@@ -67,11 +67,6 @@ public class RuleServiceImpl implements RuleService {
         return ruleMapper.selectPage(pageVO);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "rulePre", nodeType = NodeTypeEnum.COMMON)
-    public void rulePre(NodeComponent bindCmp) {
-        log.info("规则预处理");
-    }
-
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "ruleProcess", nodeType = NodeTypeEnum.COMMON)
     public void ruleProcess(NodeComponent bindCmp) {
         String tag = bindCmp.getTag();
@@ -85,11 +80,6 @@ public class RuleServiceImpl implements RuleService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "ruleFalse", nodeType = NodeTypeEnum.COMMON)
     public void ruleFalse(NodeComponent bindCmp) {
         log.info("规则未命中");
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "ruleFinally", nodeType = NodeTypeEnum.COMMON)
-    public void ruleFinally(NodeComponent bindCmp) {
-        log.info("规则执行结束");
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

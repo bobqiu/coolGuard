@@ -7,6 +7,7 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.ServiceConfigFieldPageVO;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
@@ -27,8 +28,9 @@ public interface ServiceConfigFieldMapper extends BaseMapperX<ServiceConfigField
         delete(new LambdaUpdateWrapper<ServiceConfigField>().eq(ServiceConfigField::getServiceConfigId, serviceConfigId));
     }
 
-    default List<ServiceConfigField> selectListByServiceId(Long serviceId) {
-        return selectList(new LambdaQueryWrapperX<ServiceConfigField>().eq(ServiceConfigField::getServiceConfigId, serviceId)
+    @Cacheable(cacheNames = "selectListByServiceConfigId", key = "#serviceConfigId", unless = "#result == null")
+    default List<ServiceConfigField> selectListByServiceConfigId(Long serviceConfigId) {
+        return selectList(new LambdaQueryWrapperX<ServiceConfigField>().eq(ServiceConfigField::getServiceConfigId, serviceConfigId)
                 .orderByDesc(ServiceConfigField::getRequired));
     }
 }

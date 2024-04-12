@@ -76,11 +76,6 @@ public class StrategyServiceImpl implements StrategyService {
         return strategyMapper.selectPage(pageVO);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategyPre", nodeType = NodeTypeEnum.COMMON)
-    public void strategyPre(NodeComponent bindCmp) {
-        log.info("策略预处理");
-    }
-
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategyProcess", nodeType = NodeTypeEnum.COMMON)
     public void strategyProcess(NodeComponent bindCmp) {
         String tag = bindCmp.getTag();
@@ -114,11 +109,6 @@ public class StrategyServiceImpl implements StrategyService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategyWeightProcess", nodeType = NodeTypeEnum.COMMON)
     public void strategyWeightProcess(NodeComponent bindCmp) {
         log.info("策略权重");
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategyFinally", nodeType = NodeTypeEnum.COMMON)
-    public void strategyFinally(NodeComponent bindCmp) {
-        log.info("策略结束运行");
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

@@ -3,7 +3,6 @@ package cn.wnhyang.coolGuard.controller;
 import cn.wnhyang.coolGuard.context.DecisionResponse;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.service.DecisionService;
-import com.yomahub.liteflow.core.FlowExecutor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +24,6 @@ import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 public class DecisionController {
 
     private final DecisionService decisionService;
-
-    private final FlowExecutor flowExecutor;
 
     /**
      * 同步风险

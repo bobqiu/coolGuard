@@ -5,41 +5,14 @@ server:
 spring:
   application:
     name: coolGuard
-  datasource:
-    dynamic:
-      primary: master #设置默认的数据源或者数据源组,默认值即为master
-      strict: false #严格匹配数据源,默认false. true未匹配到指定数据源时抛异常,false使用默认数据源
-      datasource:
-        master:
-          url: jdbc:mysql://localhost:3306/coolGuard?allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-          username: wnhyang
-          password: 123456
-          driver-class-name: com.mysql.cj.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
-        slave:
-          url: jdbc:mysql://localhost:3306/coolGuard?allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-          username: wnhyang
-          password: 123456
-          driver-class-name: com.mysql.cj.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
+  profiles:
+    active: local
   # Cache 配置项
   cache:
     type: REDIS
     redis:
       time-to-live: 1h # 设置过期时间为 1 小时
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      # cluster:
-      #   nodes: 127.0.0.1:6379
-      database: 0
-      password: 123456
-      lettuce:
-        pool:
-          max-active: 64 #最大连接数，0表示无限制
-          max-idle: 32 #最大等待连接数，0表示无限制
-          min-idle: 0 #最小等待连接数，0表示无限制
-          max-wait: 20ms #最大建立连接等待时间，-1表示无限制
-        shutdown-timeout: 100ms
+
 # mybatis-plus
 mybatis-plus:
   configuration:
@@ -54,40 +27,7 @@ mybatis-plus:
   mapper-locations: classpath*:mapper/**/*Mapper.xml
   login: false
 
-liteflow:
-  rule-source-ext-data-map:
-    url: jdbc:mysql://localhost:3306/coolGuard?allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-    driverClassName: com.mysql.cj.jdbc.Driver
-    username: wnhyang
-    password: 123456
-    applicationName: ${spring.application.name}
-    #是否开启SQL日志
-    sqlLogEnabled: true
-    #是否开启SQL数据轮询自动刷新机制 默认不开启
-    pollingEnabled: true
-    pollingIntervalSeconds: 60
-    pollingStartSeconds: 60
-    #以下是chain表的配置，这个一定得有
-    chainTableName: de_chain
-    chainApplicationNameField: application_name
-    chainNameField: chain_name
-    elDataField: el_data
-    chainEnableField: enable
-    #以下是script表的配置，如果你没使用到脚本，下面可以不配置
-
-#    scriptTableName: script
-#    scriptApplicationNameField: application_name
-#    scriptIdField: script_id
-#    scriptNameField: script_name
-#    scriptDataField: script_data
-#    scriptTypeField: script_type
-#    scriptLanguageField: script_language
-#    scriptEnableField: enable
-
 # 日志配置
 logging:
   config: classpath:log4j2.xml
-  level:
-    cn.wnhyang.coolGuard.mapper: debug
-
 

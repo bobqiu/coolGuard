@@ -24,7 +24,6 @@ import cn.wnhyang.coolGuard.vo.create.StrategySetCreateVO;
 import cn.wnhyang.coolGuard.vo.page.StrategySetPageVO;
 import cn.wnhyang.coolGuard.vo.update.StrategySetUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.builder.el.ELBus;
 import com.yomahub.liteflow.builder.el.LiteFlowChainELBuilder;
 import com.yomahub.liteflow.builder.el.WhenELWrapper;
 import com.yomahub.liteflow.core.NodeComponent;
@@ -87,11 +86,6 @@ public class StrategySetServiceImpl implements StrategySetService {
         return strategySetMapper.selectPage(pageVO);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategySetPre", nodeType = NodeTypeEnum.COMMON)
-    public void strategySetPre(NodeComponent bindCmp) {
-        log.info("策略集预处理");
-    }
-
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategySetProcess", nodeType = NodeTypeEnum.COMMON)
     public void strategySetProcess(NodeComponent bindCmp) {
 
@@ -139,9 +133,7 @@ public class StrategySetServiceImpl implements StrategySetService {
         for (Strategy strategy : strategyList) {
             if (strategy.getStatus().equals(1)) {
                 when.when(
-                        ELBus.then(node("strategyProcess").tag(String.valueOf(strategy.getId())))
-                                .pre(node("strategyPre").tag(String.valueOf(strategy.getId())))
-                                .finallyOpt(node("strategyFinally").tag(String.valueOf(strategy.getId())))
+                        node("strategyProcess").tag(String.valueOf(strategy.getId()))
                 );
                 StrategyVO strategyVO = StrategyConvert.INSTANCE.convert(strategy);
                 strategyContext.addStrategy(strategyVO.getId(), strategyVO);
@@ -156,12 +148,8 @@ public class StrategySetServiceImpl implements StrategySetService {
         ).build();
 
         bindCmp.invoke2Resp("strategyChain", null);
-    }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategySetFinally", nodeType = NodeTypeEnum.COMMON)
-    public void strategySetFinally(NodeComponent bindCmp) {
         DecisionResponse decisionResponse = bindCmp.getContextBean(DecisionResponse.class);
-        StrategyContext strategyContext = bindCmp.getContextBean(StrategyContext.class);
 
         decisionResponse.setStrategySetResult(strategyContext.convert());
         log.info("策略集(name:{})执行完毕", strategyContext.getStrategySetVO().getName());

@@ -62,7 +62,7 @@ public class ServiceConfigFieldServiceImpl implements ServiceConfigFieldService 
 
     @Override
     public List<InputFieldVO> getServiceConfigInputFieldsByServiceId(Long serviceId) {
-        List<ServiceConfigField> serviceConfigFields = serviceConfigFieldMapper.selectListByServiceId(serviceId);
+        List<ServiceConfigField> serviceConfigFields = serviceConfigFieldMapper.selectListByServiceConfigId(serviceId);
 
         List<InputFieldVO> inputFieldVOList = new ArrayList<>();
         for (ServiceConfigField serviceConfigField : serviceConfigFields) {

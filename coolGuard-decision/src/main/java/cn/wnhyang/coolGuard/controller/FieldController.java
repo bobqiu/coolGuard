@@ -6,6 +6,7 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.FieldService;
 import cn.wnhyang.coolGuard.vo.FieldVO;
 import cn.wnhyang.coolGuard.vo.create.FieldCreateVO;
+import cn.wnhyang.coolGuard.vo.create.TestDynamicFieldScript;
 import cn.wnhyang.coolGuard.vo.page.FieldPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldUpdateVO;
 import jakarta.validation.Valid;
@@ -84,6 +85,17 @@ public class FieldController {
     @GetMapping("/page")
     public CommonResult<PageResult<FieldVO>> pageField(@Valid FieldPageVO pageVO) {
         return success(FieldConvert.INSTANCE.convert(fieldService.pageField(pageVO)));
+    }
+
+    /**
+     * 测试动态脚本
+     *
+     * @param testDynamicFieldScript 测试动态脚本
+     * @return 测试结果
+     */
+    @PostMapping("/testDynamicFieldScript")
+    public CommonResult<String> testDynamicFieldScript(@RequestBody @Valid TestDynamicFieldScript testDynamicFieldScript) {
+        return success(fieldService.testDynamicFieldScript(testDynamicFieldScript));
     }
 
 }

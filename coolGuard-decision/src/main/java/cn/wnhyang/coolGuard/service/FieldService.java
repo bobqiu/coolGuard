@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.service;
 import cn.wnhyang.coolGuard.entity.Field;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.create.FieldCreateVO;
+import cn.wnhyang.coolGuard.vo.create.TestDynamicFieldScript;
 import cn.wnhyang.coolGuard.vo.page.FieldPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldUpdateVO;
 
@@ -51,5 +52,13 @@ public interface FieldService {
      * @return pageResult
      */
     PageResult<Field> pageField(FieldPageVO pageVO);
+
+    /**
+     * 测试动态字段脚本
+     *
+     * @param testDynamicFieldScript 测试动态字段脚本
+     * @return 测试结果
+     */
+    String testDynamicFieldScript(TestDynamicFieldScript testDynamicFieldScript);
 
 }
