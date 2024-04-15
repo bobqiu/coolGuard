@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.indicator;
 
-import cn.wnhyang.coolGuard.constant.RedisKeys;
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.WinType;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.entity.Indicator;
@@ -107,7 +107,7 @@ public abstract class AbstractIndicator {
     public void setRedisKey(NodeComponent bindCmp) {
         DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
 
-        this.redisKey = RedisKeys.INDICATOR + indicator.getId() + ":"
+        this.redisKey = RedisKey.INDICATOR + indicator.getId() + ":"
                 + INDICATOR_TYPE.getType() + ":" + decisionRequest.getStringData(indicator.getMasterField())
                 + "-" + decisionRequest.getStringData(indicator.getSlaveFields());
 

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
- * 服务配置字段表
+ * 服务配置字段
  *
  * @author wnhyang
  * @since 2024/04/04

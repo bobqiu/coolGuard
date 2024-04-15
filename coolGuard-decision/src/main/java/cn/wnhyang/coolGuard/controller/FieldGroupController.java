@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
- * 字段分组表
+ * 字段分组
  *
  * @author wnhyang
  * @since 2024/03/14

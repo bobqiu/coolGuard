@@ -41,9 +41,7 @@ public class IndicatorServiceImpl implements IndicatorService {
     }
 
     private void addIndicator(List<AbstractIndicator> indicatorList) {
-        indicatorList.forEach(indicator -> {
-            INDICATOR_MAP.put(indicator.getType(), indicator);
-        });
+        indicatorList.forEach(indicator -> INDICATOR_MAP.put(indicator.getType(), indicator));
     }
 
     @Override
