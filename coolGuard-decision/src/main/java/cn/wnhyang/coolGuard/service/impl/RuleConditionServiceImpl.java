@@ -96,7 +96,6 @@ public class RuleConditionServiceImpl implements RuleConditionService {
         boolean condition = false;
 
         // 获取字段值
-        // TODO 支持String、Integer、Double、Boolean等
         try {
             switch (fieldType) {
                 case STRING:

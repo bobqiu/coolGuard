@@ -1,10 +1,10 @@
 package cn.wnhyang.coolGuard.indicator;
 
 import cn.wnhyang.coolGuard.constant.RedisKeys;
+import cn.wnhyang.coolGuard.constant.WinType;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
-import cn.wnhyang.coolGuard.enums.WinType;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
@@ -161,9 +161,9 @@ public abstract class AbstractIndicator {
             // 3、获取redis中数据
             log.info("redisKey:{}", redisKey);
             RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(redisKey);
-            if (WinType.LAST.getType().equals(this.indicator.getWinType())) {
+            if (WinType.LAST.equals(this.indicator.getWinType())) {
                 set.expire(Duration.ofSeconds(this.indicator.getTimeSlice() * this.indicator.getWinCount()));
-            } else if (WinType.CUR.getType().equals(this.indicator.getWinType())) {
+            } else if (WinType.CUR.equals(this.indicator.getWinType())) {
                 set.expire(Duration.ofSeconds(this.indicator.getTimeSlice()));
             }
 
@@ -192,9 +192,9 @@ public abstract class AbstractIndicator {
      * @param set         redis set
      */
     public void cleanExpiredDate(long currentTime, RScoredSortedSet<String> set) {
-        if (WinType.LAST.getType().equals(indicator.getWinType())) {
+        if (WinType.LAST.equals(indicator.getWinType())) {
             set.removeRangeByScore(-1, true, currentTime - Duration.ofSeconds(indicator.getTimeSlice()).toMillis(), false);
-        } else if (WinType.CUR.getType().equals(indicator.getWinType())) {
+        } else if (WinType.CUR.equals(indicator.getWinType())) {
             set.removeRangeByScore(-1, true, calculateEpochMilli(LocalDateTime.now()), false);
         }
     }

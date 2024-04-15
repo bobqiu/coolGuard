@@ -282,21 +282,46 @@ create table de_strategy_set
 
 # strategy disposal
 
-INSERT INTO coolGuard.de_chain (application_name, chain_name, el_data, enable, description)
-VALUES ('coolGuard', 'decisionChain', 'THEN(
-  PRE(serviceConfigPre),
-  THEN(
-    serviceConfigProcess,
-    strategySetChain
+insert into coolGuard.de_chain (id, application_name, chain_name, el_data, enable, description)
+values (10, 'coolGuard', 'test1', 'IF(
+  OR(
+    ruleConditionIf.tag("1"),
+    ruleConditionIf.tag("2"),
+    ruleConditionIf.tag("3")
   ),
-  FINALLY(serviceConfigFinally)
+  ruleProcess.tag("1"),
+  ruleFalse
 );', true, ''),
-       ('coolGuard', 'strategySetChain', 'THEN(
-  PRE(strategySetPre),
+       (11, 'coolGuard', 'test2', 'IF(
+  AND(
+    ruleConditionIf.tag("4"),
+    ruleConditionIf.tag("5")
+  ),
+  ruleProcess.tag("2"),
+  ruleFalse
+);', true, ''),
+       (14, 'coolGuard', 'test3', 'IF(
+  ruleConditionIf.tag("6"),
+  ruleProcess.tag("3"),
+  ruleFalse
+);', true, ''),
+       (15, 'coolGuard', 'decisionChain', 'THEN(
+  THEN(
+    serviceConfigChain
+  )
+);', true, ''),
+       (16, 'coolGuard', 'strategySetChain', 'THEN(
   THEN(
     strategySetProcess
-  ),
-  FINALLY(strategySetFinally)
+  )
+);', true, ''),
+       (17, 'coolGuard', 'Phone_Login_Worst', 'WHEN(test3);', true, ''),
+       (18, 'coolGuard', 'Phone_Login_Order', 'THEN(test1,test2);', true, ''),
+       (19, 'coolGuard', 'serviceConfigChain', 'THEN(
+    serviceConfigProcess,
+    normalFieldProcess,
+    dynamicFieldProcess,
+    strategySetChain
 );', true, '');
 
 INSERT INTO coolGuard.de_disposal (code, name, description)

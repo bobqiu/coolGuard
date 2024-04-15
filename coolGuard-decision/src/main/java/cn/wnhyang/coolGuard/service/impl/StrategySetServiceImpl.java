@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.context.DecisionResponse;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
@@ -112,8 +113,8 @@ public class StrategySetServiceImpl implements StrategySetService {
 
         // TODO 计算指标
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
-        List<Indicator> indicatorListByAppName = indicatorMapper.selectListByScene(strategySetVO.getAppName(), "APP");
-        List<Indicator> indicatorListByStrategySetCode = indicatorMapper.selectListByScene(strategySetVO.getCode(), "StrategySet");
+        List<Indicator> indicatorListByAppName = indicatorMapper.selectListByScene(strategySetVO.getAppName(), SceneType.APP);
+        List<Indicator> indicatorListByStrategySetCode = indicatorMapper.selectListByScene(strategySetVO.getCode(), SceneType.STRATEGY_SET);
         // 合并
         indicatorListByAppName.addAll(indicatorListByStrategySetCode);
         List<IndicatorVO> indicatorVOList = IndicatorConvert.INSTANCE.convert(indicatorListByAppName);
