@@ -38,13 +38,13 @@ public class FieldGroupServiceImpl implements FieldGroupService {
 
     @Override
     public void updateFieldGroup(FieldGroupUpdateVO updateVO) {
-        validateForCreateOrUpdate(updateVO.getId(), updateVO.getName());
         FieldGroup fieldGroup = FieldGroupConvert.INSTANCE.convert(updateVO);
         fieldGroupMapper.updateById(fieldGroup);
     }
 
     @Override
     public void deleteFieldGroup(Long id) {
+        // TODO 有引用不可删除
         validateExists(id);
         fieldGroupMapper.deleteById(id);
     }

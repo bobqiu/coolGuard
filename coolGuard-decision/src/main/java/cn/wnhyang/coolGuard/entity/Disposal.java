@@ -43,6 +43,24 @@ public class Disposal extends BasePO {
     private String name;
 
     /**
+     * 等级
+     */
+    @TableField("grade")
+    private Integer grade;
+
+    /**
+     * 颜色
+     */
+    @TableField("color")
+    private String color;
+
+    /**
+     * 是否为标准
+     */
+    @TableField("standard")
+    private Boolean standard;
+
+    /**
      * 描述
      */
     @TableField("description")

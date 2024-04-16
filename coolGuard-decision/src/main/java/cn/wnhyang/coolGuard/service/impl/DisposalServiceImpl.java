@@ -38,13 +38,13 @@ public class DisposalServiceImpl implements DisposalService {
 
     @Override
     public void updateDisposal(DisposalUpdateVO updateVO) {
-        validateForCreateOrUpdate(updateVO.getId(), updateVO.getCode());
         Disposal disposal = DisposalConvert.INSTANCE.convert(updateVO);
         disposalMapper.updateById(disposal);
     }
 
     @Override
     public void deleteDisposal(Long id) {
+        // TODO 有引用不可删除
         validateExists(id);
         disposalMapper.deleteById(id);
     }

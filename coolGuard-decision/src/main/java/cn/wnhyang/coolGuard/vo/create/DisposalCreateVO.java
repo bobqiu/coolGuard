@@ -1,8 +1,9 @@
 package cn.wnhyang.coolGuard.vo.create;
 
+import cn.wnhyang.coolGuard.vo.base.DisposalBaseVO;
 import lombok.Data;
 
-import java.io.Serializable;
+import java.io.Serial;
 
 /**
  * 处置表
@@ -11,10 +12,10 @@ import java.io.Serializable;
  * @since 2024/04/03
  */
 @Data
-public class DisposalCreateVO implements Serializable {
+public class DisposalCreateVO extends DisposalBaseVO {
 
-    private static final long serialVersionUID = 1L;
-
+    @Serial
+    private static final long serialVersionUID = -4401298690445309859L;
 
     /**
      * 处置编码
@@ -25,9 +26,4 @@ public class DisposalCreateVO implements Serializable {
      * 处置名
      */
     private String name;
-
-    /**
-     * 描述
-     */
-    private String description;
 }

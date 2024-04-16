@@ -45,6 +45,12 @@ public class FieldGroup extends BasePO {
     private String name;
 
     /**
+     * 是否为标准
+     */
+    @TableField("standard")
+    private Boolean standard;
+
+    /**
      * 描述
      */
     @TableField("description")

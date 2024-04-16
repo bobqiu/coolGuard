@@ -38,13 +38,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public void updateApplication(ApplicationUpdateVO updateVO) {
-        validateForCreateOrUpdate(updateVO.getId(), updateVO.getName());
         Application application = ApplicationConvert.INSTANCE.convert(updateVO);
         applicationMapper.updateById(application);
     }
 
     @Override
     public void deleteApplication(Long id) {
+        // TODO 有引用不可删除
         validateExists(id);
         applicationMapper.deleteById(id);
     }

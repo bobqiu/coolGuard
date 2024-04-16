@@ -1,8 +1,9 @@
 package cn.wnhyang.coolGuard.vo.create;
 
+import cn.wnhyang.coolGuard.vo.base.ApplicationBaseVO;
 import lombok.Data;
 
-import java.io.Serializable;
+import java.io.Serial;
 
 /**
  * 应用表
@@ -11,15 +12,10 @@ import java.io.Serializable;
  * @since 2024/04/03
  */
 @Data
-public class ApplicationCreateVO implements Serializable {
+public class ApplicationCreateVO extends ApplicationBaseVO {
 
-    private static final long serialVersionUID = 1L;
-
-
-    /**
-     * 显示名
-     */
-    private String displayName;
+    @Serial
+    private static final long serialVersionUID = -4178585550757568445L;
 
     /**
      * 应用名
@@ -30,9 +26,4 @@ public class ApplicationCreateVO implements Serializable {
      * 密钥
      */
     private String secret;
-
-    /**
-     * 描述
-     */
-    private String description;
 }

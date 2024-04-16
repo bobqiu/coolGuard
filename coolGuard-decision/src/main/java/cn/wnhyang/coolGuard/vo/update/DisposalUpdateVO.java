@@ -1,7 +1,9 @@
 package cn.wnhyang.coolGuard.vo.update;
 
-import cn.wnhyang.coolGuard.vo.create.DisposalCreateVO;
+import cn.wnhyang.coolGuard.vo.base.DisposalBaseVO;
 import lombok.Data;
+
+import java.io.Serial;
 
 /**
  * 处置表
@@ -10,9 +12,10 @@ import lombok.Data;
  * @since 2024/04/03
  */
 @Data
-public class DisposalUpdateVO extends DisposalCreateVO {
+public class DisposalUpdateVO extends DisposalBaseVO {
 
-    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 4214406194053463597L;
 
     /**
      * 主键

@@ -2,43 +2,33 @@ package cn.wnhyang.coolGuard.dto;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 处置表
- *
  * @author wnhyang
- * @since 2024/04/03
- */
+ * @date 2024/4/16
+ **/
 @Data
-public class DisposalDTO implements Serializable {
+public class FieldGroupDTO implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 8478787293798089192L;
 
     /**
-     * 主键
+     * 自增编号
      */
     private Long id;
 
     /**
-     * 处置编码
+     * 显示分组名
      */
-    private String code;
+    private String displayName;
 
     /**
-     * 处置名
+     * 分组标识
      */
     private String name;
-
-    /**
-     * 等级
-     */
-    private Integer grade;
-
-    /**
-     * 颜色
-     */
-    private String color;
 
     /**
      * 是否为标准
@@ -49,4 +39,10 @@ public class DisposalDTO implements Serializable {
      * 描述
      */
     private String description;
+
+    /**
+     * 组内字段数
+     */
+    private Integer count;
+
 }
