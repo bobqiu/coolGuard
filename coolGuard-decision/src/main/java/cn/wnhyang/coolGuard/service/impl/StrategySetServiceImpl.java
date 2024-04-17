@@ -61,6 +61,7 @@ public class StrategySetServiceImpl implements StrategySetService {
 
     @Override
     public Long createStrategySet(StrategySetCreateVO createVO) {
+        validateForCreateOrUpdate(null, createVO.getName());
         StrategySet strategySet = StrategySetConvert.INSTANCE.convert(createVO);
         strategySetMapper.insert(strategySet);
         return strategySet.getId();
@@ -74,6 +75,7 @@ public class StrategySetServiceImpl implements StrategySetService {
 
     @Override
     public void deleteStrategySet(Long id) {
+        // TODO 有引用不可删除
         strategySetMapper.deleteById(id);
     }
 

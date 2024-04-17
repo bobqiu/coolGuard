@@ -23,7 +23,7 @@ public class ServiceConfigFieldDTO implements Serializable {
     /**
      * 服务id
      */
-    private Long serviceId;
+    private Long serviceConfigId;
 
     /**
      * 参数名

@@ -1,7 +1,9 @@
 package cn.wnhyang.coolGuard.vo.update;
 
-import cn.wnhyang.coolGuard.vo.create.StrategySetCreateVO;
+import cn.wnhyang.coolGuard.vo.base.StrategySetBaseVO;
 import lombok.Data;
+
+import java.io.Serial;
 
 /**
  * 策略集表
@@ -10,9 +12,10 @@ import lombok.Data;
  * @since 2024/04/04
  */
 @Data
-public class StrategySetUpdateVO extends StrategySetCreateVO {
+public class StrategySetUpdateVO extends StrategySetBaseVO {
 
-    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 2944541149936060422L;
 
     /**
      * 主键

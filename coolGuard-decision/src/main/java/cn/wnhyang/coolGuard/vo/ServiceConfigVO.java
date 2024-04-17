@@ -1,18 +1,28 @@
 package cn.wnhyang.coolGuard.vo;
 
-import cn.wnhyang.coolGuard.vo.create.ServiceConfigCreateVO;
+import cn.wnhyang.coolGuard.vo.base.ServiceConfigBaseVO;
 import lombok.Data;
+
+import java.io.Serial;
 
 /**
  * @author wnhyang
  * @date 2024/3/14
  **/
 @Data
-public class ServiceConfigVO extends ServiceConfigCreateVO {
+public class ServiceConfigVO extends ServiceConfigBaseVO {
+
+    @Serial
+    private static final long serialVersionUID = -6121337194207258432L;
 
     /**
      * 主键
      */
     private Long id;
+
+    /**
+     * 服务标识
+     */
+    private String name;
 
 }

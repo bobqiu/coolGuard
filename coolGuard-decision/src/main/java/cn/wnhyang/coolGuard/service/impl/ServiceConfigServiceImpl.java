@@ -64,7 +64,6 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
 
     @Override
     public void updateServiceConfig(ServiceConfigUpdateVO updateVO) {
-        validateForCreateOrUpdate(updateVO.getId(), updateVO.getName());
         ServiceConfig serviceConfig = ServiceConfigConvert.INSTANCE.convert(updateVO);
 
         serviceConfigFieldMapper.deleteByServiceConfigId(updateVO.getId());

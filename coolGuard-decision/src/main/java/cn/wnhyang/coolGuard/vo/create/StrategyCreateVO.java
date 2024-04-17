@@ -1,8 +1,9 @@
 package cn.wnhyang.coolGuard.vo.create;
 
+import cn.wnhyang.coolGuard.vo.base.StrategyBaseVO;
 import lombok.Data;
 
-import java.io.Serializable;
+import java.io.Serial;
 
 /**
  * 策略表
@@ -11,14 +12,10 @@ import java.io.Serializable;
  * @since 2024/04/04
  */
 @Data
-public class StrategyCreateVO implements Serializable {
+public class StrategyCreateVO extends StrategyBaseVO {
 
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * chain名
-     */
-    private String chainName;
+    @Serial
+    private static final long serialVersionUID = 2093290268962978058L;
 
     /**
      * 策略集id
@@ -31,22 +28,8 @@ public class StrategyCreateVO implements Serializable {
     private String code;
 
     /**
-     * 策略名
-     */
-    private String name;
-
-    /**
      * 策略模式
      */
     private String mode;
 
-    /**
-     * 策略状态
-     */
-    private Integer status;
-
-    /**
-     * 描述
-     */
-    private String description;
 }

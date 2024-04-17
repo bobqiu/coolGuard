@@ -40,7 +40,6 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
 @RequiredArgsConstructor
 public class StrategyServiceImpl implements StrategyService {
 
-
     private final StrategyMapper strategyMapper;
 
     private final RuleMapper ruleMapper;
@@ -55,13 +54,13 @@ public class StrategyServiceImpl implements StrategyService {
 
     @Override
     public void updateStrategy(StrategyUpdateVO updateVO) {
-        validateForCreateOrUpdate(updateVO.getId(), updateVO.getCode());
         Strategy strategy = StrategyConvert.INSTANCE.convert(updateVO);
         strategyMapper.updateById(strategy);
     }
 
     @Override
     public void deleteStrategy(Long id) {
+        // TODO 有引用不可删除
         validateExists(id);
         strategyMapper.deleteById(id);
     }
