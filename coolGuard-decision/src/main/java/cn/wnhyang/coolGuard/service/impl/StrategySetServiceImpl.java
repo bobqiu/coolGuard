@@ -24,6 +24,7 @@ import cn.wnhyang.coolGuard.vo.StrategyVO;
 import cn.wnhyang.coolGuard.vo.create.StrategySetCreateVO;
 import cn.wnhyang.coolGuard.vo.page.StrategySetPageVO;
 import cn.wnhyang.coolGuard.vo.update.StrategySetUpdateVO;
+import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.builder.el.LiteFlowChainELBuilder;
 import com.yomahub.liteflow.builder.el.WhenELWrapper;
@@ -50,6 +51,7 @@ import static com.yomahub.liteflow.builder.el.ELBus.node;
  */
 @Slf4j
 @Service
+@LiteflowComponent
 @RequiredArgsConstructor
 public class StrategySetServiceImpl implements StrategySetService {
 

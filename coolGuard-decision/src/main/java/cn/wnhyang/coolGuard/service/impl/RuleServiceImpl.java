@@ -11,6 +11,7 @@ import cn.wnhyang.coolGuard.vo.RuleVO;
 import cn.wnhyang.coolGuard.vo.create.RuleCreateVO;
 import cn.wnhyang.coolGuard.vo.page.RulePageVO;
 import cn.wnhyang.coolGuard.vo.update.RuleUpdateVO;
+import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
@@ -31,6 +32,7 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
  */
 @Slf4j
 @Service
+@LiteflowComponent
 @RequiredArgsConstructor
 public class RuleServiceImpl implements RuleService {
 

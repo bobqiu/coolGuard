@@ -15,6 +15,7 @@ import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.vo.create.ServiceConfigCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ServiceConfigPageVO;
 import cn.wnhyang.coolGuard.vo.update.ServiceConfigUpdateVO;
+import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
@@ -38,6 +39,7 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
  */
 @Slf4j
 @Service
+@LiteflowComponent
 @RequiredArgsConstructor
 public class ServiceConfigServiceImpl implements ServiceConfigService {
 

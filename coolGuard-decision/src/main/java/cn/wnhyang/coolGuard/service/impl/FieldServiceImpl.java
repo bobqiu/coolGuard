@@ -15,6 +15,7 @@ import cn.wnhyang.coolGuard.vo.create.FieldCreateVO;
 import cn.wnhyang.coolGuard.vo.create.TestDynamicFieldScript;
 import cn.wnhyang.coolGuard.vo.page.FieldPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldUpdateVO;
+import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.builder.LiteFlowNodeBuilder;
 import com.yomahub.liteflow.builder.el.LiteFlowChainELBuilder;
@@ -42,6 +43,7 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
  */
 @Slf4j
 @Service
+@LiteflowComponent
 @RequiredArgsConstructor
 public class FieldServiceImpl implements FieldService {
 

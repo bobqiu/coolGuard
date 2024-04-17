@@ -15,6 +15,7 @@ import cn.wnhyang.coolGuard.vo.StrategyVO;
 import cn.wnhyang.coolGuard.vo.create.StrategyCreateVO;
 import cn.wnhyang.coolGuard.vo.page.StrategyPageVO;
 import cn.wnhyang.coolGuard.vo.update.StrategyUpdateVO;
+import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
@@ -37,6 +38,7 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
  */
 @Slf4j
 @Service
+@LiteflowComponent
 @RequiredArgsConstructor
 public class StrategyServiceImpl implements StrategyService {
 

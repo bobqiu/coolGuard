@@ -14,6 +14,7 @@ import cn.wnhyang.coolGuard.service.RuleConditionService;
 import cn.wnhyang.coolGuard.vo.create.RuleConditionCreateVO;
 import cn.wnhyang.coolGuard.vo.page.RuleConditionPageVO;
 import cn.wnhyang.coolGuard.vo.update.RuleConditionUpdateVO;
+import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
@@ -33,6 +34,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Service
+@LiteflowComponent
 @RequiredArgsConstructor
 public class RuleConditionServiceImpl implements RuleConditionService {
 
@@ -66,7 +68,7 @@ public class RuleConditionServiceImpl implements RuleConditionService {
         return ruleConditionMapper.selectPage(pageVO);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_IF, nodeId = "ruleConditionIf", nodeType = NodeTypeEnum.IF)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = "ruleConditionIf", nodeType = NodeTypeEnum.BOOLEAN)
     public boolean ruleConditionIf(NodeComponent bindCmp) {
 
         // 获取当前tag

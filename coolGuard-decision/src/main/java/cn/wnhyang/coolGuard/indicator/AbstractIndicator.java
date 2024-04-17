@@ -72,7 +72,7 @@ public abstract class AbstractIndicator {
      * @param bindCmp 必要组件入参
      * @return true/false
      */
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_IF, nodeId = "indicatorConditionIF", nodeType = NodeTypeEnum.IF)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = "indicatorConditionIF", nodeType = NodeTypeEnum.BOOLEAN)
     public boolean filter(NodeComponent bindCmp) {
 
         DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
