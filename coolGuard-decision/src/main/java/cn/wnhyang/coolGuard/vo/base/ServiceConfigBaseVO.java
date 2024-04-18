@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.vo.base;
 
-import cn.wnhyang.coolGuard.vo.create.ServiceConfigFieldCreateVO;
+import cn.wnhyang.coolGuard.vo.ServiceConfigFieldVO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -26,7 +26,7 @@ public class ServiceConfigBaseVO implements Serializable {
     @Size(min = 1, max = 50, message = "字段显示名长度必须在1-50之间")
     private String displayName;
 
-    private List<ServiceConfigFieldCreateVO> inputFields;
+    private List<ServiceConfigFieldVO> inputFields;
 
     /**
      * 输入配置

@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.convert.StrategySetConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.StrategySetService;
@@ -70,7 +69,7 @@ public class StrategySetController {
      */
     @GetMapping("/{id}")
     public CommonResult<StrategySetVO> getStrategySet(@PathVariable("id") Long id) {
-        return success(StrategySetConvert.INSTANCE.convert(strategySetService.getStrategySet(id)));
+        return success(strategySetService.getStrategySet(id));
     }
 
     /**
@@ -81,6 +80,6 @@ public class StrategySetController {
      */
     @GetMapping("/page")
     public CommonResult<PageResult<StrategySetVO>> pageStrategySet(@Valid StrategySetPageVO pageVO) {
-        return success(StrategySetConvert.INSTANCE.convert(strategySetService.pageStrategySet(pageVO)));
+        return success(strategySetService.pageStrategySet(pageVO));
     }
 }

@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.convert.FieldGroupConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.FieldGroupService;
@@ -70,7 +69,7 @@ public class FieldGroupController {
      */
     @GetMapping("/{id}")
     public CommonResult<FieldGroupVO> getFieldGroup(@PathVariable("id") Long id) {
-        return success(FieldGroupConvert.INSTANCE.convert(fieldGroupService.getFieldGroup(id)));
+        return success(fieldGroupService.getFieldGroup(id));
     }
 
     /**
@@ -81,6 +80,6 @@ public class FieldGroupController {
      */
     @GetMapping("/page")
     public CommonResult<PageResult<FieldGroupVO>> pageFieldGroup(@Valid FieldGroupPageVO pageVO) {
-        return success(FieldGroupConvert.INSTANCE.convert(fieldGroupService.pageFieldGroup(pageVO)));
+        return success(fieldGroupService.pageFieldGroup(pageVO));
     }
 }

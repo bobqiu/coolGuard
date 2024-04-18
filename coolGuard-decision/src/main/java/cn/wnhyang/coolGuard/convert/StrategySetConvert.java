@@ -8,6 +8,8 @@ import cn.wnhyang.coolGuard.vo.update.StrategySetUpdateVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * 策略集表
  *
@@ -27,4 +29,5 @@ public interface StrategySetConvert {
 
     PageResult<StrategySetVO> convert(PageResult<StrategySet> pageResult);
 
+    List<StrategySetVO> convert(List<StrategySet> list);
 }

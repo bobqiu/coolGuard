@@ -31,8 +31,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.FIELD_NAME_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.FIELD_NOT_EXIST;
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -61,6 +60,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public void updateField(FieldUpdateVO updateVO) {
+        validateForUpdate(updateVO.getId());
         validateForCreateOrUpdate(updateVO.getId(), updateVO.getName());
         Field field = FieldConvert.INSTANCE.convert(updateVO);
         fieldMapper.updateById(field);
@@ -68,7 +68,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public void deleteField(Long id) {
-        validateExists(id);
+        validateForDelete(id);
         fieldMapper.deleteById(id);
     }
 
@@ -179,6 +179,22 @@ public class FieldServiceImpl implements FieldService {
 
         });
         log.info("系统字段：{}", decisionRequest.getFields());
+    }
+
+    private void validateForDelete(Long id) {
+        validateForUpdate(id);
+        // TODO 查找引用 指标、服务配置、动态字段、规则等
+    }
+
+    private void validateForUpdate(Long id) {
+        Field field = fieldMapper.selectById(id);
+        if (field == null) {
+            throw exception(FIELD_NOT_EXIST);
+        }
+        // 内置角色，不允许删除
+        if (field.getStandard()) {
+            throw exception(FIELD_STANDARD);
+        }
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

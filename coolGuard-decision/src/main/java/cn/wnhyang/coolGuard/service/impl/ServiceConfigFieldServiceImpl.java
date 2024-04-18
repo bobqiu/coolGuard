@@ -1,7 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.wnhyang.coolGuard.convert.FieldConvert;
-import cn.wnhyang.coolGuard.convert.ServiceConfigFieldConvert;
 import cn.wnhyang.coolGuard.entity.Field;
 import cn.wnhyang.coolGuard.entity.ServiceConfigField;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
@@ -9,9 +8,7 @@ import cn.wnhyang.coolGuard.mapper.ServiceConfigFieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ServiceConfigFieldService;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
-import cn.wnhyang.coolGuard.vo.create.ServiceConfigFieldCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ServiceConfigFieldPageVO;
-import cn.wnhyang.coolGuard.vo.update.ServiceConfigFieldUpdateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,24 +28,6 @@ public class ServiceConfigFieldServiceImpl implements ServiceConfigFieldService 
     private final ServiceConfigFieldMapper serviceConfigFieldMapper;
 
     private final FieldMapper fieldMapper;
-
-    @Override
-    public Long createServiceConfigField(ServiceConfigFieldCreateVO createVO) {
-        ServiceConfigField serviceConfigField = ServiceConfigFieldConvert.INSTANCE.convert(createVO);
-        serviceConfigFieldMapper.insert(serviceConfigField);
-        return serviceConfigField.getId();
-    }
-
-    @Override
-    public void updateServiceConfigField(ServiceConfigFieldUpdateVO updateVO) {
-        ServiceConfigField serviceConfigField = ServiceConfigFieldConvert.INSTANCE.convert(updateVO);
-        serviceConfigFieldMapper.updateById(serviceConfigField);
-    }
-
-    @Override
-    public void deleteServiceConfigField(Long id) {
-        serviceConfigFieldMapper.deleteById(id);
-    }
 
     @Override
     public ServiceConfigField getServiceConfigField(Long id) {

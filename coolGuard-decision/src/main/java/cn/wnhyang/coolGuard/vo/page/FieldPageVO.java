@@ -36,6 +36,11 @@ public class FieldPageVO extends PageParam {
     private String type;
 
     /**
+     * 是否标准字段
+     */
+    private Boolean standard;
+
+    /**
      * 是否动态字段(0否1是)
      */
     private Boolean dynamic;

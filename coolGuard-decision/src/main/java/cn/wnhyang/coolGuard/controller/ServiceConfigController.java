@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.convert.ServiceConfigConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ServiceConfigService;
@@ -70,7 +69,7 @@ public class ServiceConfigController {
      */
     @GetMapping("/{id}")
     public CommonResult<ServiceConfigVO> getServiceConfig(@PathVariable("id") Long id) {
-        return success(ServiceConfigConvert.INSTANCE.convert(serviceConfigService.getServiceConfig(id)));
+        return success(serviceConfigService.getServiceConfig(id));
     }
 
     /**
@@ -81,6 +80,6 @@ public class ServiceConfigController {
      */
     @GetMapping("/page")
     public CommonResult<PageResult<ServiceConfigVO>> pageServiceConfig(@Valid ServiceConfigPageVO pageVO) {
-        return success(ServiceConfigConvert.INSTANCE.convert(serviceConfigService.pageServiceConfig(pageVO)));
+        return success(serviceConfigService.pageServiceConfig(pageVO));
     }
 }

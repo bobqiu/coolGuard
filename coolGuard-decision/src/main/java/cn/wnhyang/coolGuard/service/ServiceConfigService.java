@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.service;
 
 import cn.wnhyang.coolGuard.entity.ServiceConfig;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.ServiceConfigVO;
 import cn.wnhyang.coolGuard.vo.create.ServiceConfigCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ServiceConfigPageVO;
 import cn.wnhyang.coolGuard.vo.update.ServiceConfigUpdateVO;
@@ -42,7 +43,7 @@ public interface ServiceConfigService {
      * @param id id
      * @return po
      */
-    ServiceConfig getServiceConfig(Long id);
+    ServiceConfigVO getServiceConfig(Long id);
 
     /**
      * 分页查询
@@ -50,7 +51,7 @@ public interface ServiceConfigService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<ServiceConfig> pageServiceConfig(ServiceConfigPageVO pageVO);
+    PageResult<ServiceConfigVO> pageServiceConfig(ServiceConfigPageVO pageVO);
 
     /**
      * 根据名称查询

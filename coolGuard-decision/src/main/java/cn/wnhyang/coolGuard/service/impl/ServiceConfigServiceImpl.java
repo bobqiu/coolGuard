@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.convert.ServiceConfigConvert;
+import cn.wnhyang.coolGuard.convert.ServiceConfigFieldConvert;
 import cn.wnhyang.coolGuard.entity.ServiceConfig;
 import cn.wnhyang.coolGuard.entity.ServiceConfigField;
 import cn.wnhyang.coolGuard.mapper.ServiceConfigFieldMapper;
@@ -12,6 +13,7 @@ import cn.wnhyang.coolGuard.mapper.ServiceConfigMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ServiceConfigService;
 import cn.wnhyang.coolGuard.util.CollectionUtils;
+import cn.wnhyang.coolGuard.vo.ServiceConfigVO;
 import cn.wnhyang.coolGuard.vo.create.ServiceConfigCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ServiceConfigPageVO;
 import cn.wnhyang.coolGuard.vo.update.ServiceConfigUpdateVO;
@@ -86,13 +88,25 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
     }
 
     @Override
-    public ServiceConfig getServiceConfig(Long id) {
-        return serviceConfigMapper.selectById(id);
+    public ServiceConfigVO getServiceConfig(Long id) {
+        ServiceConfig serviceConfig = serviceConfigMapper.selectById(id);
+        ServiceConfigVO serviceConfigVO = ServiceConfigConvert.INSTANCE.convert(serviceConfig);
+        serviceConfigVO.setInputFields(CollectionUtils.convertList(
+                serviceConfigFieldMapper.selectListByServiceConfigId(id),
+                ServiceConfigFieldConvert.INSTANCE::convert));
+        return serviceConfigVO;
     }
 
     @Override
-    public PageResult<ServiceConfig> pageServiceConfig(ServiceConfigPageVO pageVO) {
-        return serviceConfigMapper.selectPage(pageVO);
+    public PageResult<ServiceConfigVO> pageServiceConfig(ServiceConfigPageVO pageVO) {
+        PageResult<ServiceConfig> pageResult = serviceConfigMapper.selectPage(pageVO);
+        PageResult<ServiceConfigVO> convert = ServiceConfigConvert.INSTANCE.convert(pageResult);
+        convert.getList().forEach(serviceConfig ->
+                serviceConfig.setInputFields(CollectionUtils.convertList(
+                        serviceConfigFieldMapper.selectListByServiceConfigId(serviceConfig.getId()),
+                        ServiceConfigFieldConvert.INSTANCE::convert)));
+
+        return convert;
     }
 
     @Override

@@ -15,7 +15,37 @@ public class StrategySetPageVO extends PageParam {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键
+     * app名
      */
-    private Long id;
+    private String appName;
+
+    /**
+     * 策略集编码
+     */
+    private String code;
+
+    /**
+     * 策略集名
+     */
+    private String name;
+
+    /**
+     * 策略编码
+     */
+    private String strategyCode;
+
+    /**
+     * 策略名
+     */
+    private String strategyName;
+
+    /**
+     * 规则编码
+     */
+    private String ruleCode;
+
+    /**
+     * 规则名
+     */
+    private String ruleName;
 }

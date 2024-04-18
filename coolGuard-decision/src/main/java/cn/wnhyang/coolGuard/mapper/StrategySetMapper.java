@@ -8,6 +8,9 @@ import cn.wnhyang.coolGuard.vo.page.StrategySetPageVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.cache.annotation.Cacheable;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * 策略集表 Mapper 接口
  *
@@ -29,5 +32,13 @@ public interface StrategySetMapper extends BaseMapperX<StrategySet> {
     @Cacheable(cacheNames = "strategySetByAppNameAndCode", key = "#appName+'-'+#code", unless = "#result == null")
     default StrategySet selectByAppNameAndCode(String appName, String code) {
         return selectOne(StrategySet::getAppName, appName, StrategySet::getCode, code);
+    }
+
+    default List<StrategySet> selectList(Set<Long> ids, String appName, String name, String code) {
+        return selectList(new LambdaQueryWrapperX<StrategySet>()
+                .inIfPresent(StrategySet::getId, ids)
+                .eqIfPresent(StrategySet::getAppName, appName)
+                .likeIfPresent(StrategySet::getName, name)
+                .eqIfPresent(StrategySet::getCode, code));
     }
 }

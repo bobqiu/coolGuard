@@ -18,7 +18,9 @@ import org.springframework.cache.annotation.Cacheable;
 public interface ApplicationMapper extends BaseMapperX<Application> {
 
     default PageResult<Application> selectPage(ApplicationPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<Application>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<Application>()
+                .likeIfPresent(Application::getDisplayName, pageVO.getDisplayName())
+                .likeIfPresent(Application::getName, pageVO.getName()));
     }
 
     @Cacheable(cacheNames = "applicationByName", key = "#name", unless = "#result == null")

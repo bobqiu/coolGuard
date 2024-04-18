@@ -4,6 +4,7 @@ import cn.wnhyang.coolGuard.vo.base.StrategySetBaseVO;
 import lombok.Data;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 策略集表
@@ -31,4 +32,9 @@ public class StrategySetVO extends StrategySetBaseVO {
      * 策略集编码
      */
     private String code;
+
+    /**
+     * 策略
+     */
+    private List<StrategyVO> strategyList;
 }

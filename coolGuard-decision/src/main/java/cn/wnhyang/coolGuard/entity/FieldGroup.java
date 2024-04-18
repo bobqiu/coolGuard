@@ -56,9 +56,4 @@ public class FieldGroup extends BasePO {
     @TableField("description")
     private String description;
 
-    /**
-     * 组内字段数
-     */
-    @TableField("count")
-    private Integer count;
 }

@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 规则表 Mapper 接口
@@ -20,7 +22,10 @@ import java.util.List;
 public interface RuleMapper extends BaseMapperX<Rule> {
 
     default PageResult<Rule> selectPage(RulePageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<Rule>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<Rule>()
+                .likeIfPresent(Rule::getName, pageVO.getName())
+                .likeIfPresent(Rule::getCode, pageVO.getCode())
+                .eqIfPresent(Rule::getDisposalId, pageVO.getDisposalId()));
     }
 
     @Cacheable(cacheNames = "fieldByCode", key = "#code", unless = "#result == null")
@@ -36,5 +41,13 @@ public interface RuleMapper extends BaseMapperX<Rule> {
     @Cacheable(cacheNames = "ruleByStrategyId", key = "#strategyId+'-'+#status", unless = "#result == null")
     default List<Rule> selectByStrategyIdAndStatus(Long strategyId, String status) {
         return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getStrategyId, strategyId).eq(Rule::getStatus, status).orderByDesc(Rule::getSort));
+    }
+
+    default Set<Long> selectStrategyId(String name, String code) {
+        return selectList(new LambdaQueryWrapperX<Rule>()
+                .likeIfPresent(Rule::getName, name)
+                .eqIfPresent(Rule::getCode, code)
+                .select(Rule::getStrategyId))
+                .stream().map(Rule::getStrategyId).collect(Collectors.toSet());
     }
 }

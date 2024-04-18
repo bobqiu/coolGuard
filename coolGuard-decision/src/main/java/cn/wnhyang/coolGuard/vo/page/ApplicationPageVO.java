@@ -15,7 +15,13 @@ public class ApplicationPageVO extends PageParam {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键
+     * 显示名
      */
-    private Long id;
+    private String displayName;
+
+    /**
+     * 应用名
+     */
+    private String name;
+
 }

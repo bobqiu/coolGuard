@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.service;
 
-import cn.wnhyang.coolGuard.entity.FieldGroup;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.FieldGroupVO;
 import cn.wnhyang.coolGuard.vo.create.FieldGroupCreateVO;
 import cn.wnhyang.coolGuard.vo.page.FieldGroupPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldGroupUpdateVO;
@@ -42,7 +42,7 @@ public interface FieldGroupService {
      * @param id id
      * @return po
      */
-    FieldGroup getFieldGroup(Long id);
+    FieldGroupVO getFieldGroup(Long id);
 
     /**
      * 分页查询
@@ -50,6 +50,6 @@ public interface FieldGroupService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<FieldGroup> pageFieldGroup(FieldGroupPageVO pageVO);
+    PageResult<FieldGroupVO> pageFieldGroup(FieldGroupPageVO pageVO);
 
 }

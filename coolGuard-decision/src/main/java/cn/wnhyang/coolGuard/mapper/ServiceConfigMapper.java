@@ -18,7 +18,9 @@ import org.springframework.cache.annotation.Cacheable;
 public interface ServiceConfigMapper extends BaseMapperX<ServiceConfig> {
 
     default PageResult<ServiceConfig> selectPage(ServiceConfigPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<ServiceConfig>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<ServiceConfig>()
+                .likeIfPresent(ServiceConfig::getName, pageVO.getName())
+                .likeIfPresent(ServiceConfig::getDisplayName, pageVO.getDisplayName()));
     }
 
     @Cacheable(cacheNames = "serviceConfigByName", key = "#name", unless = "#result == null")

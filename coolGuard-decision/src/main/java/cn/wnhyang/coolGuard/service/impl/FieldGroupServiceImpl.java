@@ -4,16 +4,17 @@ import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.convert.FieldGroupConvert;
 import cn.wnhyang.coolGuard.entity.FieldGroup;
 import cn.wnhyang.coolGuard.mapper.FieldGroupMapper;
+import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.FieldGroupService;
+import cn.wnhyang.coolGuard.vo.FieldGroupVO;
 import cn.wnhyang.coolGuard.vo.create.FieldGroupCreateVO;
 import cn.wnhyang.coolGuard.vo.page.FieldGroupPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldGroupUpdateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.FIELD_GROUP_NAME_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.FIELD_GROUP_NOT_EXIST;
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -28,6 +29,8 @@ public class FieldGroupServiceImpl implements FieldGroupService {
 
     private final FieldGroupMapper fieldGroupMapper;
 
+    private final FieldMapper fieldMapper;
+
     @Override
     public Long createFieldGroup(FieldGroupCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getName());
@@ -38,25 +41,52 @@ public class FieldGroupServiceImpl implements FieldGroupService {
 
     @Override
     public void updateFieldGroup(FieldGroupUpdateVO updateVO) {
+        validateForUpdate(updateVO.getId());
         FieldGroup fieldGroup = FieldGroupConvert.INSTANCE.convert(updateVO);
         fieldGroupMapper.updateById(fieldGroup);
     }
 
     @Override
     public void deleteFieldGroup(Long id) {
-        // TODO 有引用不可删除
-        validateExists(id);
+        validateForDelete(id);
         fieldGroupMapper.deleteById(id);
     }
 
     @Override
-    public FieldGroup getFieldGroup(Long id) {
-        return fieldGroupMapper.selectById(id);
+    public FieldGroupVO getFieldGroup(Long id) {
+        FieldGroup fieldGroup = fieldGroupMapper.selectById(id);
+        FieldGroupVO fieldGroupVO = FieldGroupConvert.INSTANCE.convert(fieldGroup);
+        if (fieldGroupVO != null) {
+            fieldGroupVO.setCount(fieldMapper.selectCountByFieldGroupId(fieldGroup.getId()));
+        }
+        return fieldGroupVO;
     }
 
     @Override
-    public PageResult<FieldGroup> pageFieldGroup(FieldGroupPageVO pageVO) {
-        return fieldGroupMapper.selectPage(pageVO);
+    public PageResult<FieldGroupVO> pageFieldGroup(FieldGroupPageVO pageVO) {
+        PageResult<FieldGroup> pageResult = fieldGroupMapper.selectPage(pageVO);
+        PageResult<FieldGroupVO> convert = FieldGroupConvert.INSTANCE.convert(pageResult);
+        convert.getList().forEach(fieldGroup -> fieldGroup.setCount(fieldMapper.selectCountByFieldGroupId(fieldGroup.getId())));
+        return convert;
+    }
+
+    private void validateForDelete(Long id) {
+        validateForUpdate(id);
+        Long count = fieldMapper.selectCountByFieldGroupId(id);
+        if (count > 0) {
+            throw exception(FIELD_GROUP_HAS_FIELD);
+        }
+    }
+
+    private void validateForUpdate(Long id) {
+        FieldGroup fieldGroup = fieldGroupMapper.selectById(id);
+        if (fieldGroup == null) {
+            throw exception(FIELD_GROUP_NOT_EXIST);
+        }
+        // 内置角色，不允许删除
+        if (fieldGroup.getStandard()) {
+            throw exception(FIELD_GROUP_STANDARD);
+        }
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

@@ -18,11 +18,21 @@ import org.springframework.cache.annotation.Cacheable;
 public interface FieldMapper extends BaseMapperX<Field> {
 
     default PageResult<Field> selectPage(FieldPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<Field>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<Field>()
+                .likeIfPresent(Field::getName, pageVO.getName())
+                .likeIfPresent(Field::getDisplayName, pageVO.getDisplayName())
+                .eqIfPresent(Field::getGroupId, pageVO.getGroupId())
+                .eqIfPresent(Field::getDynamic, pageVO.getDynamic())
+                .eqIfPresent(Field::getType, pageVO.getType())
+                .eqIfPresent(Field::getStandard, pageVO.getStandard()));
     }
 
     @Cacheable(cacheNames = "fieldByName", key = "#name", unless = "#result == null")
     default Field selectByName(String name) {
         return selectOne(Field::getName, name);
+    }
+
+    default Long selectCountByFieldGroupId(Long groupId) {
+        return selectCount(Field::getGroupId, groupId);
     }
 }

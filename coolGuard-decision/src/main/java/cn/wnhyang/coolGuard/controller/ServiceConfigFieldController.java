@@ -5,12 +5,13 @@ import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ServiceConfigFieldService;
 import cn.wnhyang.coolGuard.vo.ServiceConfigFieldVO;
-import cn.wnhyang.coolGuard.vo.create.ServiceConfigFieldCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ServiceConfigFieldPageVO;
-import cn.wnhyang.coolGuard.vo.update.ServiceConfigFieldUpdateVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
@@ -26,41 +27,6 @@ import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 public class ServiceConfigFieldController {
 
     private final ServiceConfigFieldService serviceConfigFieldService;
-
-    /**
-     * 新增
-     *
-     * @param createVO 创建VO
-     * @return id
-     */
-    @PostMapping
-    public CommonResult<Long> createServiceConfigField(@RequestBody @Valid ServiceConfigFieldCreateVO createVO) {
-        return success(serviceConfigFieldService.createServiceConfigField(createVO));
-    }
-
-    /**
-     * 更新
-     *
-     * @param updateVO 更新VO
-     * @return true/false
-     */
-    @PutMapping
-    public CommonResult<Boolean> updateServiceConfigField(@RequestBody @Valid ServiceConfigFieldUpdateVO updateVO) {
-        serviceConfigFieldService.updateServiceConfigField(updateVO);
-        return success(true);
-    }
-
-    /**
-     * 删除
-     *
-     * @param id id
-     * @return true/false
-     */
-    @DeleteMapping
-    public CommonResult<Boolean> deleteServiceConfigField(@RequestParam("id") Long id) {
-        serviceConfigFieldService.deleteServiceConfigField(id);
-        return success(true);
-    }
 
     /**
      * 查询单个

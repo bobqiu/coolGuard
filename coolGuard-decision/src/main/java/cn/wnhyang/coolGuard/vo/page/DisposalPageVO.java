@@ -15,7 +15,13 @@ public class DisposalPageVO extends PageParam {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键
+     * 处置编码
      */
-    private Long id;
+    private String code;
+
+    /**
+     * 处置名
+     */
+    private String name;
+
 }

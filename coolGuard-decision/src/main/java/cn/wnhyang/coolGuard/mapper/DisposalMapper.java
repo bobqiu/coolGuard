@@ -18,7 +18,9 @@ import org.springframework.cache.annotation.Cacheable;
 public interface DisposalMapper extends BaseMapperX<Disposal> {
 
     default PageResult<Disposal> selectPage(DisposalPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<Disposal>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<Disposal>()
+                .likeIfPresent(Disposal::getCode, pageVO.getCode())
+                .likeIfPresent(Disposal::getName, pageVO.getName()));
     }
 
     @Cacheable(cacheNames = "disposalByCode", key = "#code", unless = "#result == null")

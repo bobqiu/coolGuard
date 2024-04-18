@@ -14,6 +14,7 @@ import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.entity.Strategy;
 import cn.wnhyang.coolGuard.entity.StrategySet;
 import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
+import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.mapper.StrategyMapper;
 import cn.wnhyang.coolGuard.mapper.StrategySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
@@ -37,6 +38,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.STRATEGY_SET_CODE_EXIST;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.STRATEGY_SET_NOT_EXIST;
@@ -58,6 +61,8 @@ public class StrategySetServiceImpl implements StrategySetService {
     private final StrategySetMapper strategySetMapper;
 
     private final StrategyMapper strategyMapper;
+
+    private final RuleMapper ruleMapper;
 
     private final IndicatorMapper indicatorMapper;
 
@@ -82,13 +87,42 @@ public class StrategySetServiceImpl implements StrategySetService {
     }
 
     @Override
-    public StrategySet getStrategySet(Long id) {
-        return strategySetMapper.selectById(id);
+    public StrategySetVO getStrategySet(Long id) {
+        StrategySet strategySet = strategySetMapper.selectById(id);
+        StrategySetVO strategySetVO = StrategySetConvert.INSTANCE.convert(strategySet);
+        List<Strategy> strategyList = strategyMapper.selectListBySetId(id);
+        List<StrategyVO> strategies = StrategyConvert.INSTANCE.convert(strategyList);
+        strategySetVO.setStrategyList(strategies);
+        return strategySetVO;
     }
 
     @Override
-    public PageResult<StrategySet> pageStrategySet(StrategySetPageVO pageVO) {
-        return strategySetMapper.selectPage(pageVO);
+    public PageResult<StrategySetVO> pageStrategySet(StrategySetPageVO pageVO) {
+        // 1、查询规则所属策略
+        Set<Long> strategyIdSet = ruleMapper.selectStrategyId(pageVO.getRuleName(), pageVO.getRuleCode());
+
+        // 2、查询策略所属策略集
+        List<Strategy> strategyList = strategyMapper.selectList(strategyIdSet, pageVO.getStrategyName(), pageVO.getStrategyCode());
+
+        // 3、过滤策略集
+        Set<Long> strategySetIdSet = strategyList.stream().map(Strategy::getStrategySetId).collect(Collectors.toSet());
+
+        List<StrategySet> strategySetList = strategySetMapper.selectList(strategySetIdSet, pageVO.getAppName(), pageVO.getName(), pageVO.getCode());
+
+        List<StrategySetVO> strategySetVOList = StrategySetConvert.INSTANCE.convert(strategySetList);
+
+        // 策略集拼装策略
+        List<StrategySetVO> collect = strategySetVOList.stream()
+                .skip((long) (pageVO.getPageNo() - 1) * pageVO.getPageSize())
+                .limit(pageVO.getPageSize())
+                .peek(item -> {
+                    List<Strategy> strategies = strategyList.stream().filter(strategy -> item.getId().equals(strategy.getStrategySetId()))
+                            .toList();
+                    List<StrategyVO> strategyVOList = StrategyConvert.INSTANCE.convert(strategies);
+                    item.setStrategyList(strategyVOList);
+                }).collect(Collectors.toList());
+
+        return new PageResult<>(collect, (long) strategySetList.size());
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategySetProcess", nodeType = NodeTypeEnum.COMMON)

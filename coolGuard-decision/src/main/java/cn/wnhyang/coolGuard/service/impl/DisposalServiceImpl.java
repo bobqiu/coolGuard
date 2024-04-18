@@ -12,8 +12,7 @@ import cn.wnhyang.coolGuard.vo.update.DisposalUpdateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.DISPOSAL_CODE_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.DISPOSAL_NOT_EXIST;
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -38,14 +37,14 @@ public class DisposalServiceImpl implements DisposalService {
 
     @Override
     public void updateDisposal(DisposalUpdateVO updateVO) {
+        validateForUpdate(updateVO.getId());
         Disposal disposal = DisposalConvert.INSTANCE.convert(updateVO);
         disposalMapper.updateById(disposal);
     }
 
     @Override
     public void deleteDisposal(Long id) {
-        // TODO 有引用不可删除
-        validateExists(id);
+        validateForDelete(id);
         disposalMapper.deleteById(id);
     }
 
@@ -57,6 +56,22 @@ public class DisposalServiceImpl implements DisposalService {
     @Override
     public PageResult<Disposal> pageDisposal(DisposalPageVO pageVO) {
         return disposalMapper.selectPage(pageVO);
+    }
+
+    private void validateForDelete(Long id) {
+        validateForUpdate(id);
+        // TODO 查找引用 规则等
+    }
+
+    private void validateForUpdate(Long id) {
+        Disposal disposal = disposalMapper.selectById(id);
+        if (disposal == null) {
+            throw exception(DISPOSAL_NOT_EXIST);
+        }
+        // 内置角色，不允许删除
+        if (disposal.getStandard()) {
+            throw exception(DISPOSAL_STANDARD);
+        }
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

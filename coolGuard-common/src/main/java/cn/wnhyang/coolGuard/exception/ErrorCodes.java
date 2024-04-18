@@ -14,6 +14,8 @@ public interface ErrorCodes {
 
     ErrorCode DISPOSAL_CODE_EXIST = new ErrorCode(1002001001, "处置代码已存在");
 
+    ErrorCode DISPOSAL_STANDARD = new ErrorCode(1002001002, "标准处置不可更改");
+
     ErrorCode SERVICE_CONFIG_NOT_EXIST = new ErrorCode(1003001000, "服务配置不存在");
 
     ErrorCode SERVICE_CONFIG_NAME_EXIST = new ErrorCode(1003001001, "服务配置名已存在");
@@ -22,9 +24,15 @@ public interface ErrorCodes {
 
     ErrorCode FIELD_NAME_EXIST = new ErrorCode(1004001001, "字段名已存在");
 
+    ErrorCode FIELD_STANDARD = new ErrorCode(1004001002, "标准字段名不可更改");
+
     ErrorCode FIELD_GROUP_NOT_EXIST = new ErrorCode(1004001002, "字段组不存在");
 
     ErrorCode FIELD_GROUP_NAME_EXIST = new ErrorCode(1004001003, "字段组名已存在");
+
+    ErrorCode FIELD_GROUP_HAS_FIELD = new ErrorCode(1004001004, "字段组存在字段");
+
+    ErrorCode FIELD_GROUP_STANDARD = new ErrorCode(1004001005, "标准字段组不可更改");
 
     ErrorCode RULE_NOT_EXIST = new ErrorCode(1005001000, "规则不存在");
 

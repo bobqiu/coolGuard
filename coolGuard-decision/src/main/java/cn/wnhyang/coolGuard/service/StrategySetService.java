@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.service;
 
-import cn.wnhyang.coolGuard.entity.StrategySet;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.StrategySetVO;
 import cn.wnhyang.coolGuard.vo.create.StrategySetCreateVO;
 import cn.wnhyang.coolGuard.vo.page.StrategySetPageVO;
 import cn.wnhyang.coolGuard.vo.update.StrategySetUpdateVO;
@@ -42,7 +42,7 @@ public interface StrategySetService {
      * @param id id
      * @return po
      */
-    StrategySet getStrategySet(Long id);
+    StrategySetVO getStrategySet(Long id);
 
     /**
      * 分页查询
@@ -50,6 +50,6 @@ public interface StrategySetService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<StrategySet> pageStrategySet(StrategySetPageVO pageVO);
+    PageResult<StrategySetVO> pageStrategySet(StrategySetPageVO pageVO);
 
 }

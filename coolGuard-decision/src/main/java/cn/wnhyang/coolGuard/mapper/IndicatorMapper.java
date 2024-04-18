@@ -20,7 +20,11 @@ import java.util.List;
 public interface IndicatorMapper extends BaseMapperX<Indicator> {
 
     default PageResult<Indicator> selectPage(IndicatorPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<Indicator>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<Indicator>()
+                .likeIfPresent(Indicator::getName, pageVO.getName())
+                .eqIfPresent(Indicator::getType, pageVO.getType())
+                .eqIfPresent(Indicator::getSceneType, pageVO.getSceneType())
+                .eqIfPresent(Indicator::getScene, pageVO.getScene()));
     }
 
     @Cacheable(cacheNames = "indicatorsByScene", key = "#scene+'-'+#sceneType", unless = "#result == null")

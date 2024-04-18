@@ -18,7 +18,9 @@ import org.springframework.cache.annotation.Cacheable;
 public interface FieldGroupMapper extends BaseMapperX<FieldGroup> {
 
     default PageResult<FieldGroup> selectPage(FieldGroupPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<FieldGroup>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<FieldGroup>()
+                .likeIfPresent(FieldGroup::getDisplayName, pageVO.getDisplayName())
+                .likeIfPresent(FieldGroup::getName, pageVO.getName()));
     }
 
     @Cacheable(cacheNames = "fieldGroupByName", key = "#name", unless = "#result == null")

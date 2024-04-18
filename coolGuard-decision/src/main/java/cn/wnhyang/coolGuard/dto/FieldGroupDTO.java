@@ -43,6 +43,6 @@ public class FieldGroupDTO implements Serializable {
     /**
      * 组内字段数
      */
-    private Integer count;
+    private Long count;
 
 }

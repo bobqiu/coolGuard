@@ -3,9 +3,7 @@ package cn.wnhyang.coolGuard.service;
 import cn.wnhyang.coolGuard.entity.ServiceConfigField;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
-import cn.wnhyang.coolGuard.vo.create.ServiceConfigFieldCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ServiceConfigFieldPageVO;
-import cn.wnhyang.coolGuard.vo.update.ServiceConfigFieldUpdateVO;
 
 import java.util.List;
 
@@ -16,28 +14,6 @@ import java.util.List;
  * @since 2024/04/04
  */
 public interface ServiceConfigFieldService {
-
-    /**
-     * 新建
-     *
-     * @param createVO 新建VO
-     * @return id
-     */
-    Long createServiceConfigField(ServiceConfigFieldCreateVO createVO);
-
-    /**
-     * 更新
-     *
-     * @param updateVO 更新VO
-     */
-    void updateServiceConfigField(ServiceConfigFieldUpdateVO updateVO);
-
-    /**
-     * 删除
-     *
-     * @param id id
-     */
-    void deleteServiceConfigField(Long id);
 
     /**
      * 查询单个

@@ -24,4 +24,5 @@ public class ServiceConfigPageVO extends PageParam {
      * 字段名
      */
     private String name;
+
 }
