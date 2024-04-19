@@ -5,10 +5,8 @@ import cn.wnhyang.coolGuard.entity.Field;
 import cn.wnhyang.coolGuard.entity.ServiceConfigField;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.mapper.ServiceConfigFieldMapper;
-import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ServiceConfigFieldService;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
-import cn.wnhyang.coolGuard.vo.page.ServiceConfigFieldPageVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,16 +26,6 @@ public class ServiceConfigFieldServiceImpl implements ServiceConfigFieldService 
     private final ServiceConfigFieldMapper serviceConfigFieldMapper;
 
     private final FieldMapper fieldMapper;
-
-    @Override
-    public ServiceConfigField getServiceConfigField(Long id) {
-        return serviceConfigFieldMapper.selectById(id);
-    }
-
-    @Override
-    public PageResult<ServiceConfigField> pageServiceConfigField(ServiceConfigFieldPageVO pageVO) {
-        return serviceConfigFieldMapper.selectPage(pageVO);
-    }
 
     @Override
     public List<InputFieldVO> getServiceConfigInputFieldsByServiceId(Long serviceId) {

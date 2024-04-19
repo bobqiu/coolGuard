@@ -191,7 +191,7 @@ public class FieldServiceImpl implements FieldService {
         if (field == null) {
             throw exception(FIELD_NOT_EXIST);
         }
-        // 内置角色，不允许删除
+        // 标准，不允许删除
         if (field.getStandard()) {
             throw exception(FIELD_STANDARD);
         }

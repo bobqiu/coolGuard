@@ -68,7 +68,7 @@ public class DisposalServiceImpl implements DisposalService {
         if (disposal == null) {
             throw exception(DISPOSAL_NOT_EXIST);
         }
-        // 内置角色，不允许删除
+        // 标准，不允许删除
         if (disposal.getStandard()) {
             throw exception(DISPOSAL_STANDARD);
         }

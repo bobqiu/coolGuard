@@ -112,6 +112,13 @@ public class StrategyServiceImpl implements StrategyService {
         log.info("策略权重");
     }
 
+    @LiteflowMethod(value = LiteFlowMethodEnum.IS_END, nodeId = "strategyProcess", nodeType = NodeTypeEnum.COMMON)
+    public boolean strategyProcessEnd(NodeComponent bindCmp) {
+        // isEnd 用于顺序模式，提前终止流程
+        log.info("终止");
+        return false;
+    }
+
     private void validateForCreateOrUpdate(Long id, String name) {
         // 校验存在
         validateExists(id);

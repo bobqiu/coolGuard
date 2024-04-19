@@ -83,7 +83,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
         if (fieldGroup == null) {
             throw exception(FIELD_GROUP_NOT_EXIST);
         }
-        // 内置角色，不允许删除
+        // 标准，不允许删除
         if (fieldGroup.getStandard()) {
             throw exception(FIELD_GROUP_STANDARD);
         }
