@@ -26,6 +26,7 @@
         <lombok.version>1.18.24</lombok.version>
         <disruptor.version>3.4.4</disruptor.version>
         <hutool.version>5.8.27</hutool.version>
+        <poi.version>4.1.2</poi.version>
     </properties>
 
     <dependencyManagement>
@@ -102,6 +103,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>cn.wnhyang</groupId>
                 <artifactId>coolGuard-common</artifactId>
                 <version>${project.version}</version>
@@ -116,6 +123,12 @@
             <dependency>
                 <groupId>cn.wnhyang</groupId>
                 <artifactId>coolGuard-decision</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.wnhyang</groupId>
+                <artifactId>coolGuard-data</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

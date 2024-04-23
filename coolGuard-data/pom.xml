@@ -9,28 +9,14 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>coolGuard-admin</artifactId>
+    <artifactId>coolGuard-data</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
-
         <dependency>
             <groupId>cn.wnhyang</groupId>
-            <artifactId>coolGuard-system</artifactId>
+            <artifactId>coolGuard-common</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>cn.wnhyang</groupId>
-            <artifactId>coolGuard-decision</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.wnhyang</groupId>
-            <artifactId>coolGuard-data</artifactId>
-        </dependency>
-
-
     </dependencies>
-
 
 </project>

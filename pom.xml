@@ -15,6 +15,7 @@
         <module>coolGuard-system</module>
         <module>coolGuard-decision</module>
         <module>coolGuard-dependencies</module>
+        <module>coolGuard-data</module>
     </modules>
 
     <properties>
