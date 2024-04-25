@@ -1,0 +1,116 @@
+package cn.wnhyang.coolGuard.util;
+
+import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.core.text.csv.CsvUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.entity.ad.Area;
+import cn.wnhyang.coolGuard.entity.ad.City;
+import cn.wnhyang.coolGuard.entity.ad.Pca;
+import cn.wnhyang.coolGuard.entity.ad.Province;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author wnhyang
+ * @date 2024/4/24
+ **/
+@Slf4j
+public class AdocUtil {
+
+    private static final Map<String, Province> PROVINCE_MAP = new HashMap<>();
+
+    private static final Map<String, City> CITY_MAP = new HashMap<>();
+
+    private static final Map<String, Area> AREA_MAP = new HashMap<>();
+
+    private static final String DONT_KNOW = "未知";
+
+    private static final int AREA_CODE_LENGTH = 6;
+
+    private AdocUtil() {
+    }
+
+    public static void init() {
+        long start = System.currentTimeMillis();
+        try {
+            List<Province> provinceList = CsvUtil.getReader().read(
+                    ResourceUtil.getUtf8Reader("provinces.csv"), Province.class);
+            provinceList.forEach(province -> PROVINCE_MAP.put(province.getCode(), province));
+
+            List<City> cityList = CsvUtil.getReader().read(
+                    ResourceUtil.getUtf8Reader("cities.csv"), City.class);
+            cityList.forEach(city -> CITY_MAP.put(city.getCode(), city));
+
+            List<Area> areaList = CsvUtil.getReader().read(
+                    ResourceUtil.getUtf8Reader("areas.csv"), Area.class);
+            areaList.forEach(area -> AREA_MAP.put(area.getCode(), area));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        log.info("init success, cost:{}ms", System.currentTimeMillis() - start);
+    }
+
+
+    public static Province getProvince(String provinceCode) {
+        if (PROVINCE_MAP.containsKey(provinceCode)) {
+            return PROVINCE_MAP.get(provinceCode);
+        }
+        return null;
+    }
+
+    public static String getProvinceName(String provinceCode) {
+        if (ObjectUtil.isNotNull(getProvince(provinceCode))) {
+            return getProvince(provinceCode).getName();
+        }
+        return DONT_KNOW;
+    }
+
+    public static City getCity(String cityCode) {
+        if (CITY_MAP.containsKey(cityCode)) {
+            return CITY_MAP.get(cityCode);
+        }
+        return null;
+    }
+
+    public static String getCityName(String cityCode) {
+        if (ObjectUtil.isNotNull(getCity(cityCode))) {
+            return getCity(cityCode).getName();
+        }
+        return DONT_KNOW;
+    }
+
+    public static Area getArea(String areaCode) {
+        if (AREA_MAP.containsKey(areaCode)) {
+            return AREA_MAP.get(areaCode);
+        }
+        return null;
+    }
+
+    public static String getAreaName(String areaCode) {
+        if (ObjectUtil.isNotNull(getArea(areaCode))) {
+            return getArea(areaCode).getName();
+        }
+        return DONT_KNOW;
+    }
+
+    public static Pca getPca(String areaCode) {
+        int len = areaCode.length();
+        if (len == AREA_CODE_LENGTH) {
+            String provinceCode = StrUtil.sub(areaCode, 0, 2);
+            String cityCode = StrUtil.sub(areaCode, 0, 4);
+            log.info("provinceCode:{}, cityCode:{}, areaCode:{}", provinceCode, cityCode, areaCode);
+            Pca pca = new Pca();
+            pca.setProvince(getProvinceName(provinceCode));
+            pca.setCity(getCityName(cityCode));
+            pca.setArea(getAreaName(areaCode));
+            return pca;
+        }
+        return null;
+    }
+
+}

@@ -1,4 +1,4 @@
-package cn.wnhyang.coolGuard;
+package cn.wnhyang.coolGuard.entity.ad;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2024/4/22
  **/
 @Data
-public class AD {
+public class Pca {
 
     /**
      * 省
@@ -22,5 +22,5 @@ public class AD {
     /**
      * 县
      */
-    private String district;
+    private String area;
 }
