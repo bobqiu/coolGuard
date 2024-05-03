@@ -9,9 +9,18 @@ import lombok.Data;
 @Data
 public class City {
 
+    /**
+     * 城市编码
+     */
     private String code;
 
+    /**
+     * 城市名称
+     */
     private String name;
 
+    /**
+     * 所属省份编码
+     */
     private String provinceCode;
 }

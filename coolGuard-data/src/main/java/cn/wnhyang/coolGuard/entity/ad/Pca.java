@@ -10,17 +10,17 @@ import lombok.Data;
 public class Pca {
 
     /**
-     * 省
+     * 省份名称
      */
     private String province;
 
     /**
-     * 市
+     * 城市名称
      */
     private String city;
 
     /**
-     * 县
+     * 区/县名称
      */
     private String area;
 }

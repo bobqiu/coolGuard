@@ -349,10 +349,28 @@ VALUES ('应用名', 'N_S_appName', 1, true, 'S', '应用名', null, false),
        ('付款方银行名', 'N_S_payerBankName', 1, true, 'S', '付款方银行名', null, false),
        ('收款方地址', 'N_S_payeeAddress', 1, true, 'S', '收款方地址', null, false),
        ('付款方地址', 'N_S_payerAddress', 1, true, 'S', '付款方地址', null, false),
-       ('收款方手机号', 'N_S_payeeMobilePhoneNumber', 1, true, 'S', '收款方手机号', null, false),
-       ('付款方手机号', 'N_S_payerMobilePhoneNumber', 1, true, 'S', '付款方手机号', null, false),
+       ('收款方手机号', 'N_S_payeePhoneNumber', 1, true, 'S', '收款方手机号', null, false),
+       ('付款方手机号', 'N_S_payerPhoneNumber', 1, true, 'S', '付款方手机号', null, false),
        ('收款方证件号码', 'N_S_payeeIDNumber', 1, true, 'S', '收款方证件号码', null, false),
        ('付款方证件号码', 'N_S_payerIDNumber', 1, true, 'S', '付款方证件号码', null, false),
        ('收款方证件所属国家/地区', 'N_S_payeeIDCountryRegion', 1, true, 'S', '收款方所属国家/地区', null, false),
        ('付款方证件所属国家/地区', 'N_S_payerIDCountryRegion', 1, true, 'S', '付款方所属国家/地区', null, false);
+
+
+INSERT INTO coolGuard.de_field (display_name, name, group_id, standard, type, description, default_value, dynamic)
+VALUES ('证件号所属省名称', 'N_S_idCardProvince', 1, true, 'S', '证件号所属省名称', null, false),
+       ('证件号所属市名称', 'N_S_idCardCity', 1, true, 'S', '证件号所属市名称', null, false),
+       ('证件号所属区/县名称', 'N_S_idCardDistrict', 1, true, 'S', '证件号所属区/县名称', null, false),
+       ('手机号号所属省名称', 'N_S_phoneNumberProvince', 1, true, 'S', '手机号所属省名称', null, false),
+       ('手机号号所属市名称', 'N_S_phoneNumberCity', 1, true, 'S', '手机号所属市名称', null, false),
+       ('手机号号ISP', 'N_S_phoneNumberIsp', 1, true, 'S', '手机号所属运营商', null, false),
+       ('ip', 'N_S_ip', 1, true, 'S', 'ip', null, false),
+       ('IP所属国家名称', 'N_S_ipCountry', 1, true, 'S', 'IP归属国家名称', null, false),
+       ('IP所属省名称', 'N_S_ipProvince', 1, true, 'S', 'IP归属省名称', null, false),
+       ('IP所属市名称', 'N_S_ipCity', 1, true, 'S', 'IP归属市名称', null, false),
+       ('IP所属isp', 'N_S_ipIsp', 1, true, 'S', 'IP归属运营商', null, false),
+       ('经纬度', 'N_S_lonAndLat', 1, true, 'S', '经纬度字符串，格式必须是 "经度,纬度"', null, false),
+       ('经纬度所在省名称', 'N_S_geoProvince', 1, true, 'S', '经纬度所在省名称', null, false),
+       ('经纬度所在市名称', 'N_S_geoCity', 1, true, 'S', '经纬度所在市名称', null, false),
+       ('经纬度所在区/县名称', 'N_S_geoDistrict', 1, true, 'S', '经纬度所在区/县名称', null, false);
 

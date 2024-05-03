@@ -9,7 +9,13 @@ import lombok.Data;
 @Data
 public class Province {
 
+    /**
+     * 省份编码
+     */
     private String code;
 
+    /**
+     * 省份名称
+     */
     private String name;
 }

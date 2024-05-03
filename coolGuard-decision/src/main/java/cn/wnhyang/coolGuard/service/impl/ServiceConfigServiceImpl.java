@@ -125,8 +125,6 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
         Map<String, String> params = decisionRequest.getParams();
         log.info("入参：{}", params);
 
-        // TODO 解析服务，如手机号、ip、gps等
-
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

@@ -25,8 +25,10 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.24</lombok.version>
         <disruptor.version>3.4.4</disruptor.version>
-        <hutool.version>5.8.27</hutool.version>
+        <hutool.version>5.8.26</hutool.version>
         <poi.version>4.1.2</poi.version>
+        <phone-number-geo.version>1.0.9-202302</phone-number-geo.version>
+        <ip2region.version>2.7.0</ip2region.version>
     </properties>
 
     <dependencyManagement>
@@ -106,6 +108,18 @@
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>me.ihxq.projects</groupId>
+                <artifactId>phone-number-geo</artifactId>
+                <version>${phone-number-geo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.lionsoul</groupId>
+                <artifactId>ip2region</artifactId>
+                <version>${ip2region.version}</version>
             </dependency>
 
             <dependency>

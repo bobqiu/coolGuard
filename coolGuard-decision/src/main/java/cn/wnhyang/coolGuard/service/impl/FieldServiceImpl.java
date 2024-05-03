@@ -1,15 +1,23 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.convert.FieldConvert;
 import cn.wnhyang.coolGuard.entity.Field;
+import cn.wnhyang.coolGuard.entity.ad.Pca;
+import cn.wnhyang.coolGuard.entity.ip.Ip2Region;
 import cn.wnhyang.coolGuard.enums.FieldType;
 import cn.wnhyang.coolGuard.exception.ServiceException;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.FieldService;
+import cn.wnhyang.coolGuard.util.AdocUtil;
+import cn.wnhyang.coolGuard.util.GeoUtil;
+import cn.wnhyang.coolGuard.util.IpUtil;
+import cn.wnhyang.coolGuard.util.PhoneNumberUtil;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.create.FieldCreateVO;
 import cn.wnhyang.coolGuard.vo.create.TestDynamicFieldScript;
@@ -26,6 +34,7 @@ import com.yomahub.liteflow.enums.NodeTypeEnum;
 import com.yomahub.liteflow.flow.LiteflowResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.ihxq.projects.pna.PhoneNumberInfo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -162,6 +171,46 @@ public class FieldServiceImpl implements FieldService {
                 throw new RuntimeException(e);
             }
         });
+
+
+        // 身份证解析
+        String idCard = decisionRequest.getStringData(FieldName.payerIDNumber);
+        if (IdcardUtil.isValidCard(idCard)) {
+            Pca pca = AdocUtil.getPca(IdcardUtil.getDistrictCodeByIdCard(idCard));
+            if (pca != null) {
+                decisionRequest.setDataByType(FieldName.idCardProvince, pca.getProvince(), FieldType.STRING);
+                decisionRequest.setDataByType(FieldName.idCardCity, pca.getCity(), FieldType.STRING);
+                decisionRequest.setDataByType(FieldName.idCardDistrict, pca.getArea(), FieldType.STRING);
+            }
+        }
+
+        // 手机号解析
+        String phoneNumber = decisionRequest.getStringData(FieldName.payerPhoneNumber);
+        PhoneNumberInfo lookup = PhoneNumberUtil.lookup(phoneNumber);
+        decisionRequest.setDataByType(FieldName.phoneNumberProvince, lookup.getAttribution().getProvince(), FieldType.STRING);
+        decisionRequest.setDataByType(FieldName.phoneNumberCity, lookup.getAttribution().getCity(), FieldType.STRING);
+        decisionRequest.setDataByType(FieldName.phoneNumberIsp, lookup.getIsp().getCnName(), FieldType.STRING);
+
+        // ip解析
+        String ip = decisionRequest.getStringData(FieldName.ip);
+        Ip2Region ip2Region = IpUtil.getIp2Region(ip);
+        if (ip2Region != null){
+            decisionRequest.setDataByType(FieldName.ipCountry, ip2Region.getCountry(), FieldType.STRING);
+            decisionRequest.setDataByType(FieldName.ipProvince, ip2Region.getProvince(), FieldType.STRING);
+            decisionRequest.setDataByType(FieldName.ipCity, ip2Region.getCity(), FieldType.STRING);
+            decisionRequest.setDataByType(FieldName.ipIsp, ip2Region.getIsp(), FieldType.STRING);
+        }
+
+        // 经纬度解析
+        String lonAndLat = decisionRequest.getStringData(FieldName.lonAndLat);
+        Pca pca = GeoUtil.getPcaByGeo(lonAndLat);
+        if (pca != null) {
+            decisionRequest.setDataByType(FieldName.geoProvince, pca.getProvince(), FieldType.STRING);
+            decisionRequest.setDataByType(FieldName.geoCity, pca.getCity(), FieldType.STRING);
+            decisionRequest.setDataByType(FieldName.geoDistrict, pca.getArea(), FieldType.STRING);
+        }
+
+
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "dynamicFieldProcess", nodeType = NodeTypeEnum.COMMON)
