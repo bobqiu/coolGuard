@@ -1,6 +1,6 @@
-package cn.wnhyang.coolGuard.vo;
+package cn.wnhyang.coolGuard.vo.update;
 
-import cn.wnhyang.coolGuard.vo.create.RuleConditionCreateVO;
+import cn.wnhyang.coolGuard.vo.create.ConditionCreateVO;
 import lombok.Data;
 
 /**
@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2024/04/04
  */
 @Data
-public class RuleConditionVO extends RuleConditionCreateVO {
+public class ConditionUpdateVO extends ConditionCreateVO {
 
     private static final long serialVersionUID = 1L;
 

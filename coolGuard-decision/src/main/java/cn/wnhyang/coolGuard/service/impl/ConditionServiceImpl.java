@@ -4,16 +4,16 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
-import cn.wnhyang.coolGuard.convert.RuleConditionConvert;
-import cn.wnhyang.coolGuard.entity.RuleCondition;
+import cn.wnhyang.coolGuard.convert.ConditionConvert;
+import cn.wnhyang.coolGuard.entity.Condition;
 import cn.wnhyang.coolGuard.enums.FieldType;
 import cn.wnhyang.coolGuard.enums.OperateType;
-import cn.wnhyang.coolGuard.mapper.RuleConditionMapper;
+import cn.wnhyang.coolGuard.mapper.ConditionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.service.RuleConditionService;
-import cn.wnhyang.coolGuard.vo.create.RuleConditionCreateVO;
-import cn.wnhyang.coolGuard.vo.page.RuleConditionPageVO;
-import cn.wnhyang.coolGuard.vo.update.RuleConditionUpdateVO;
+import cn.wnhyang.coolGuard.service.ConditionService;
+import cn.wnhyang.coolGuard.vo.create.ConditionCreateVO;
+import cn.wnhyang.coolGuard.vo.page.ConditionPageVO;
+import cn.wnhyang.coolGuard.vo.update.ConditionUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
@@ -36,66 +36,66 @@ import java.util.Objects;
 @Service
 @LiteflowComponent
 @RequiredArgsConstructor
-public class RuleConditionServiceImpl implements RuleConditionService {
+public class ConditionServiceImpl implements ConditionService {
 
-    private final RuleConditionMapper ruleConditionMapper;
+    private final ConditionMapper conditionMapper;
 
     @Override
-    public Long createRuleCondition(RuleConditionCreateVO createVO) {
-        RuleCondition ruleCondition = RuleConditionConvert.INSTANCE.convert(createVO);
-        ruleConditionMapper.insert(ruleCondition);
-        return ruleCondition.getId();
+    public Long createCondition(ConditionCreateVO createVO) {
+        Condition condition = ConditionConvert.INSTANCE.convert(createVO);
+        conditionMapper.insert(condition);
+        return condition.getId();
     }
 
     @Override
-    public void updateRuleCondition(RuleConditionUpdateVO updateVO) {
-        RuleCondition ruleCondition = RuleConditionConvert.INSTANCE.convert(updateVO);
-        ruleConditionMapper.updateById(ruleCondition);
+    public void updateCondition(ConditionUpdateVO updateVO) {
+        Condition condition = ConditionConvert.INSTANCE.convert(updateVO);
+        conditionMapper.updateById(condition);
     }
 
     @Override
-    public void deleteRuleCondition(Long id) {
-        ruleConditionMapper.deleteById(id);
+    public void deleteCondition(Long id) {
+        conditionMapper.deleteById(id);
     }
 
     @Override
-    public RuleCondition getRuleCondition(Long id) {
-        return ruleConditionMapper.selectById(id);
+    public Condition getCondition(Long id) {
+        return conditionMapper.selectById(id);
     }
 
     @Override
-    public PageResult<RuleCondition> pageRuleCondition(RuleConditionPageVO pageVO) {
-        return ruleConditionMapper.selectPage(pageVO);
+    public PageResult<Condition> pageCondition(ConditionPageVO pageVO) {
+        return conditionMapper.selectPage(pageVO);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = "ruleConditionIf", nodeType = NodeTypeEnum.BOOLEAN)
-    public boolean ruleConditionIf(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = "cond", nodeType = NodeTypeEnum.BOOLEAN)
+    public boolean conditionIf(NodeComponent bindCmp) {
 
         // 获取当前tag
         String tag = bindCmp.getTag();
 
         // 获取当前tag对应的条件
-        RuleCondition ruleCondition = ruleConditionMapper.selectById(tag);
+        Condition condition = conditionMapper.selectById(tag);
 
         // 获取上下文
         DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
 
         // 获取条件字段
-        String fieldName = ruleCondition.getFieldName();
+        String fieldName = condition.getFieldName();
         FieldType fieldType = FieldType.getByFieldName(fieldName);
 
 
-        OperateType byType = OperateType.getByType(ruleCondition.getOperateType());
+        OperateType byType = OperateType.getByType(condition.getOperateType());
 
         // TODO 当前是常量，之后要考虑变量
 
-        String expectValue = ruleCondition.getExpectValue();
+        String expectValue = condition.getExpectValue();
 
         if (fieldType == null || byType == null) {
             return false;
         }
 
-        boolean condition = false;
+        boolean cond = false;
 
         // 获取字段值
         try {
@@ -103,7 +103,7 @@ public class RuleConditionServiceImpl implements RuleConditionService {
                 case STRING:
                     String stringData = decisionRequest.getStringData(fieldName);
                     log.info("字段值:{}, 操作:{}, 期望值:{}", stringData, byType, expectValue);
-                    condition = switch (Objects.requireNonNull(byType)) {
+                    cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> StrUtil.isBlank(stringData);
                         case NOT_NULL -> !StrUtil.isBlank(stringData);
                         case EQ -> stringData.equals(expectValue);
@@ -121,7 +121,7 @@ public class RuleConditionServiceImpl implements RuleConditionService {
                     Integer numberData = decisionRequest.getNumberData(fieldName);
                     Integer expectInteger = Integer.parseInt(expectValue);
                     log.info("字段值:{}, 操作:{}, 期望值:{}", numberData, byType, expectInteger);
-                    condition = switch (Objects.requireNonNull(byType)) {
+                    cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> numberData == null;
                         case NOT_NULL -> numberData != null;
                         case EQ -> numberData.equals(expectInteger);
@@ -137,7 +137,7 @@ public class RuleConditionServiceImpl implements RuleConditionService {
                     Double floatData = decisionRequest.getFloatData(fieldName);
                     Double expectDouble = Double.parseDouble(expectValue);
                     log.info("字段值:{}, 操作:{}, 期望值:{}", floatData, byType, expectDouble);
-                    condition = switch (Objects.requireNonNull(byType)) {
+                    cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> floatData == null;
                         case NOT_NULL -> floatData != null;
                         case EQ -> floatData.equals(expectDouble);
@@ -153,7 +153,7 @@ public class RuleConditionServiceImpl implements RuleConditionService {
                     LocalDateTime dateData = decisionRequest.getDateData(fieldName);
                     LocalDateTime expectDateTime = LocalDateTimeUtil.parse(expectValue, DatePattern.NORM_DATETIME_FORMATTER);
                     log.info("字段值:{}, 操作:{}, 期望值:{}", dateData, byType, expectDateTime);
-                    condition = switch (Objects.requireNonNull(byType)) {
+                    cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> dateData == null;
                         case NOT_NULL -> dateData != null;
                         case EQ -> dateData.equals(expectDateTime);
@@ -168,7 +168,7 @@ public class RuleConditionServiceImpl implements RuleConditionService {
                 case ENUM:
                     String enumData = decisionRequest.getEnumData(fieldName);
                     log.info("字段值:{}, 操作:{}, 期望值:{}", enumData, byType, expectValue);
-                    condition = switch (Objects.requireNonNull(byType)) {
+                    cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> enumData == null;
                         case NOT_NULL -> enumData != null;
                         case EQ -> enumData.equals(expectValue);
@@ -179,7 +179,7 @@ public class RuleConditionServiceImpl implements RuleConditionService {
                 case BOOLEAN:
                     Boolean booleanData = decisionRequest.getBooleanData(fieldName);
                     log.info("字段值:{}", booleanData);
-                    condition = switch (Objects.requireNonNull(byType)) {
+                    cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> booleanData == null;
                         case NOT_NULL -> booleanData != null;
                         case EQ -> booleanData.equals(Boolean.parseBoolean(expectValue));
@@ -192,7 +192,7 @@ public class RuleConditionServiceImpl implements RuleConditionService {
             log.info("规则条件运行异常:{}", e.getMessage());
         }
 
-        return condition;
+        return cond;
     }
 
 }

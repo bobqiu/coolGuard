@@ -126,7 +126,7 @@ create table de_indicator
 )
     comment '指标表';
 
-create table de_indicator_condition
+create table de_condition
 (
     id           bigint auto_increment comment '主键'
         primary key,
@@ -164,22 +164,6 @@ create table de_rule
         unique (code)
 )
     comment '规则表';
-
-create table de_rule_condition
-(
-    id           bigint auto_increment comment '主键'
-        primary key,
-    field_name   varchar(32)                 default ''                not null comment '字段名',
-    operate_type varchar(32)                 default 'null'            not null comment '操作类型',
-    expect_value varchar(32)                 default ''                not null comment '期望值',
-    description  varchar(64) charset utf8mb4 default ''                null comment '描述',
-    creator      varchar(64) charset utf8mb4 default ''                null comment '创建者',
-    create_time  datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater      varchar(64) charset utf8mb4 default ''                null comment '更新者',
-    update_time  datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    deleted      bit                         default b'0'              not null comment '是否删除'
-)
-    comment '规则条件表';
 
 create table de_rule_script
 (
@@ -285,47 +269,6 @@ create table de_strategy_set
 
 # strategy disposal
 
-insert into coolGuard.de_chain (id, application_name, chain_name, el_data, enable, description)
-values (10, 'coolGuard', 'test1', 'IF(
-  OR(
-    ruleConditionIf.tag("1"),
-    ruleConditionIf.tag("2"),
-    ruleConditionIf.tag("3")
-  ),
-  ruleProcess.tag("1"),
-  ruleFalse
-);', true, ''),
-       (11, 'coolGuard', 'test2', 'IF(
-  AND(
-    ruleConditionIf.tag("4"),
-    ruleConditionIf.tag("5")
-  ),
-  ruleProcess.tag("2"),
-  ruleFalse
-);', true, ''),
-       (14, 'coolGuard', 'test3', 'IF(
-  ruleConditionIf.tag("6"),
-  ruleProcess.tag("3"),
-  ruleFalse
-);', true, ''),
-       (15, 'coolGuard', 'decisionChain', 'THEN(
-  THEN(
-    serviceConfigChain
-  )
-);', true, ''),
-       (16, 'coolGuard', 'strategySetChain', 'THEN(
-  THEN(
-    strategySetProcess
-  )
-);', true, ''),
-       (17, 'coolGuard', 'Phone_Login_Worst', 'WHEN(test3);', true, ''),
-       (18, 'coolGuard', 'Phone_Login_Order', 'THEN(test1,test2);', true, ''),
-       (19, 'coolGuard', 'serviceConfigChain', 'THEN(
-    serviceConfigProcess,
-    normalFieldProcess,
-    dynamicFieldProcess,
-    strategySetChain
-);', true, '');
 
 INSERT INTO coolGuard.de_disposal (code, name, description)
 VALUES ('pass', '通过', '');

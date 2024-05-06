@@ -1,6 +1,6 @@
-package cn.wnhyang.coolGuard.vo.page;
+package cn.wnhyang.coolGuard.vo;
 
-import cn.wnhyang.coolGuard.pojo.PageParam;
+import cn.wnhyang.coolGuard.vo.create.ConditionCreateVO;
 import lombok.Data;
 
 /**
@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2024/04/04
  */
 @Data
-public class RuleConditionPageVO extends PageParam {
+public class ConditionVO extends ConditionCreateVO {
 
     private static final long serialVersionUID = 1L;
 

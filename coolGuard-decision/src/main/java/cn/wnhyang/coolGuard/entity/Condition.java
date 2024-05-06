@@ -18,8 +18,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_rule_condition")
-public class RuleCondition extends BasePO {
+@TableName("de_condition")
+public class Condition extends BasePO {
 
     private static final long serialVersionUID = 1L;
 

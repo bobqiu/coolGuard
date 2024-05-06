@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @since 2024/04/04
  */
 @Data
-public class RuleConditionCreateVO implements Serializable {
+public class ConditionCreateVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

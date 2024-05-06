@@ -194,7 +194,7 @@ public class FieldServiceImpl implements FieldService {
         // ip解析
         String ip = decisionRequest.getStringData(FieldName.ip);
         Ip2Region ip2Region = IpUtil.getIp2Region(ip);
-        if (ip2Region != null){
+        if (ip2Region != null) {
             decisionRequest.setDataByType(FieldName.ipCountry, ip2Region.getCountry(), FieldType.STRING);
             decisionRequest.setDataByType(FieldName.ipProvince, ip2Region.getProvince(), FieldType.STRING);
             decisionRequest.setDataByType(FieldName.ipCity, ip2Region.getCity(), FieldType.STRING);

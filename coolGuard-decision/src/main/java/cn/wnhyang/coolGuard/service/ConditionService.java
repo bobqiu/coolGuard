@@ -1,10 +1,10 @@
 package cn.wnhyang.coolGuard.service;
 
-import cn.wnhyang.coolGuard.entity.RuleCondition;
+import cn.wnhyang.coolGuard.entity.Condition;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.vo.create.RuleConditionCreateVO;
-import cn.wnhyang.coolGuard.vo.page.RuleConditionPageVO;
-import cn.wnhyang.coolGuard.vo.update.RuleConditionUpdateVO;
+import cn.wnhyang.coolGuard.vo.create.ConditionCreateVO;
+import cn.wnhyang.coolGuard.vo.page.ConditionPageVO;
+import cn.wnhyang.coolGuard.vo.update.ConditionUpdateVO;
 
 /**
  * 规则条件表 服务类
@@ -12,7 +12,7 @@ import cn.wnhyang.coolGuard.vo.update.RuleConditionUpdateVO;
  * @author wnhyang
  * @since 2024/04/04
  */
-public interface RuleConditionService {
+public interface ConditionService {
 
     /**
      * 新建
@@ -20,21 +20,21 @@ public interface RuleConditionService {
      * @param createVO 新建VO
      * @return id
      */
-    Long createRuleCondition(RuleConditionCreateVO createVO);
+    Long createCondition(ConditionCreateVO createVO);
 
     /**
      * 更新
      *
      * @param updateVO 更新VO
      */
-    void updateRuleCondition(RuleConditionUpdateVO updateVO);
+    void updateCondition(ConditionUpdateVO updateVO);
 
     /**
      * 删除
      *
      * @param id id
      */
-    void deleteRuleCondition(Long id);
+    void deleteCondition(Long id);
 
     /**
      * 查询单个
@@ -42,7 +42,7 @@ public interface RuleConditionService {
      * @param id id
      * @return po
      */
-    RuleCondition getRuleCondition(Long id);
+    Condition getCondition(Long id);
 
     /**
      * 分页查询
@@ -50,6 +50,6 @@ public interface RuleConditionService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<RuleCondition> pageRuleCondition(RuleConditionPageVO pageVO);
+    PageResult<Condition> pageCondition(ConditionPageVO pageVO);
 
 }
