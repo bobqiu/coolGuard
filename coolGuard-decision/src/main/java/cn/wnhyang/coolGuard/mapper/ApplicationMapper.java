@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.Application;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -23,7 +24,7 @@ public interface ApplicationMapper extends BaseMapperX<Application> {
                 .likeIfPresent(Application::getName, pageVO.getName()));
     }
 
-    @Cacheable(cacheNames = "applicationByName", key = "#name", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.APPLICATION + "::na", key = "#name", unless = "#result == null")
     default Application selectByName(String name) {
         return selectOne(Application::getName, name);
     }

@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -28,17 +29,17 @@ public interface RuleMapper extends BaseMapperX<Rule> {
                 .eqIfPresent(Rule::getDisposalId, pageVO.getDisposalId()));
     }
 
-    @Cacheable(cacheNames = "fieldByCode", key = "#code", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.RULE + "::co", key = "#code", unless = "#result == null")
     default Rule selectByCode(String code) {
         return selectOne(Rule::getCode, code);
     }
 
-    @Cacheable(cacheNames = "ruleByStrategyId", key = "#strategyId", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.RULES + "::sId", key = "#strategyId", unless = "#result == null")
     default List<Rule> selectByStrategyId(Long strategyId) {
         return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getStrategyId, strategyId).orderByDesc(Rule::getSort));
     }
 
-    @Cacheable(cacheNames = "ruleByStrategyId", key = "#strategyId+'-'+#status", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.RULES + "::sId", key = "#strategyId+'-'+#status", unless = "#result == null")
     default List<Rule> selectByStrategyIdAndStatus(Long strategyId, String status) {
         return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getStrategyId, strategyId).eq(Rule::getStatus, status).orderByDesc(Rule::getSort));
     }

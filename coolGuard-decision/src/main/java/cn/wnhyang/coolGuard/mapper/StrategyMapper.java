@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.Strategy;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -28,7 +29,7 @@ public interface StrategyMapper extends BaseMapperX<Strategy> {
         return selectList(Strategy::getStrategySetId, setId);
     }
 
-    @Cacheable(cacheNames = "strategyByCode", key = "#code", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.STRATEGY + "::co", key = "#code", unless = "#result == null")
     default Strategy selectByCode(String code) {
         return selectOne(Strategy::getCode, code);
     }

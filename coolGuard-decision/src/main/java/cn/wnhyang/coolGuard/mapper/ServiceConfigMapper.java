@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.ServiceConfig;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -23,7 +24,7 @@ public interface ServiceConfigMapper extends BaseMapperX<ServiceConfig> {
                 .likeIfPresent(ServiceConfig::getDisplayName, pageVO.getDisplayName()));
     }
 
-    @Cacheable(cacheNames = "serviceConfigByName", key = "#name", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.SERVICE_CONFIG + "::na", key = "#name", unless = "#result == null")
     default ServiceConfig selectByName(String name) {
         return selectOne(ServiceConfig::getName, name);
     }

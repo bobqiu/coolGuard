@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.Disposal;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -23,7 +24,7 @@ public interface DisposalMapper extends BaseMapperX<Disposal> {
                 .likeIfPresent(Disposal::getName, pageVO.getName()));
     }
 
-    @Cacheable(cacheNames = "disposalByCode", key = "#code", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.DISPOSAL + "::co", key = "#code", unless = "#result == null")
     default Disposal selectByCode(String code) {
         return selectOne(Disposal::getCode, code);
     }

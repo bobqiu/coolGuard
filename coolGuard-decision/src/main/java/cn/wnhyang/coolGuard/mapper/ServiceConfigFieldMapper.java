@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.ServiceConfigField;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -28,7 +29,7 @@ public interface ServiceConfigFieldMapper extends BaseMapperX<ServiceConfigField
         delete(new LambdaUpdateWrapper<ServiceConfigField>().eq(ServiceConfigField::getServiceConfigId, serviceConfigId));
     }
 
-    @Cacheable(cacheNames = "selectListByServiceConfigId", key = "#serviceConfigId", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.SERVICE_CONFIG_FIELD + "::id", key = "#serviceConfigId", unless = "#result == null")
     default List<ServiceConfigField> selectListByServiceConfigId(Long serviceConfigId) {
         return selectList(new LambdaQueryWrapperX<ServiceConfigField>().eq(ServiceConfigField::getServiceConfigId, serviceConfigId)
                 .orderByDesc(ServiceConfigField::getRequired));

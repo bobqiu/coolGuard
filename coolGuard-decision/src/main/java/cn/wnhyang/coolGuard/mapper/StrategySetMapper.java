@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.StrategySet;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -24,12 +25,12 @@ public interface StrategySetMapper extends BaseMapperX<StrategySet> {
         return selectPage(pageVO, new LambdaQueryWrapperX<StrategySet>());
     }
 
-    @Cacheable(cacheNames = "strategySetByCode", key = "#{code}", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.STRATEGY_SET + "::co", key = "#{code}", unless = "#result == null")
     default StrategySet selectByCode(String code) {
         return selectOne(StrategySet::getCode, code);
     }
 
-    @Cacheable(cacheNames = "strategySetByAppNameAndCode", key = "#appName+'-'+#code", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.STRATEGY_SET + "::a-c", key = "#appName+'-'+#code", unless = "#result == null")
     default StrategySet selectByAppNameAndCode(String appName, String code) {
         return selectOne(StrategySet::getAppName, appName, StrategySet::getCode, code);
     }

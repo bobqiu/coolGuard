@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -27,7 +28,7 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
                 .eqIfPresent(Indicator::getScene, pageVO.getScene()));
     }
 
-    @Cacheable(cacheNames = "indicatorsByScene", key = "#scene+'-'+#sceneType", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.INDICATOR + "::s-st", key = "#scene+'-'+#sceneType", unless = "#result == null")
     default List<Indicator> selectListByScene(String scene, String sceneType) {
         return selectList(new LambdaQueryWrapperX<Indicator>().eq(Indicator::getScene, scene).eq(Indicator::getSceneType, sceneType));
     }

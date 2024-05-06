@@ -107,7 +107,7 @@ public abstract class AbstractIndicator {
     public void setRedisKey(NodeComponent bindCmp) {
         DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
 
-        this.redisKey = RedisKey.INDICATOR + indicator.getId() + ":"
+        this.redisKey = RedisKey.ZB + indicator.getId() + ":"
                 + INDICATOR_TYPE.getType() + ":" + decisionRequest.getStringData(indicator.getMasterField())
                 + "-" + decisionRequest.getStringData(indicator.getSlaveFields());
 

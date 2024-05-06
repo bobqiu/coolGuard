@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.Field;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -27,7 +28,7 @@ public interface FieldMapper extends BaseMapperX<Field> {
                 .eqIfPresent(Field::getStandard, pageVO.getStandard()));
     }
 
-    @Cacheable(cacheNames = "fieldByName", key = "#name", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.FIELD + "::na", key = "#name", unless = "#result == null")
     default Field selectByName(String name) {
         return selectOne(Field::getName, name);
     }

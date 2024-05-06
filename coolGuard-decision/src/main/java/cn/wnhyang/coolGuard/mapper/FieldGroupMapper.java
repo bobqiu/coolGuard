@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.FieldGroup;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -23,7 +24,7 @@ public interface FieldGroupMapper extends BaseMapperX<FieldGroup> {
                 .likeIfPresent(FieldGroup::getName, pageVO.getName()));
     }
 
-    @Cacheable(cacheNames = "fieldGroupByName", key = "#name", unless = "#result == null")
+    @Cacheable(cacheNames = RedisKey.FIELD_GROUP + "::na", key = "#name", unless = "#result == null")
     default FieldGroup selectByName(String name) {
         return selectOne(FieldGroup::getName, name);
     }

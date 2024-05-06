@@ -9,5 +9,54 @@ public interface RedisKey {
     /**
      * 指标
      */
-    String INDICATOR = "zb:";
+    String ZB = "zb:";
+
+    /**
+     * 应用
+     */
+    String APPLICATION = "app";
+
+    /**
+     * 链路
+     */
+    String CHAIN = "chain";
+
+    /**
+     * 处置
+     */
+    String DISPOSAL = "disposal";
+
+    /**
+     * 字段
+     */
+    String FIELD = "field";
+
+    /**
+     * 字段分组
+     */
+    String FIELD_GROUP = "fieldGroup";
+
+    /**
+     * 指标
+     */
+    String INDICATOR = "indicator";
+
+    /**
+     * 规则
+     */
+    String RULE = "rule";
+
+    /**
+     * 规则s
+     */
+    String RULES = "rules";
+
+    String SERVICE_CONFIG = "sc";
+
+    String SERVICE_CONFIG_FIELD = "scf";
+
+    String STRATEGY = "strategy";
+
+    String STRATEGY_SET = "strategy_set";
+
 }
