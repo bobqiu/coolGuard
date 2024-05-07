@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.wnhyang.coolGuard.constant.RouteStatus;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.context.DecisionResponse;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
@@ -55,7 +56,7 @@ public class DecisionServiceImpl implements DecisionService {
         // 设置服务配置
         List<InputFieldVO> inputFields = serviceConfigFieldService.getServiceConfigInputFieldsByServiceId(serviceConfig.getId());
 
-        DecisionRequest decisionRequest = new DecisionRequest(name, params, serviceConfig, inputFields);
+        DecisionRequest decisionRequest = new DecisionRequest(RouteStatus.STRATEGY_SET_P, name, params, serviceConfig, inputFields);
         StrategyContext strategyContext = new StrategyContext();
         for (Disposal disposal : disposalMapper.selectList()) {
             strategyContext.addDisposal(disposal.getId(), disposal);

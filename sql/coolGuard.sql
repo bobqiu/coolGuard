@@ -37,6 +37,22 @@ create table de_chain
 )
     comment 'chain表';
 
+create table de_condition
+(
+    id           bigint auto_increment comment '主键'
+        primary key,
+    field_name   varchar(32)                 default ''                not null comment '字段名',
+    operate_type varchar(32)                 default 'null'            not null comment '操作类型',
+    expect_value varchar(32)                 default ''                not null comment '期望值',
+    description  varchar(64) charset utf8mb4 default ''                null comment '描述',
+    creator      varchar(64) charset utf8mb4 default ''                null comment '创建者',
+    create_time  datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater      varchar(64) charset utf8mb4 default ''                null comment '更新者',
+    update_time  datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted      bit                         default b'0'              not null comment '是否删除'
+)
+    comment '规则条件表';
+
 create table de_disposal
 (
     id          bigint auto_increment comment '主键'
@@ -88,7 +104,6 @@ create table de_field_group
     name         varchar(64) charset utf8mb4 default ''                not null comment '分组标识',
     standard     bit                         default b'0'              not null comment '标准',
     description  varchar(64) charset utf8mb4 default ''                null comment '描述',
-    count        int                         default 0                 not null comment '组内字段数',
     creator      varchar(64) charset utf8mb4 default ''                null comment '创建者',
     create_time  datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
     updater      varchar(64) charset utf8mb4 default ''                null comment '更新者',
@@ -105,6 +120,7 @@ create table de_indicator
         primary key,
     name           varchar(64) charset utf8mb4 default ''                not null comment '指标名',
     status         bit                         default b'0'              not null comment '状态',
+    chain_name     varchar(64)                 default ''                null comment 'chain名',
     type           varchar(10)                                           null comment '类型',
     calc_field     varchar(64) charset utf8mb4 default ''                null comment '计算字段',
     win_size       varchar(5) charset utf8mb4  default ''                not null comment '窗口大小',
@@ -125,22 +141,6 @@ create table de_indicator
     deleted        bit                         default b'0'              not null comment '是否删除'
 )
     comment '指标表';
-
-create table de_condition
-(
-    id           bigint auto_increment comment '主键'
-        primary key,
-    field_name   varchar(32)                 default ''                not null comment '字段名',
-    operate_type int                         default 0                 not null comment '操作类型',
-    expect_value varchar(32)                 default ''                not null comment '期望值',
-    description  varchar(64) charset utf8mb4 default ''                null comment '描述',
-    creator      varchar(64) charset utf8mb4 default ''                null comment '创建者',
-    create_time  datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater      varchar(64) charset utf8mb4 default ''                null comment '更新者',
-    update_time  datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    deleted      bit                         default b'0'              not null comment '是否删除'
-)
-    comment '指标条件表';
 
 create table de_rule
 (

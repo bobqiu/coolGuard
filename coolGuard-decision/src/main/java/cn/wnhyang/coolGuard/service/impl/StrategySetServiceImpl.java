@@ -99,10 +99,10 @@ public class StrategySetServiceImpl implements StrategySetService {
     @Override
     public PageResult<StrategySetVO> pageStrategySet(StrategySetPageVO pageVO) {
         // 1、查询规则所属策略
-        Set<Long> strategyIdSet = ruleMapper.selectStrategyId(pageVO.getRuleName(), pageVO.getRuleCode());
+        List<Long> strategyIdList = ruleMapper.selectStrategyId(pageVO.getRuleName(), pageVO.getRuleCode());
 
         // 2、查询策略所属策略集
-        List<Strategy> strategyList = strategyMapper.selectList(strategyIdSet, pageVO.getStrategyName(), pageVO.getStrategyCode());
+        List<Strategy> strategyList = strategyMapper.selectList(strategyIdList, pageVO.getStrategyName(), pageVO.getStrategyCode());
 
         // 3、过滤策略集
         Set<Long> strategySetIdSet = strategyList.stream().map(Strategy::getStrategySetId).collect(Collectors.toSet());
@@ -156,9 +156,21 @@ public class StrategySetServiceImpl implements StrategySetService {
         // 合并
         indicatorListByAppName.addAll(indicatorListByStrategySetCode);
         List<IndicatorVO> indicatorVOList = IndicatorConvert.INSTANCE.convert(indicatorListByAppName);
+        WhenELWrapper whenI = new WhenELWrapper();
         for (IndicatorVO indicatorVO : indicatorVOList) {
+            whenI.when(
+                    node("indicatorProcess").tag(String.valueOf(indicatorVO.getId()))
+            );
             indicatorContext.addIndicator(indicatorVO.getId(), indicatorVO);
         }
+
+        LiteFlowChainELBuilder.createChain().setChainId("indicatorChain").setEL(
+                // 输出el表达式
+                whenI.toEL()
+        ).build();
+
+        bindCmp.invoke2Resp("indicatorChain", null);
+
 
         // 查询策略列表
         List<Strategy> strategyList = strategyMapper.selectListBySetId(strategySet.getId());

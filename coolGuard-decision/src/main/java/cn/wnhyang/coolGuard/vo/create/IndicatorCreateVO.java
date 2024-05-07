@@ -25,6 +25,11 @@ public class IndicatorCreateVO {
     private Boolean status;
 
     /**
+     * chain名
+     */
+    private String chainName;
+
+    /**
      * 类型
      */
     @NotBlank(message = "指标类型不能为空")

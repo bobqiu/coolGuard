@@ -10,7 +10,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * 策略表 Mapper 接口
@@ -34,7 +33,7 @@ public interface StrategyMapper extends BaseMapperX<Strategy> {
         return selectOne(Strategy::getCode, code);
     }
 
-    default List<Strategy> selectList(Set<Long> ids, String name, String code) {
+    default List<Strategy> selectList(List<Long> ids, String name, String code) {
         return selectList(new LambdaQueryWrapperX<Strategy>()
                 .inIfPresent(Strategy::getId, ids)
                 .likeIfPresent(Strategy::getName, name)

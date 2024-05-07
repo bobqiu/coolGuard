@@ -32,4 +32,8 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
     default List<Indicator> selectListByScene(String scene, String sceneType) {
         return selectList(new LambdaQueryWrapperX<Indicator>().eq(Indicator::getScene, scene).eq(Indicator::getSceneType, sceneType));
     }
+
+    default List<Long> selectIdListByScene(String scene, String sceneType) {
+        return selectObjs(new LambdaQueryWrapperX<Indicator>().eq(Indicator::getScene, scene).eq(Indicator::getSceneType, sceneType).select(Indicator::getId));
+    }
 }

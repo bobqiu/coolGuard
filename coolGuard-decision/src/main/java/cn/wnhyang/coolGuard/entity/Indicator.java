@@ -45,6 +45,12 @@ public class Indicator extends BasePO {
     private Boolean status;
 
     /**
+     * chain名
+     */
+    @TableField("chain_name")
+    private String chainName;
+
+    /**
      * 类型
      */
     @TableField("type")

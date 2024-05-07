@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.enums.WinSize;
@@ -7,6 +8,7 @@ import cn.wnhyang.coolGuard.indicator.AbstractIndicator;
 import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
+import cn.wnhyang.coolGuard.vo.IndicatorVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
@@ -93,8 +95,25 @@ public class IndicatorServiceImpl implements IndicatorService {
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "indicatorProcess", nodeType = NodeTypeEnum.COMMON)
-    public void compute(NodeComponent bindCmp) {
+    public void indicatorProcess(NodeComponent bindCmp) {
+        String tag = bindCmp.getTag();
+        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
+        IndicatorVO indicator = indicatorContext.getIndicator(Long.valueOf(tag));
+        log.info("当前指标(id:{}, name:{})", indicator.getId(), indicator.getName());
 
+        // TODO 计算指标
+        bindCmp.invoke2Resp(indicator.getChainName(), null);
+    }
+
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "indicatorCompute", nodeType = NodeTypeEnum.COMMON)
+    public void indicatorCompute(NodeComponent bindCmp) {
+        // TODO 计算指标
+        log.info("指标计算");
+    }
+
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "indicatorFalse", nodeType = NodeTypeEnum.COMMON)
+    public void indicatorFalse(NodeComponent bindCmp) {
+        log.info("指标条件不满足");
     }
 
 }

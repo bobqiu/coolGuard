@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.convert.ChainConvert;
 import cn.wnhyang.coolGuard.entity.Chain;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
@@ -8,6 +9,10 @@ import cn.wnhyang.coolGuard.service.ChainService;
 import cn.wnhyang.coolGuard.vo.create.ChainCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ChainPageVO;
 import cn.wnhyang.coolGuard.vo.update.ChainUpdateVO;
+import com.yomahub.liteflow.annotation.LiteflowMethod;
+import com.yomahub.liteflow.core.NodeComponent;
+import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
+import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +54,14 @@ public class ChainServiceImpl implements ChainService {
     @Override
     public PageResult<Chain> pageChain(ChainPageVO pageVO) {
         return chainMapper.selectPage(pageVO);
+    }
+
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = "rs", nodeType = NodeTypeEnum.BOOLEAN)
+    public boolean conditionIf(NodeComponent bindCmp) {
+        DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
+        String routeStatus = decisionRequest.getRouteStatus();
+        String tag = bindCmp.getTag();
+        return routeStatus.equals(tag);
     }
 
 }

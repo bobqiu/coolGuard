@@ -10,8 +10,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 规则表 Mapper 接口
@@ -44,11 +42,10 @@ public interface RuleMapper extends BaseMapperX<Rule> {
         return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getStrategyId, strategyId).eq(Rule::getStatus, status).orderByDesc(Rule::getSort));
     }
 
-    default Set<Long> selectStrategyId(String name, String code) {
-        return selectList(new LambdaQueryWrapperX<Rule>()
+    default List<Long> selectStrategyId(String name, String code) {
+        return selectObjs(new LambdaQueryWrapperX<Rule>()
                 .likeIfPresent(Rule::getName, name)
                 .eqIfPresent(Rule::getCode, code)
-                .select(Rule::getStrategyId))
-                .stream().map(Rule::getStrategyId).collect(Collectors.toSet());
+                .select(Rule::getStrategyId));
     }
 }
