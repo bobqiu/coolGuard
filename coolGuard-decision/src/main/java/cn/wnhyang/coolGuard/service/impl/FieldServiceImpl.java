@@ -147,7 +147,7 @@ public class FieldServiceImpl implements FieldService {
         Map<String, String> params = decisionRequest.getParams();
 
         // 设置唯一id
-        decisionRequest.setDataByType("seqId", IdUtil.fastSimpleUUID(), FieldType.STRING);
+        decisionRequest.setDataByType(FieldName.seqId, IdUtil.fastSimpleUUID(), FieldType.STRING);
 
         // 普通字段处理
         inputFields.stream().filter(inputField -> !inputField.getDynamic()).forEach(inputField -> {

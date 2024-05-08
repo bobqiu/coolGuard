@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.ExpectType;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.convert.ConditionConvert;
 import cn.wnhyang.coolGuard.entity.Condition;
@@ -69,7 +70,7 @@ public class ConditionServiceImpl implements ConditionService {
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = "cond", nodeType = NodeTypeEnum.BOOLEAN)
-    public boolean conditionIf(NodeComponent bindCmp) {
+    public boolean cond(NodeComponent bindCmp) {
 
         // 获取当前tag
         String tag = bindCmp.getTag();
@@ -87,9 +88,10 @@ public class ConditionServiceImpl implements ConditionService {
 
         OperateType byType = OperateType.getByType(condition.getOperateType());
 
-        // TODO 当前是常量，之后要考虑变量
-
         String expectValue = condition.getExpectValue();
+        if (ExpectType.CONTEXT.equals(condition.getExpectedType())) {
+            expectValue = decisionRequest.getStringData(expectValue);
+        }
 
         if (fieldType == null || byType == null) {
             return false;
@@ -189,7 +191,7 @@ public class ConditionServiceImpl implements ConditionService {
                     break;
             }
         } catch (Exception e) {
-            log.info("规则条件运行异常:{}", e.getMessage());
+            log.info("条件运行异常:{}", e.getMessage());
         }
 
         return cond;

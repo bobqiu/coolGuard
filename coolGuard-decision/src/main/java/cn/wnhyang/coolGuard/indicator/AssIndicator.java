@@ -25,9 +25,9 @@ public class AssIndicator extends AbstractIndicator {
     }
 
     @Override
-    public void addEvent(long currentTime, RScoredSortedSet<String> set, Map<String, String> eventDetail) {
+    public void addEvent(long currentTime, RScoredSortedSet<String> set, Map<String, Object> eventDetail) {
 
-        set.add(currentTime, eventDetail.get(indicator.getCalcField()));
+        set.add(currentTime, (String) eventDetail.get(indicator.getCalcField()));
 
     }
 }

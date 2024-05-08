@@ -66,7 +66,6 @@ public class DecisionServiceImpl implements DecisionService {
         LiteflowResponse syncRisk = flowExecutor.execute2Resp("decisionChain", null, decisionRequest, indicatorContext, strategyContext, decisionResponse);
 
 
-        decisionResponse.setExecuteStepStrWithTime(syncRisk.getExecuteStepStrWithTime());
         return decisionResponse;
     }
 

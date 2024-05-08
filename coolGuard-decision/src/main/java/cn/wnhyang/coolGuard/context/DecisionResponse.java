@@ -18,8 +18,6 @@ public class DecisionResponse implements Serializable {
     @Serial
     private static final long serialVersionUID = -1627715296419489019L;
 
-    private String executeStepStrWithTime;
-
     private StrategySetResult strategySetResult;
 
     private final Map<String, String> outputFields = new ConcurrentHashMap<>();

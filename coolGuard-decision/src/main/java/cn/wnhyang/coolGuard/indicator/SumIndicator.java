@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.indicator;
 
+import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RedissonClient;
@@ -25,7 +26,7 @@ public class SumIndicator extends AbstractIndicator {
         for (String item : set) {
             String[] split = item.split("-");
             if (split.length >= 2) {
-                sum = Double.parseDouble(sum + split[1]);
+                sum = sum + Double.parseDouble(split[1]);
             }
         }
 
@@ -33,9 +34,9 @@ public class SumIndicator extends AbstractIndicator {
     }
 
     @Override
-    public void addEvent(long currentTime, RScoredSortedSet<String> set, Map<String, String> eventDetail) {
+    public void addEvent(long currentTime, RScoredSortedSet<String> set, Map<String, Object> eventDetail) {
 
-        set.add(currentTime, eventDetail.get("seqId") + "-" + eventDetail.get(indicator.getCalcField()));
+        set.add(currentTime, eventDetail.get(FieldName.seqId) + "-" + eventDetail.get(indicator.getCalcField()));
 
     }
 

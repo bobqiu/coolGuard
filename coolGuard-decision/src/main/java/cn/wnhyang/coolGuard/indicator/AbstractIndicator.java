@@ -1,14 +1,11 @@
 package cn.wnhyang.coolGuard.indicator;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.WinType;
-import cn.wnhyang.coolGuard.context.DecisionRequest;
-import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
-import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.core.NodeComponent;
-import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
-import com.yomahub.liteflow.enums.NodeTypeEnum;
+import cn.wnhyang.coolGuard.vo.IndicatorVO;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RedissonClient;
@@ -29,7 +26,7 @@ public abstract class AbstractIndicator {
     /**
      * 指标
      */
-    protected Indicator indicator;
+    protected IndicatorVO indicator;
 
     protected String redisKey;
 
@@ -69,47 +66,35 @@ public abstract class AbstractIndicator {
     /**
      * 过滤
      *
-     * @param bindCmp 必要组件入参
      * @return true/false
      */
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = "indicatorConditionIF", nodeType = NodeTypeEnum.BOOLEAN)
-    public boolean filter(NodeComponent bindCmp) {
+    public boolean filter(Map<String, Object> eventDetail) {
 
-        DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
-        // 1、主属性、从属性不为空
-        if (indicator.getMasterField() != null && decisionRequest.getStringData(indicator.getMasterField()) != null) {
-            if (indicator.getSlaveFields() != null) {
+        // 1、主属性不能为空，并且主属性取值也不能为空
+        if (StrUtil.isNotBlank(indicator.getMasterField()) && ObjectUtil.isNotNull(eventDetail.get(indicator.getMasterField()))) {
+            if (StrUtil.isNotBlank(indicator.getSlaveFields())) {
                 String[] split = indicator.getSlaveFields().split(",");
                 for (String s : split) {
-                    if (decisionRequest.getStringData(s) == null) {
+                    if (eventDetail.get(s) == null) {
                         return false;
                     }
                 }
-                // 2、过滤脚本
-                if (indicator.getComputeScript() == null) {
-                    return true;
-                } else {
-                    // TODO 脚本过滤
-                    return true;
-                }
             }
+            return true;
         }
-
         return false;
     }
 
     /**
      * 设置redis key
-     *
-     * @param bindCmp 必要组件入参
      */
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "setIndicatorRedisKey", nodeType = NodeTypeEnum.COMMON)
-    public void setRedisKey(NodeComponent bindCmp) {
-        DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
+    public void setRedisKey(Map<String, Object> eventDetail) {
 
         this.redisKey = RedisKey.ZB + indicator.getId() + ":"
-                + INDICATOR_TYPE.getType() + ":" + decisionRequest.getStringData(indicator.getMasterField())
-                + "-" + decisionRequest.getStringData(indicator.getSlaveFields());
+                + INDICATOR_TYPE.getType() + ":" + eventDetail.get(indicator.getMasterField());
+        if (StrUtil.isNotBlank(indicator.getSlaveFields())) {
+            this.redisKey += "-" + eventDetail.get(indicator.getSlaveFields());
+        }
 
     }
 
@@ -144,8 +129,7 @@ public abstract class AbstractIndicator {
      * @param indicator   指标
      * @param eventDetail 事件详情
      */
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "indicatorCompute", nodeType = NodeTypeEnum.COMMON)
-    public void compute(NodeComponent bindCmp, Indicator indicator, Map<String, String> eventDetail) {
+    public void compute(IndicatorVO indicator, Map<String, Object> eventDetail) {
 
         if (indicator == null) {
             return;
@@ -153,9 +137,9 @@ public abstract class AbstractIndicator {
             this.indicator = indicator;
         }
         // 1、状态检查和过滤
-        if (getStatus() && filter(bindCmp)) {
+        if (getStatus() && filter(eventDetail)) {
 
-
+            setRedisKey(eventDetail);
             // 2、获取当前时间戳
             long currentTime = System.currentTimeMillis();
             // 3、获取redis中数据
@@ -183,7 +167,7 @@ public abstract class AbstractIndicator {
      * @param set         redis set
      * @param eventDetail 事件详情
      */
-    public abstract void addEvent(long currentTime, RScoredSortedSet<String> set, Map<String, String> eventDetail);
+    public abstract void addEvent(long currentTime, RScoredSortedSet<String> set, Map<String, Object> eventDetail);
 
     /**
      * 清理过期数据

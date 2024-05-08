@@ -6,7 +6,7 @@ package cn.wnhyang.coolGuard.constant;
  **/
 public interface FieldName {
 
-
+    String seqId = "N_S_seqId";
     String payerPhoneNumber = "N_S_payerPhoneNumber";
     String payerIDNumber = "N_S_payerIDNumber";
     String idCardProvince = "N_S_idCardProvince";

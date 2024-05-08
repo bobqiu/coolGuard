@@ -149,7 +149,7 @@ public class StrategySetServiceImpl implements StrategySetService {
         StrategySetVO strategySetVO = StrategySetConvert.INSTANCE.convert(strategySet);
         strategyContext.setStrategySetVO(strategySetVO);
 
-        // TODO 计算指标
+        // 计算指标
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
         List<Indicator> indicatorListByAppName = indicatorMapper.selectListByScene(strategySetVO.getAppName(), SceneType.APP);
         List<Indicator> indicatorListByStrategySetCode = indicatorMapper.selectListByScene(strategySetVO.getCode(), SceneType.STRATEGY_SET);

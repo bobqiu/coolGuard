@@ -97,18 +97,18 @@ public class StrategyServiceImpl implements StrategyService {
 
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategyOrderProcess", nodeType = NodeTypeEnum.COMMON)
-    public void strategyOrderProcess(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategyOrder", nodeType = NodeTypeEnum.COMMON)
+    public void strategyOrder(NodeComponent bindCmp) {
         log.info("策略顺序");
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategyWorstProcess", nodeType = NodeTypeEnum.COMMON)
-    public void strategyWorstProcess(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategyWorst", nodeType = NodeTypeEnum.COMMON)
+    public void strategyWorst(NodeComponent bindCmp) {
         log.info("策略最坏");
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategyWeightProcess", nodeType = NodeTypeEnum.COMMON)
-    public void strategyWeightProcess(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "strategyWeight", nodeType = NodeTypeEnum.COMMON)
+    public void strategyWeight(NodeComponent bindCmp) {
         log.info("策略权重");
     }
 

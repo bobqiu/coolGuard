@@ -43,6 +43,7 @@ create table de_condition
         primary key,
     field_name   varchar(32)                 default ''                not null comment '字段名',
     operate_type varchar(32)                 default 'null'            not null comment '操作类型',
+    expect_type  varchar(32)                 default 'input'           not null comment '期望值类型',
     expect_value varchar(32)                 default ''                not null comment '期望值',
     description  varchar(64) charset utf8mb4 default ''                null comment '描述',
     creator      varchar(64) charset utf8mb4 default ''                null comment '创建者',

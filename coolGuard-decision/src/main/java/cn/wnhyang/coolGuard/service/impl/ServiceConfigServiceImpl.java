@@ -3,7 +3,9 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
+import cn.wnhyang.coolGuard.context.DecisionResponse;
 import cn.wnhyang.coolGuard.convert.ServiceConfigConvert;
 import cn.wnhyang.coolGuard.convert.ServiceConfigFieldConvert;
 import cn.wnhyang.coolGuard.entity.ServiceConfig;
@@ -118,13 +120,21 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
         return serviceConfig;
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "serviceConfigProcess", nodeType = NodeTypeEnum.COMMON)
-    public void serviceConfigProcess(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "serviceIn", nodeType = NodeTypeEnum.COMMON)
+    public void serviceIn(NodeComponent bindCmp) {
         DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
         // 处理入参
         Map<String, String> params = decisionRequest.getParams();
         log.info("入参：{}", params);
 
+    }
+
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "serviceOut", nodeType = NodeTypeEnum.COMMON)
+    public void serviceOut(NodeComponent bindCmp) {
+        DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
+        DecisionResponse decisionResponse = bindCmp.getContextBean(DecisionResponse.class);
+        // 设置出参
+        decisionResponse.setOutputData(FieldName.seqId, decisionRequest.getStringData(FieldName.seqId));
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

@@ -42,6 +42,12 @@ public class Condition extends BasePO {
     private String operateType;
 
     /**
+     * 期望类型
+     */
+    @TableField("expect_type")
+    private String expectedType;
+
+    /**
      * 期望值
      */
     @TableField("expect_value")

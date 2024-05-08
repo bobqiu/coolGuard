@@ -32,6 +32,11 @@ public class ConditionCreateVO implements Serializable {
     private String operateType;
 
     /**
+     * 期望类型
+     */
+    private String expectedType;
+
+    /**
      * 期望值
      */
     private String expectValue;
