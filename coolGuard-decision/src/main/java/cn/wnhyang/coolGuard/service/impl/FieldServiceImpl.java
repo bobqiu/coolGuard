@@ -94,7 +94,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public String testDynamicFieldScript(TestDynamicFieldScript testDynamicFieldScript) {
-        DecisionRequest decisionRequest = new DecisionRequest(RouteStatus.STRATEGY_SET_P, null, null, null, null);
+        DecisionRequest decisionRequest = new DecisionRequest(RouteStatus.STRATEGY_SET_P, null, null, null, null, null);
         Map<String, String> params = testDynamicFieldScript.getParams();
         for (Map.Entry<String, String> entry : params.entrySet()) {
             Field field = fieldMapper.selectByName(entry.getKey());

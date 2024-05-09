@@ -4,6 +4,7 @@ import cn.wnhyang.coolGuard.entity.ConfigField;
 import cn.wnhyang.coolGuard.entity.ServiceConfig;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
+import cn.wnhyang.coolGuard.vo.OutputFieldVO;
 import cn.wnhyang.coolGuard.vo.ServiceConfigVO;
 import cn.wnhyang.coolGuard.vo.create.ServiceConfigCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ServiceConfigPageVO;
@@ -78,4 +79,11 @@ public interface ServiceConfigService {
      */
     List<InputFieldVO> getServiceConfigInputFieldList(Long id);
 
+    /**
+     * 根据服务id查询
+     *
+     * @param id 服务id
+     * @return outputFieldVO集合
+     */
+    List<OutputFieldVO> getServiceConfigOutputFieldList(Long id);
 }

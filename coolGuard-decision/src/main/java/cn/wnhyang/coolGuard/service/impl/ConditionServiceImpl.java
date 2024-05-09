@@ -104,7 +104,7 @@ public class ConditionServiceImpl implements ConditionService {
             switch (fieldType) {
                 case STRING:
                     String stringData = decisionRequest.getStringData(fieldName);
-                    log.info("字段值:{}, 操作:{}, 期望值:{}", stringData, byType, expectValue);
+                    log.debug("字段值:{}, 操作:{}, 期望值:{}", stringData, byType, expectValue);
                     cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> StrUtil.isBlank(stringData);
                         case NOT_NULL -> !StrUtil.isBlank(stringData);
@@ -122,7 +122,7 @@ public class ConditionServiceImpl implements ConditionService {
                 case NUMBER:
                     Integer numberData = decisionRequest.getNumberData(fieldName);
                     Integer expectInteger = Integer.parseInt(expectValue);
-                    log.info("字段值:{}, 操作:{}, 期望值:{}", numberData, byType, expectInteger);
+                    log.debug("字段值:{}, 操作:{}, 期望值:{}", numberData, byType, expectInteger);
                     cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> numberData == null;
                         case NOT_NULL -> numberData != null;
@@ -138,7 +138,7 @@ public class ConditionServiceImpl implements ConditionService {
                 case FLOAT:
                     Double floatData = decisionRequest.getFloatData(fieldName);
                     Double expectDouble = Double.parseDouble(expectValue);
-                    log.info("字段值:{}, 操作:{}, 期望值:{}", floatData, byType, expectDouble);
+                    log.debug("字段值:{}, 操作:{}, 期望值:{}", floatData, byType, expectDouble);
                     cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> floatData == null;
                         case NOT_NULL -> floatData != null;
@@ -154,7 +154,7 @@ public class ConditionServiceImpl implements ConditionService {
                 case DATE:
                     LocalDateTime dateData = decisionRequest.getDateData(fieldName);
                     LocalDateTime expectDateTime = LocalDateTimeUtil.parse(expectValue, DatePattern.NORM_DATETIME_FORMATTER);
-                    log.info("字段值:{}, 操作:{}, 期望值:{}", dateData, byType, expectDateTime);
+                    log.debug("字段值:{}, 操作:{}, 期望值:{}", dateData, byType, expectDateTime);
                     cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> dateData == null;
                         case NOT_NULL -> dateData != null;
@@ -169,7 +169,7 @@ public class ConditionServiceImpl implements ConditionService {
                     break;
                 case ENUM:
                     String enumData = decisionRequest.getEnumData(fieldName);
-                    log.info("字段值:{}, 操作:{}, 期望值:{}", enumData, byType, expectValue);
+                    log.debug("字段值:{}, 操作:{}, 期望值:{}", enumData, byType, expectValue);
                     cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> enumData == null;
                         case NOT_NULL -> enumData != null;
@@ -180,7 +180,7 @@ public class ConditionServiceImpl implements ConditionService {
                     break;
                 case BOOLEAN:
                     Boolean booleanData = decisionRequest.getBooleanData(fieldName);
-                    log.info("字段值:{}", booleanData);
+                    log.debug("字段值:{}", booleanData);
                     cond = switch (Objects.requireNonNull(byType)) {
                         case NULL -> booleanData == null;
                         case NOT_NULL -> booleanData != null;
@@ -191,7 +191,7 @@ public class ConditionServiceImpl implements ConditionService {
                     break;
             }
         } catch (Exception e) {
-            log.info("条件运行异常:{}", e.getMessage());
+            log.error("条件运行异常:{}", e.getMessage());
         }
 
         return cond;

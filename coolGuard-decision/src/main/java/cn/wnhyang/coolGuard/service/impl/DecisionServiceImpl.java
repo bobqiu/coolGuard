@@ -12,6 +12,7 @@ import cn.wnhyang.coolGuard.mapper.DisposalMapper;
 import cn.wnhyang.coolGuard.service.DecisionService;
 import cn.wnhyang.coolGuard.service.ServiceConfigService;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
+import cn.wnhyang.coolGuard.vo.OutputFieldVO;
 import com.yomahub.liteflow.core.FlowExecutor;
 import com.yomahub.liteflow.flow.LiteflowResponse;
 import lombok.RequiredArgsConstructor;
@@ -52,8 +53,9 @@ public class DecisionServiceImpl implements DecisionService {
 
         // 设置服务配置
         List<InputFieldVO> inputFields = serviceConfigService.getServiceConfigInputFieldList(serviceConfig.getId());
+        List<OutputFieldVO> outputFields = serviceConfigService.getServiceConfigOutputFieldList(serviceConfig.getId());
 
-        DecisionRequest decisionRequest = new DecisionRequest(RouteStatus.STRATEGY_SET_P, name, params, serviceConfig, inputFields);
+        DecisionRequest decisionRequest = new DecisionRequest(RouteStatus.STRATEGY_SET_P, name, params, serviceConfig, inputFields, outputFields);
         StrategyContext strategyContext = new StrategyContext();
         for (Disposal disposal : disposalMapper.selectList()) {
             strategyContext.addDisposal(disposal.getId(), disposal);

@@ -187,7 +187,7 @@ public class StrategySetServiceImpl implements StrategySetService {
             }
         }
         String el = when.toEL();
-        log.info("策略集(name:{})下策略表达式:{}", strategySet.getName(), el);
+        log.debug("策略集(name:{})下策略表达式:{}", strategySet.getName(), el);
 
         LiteFlowChainELBuilder.createChain().setChainId("strategyChain").setEL(
                 // 输出el表达式

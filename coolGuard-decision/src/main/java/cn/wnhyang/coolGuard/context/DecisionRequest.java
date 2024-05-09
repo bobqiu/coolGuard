@@ -5,6 +5,7 @@ import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.wnhyang.coolGuard.entity.ServiceConfig;
 import cn.wnhyang.coolGuard.enums.FieldType;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
+import cn.wnhyang.coolGuard.vo.OutputFieldVO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +38,8 @@ public class DecisionRequest implements Serializable {
     private final ServiceConfig serviceConfig;
 
     private final List<InputFieldVO> inputFields;
+
+    private final List<OutputFieldVO> outputFields;
 
     public void setParamsData(String key, String value) {
         params.put(key, value);

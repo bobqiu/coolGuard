@@ -121,7 +121,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "indicatorFalse", nodeType = NodeTypeEnum.COMMON)
     public void indicatorFalse(NodeComponent bindCmp) {
-        log.info("指标条件不满足");
+        log.debug("指标条件不满足");
     }
 
 }
