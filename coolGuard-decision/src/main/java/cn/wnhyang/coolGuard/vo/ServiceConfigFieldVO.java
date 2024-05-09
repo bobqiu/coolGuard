@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.vo;
 
-import cn.wnhyang.coolGuard.vo.base.ServiceConfigFieldBaseVO;
+import cn.wnhyang.coolGuard.entity.ConfigField;
 import lombok.Data;
 
 import java.io.Serial;
@@ -12,18 +12,13 @@ import java.io.Serial;
  * @since 2024/04/04
  */
 @Data
-public class ServiceConfigFieldVO extends ServiceConfigFieldBaseVO {
+public class ServiceConfigFieldVO extends ConfigField {
 
     @Serial
     private static final long serialVersionUID = 7303993433636717669L;
 
     /**
-     * 主键
+     * 字段显示名
      */
-    private Long id;
-
-    /**
-     * 服务id
-     */
-    private Long serviceConfigId;
+    private String displayName;
 }

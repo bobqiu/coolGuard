@@ -10,7 +10,6 @@ import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.entity.ServiceConfig;
 import cn.wnhyang.coolGuard.mapper.DisposalMapper;
 import cn.wnhyang.coolGuard.service.DecisionService;
-import cn.wnhyang.coolGuard.service.ServiceConfigFieldService;
 import cn.wnhyang.coolGuard.service.ServiceConfigService;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import com.yomahub.liteflow.core.FlowExecutor;
@@ -33,8 +32,6 @@ public class DecisionServiceImpl implements DecisionService {
 
     private final ServiceConfigService serviceConfigService;
 
-    private final ServiceConfigFieldService serviceConfigFieldService;
-
     private final DisposalMapper disposalMapper;
 
     private final FlowExecutor flowExecutor;
@@ -54,7 +51,7 @@ public class DecisionServiceImpl implements DecisionService {
         ServiceConfig serviceConfig = serviceConfigService.getServiceConfigByName(name);
 
         // 设置服务配置
-        List<InputFieldVO> inputFields = serviceConfigFieldService.getServiceConfigInputFieldsByServiceId(serviceConfig.getId());
+        List<InputFieldVO> inputFields = serviceConfigService.getServiceConfigInputFieldList(serviceConfig.getId());
 
         DecisionRequest decisionRequest = new DecisionRequest(RouteStatus.STRATEGY_SET_P, name, params, serviceConfig, inputFields);
         StrategyContext strategyContext = new StrategyContext();

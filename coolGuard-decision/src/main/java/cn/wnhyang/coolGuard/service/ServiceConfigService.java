@@ -1,11 +1,15 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.entity.ConfigField;
 import cn.wnhyang.coolGuard.entity.ServiceConfig;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.ServiceConfigVO;
 import cn.wnhyang.coolGuard.vo.create.ServiceConfigCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ServiceConfigPageVO;
 import cn.wnhyang.coolGuard.vo.update.ServiceConfigUpdateVO;
+
+import java.util.List;
 
 /**
  * 服务配置表 服务类
@@ -60,4 +64,18 @@ public interface ServiceConfigService {
      * @return po
      */
     ServiceConfig getServiceConfigByName(String name);
+
+
+    List<ConfigField> getInputFieldList(Long id);
+
+    List<ConfigField> getOutputFieldList(Long id);
+
+    /**
+     * 根据服务id查询
+     *
+     * @param id 服务id
+     * @return inputFieldVO集合
+     */
+    List<InputFieldVO> getServiceConfigInputFieldList(Long id);
+
 }

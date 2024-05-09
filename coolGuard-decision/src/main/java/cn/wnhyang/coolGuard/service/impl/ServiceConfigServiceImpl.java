@@ -1,24 +1,26 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.context.DecisionResponse;
+import cn.wnhyang.coolGuard.convert.FieldConvert;
 import cn.wnhyang.coolGuard.convert.ServiceConfigConvert;
-import cn.wnhyang.coolGuard.convert.ServiceConfigFieldConvert;
+import cn.wnhyang.coolGuard.entity.ConfigField;
+import cn.wnhyang.coolGuard.entity.Field;
 import cn.wnhyang.coolGuard.entity.ServiceConfig;
-import cn.wnhyang.coolGuard.entity.ServiceConfigField;
-import cn.wnhyang.coolGuard.mapper.ServiceConfigFieldMapper;
+import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.mapper.ServiceConfigMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ServiceConfigService;
-import cn.wnhyang.coolGuard.util.CollectionUtils;
+import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.ServiceConfigVO;
 import cn.wnhyang.coolGuard.vo.create.ServiceConfigCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ServiceConfigPageVO;
 import cn.wnhyang.coolGuard.vo.update.ServiceConfigUpdateVO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
@@ -29,6 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.SERVICE_CONFIG_NAME_EXIST;
@@ -49,7 +53,9 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
 
     private final ServiceConfigMapper serviceConfigMapper;
 
-    private final ServiceConfigFieldMapper serviceConfigFieldMapper;
+    private final ObjectMapper objectMapper;
+
+    private final FieldMapper fieldMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -58,13 +64,6 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
         validateForCreateOrUpdate(null, createVO.getName());
         ServiceConfig serviceConfig = ServiceConfigConvert.INSTANCE.convert(createVO);
         serviceConfigMapper.insert(serviceConfig);
-        if (CollUtil.isNotEmpty(createVO.getInputFields())) {
-            serviceConfigFieldMapper.insertBatch(CollectionUtils.convertList(createVO.getInputFields(),
-                    inputField -> new ServiceConfigField().setServiceConfigId(serviceConfig.getId())
-                            .setParamName(inputField.getParamName()).setRequired(inputField.getRequired())
-                            .setFieldName(inputField.getFieldName())));
-        }
-
         return serviceConfig.getId();
     }
 
@@ -72,13 +71,6 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
     public void updateServiceConfig(ServiceConfigUpdateVO updateVO) {
         ServiceConfig serviceConfig = ServiceConfigConvert.INSTANCE.convert(updateVO);
 
-        serviceConfigFieldMapper.deleteByServiceConfigId(updateVO.getId());
-        if (CollectionUtil.isNotEmpty(updateVO.getInputFields())) {
-            serviceConfigFieldMapper.insertBatch(CollectionUtils.convertList(updateVO.getInputFields(),
-                    inputField -> new ServiceConfigField().setServiceConfigId(serviceConfig.getId())
-                            .setParamName(inputField.getParamName()).setRequired(inputField.getRequired())
-                            .setFieldName(inputField.getFieldName())));
-        }
         serviceConfigMapper.updateById(serviceConfig);
     }
 
@@ -86,29 +78,18 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
     public void deleteServiceConfig(Long id) {
         validateExists(id);
         serviceConfigMapper.deleteById(id);
-        serviceConfigFieldMapper.deleteByServiceConfigId(id);
     }
 
     @Override
     public ServiceConfigVO getServiceConfig(Long id) {
         ServiceConfig serviceConfig = serviceConfigMapper.selectById(id);
-        ServiceConfigVO serviceConfigVO = ServiceConfigConvert.INSTANCE.convert(serviceConfig);
-        serviceConfigVO.setInputFields(CollectionUtils.convertList(
-                serviceConfigFieldMapper.selectListByServiceConfigId(id),
-                ServiceConfigFieldConvert.INSTANCE::convert));
-        return serviceConfigVO;
+        return ServiceConfigConvert.INSTANCE.convert(serviceConfig);
     }
 
     @Override
     public PageResult<ServiceConfigVO> pageServiceConfig(ServiceConfigPageVO pageVO) {
         PageResult<ServiceConfig> pageResult = serviceConfigMapper.selectPage(pageVO);
-        PageResult<ServiceConfigVO> convert = ServiceConfigConvert.INSTANCE.convert(pageResult);
-        convert.getList().forEach(serviceConfig ->
-                serviceConfig.setInputFields(CollectionUtils.convertList(
-                        serviceConfigFieldMapper.selectListByServiceConfigId(serviceConfig.getId()),
-                        ServiceConfigFieldConvert.INSTANCE::convert)));
-
-        return convert;
+        return ServiceConfigConvert.INSTANCE.convert(pageResult);
     }
 
     @Override
@@ -118,6 +99,49 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
             throw exception(SERVICE_CONFIG_NOT_EXIST);
         }
         return serviceConfig;
+    }
+
+    @Override
+    public List<ConfigField> getInputFieldList(Long id) {
+        String json = serviceConfigMapper.selectInputConfig(id);
+        try {
+            return objectMapper.readValue(json,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, ConfigField.class));
+        } catch (JsonProcessingException e) {
+            log.error("inputConfig转换失败", e);
+        }
+        return List.of();
+    }
+
+    @Override
+    public List<ConfigField> getOutputFieldList(Long id) {
+        String json = serviceConfigMapper.selectOutputConfig(id);
+        try {
+            return objectMapper.readValue(json,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, ConfigField.class));
+        } catch (JsonProcessingException e) {
+            log.error("outputConfig转换失败", e);
+        }
+        return List.of();
+    }
+
+    @Override
+    public List<InputFieldVO> getServiceConfigInputFieldList(Long id) {
+        List<ConfigField> configFieldList = getInputFieldList(id);
+
+        List<InputFieldVO> inputFieldVOList = new ArrayList<>();
+        if (CollUtil.isNotEmpty(configFieldList)) {
+            for (ConfigField configField : configFieldList) {
+                Field field = fieldMapper.selectByName(configField.getFieldName());
+                if (field != null) {
+                    InputFieldVO inputFieldVO = FieldConvert.INSTANCE.convert2InputFieldVO(field);
+                    inputFieldVO.setParamName(configField.getParamName());
+                    inputFieldVO.setRequired(configField.getRequired());
+                    inputFieldVOList.add(inputFieldVO);
+                }
+            }
+        }
+        return inputFieldVOList;
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "serviceIn", nodeType = NodeTypeEnum.COMMON)
@@ -135,6 +159,7 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
         DecisionResponse decisionResponse = bindCmp.getContextBean(DecisionResponse.class);
         // 设置出参
         decisionResponse.setOutputData(FieldName.seqId, decisionRequest.getStringData(FieldName.seqId));
+
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

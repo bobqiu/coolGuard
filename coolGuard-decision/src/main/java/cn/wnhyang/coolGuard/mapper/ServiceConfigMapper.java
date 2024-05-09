@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.ServiceConfig;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
@@ -27,5 +28,21 @@ public interface ServiceConfigMapper extends BaseMapperX<ServiceConfig> {
     @Cacheable(cacheNames = RedisKey.SERVICE_CONFIG + "::na", key = "#name", unless = "#result == null")
     default ServiceConfig selectByName(String name) {
         return selectOne(ServiceConfig::getName, name);
+    }
+
+    default String selectInputConfig(Long id) {
+        ServiceConfig serviceConfig = selectById(id);
+        if (ObjectUtil.isNotNull(serviceConfig)) {
+            return serviceConfig.getInputConfig();
+        }
+        return null;
+    }
+
+    default String selectOutputConfig(Long id) {
+        ServiceConfig serviceConfig = selectById(id);
+        if (ObjectUtil.isNotNull(serviceConfig)) {
+            return serviceConfig.getOutputConfig();
+        }
+        return null;
     }
 }
