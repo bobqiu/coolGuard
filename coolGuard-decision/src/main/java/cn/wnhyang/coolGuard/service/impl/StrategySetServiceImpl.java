@@ -2,7 +2,6 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.context.DecisionResponse;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
@@ -151,11 +150,8 @@ public class StrategySetServiceImpl implements StrategySetService {
 
         // 计算指标
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
-        List<Indicator> indicatorListByAppName = indicatorMapper.selectListByScene(strategySetVO.getAppName(), SceneType.APP);
-        List<Indicator> indicatorListByStrategySetCode = indicatorMapper.selectListByScene(strategySetVO.getCode(), SceneType.STRATEGY_SET);
-        // 合并
-        indicatorListByAppName.addAll(indicatorListByStrategySetCode);
-        List<IndicatorVO> indicatorVOList = IndicatorConvert.INSTANCE.convert(indicatorListByAppName);
+        List<Indicator> indicatorList = indicatorMapper.selectList(strategySetVO.getAppName(), strategySetVO.getCode());
+        List<IndicatorVO> indicatorVOList = IndicatorConvert.INSTANCE.convert(indicatorList);
         WhenELWrapper whenI = new WhenELWrapper();
         for (IndicatorVO indicatorVO : indicatorVOList) {
             whenI.when(

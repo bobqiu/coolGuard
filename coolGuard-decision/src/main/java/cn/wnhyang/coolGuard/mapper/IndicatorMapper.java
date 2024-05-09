@@ -1,9 +1,11 @@
 package cn.wnhyang.coolGuard.mapper;
 
 import cn.wnhyang.coolGuard.constant.RedisKey;
+import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
+import cn.wnhyang.coolGuard.pojo.PageParam;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -35,5 +37,17 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
 
     default List<Long> selectIdListByScene(String scene, String sceneType) {
         return selectObjs(new LambdaQueryWrapperX<Indicator>().eq(Indicator::getScene, scene).eq(Indicator::getSceneType, sceneType).select(Indicator::getId));
+    }
+
+    default PageResult<Indicator> selectPage(PageParam pageVO, String appName, String code) {
+        return selectPage(pageVO, new LambdaQueryWrapperX<Indicator>()
+                .and(q -> q.eq(Indicator::getSceneType, SceneType.APP).eq(Indicator::getScene, appName))
+                .or(q -> q.eq(Indicator::getSceneType, SceneType.STRATEGY_SET).eq(Indicator::getScene, code)));
+    }
+
+    default List<Indicator> selectList(String appName, String code) {
+        return selectList(new LambdaQueryWrapperX<Indicator>()
+                .and(q -> q.eq(Indicator::getSceneType, SceneType.APP).eq(Indicator::getScene, appName))
+                .or(q -> q.eq(Indicator::getSceneType, SceneType.STRATEGY_SET).eq(Indicator::getScene, code)));
     }
 }

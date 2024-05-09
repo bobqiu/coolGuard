@@ -1,16 +1,20 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.entity.Indicator;
+import cn.wnhyang.coolGuard.entity.StrategySet;
 import cn.wnhyang.coolGuard.enums.WinSize;
 import cn.wnhyang.coolGuard.indicator.AbstractIndicator;
 import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
+import cn.wnhyang.coolGuard.mapper.StrategySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
+import cn.wnhyang.coolGuard.vo.page.IndicatorByStrategySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
@@ -38,9 +42,12 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     private final IndicatorMapper indicatorMapper;
 
-    public IndicatorServiceImpl(List<AbstractIndicator> indicatorList, IndicatorMapper indicatorMapper) {
+    private final StrategySetMapper strategySetMapper;
+
+    public IndicatorServiceImpl(List<AbstractIndicator> indicatorList, IndicatorMapper indicatorMapper, StrategySetMapper strategySetMapper) {
         addIndicator(indicatorList);
         this.indicatorMapper = indicatorMapper;
+        this.strategySetMapper = strategySetMapper;
     }
 
     private void addIndicator(List<AbstractIndicator> indicatorList) {
@@ -78,21 +85,13 @@ public class IndicatorServiceImpl implements IndicatorService {
     }
 
     @Override
-    public void compute(List<Indicator> indicatorList, Map<String, String> eventDetail) {
-        for (Indicator indicator : indicatorList) {
-//            INDICATOR_MAP.get(indicator.getType()).compute(indicator, eventDetail);
+    public PageResult<Indicator> pageIndicatorByStrategySet(IndicatorByStrategySetPageVO pageVO) {
+        Long strategySetId = pageVO.getStrategySetId();
+        StrategySet strategySet = strategySetMapper.selectById(strategySetId);
+        if (ObjectUtil.isNotNull(strategySet)) {
+            indicatorMapper.selectPage(pageVO, strategySet.getAppName(), strategySet.getCode());
         }
-    }
-
-    @Override
-    public double getResultById(Long id, Map<String, String> eventDetail) {
-        Indicator indicator = indicatorMapper.selectById(id);
-        return getResult(indicator, eventDetail);
-    }
-
-    @Override
-    public double getResult(Indicator indicator, Map<String, String> eventDetail) {
-        return 0.0;
+        return PageResult.empty();
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "indicatorProcess", nodeType = NodeTypeEnum.COMMON)

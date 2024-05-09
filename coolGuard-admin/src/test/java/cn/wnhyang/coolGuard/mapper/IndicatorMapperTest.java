@@ -1,6 +1,9 @@
 package cn.wnhyang.coolGuard.mapper;
 
 import cn.wnhyang.coolGuard.AdminApplication;
+import cn.wnhyang.coolGuard.entity.Indicator;
+import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.page.IndicatorByStrategySetPageVO;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -24,4 +27,21 @@ public class IndicatorMapperTest {
         List<Long> longs = indicatorMapper.selectIdListByScene("test", "test");
         log.info("longs: {}", longs);
     }
+
+    @Test
+    public void test2() {
+        IndicatorByStrategySetPageVO pageParam = new IndicatorByStrategySetPageVO();
+        pageParam.setStrategySetId(1L);
+        pageParam.setPageNo(1).setPageSize(10);
+        PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPage(pageParam, "Phone", "Phone_Login");
+        log.info("indicatorPageResult: {}", indicatorPageResult);
+    }
+
+    @Test
+    public void test3() {
+        List<Indicator> resultList = indicatorMapper.selectList("Phone", "Phone_Login");
+        log.info("resultList: {}", resultList);
+
+    }
+
 }

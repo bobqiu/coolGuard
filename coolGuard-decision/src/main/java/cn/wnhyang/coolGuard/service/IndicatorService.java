@@ -3,11 +3,9 @@ package cn.wnhyang.coolGuard.service;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
+import cn.wnhyang.coolGuard.vo.page.IndicatorByStrategySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 指标表 服务类
@@ -55,9 +53,11 @@ public interface IndicatorService {
      */
     PageResult<Indicator> pageIndicator(IndicatorPageVO pageVO);
 
-    void compute(List<Indicator> indicatorList, Map<String, String> eventDetail);
-
-    double getResultById(Long id, Map<String, String> eventDetail);
-
-    double getResult(Indicator indicator, Map<String, String> eventDetail);
+    /**
+     * 分页查询
+     *
+     * @param pageVO 分页VO
+     * @return pageResult
+     */
+    PageResult<Indicator> pageIndicatorByStrategySet(IndicatorByStrategySetPageVO pageVO);
 }
