@@ -26,7 +26,7 @@
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <coolGuard.version>1.0-SNAPSHOT</coolGuard.version>
-        <spring-boot.version>3.0.2</spring-boot.version>
+        <spring-boot.version>3.2.3</spring-boot.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.24</lombok.version>
     </properties>
@@ -70,6 +70,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
+                    <parameters>true</parameters>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.springframework.boot</groupId>

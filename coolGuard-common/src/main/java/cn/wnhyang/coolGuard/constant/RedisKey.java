@@ -51,9 +51,7 @@ public interface RedisKey {
      */
     String RULES = "rules";
 
-    String SERVICE_CONFIG = "sc";
-
-    String SERVICE_CONFIG_FIELD = "scf";
+    String ACCESS = "access";
 
     String STRATEGY = "strategy";
 

@@ -60,7 +60,7 @@ public class Strategy extends BasePO {
     private String mode;
 
     /**
-     * 策略状态，应该包含启用、禁用、上线、下线、待发布
+     * 策略状态，应该包含开启、关闭、待发布
      */
     @TableField("status")
     private Integer status;

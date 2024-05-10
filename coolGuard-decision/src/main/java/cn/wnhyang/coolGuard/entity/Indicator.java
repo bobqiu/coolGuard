@@ -87,13 +87,13 @@ public class Indicator extends BasePO {
     private Long timeSlice;
 
     /**
-     * 主字段
+     * 主字段 只能是字符类
      */
     @TableField("master_field")
     private String masterField;
 
     /**
-     * 从字段
+     * 从字段 只能是字符类
      */
     @TableField("slave_fields")
     private String slaveFields;

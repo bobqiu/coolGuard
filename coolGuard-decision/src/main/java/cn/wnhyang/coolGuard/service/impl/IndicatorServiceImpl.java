@@ -106,7 +106,6 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "indicatorCompute", nodeType = NodeTypeEnum.COMMON)
     public void indicatorCompute(NodeComponent bindCmp) {
-        // TODO 计算指标
         String tag = bindCmp.getTag();
         DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);

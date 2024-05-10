@@ -80,7 +80,7 @@ public class StrategyContext {
             if (CollUtil.isNotEmpty(ruleVOList)) {
                 for (RuleVO ruleVO : ruleVOList) {
                     RuleResult ruleResult = new RuleResult(ruleVO.getName(), ruleVO.getCode());
-                    // TODO
+                    // TODO 模拟规则不返回
                     Disposal disposal = disposalMap.get(ruleVO.getDisposalId());
                     if (null != disposal) {
                         ruleResult.setDisposalName(disposal.getName());

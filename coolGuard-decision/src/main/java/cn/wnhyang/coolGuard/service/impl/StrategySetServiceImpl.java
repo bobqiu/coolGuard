@@ -178,6 +178,7 @@ public class StrategySetServiceImpl implements StrategySetService {
         }
         WhenELWrapper when = new WhenELWrapper();
         for (Strategy strategy : strategyList) {
+            // TODO 策略状态
             if (strategy.getStatus().equals(1)) {
                 when.when(
                         node("strategyProcess").tag(String.valueOf(strategy.getId()))
@@ -201,7 +202,6 @@ public class StrategySetServiceImpl implements StrategySetService {
         decisionResponse.setStrategySetResult(strategyContext.convert());
         log.info("策略集(name:{})执行完毕", strategyContext.getStrategySetVO().getName());
 
-        // TODO 策略集出参
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

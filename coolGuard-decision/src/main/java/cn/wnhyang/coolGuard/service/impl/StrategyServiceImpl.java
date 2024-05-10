@@ -84,6 +84,7 @@ public class StrategyServiceImpl implements StrategyService {
         StrategyVO strategy = strategyContext.getStrategy(Long.valueOf(tag));
         log.info("当前策略(id:{}, name:{}, code:{})", strategy.getId(), strategy.getName(), strategy.getCode());
 
+        // TODO 开启和模拟状态规则都要运行
         List<Rule> ruleList = ruleMapper.selectByStrategyIdAndStatus(strategy.getId(), "1");
         if (CollUtil.isEmpty(ruleList)) {
             log.info("策略(name:{})下没有规则运行", strategy.getName());
