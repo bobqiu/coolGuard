@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.context;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
-import cn.wnhyang.coolGuard.entity.ServiceConfig;
+import cn.wnhyang.coolGuard.entity.Access;
 import cn.wnhyang.coolGuard.enums.FieldType;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.OutputFieldVO;
@@ -31,11 +31,11 @@ public class DecisionRequest implements Serializable {
     @Setter
     private String routeStatus;
 
-    private final String serviceConfigName;
+    private final String accessName;
 
     private final Map<String, String> params;
 
-    private final ServiceConfig serviceConfig;
+    private final Access access;
 
     private final List<InputFieldVO> inputFields;
 

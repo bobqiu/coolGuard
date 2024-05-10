@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.vo.create;
 
-import cn.wnhyang.coolGuard.vo.base.ServiceConfigBaseVO;
+import cn.wnhyang.coolGuard.vo.base.AccessBaseVO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.io.Serial;
  * @date 2024/3/14
  **/
 @Data
-public class ServiceConfigCreateVO extends ServiceConfigBaseVO {
+public class AccessCreateVO extends AccessBaseVO {
 
     @Serial
     private static final long serialVersionUID = -5143580505431009435L;

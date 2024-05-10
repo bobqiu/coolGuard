@@ -1,5 +1,24 @@
 create schema coolGuard collate utf8mb4_general_ci;
 
+create table de_access
+(
+    id            bigint auto_increment comment '自增编号'
+        primary key,
+    display_name  varchar(64) charset utf8mb4 default ''                not null comment '显示服务名',
+    name          varchar(64) charset utf8mb4 default ''                not null comment '服务标识',
+    input_config  text charset utf8mb4                                  null comment '输入配置',
+    output_config text charset utf8mb4                                  null comment '输出配置',
+    description   varchar(64) charset utf8mb4 default ''                null comment '描述',
+    creator       varchar(64) charset utf8mb4 default ''                null comment '创建者',
+    create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater       varchar(64) charset utf8mb4 default ''                null comment '更新者',
+    update_time   datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted       bit                         default b'0'              not null comment '是否删除',
+    constraint uk_name
+        unique (name)
+)
+    comment '服务配置表';
+
 create table de_application
 (
     id           bigint auto_increment comment '主键'
@@ -185,25 +204,6 @@ create table de_rule_script
     deleted          bit                         default b'0'              not null comment '是否删除'
 )
     comment '规则脚本表';
-
-create table de_service_config
-(
-    id            bigint auto_increment comment '自增编号'
-        primary key,
-    display_name  varchar(64) charset utf8mb4 default ''                not null comment '显示服务名',
-    name          varchar(64) charset utf8mb4 default ''                not null comment '服务标识',
-    input_config  text charset utf8mb4                                  null comment '输入配置',
-    output_config text charset utf8mb4                                  null comment '输出配置',
-    description   varchar(64) charset utf8mb4 default ''                null comment '描述',
-    creator       varchar(64) charset utf8mb4 default ''                null comment '创建者',
-    create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater       varchar(64) charset utf8mb4 default ''                null comment '更新者',
-    update_time   datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    deleted       bit                         default b'0'              not null comment '是否删除',
-    constraint uk_name
-        unique (name)
-)
-    comment '服务配置表';
 
 create table de_strategy
 (

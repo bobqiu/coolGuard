@@ -10,7 +10,7 @@ import java.io.Serial;
  * @date 2024/3/14
  **/
 @Data
-public class ServiceConfigPageVO extends PageParam {
+public class AccessPageVO extends PageParam {
 
     @Serial
     private static final long serialVersionUID = -4138518261130779757L;

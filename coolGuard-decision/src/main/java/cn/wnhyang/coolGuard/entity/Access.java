@@ -20,8 +20,8 @@ import java.io.Serial;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_service_config")
-public class ServiceConfig extends BasePO {
+@TableName("de_access")
+public class Access extends BasePO {
 
     @Serial
     private static final long serialVersionUID = 1L;

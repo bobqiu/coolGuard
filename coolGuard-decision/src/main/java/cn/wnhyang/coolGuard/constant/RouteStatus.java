@@ -6,7 +6,7 @@ package cn.wnhyang.coolGuard.constant;
  **/
 public interface RouteStatus {
 
-    String SERVICE_CONFIG_P = "serviceConfigP";
+    String SERVICE_CONFIG_P = "accessP";
 
     String STRATEGY_SET_P = "strategySetP";
 

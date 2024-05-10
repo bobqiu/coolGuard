@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @date 2024/4/17
  **/
 @Data
-public class ServiceConfigBaseVO implements Serializable {
+public class AccessBaseVO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -5565734558672093346L;

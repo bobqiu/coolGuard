@@ -5,21 +5,21 @@ import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.context.DecisionResponse;
+import cn.wnhyang.coolGuard.convert.AccessConvert;
 import cn.wnhyang.coolGuard.convert.FieldConvert;
-import cn.wnhyang.coolGuard.convert.ServiceConfigConvert;
+import cn.wnhyang.coolGuard.entity.Access;
 import cn.wnhyang.coolGuard.entity.ConfigField;
 import cn.wnhyang.coolGuard.entity.Field;
-import cn.wnhyang.coolGuard.entity.ServiceConfig;
+import cn.wnhyang.coolGuard.mapper.AccessMapper;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
-import cn.wnhyang.coolGuard.mapper.ServiceConfigMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.service.ServiceConfigService;
+import cn.wnhyang.coolGuard.service.AccessService;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.OutputFieldVO;
-import cn.wnhyang.coolGuard.vo.ServiceConfigVO;
-import cn.wnhyang.coolGuard.vo.create.ServiceConfigCreateVO;
-import cn.wnhyang.coolGuard.vo.page.ServiceConfigPageVO;
-import cn.wnhyang.coolGuard.vo.update.ServiceConfigUpdateVO;
+import cn.wnhyang.coolGuard.vo.AccessVO;
+import cn.wnhyang.coolGuard.vo.create.AccessCreateVO;
+import cn.wnhyang.coolGuard.vo.page.AccessPageVO;
+import cn.wnhyang.coolGuard.vo.update.AccessUpdateVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
@@ -50,9 +50,9 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
 @Service
 @LiteflowComponent
 @RequiredArgsConstructor
-public class ServiceConfigServiceImpl implements ServiceConfigService {
+public class AccessServiceImpl implements AccessService {
 
-    private final ServiceConfigMapper serviceConfigMapper;
+    private final AccessMapper accessMapper;
 
     private final ObjectMapper objectMapper;
 
@@ -60,51 +60,51 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long createServiceConfig(ServiceConfigCreateVO createVO) {
+    public Long createAccess(AccessCreateVO createVO) {
         // 1、校验服务name唯一性
         validateForCreateOrUpdate(null, createVO.getName());
-        ServiceConfig serviceConfig = ServiceConfigConvert.INSTANCE.convert(createVO);
-        serviceConfigMapper.insert(serviceConfig);
-        return serviceConfig.getId();
+        Access access = AccessConvert.INSTANCE.convert(createVO);
+        accessMapper.insert(access);
+        return access.getId();
     }
 
     @Override
-    public void updateServiceConfig(ServiceConfigUpdateVO updateVO) {
-        ServiceConfig serviceConfig = ServiceConfigConvert.INSTANCE.convert(updateVO);
+    public void updateAccess(AccessUpdateVO updateVO) {
+        Access access = AccessConvert.INSTANCE.convert(updateVO);
 
-        serviceConfigMapper.updateById(serviceConfig);
+        accessMapper.updateById(access);
     }
 
     @Override
-    public void deleteServiceConfig(Long id) {
+    public void deleteAccess(Long id) {
         validateExists(id);
-        serviceConfigMapper.deleteById(id);
+        accessMapper.deleteById(id);
     }
 
     @Override
-    public ServiceConfigVO getServiceConfig(Long id) {
-        ServiceConfig serviceConfig = serviceConfigMapper.selectById(id);
-        return ServiceConfigConvert.INSTANCE.convert(serviceConfig);
+    public AccessVO getAccess(Long id) {
+        Access access = accessMapper.selectById(id);
+        return AccessConvert.INSTANCE.convert(access);
     }
 
     @Override
-    public PageResult<ServiceConfigVO> pageServiceConfig(ServiceConfigPageVO pageVO) {
-        PageResult<ServiceConfig> pageResult = serviceConfigMapper.selectPage(pageVO);
-        return ServiceConfigConvert.INSTANCE.convert(pageResult);
+    public PageResult<AccessVO> pageAccess(AccessPageVO pageVO) {
+        PageResult<Access> pageResult = accessMapper.selectPage(pageVO);
+        return AccessConvert.INSTANCE.convert(pageResult);
     }
 
     @Override
-    public ServiceConfig getServiceConfigByName(String name) {
-        ServiceConfig serviceConfig = serviceConfigMapper.selectByName(name);
-        if (serviceConfig == null) {
+    public Access getAccessByName(String name) {
+        Access access = accessMapper.selectByName(name);
+        if (access == null) {
             throw exception(SERVICE_CONFIG_NOT_EXIST);
         }
-        return serviceConfig;
+        return access;
     }
 
     @Override
     public List<ConfigField> getInputFieldList(Long id) {
-        String json = serviceConfigMapper.selectInputConfig(id);
+        String json = accessMapper.selectInputConfig(id);
         try {
             if (StrUtil.isNotBlank(json)){
                 return objectMapper.readValue(json,
@@ -118,7 +118,7 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
 
     @Override
     public List<ConfigField> getOutputFieldList(Long id) {
-        String json = serviceConfigMapper.selectOutputConfig(id);
+        String json = accessMapper.selectOutputConfig(id);
         try {
             if (StrUtil.isNotBlank(json)){
                 return objectMapper.readValue(json,
@@ -131,7 +131,7 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
     }
 
     @Override
-    public List<InputFieldVO> getServiceConfigInputFieldList(Long id) {
+    public List<InputFieldVO> getAccessInputFieldList(Long id) {
         List<ConfigField> configFieldList = getInputFieldList(id);
 
         List<InputFieldVO> inputFieldVOList = new ArrayList<>();
@@ -150,7 +150,7 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
     }
 
     @Override
-    public List<OutputFieldVO> getServiceConfigOutputFieldList(Long id) {
+    public List<OutputFieldVO> getAccessOutputFieldList(Long id) {
         List<ConfigField> configFieldList = getOutputFieldList(id);
 
         List<OutputFieldVO> outputFieldVOList = new ArrayList<>();
@@ -167,8 +167,8 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
         return outputFieldVOList;
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "serviceIn", nodeType = NodeTypeEnum.COMMON)
-    public void serviceIn(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "accessIn", nodeType = NodeTypeEnum.COMMON)
+    public void accessIn(NodeComponent bindCmp) {
         DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
         // 处理入参
         Map<String, String> params = decisionRequest.getParams();
@@ -176,8 +176,8 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
 
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "serviceOut", nodeType = NodeTypeEnum.COMMON)
-    public void serviceOut(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "accessOut", nodeType = NodeTypeEnum.COMMON)
+    public void accessOut(NodeComponent bindCmp) {
         DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
         DecisionResponse decisionResponse = bindCmp.getContextBean(DecisionResponse.class);
         // 设置出参
@@ -202,8 +202,8 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
         if (id == null) {
             return;
         }
-        ServiceConfig serviceConfig = serviceConfigMapper.selectById(id);
-        if (serviceConfig == null) {
+        Access access = accessMapper.selectById(id);
+        if (access == null) {
             throw exception(SERVICE_CONFIG_NOT_EXIST);
         }
     }
@@ -212,15 +212,15 @@ public class ServiceConfigServiceImpl implements ServiceConfigService {
         if (StrUtil.isBlank(name)) {
             return;
         }
-        ServiceConfig serviceConfig = serviceConfigMapper.selectByName(name);
-        if (serviceConfig == null) {
+        Access access = accessMapper.selectByName(name);
+        if (access == null) {
             return;
         }
         // 如果 id 为空，说明不用比较是否为相同 id 的用户
         if (id == null) {
             throw exception(SERVICE_CONFIG_NAME_EXIST);
         }
-        if (!serviceConfig.getId().equals(id)) {
+        if (!access.getId().equals(id)) {
             throw exception(SERVICE_CONFIG_NAME_EXIST);
         }
     }

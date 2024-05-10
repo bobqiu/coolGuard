@@ -12,7 +12,7 @@ import java.io.Serial;
  * @since 2024/04/04
  */
 @Data
-public class ServiceConfigFieldVO extends ConfigField {
+public class AccessFieldVO extends ConfigField {
 
     @Serial
     private static final long serialVersionUID = 7303993433636717669L;

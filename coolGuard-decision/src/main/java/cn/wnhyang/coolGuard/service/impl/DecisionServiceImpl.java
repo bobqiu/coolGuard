@@ -7,10 +7,10 @@ import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.context.StrategyContext;
 import cn.wnhyang.coolGuard.entity.Disposal;
 import cn.wnhyang.coolGuard.entity.Indicator;
-import cn.wnhyang.coolGuard.entity.ServiceConfig;
+import cn.wnhyang.coolGuard.entity.Access;
 import cn.wnhyang.coolGuard.mapper.DisposalMapper;
 import cn.wnhyang.coolGuard.service.DecisionService;
-import cn.wnhyang.coolGuard.service.ServiceConfigService;
+import cn.wnhyang.coolGuard.service.AccessService;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.OutputFieldVO;
 import com.yomahub.liteflow.core.FlowExecutor;
@@ -31,7 +31,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DecisionServiceImpl implements DecisionService {
 
-    private final ServiceConfigService serviceConfigService;
+    private final AccessService accessService;
 
     private final DisposalMapper disposalMapper;
 
@@ -49,13 +49,13 @@ public class DecisionServiceImpl implements DecisionService {
         DecisionResponse decisionResponse = new DecisionResponse();
 
         // 根据服务配置名称获取服务配置
-        ServiceConfig serviceConfig = serviceConfigService.getServiceConfigByName(name);
+        Access access = accessService.getAccessByName(name);
 
         // 设置服务配置
-        List<InputFieldVO> inputFields = serviceConfigService.getServiceConfigInputFieldList(serviceConfig.getId());
-        List<OutputFieldVO> outputFields = serviceConfigService.getServiceConfigOutputFieldList(serviceConfig.getId());
+        List<InputFieldVO> inputFields = accessService.getAccessInputFieldList(access.getId());
+        List<OutputFieldVO> outputFields = accessService.getAccessOutputFieldList(access.getId());
 
-        DecisionRequest decisionRequest = new DecisionRequest(RouteStatus.STRATEGY_SET_P, name, params, serviceConfig, inputFields, outputFields);
+        DecisionRequest decisionRequest = new DecisionRequest(RouteStatus.STRATEGY_SET_P, name, params, access, inputFields, outputFields);
         StrategyContext strategyContext = new StrategyContext();
         for (Disposal disposal : disposalMapper.selectList()) {
             strategyContext.addDisposal(disposal.getId(), disposal);
