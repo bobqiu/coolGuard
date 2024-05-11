@@ -16,9 +16,9 @@ public interface ErrorCodes {
 
     ErrorCode DISPOSAL_STANDARD = new ErrorCode(1002001002, "标准处置不可更改");
 
-    ErrorCode SERVICE_CONFIG_NOT_EXIST = new ErrorCode(1003001000, "服务配置不存在");
+    ErrorCode ACCESS_NOT_EXIST = new ErrorCode(1003001000, "接入不存在");
 
-    ErrorCode SERVICE_CONFIG_NAME_EXIST = new ErrorCode(1003001001, "服务配置名已存在");
+    ErrorCode ACCESS_NAME_EXIST = new ErrorCode(1003001001, "接入名已存在");
 
     ErrorCode FIELD_NOT_EXIST = new ErrorCode(1004001000, "字段不存在");
 

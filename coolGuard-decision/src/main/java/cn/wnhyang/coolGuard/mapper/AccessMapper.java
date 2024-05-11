@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.cache.annotation.Cacheable;
 
 /**
- * 服务配置表 Mapper 接口
+ * 接入表 Mapper 接口
  *
  * @author wnhyang
  * @since 2024/03/14

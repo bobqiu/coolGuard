@@ -233,7 +233,7 @@ public class FieldServiceImpl implements FieldService {
 
     private void validateForDelete(Long id) {
         validateForUpdate(id);
-        // TODO 查找引用 指标、服务配置、动态字段、规则等
+        // TODO 查找引用 指标、接入、动态字段、规则等
     }
 
     private void validateForUpdate(Long id) {

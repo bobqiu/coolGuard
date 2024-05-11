@@ -10,7 +10,7 @@ import lombok.*;
 import java.io.Serial;
 
 /**
- * 服务配置表
+ * 接入表
  *
  * @author wnhyang
  * @since 2024/03/14

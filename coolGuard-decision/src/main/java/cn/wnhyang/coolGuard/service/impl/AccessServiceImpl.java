@@ -36,12 +36,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.SERVICE_CONFIG_NAME_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.SERVICE_CONFIG_NOT_EXIST;
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_NAME_EXIST;
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_NOT_EXIST;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
- * 服务配置表 服务实现类
+ * 接入表 服务实现类
  *
  * @author wnhyang
  * @since 2024/03/14
@@ -97,7 +97,7 @@ public class AccessServiceImpl implements AccessService {
     public Access getAccessByName(String name) {
         Access access = accessMapper.selectByName(name);
         if (access == null) {
-            throw exception(SERVICE_CONFIG_NOT_EXIST);
+            throw exception(ACCESS_NOT_EXIST);
         }
         return access;
     }
@@ -204,7 +204,7 @@ public class AccessServiceImpl implements AccessService {
         }
         Access access = accessMapper.selectById(id);
         if (access == null) {
-            throw exception(SERVICE_CONFIG_NOT_EXIST);
+            throw exception(ACCESS_NOT_EXIST);
         }
     }
 
@@ -218,10 +218,10 @@ public class AccessServiceImpl implements AccessService {
         }
         // 如果 id 为空，说明不用比较是否为相同 id 的用户
         if (id == null) {
-            throw exception(SERVICE_CONFIG_NAME_EXIST);
+            throw exception(ACCESS_NAME_EXIST);
         }
         if (!access.getId().equals(id)) {
-            throw exception(SERVICE_CONFIG_NAME_EXIST);
+            throw exception(ACCESS_NAME_EXIST);
         }
     }
 }

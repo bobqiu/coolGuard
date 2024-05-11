@@ -6,7 +6,7 @@ import lombok.Data;
 import java.io.Serial;
 
 /**
- * 服务配置字段表
+ * 接入字段表
  *
  * @author wnhyang
  * @since 2024/04/04

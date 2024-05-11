@@ -17,7 +17,7 @@ create table de_access
     constraint uk_name
         unique (name)
 )
-    comment '服务配置表';
+    comment '接入表';
 
 create table de_application
 (

@@ -48,10 +48,10 @@ public class DecisionServiceImpl implements DecisionService {
 
         DecisionResponse decisionResponse = new DecisionResponse();
 
-        // 根据服务配置名称获取服务配置
+        // 根据接入名称获取接入
         Access access = accessService.getAccessByName(name);
 
-        // 设置服务配置
+        // 设置接入
         List<InputFieldVO> inputFields = accessService.getAccessInputFieldList(access.getId());
         List<OutputFieldVO> outputFields = accessService.getAccessOutputFieldList(access.getId());
 

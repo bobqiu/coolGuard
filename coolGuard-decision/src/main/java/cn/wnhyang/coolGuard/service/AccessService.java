@@ -13,7 +13,7 @@ import cn.wnhyang.coolGuard.vo.update.AccessUpdateVO;
 import java.util.List;
 
 /**
- * 服务配置表 服务类
+ * 接入表 服务类
  *
  * @author wnhyang
  * @since 2024/03/14
