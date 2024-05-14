@@ -109,6 +109,13 @@
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
+
+        <!-- TODO 暂时将所有公共放在common中       -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>lock4j-redisson-spring-boot-starter</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

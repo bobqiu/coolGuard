@@ -29,6 +29,7 @@
         <poi.version>4.1.2</poi.version>
         <phone-number-geo.version>1.0.9-202302</phone-number-geo.version>
         <ip2region.version>2.7.0</ip2region.version>
+        <lock4j.version>2.2.7</lock4j.version>
     </properties>
 
     <dependencyManagement>
@@ -120,6 +121,12 @@
                 <groupId>org.lionsoul</groupId>
                 <artifactId>ip2region</artifactId>
                 <version>${ip2region.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>lock4j-redisson-spring-boot-starter</artifactId>
+                <version>${lock4j.version}</version>
             </dependency>
 
             <dependency>

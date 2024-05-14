@@ -12,13 +12,25 @@ spring:
     type: REDIS
     redis:
       time-to-live: 1h # 设置过期时间为 1 小时
+  # kafka配置
+  kafka:
+    client-id: coolGuard
+    producer:
+      acks: 1
+      retries: 3
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      # 默认消费者组id
+      group-id: coolGuard-default
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 # mybatis-plus
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
-    auto-mapping-behavior: full
   global-config:
     db-config:
       logic-delete-field: deleted
@@ -31,3 +43,9 @@ mybatis-plus:
 logging:
   config: classpath:log4j2.xml
 
+# Lock4j 配置项
+lock4j:
+  acquire-timeout: 3000 #默认值3s，可不设置
+  expire: 30000 #默认值30s，可不设置
+  primary-executor: com.baomidou.lock.executor.RedissonLockExecutor #默认redisson>redisTemplate>zookeeper，可不设置
+  lock-key-prefix: lock4j #锁key前缀, 默认值lock4j，可不设置

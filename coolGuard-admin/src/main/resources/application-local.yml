@@ -29,6 +29,9 @@ spring:
           min-idle: 0 #最小等待连接数，0表示无限制
           max-wait: 20ms #最大建立连接等待时间，-1表示无限制
         shutdown-timeout: 100ms
+  # kafka配置
+  kafka:
+    bootstrap-servers: localhost:9092
 
 liteflow:
   rule-source-ext-data-map:
@@ -50,6 +53,7 @@ liteflow:
     elDataField: el_data
     chainEnableField: enable
     #以下是script表的配置，如果你没使用到脚本，下面可以不配置
+  print-execution-log: false
 
 #    scriptTableName: script
 #    scriptApplicationNameField: application_name
