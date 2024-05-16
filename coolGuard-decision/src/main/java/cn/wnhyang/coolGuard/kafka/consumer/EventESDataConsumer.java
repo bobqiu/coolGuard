@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
  **/
 @Service
 @Slf4j
-public class ConsumerService {
-    @KafkaListener(topics = "test", groupId = "test-group")
+public class EventESDataConsumer {
+
+    @KafkaListener(topics = "event-es-data", groupId = "event-es-data-consumers")
     public void consume(String message) {
-        log.info("consume message:{}", message);
+        // TODO 存储到ES
+        log.info("consume message: {}", message);
     }
 }

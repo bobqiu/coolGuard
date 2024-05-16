@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProducerService {
+public class CommonProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -23,7 +23,9 @@ public class ProducerService {
         CompletableFuture<SendResult<String, Object>> send = kafkaTemplate.send(topic, message);
         send.whenComplete((result, exception) -> {
             if (exception != null) {
-                log.error("send message error", exception);
+                log.warn("send message error", exception);
+            }else {
+                log.info("send message success, topic:{}, message:{}", topic, message);
             }
         });
     }
