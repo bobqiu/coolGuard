@@ -71,7 +71,7 @@ create table de_condition
     update_time  datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     deleted      bit                         default b'0'              not null comment '是否删除'
 )
-    comment '条件表';
+    comment '规则条件表';
 
 create table de_disposal
 (
@@ -161,6 +161,40 @@ create table de_indicator
     deleted        bit                         default b'0'              not null comment '是否删除'
 )
     comment '指标表';
+
+create table de_list_data
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    list_set_id bigint                                                not null comment '名单集id',
+    value       varchar(64)                                           not null comment '名单数据',
+    type        varchar(10)                 default ''                not null comment '名单集类型',
+    source      varchar(10)                 default ''                not null comment '名单数据来源',
+    status      bit                         default b'0'              not null comment '名单集状态',
+    description varchar(64) charset utf8mb4 default ''                null comment '描述',
+    creator     varchar(64) charset utf8mb4 default ''                null comment '创建者',
+    create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater     varchar(64) charset utf8mb4 default ''                null comment '更新者',
+    update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted     bit                         default b'0'              not null comment '是否删除'
+)
+    comment '名单数据表';
+
+create table de_list_set
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    name        varchar(64)                                           not null comment '名单集名',
+    type        varchar(10)                                           not null comment '名单集类型',
+    status      bit                         default b'0'              not null comment '名单集状态',
+    description varchar(64) charset utf8mb4 default ''                null comment '描述',
+    creator     varchar(64) charset utf8mb4 default ''                null comment '创建者',
+    create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater     varchar(64) charset utf8mb4 default ''                null comment '更新者',
+    update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted     bit                         default b'0'              not null comment '是否删除'
+)
+    comment '名单集表';
 
 create table de_rule
 (

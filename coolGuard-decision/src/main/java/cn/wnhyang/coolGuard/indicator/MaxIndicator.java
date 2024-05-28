@@ -26,7 +26,7 @@ public class MaxIndicator extends AbstractIndicator {
             String[] split = item.split("-");
             if (split.length >= 2) {
                 double v = Double.parseDouble(split[1]);
-                if (v > max){
+                if (v > max) {
                     max = v;
                 }
             }

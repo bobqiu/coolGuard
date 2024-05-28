@@ -25,7 +25,7 @@ public class IndicatorContext {
         return indicatorMap.containsKey(id);
     }
 
-    public void setIndicatorValue(Long id, double value){
+    public void setIndicatorValue(Long id, double value) {
         indicatorMap.get(id).setValue(String.valueOf(value));
     }
 

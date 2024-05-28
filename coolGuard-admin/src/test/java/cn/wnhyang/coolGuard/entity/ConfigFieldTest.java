@@ -51,7 +51,7 @@ class ConfigFieldTest {
 
     @Test
     void test02() throws JsonProcessingException {
-        String json="[\n" +
+        String json = "[\n" +
                 "{\"paramName\":\"appName\",\"required\":false,\"fieldName\":\"N_S_appName\"},\n" +
                 "{\"paramName\":\"strategySetCode\",\"required\":false,\"fieldName\":\"N_S_strategySetCode\"},\n" +
                 "{\"paramName\":\"strategyCode\",\"required\":false,\"fieldName\":\"N_S_strategyCode\"},\n" +

@@ -105,6 +105,11 @@
             <artifactId>poi-ooxml</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+        </dependency>
+
         <!-- TODO 暂时将所有公共放在common中       -->
         <dependency>
             <groupId>com.baomidou</groupId>

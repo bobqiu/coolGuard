@@ -14,9 +14,9 @@ import cn.wnhyang.coolGuard.mapper.AccessMapper;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.AccessService;
+import cn.wnhyang.coolGuard.vo.AccessVO;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.OutputFieldVO;
-import cn.wnhyang.coolGuard.vo.AccessVO;
 import cn.wnhyang.coolGuard.vo.create.AccessCreateVO;
 import cn.wnhyang.coolGuard.vo.page.AccessPageVO;
 import cn.wnhyang.coolGuard.vo.update.AccessUpdateVO;
@@ -106,7 +106,7 @@ public class AccessServiceImpl implements AccessService {
     public List<ConfigField> getInputFieldList(Long id) {
         String json = accessMapper.selectInputConfig(id);
         try {
-            if (StrUtil.isNotBlank(json)){
+            if (StrUtil.isNotBlank(json)) {
                 return objectMapper.readValue(json,
                         objectMapper.getTypeFactory().constructCollectionType(List.class, ConfigField.class));
             }
@@ -120,7 +120,7 @@ public class AccessServiceImpl implements AccessService {
     public List<ConfigField> getOutputFieldList(Long id) {
         String json = accessMapper.selectOutputConfig(id);
         try {
-            if (StrUtil.isNotBlank(json)){
+            if (StrUtil.isNotBlank(json)) {
                 return objectMapper.readValue(json,
                         objectMapper.getTypeFactory().constructCollectionType(List.class, ConfigField.class));
             }

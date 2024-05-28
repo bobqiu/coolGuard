@@ -24,7 +24,7 @@ public class CommonProducer {
         send.whenComplete((result, exception) -> {
             if (exception != null) {
                 log.warn("send message error", exception);
-            }else {
+            } else {
                 log.info("send message success, topic:{}, message:{}", topic, message);
             }
         });
