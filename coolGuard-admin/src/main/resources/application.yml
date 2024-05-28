@@ -25,6 +25,17 @@ spring:
       group-id: coolGuard-default
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  boot:
+    admin:
+      client:
+        url: http://localhost:9081
+
+# 监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
 # mybatis-plus
 mybatis-plus:

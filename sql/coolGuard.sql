@@ -71,7 +71,7 @@ create table de_condition
     update_time  datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     deleted      bit                         default b'0'              not null comment '是否删除'
 )
-    comment '规则条件表';
+    comment '条件表';
 
 create table de_disposal
 (

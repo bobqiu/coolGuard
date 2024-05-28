@@ -1,0 +1,9 @@
+server:
+  port: 9081
+  shutdown: graceful
+
+spring:
+  application:
+    name: coolGuard-monitor
+  profiles:
+    active: local

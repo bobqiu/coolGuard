@@ -1,5 +1,7 @@
 # coolGuard
 
+coolGuard意为酷卫
+
 身份证解析数据来源
 https://www.mca.gov.cn/mzsj/xzqh/2022/202201xzqh.html
 

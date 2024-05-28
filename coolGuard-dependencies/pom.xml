@@ -30,6 +30,7 @@
         <phone-number-geo.version>1.0.9-202302</phone-number-geo.version>
         <ip2region.version>2.7.0</ip2region.version>
         <lock4j.version>2.2.7</lock4j.version>
+        <admin.version>3.2.3</admin.version>
     </properties>
 
     <dependencyManagement>
@@ -151,6 +152,18 @@
                 <groupId>cn.wnhyang</groupId>
                 <artifactId>coolGuard-data</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-client</artifactId>
+                <version>${admin.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>${admin.version}</version>
             </dependency>
 
         </dependencies>
