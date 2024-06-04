@@ -1,4 +1,4 @@
-package cn.wnhyang.coolGuard.entity.geo;
+package cn.wnhyang.coolGuard.analysis.geo;
 
 import lombok.Data;
 

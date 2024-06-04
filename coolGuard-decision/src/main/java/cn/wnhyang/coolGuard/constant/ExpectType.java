@@ -9,4 +9,6 @@ public interface ExpectType {
     String INPUT = "input";
 
     String CONTEXT = "context";
+
+    String LIST_SET = "listSet";
 }

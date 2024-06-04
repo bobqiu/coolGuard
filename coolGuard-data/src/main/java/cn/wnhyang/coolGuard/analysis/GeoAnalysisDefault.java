@@ -1,11 +1,13 @@
-package cn.wnhyang.coolGuard.util;
+package cn.wnhyang.coolGuard.analysis;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.entity.ad.Pca;
-import cn.wnhyang.coolGuard.entity.geo.AreaWithGeo;
+import cn.wnhyang.coolGuard.analysis.ad.Pca;
+import cn.wnhyang.coolGuard.analysis.geo.AreaWithGeo;
+import cn.wnhyang.coolGuard.util.AdocUtil;
+import cn.wnhyang.coolGuard.util.DistanceCalculator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -14,25 +16,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 地区经纬度工具类
- *
  * @author wnhyang
- * @date 2024/4/29
+ * @date 2024/5/31
  **/
 @Slf4j
-public class GeoUtil {
+public class GeoAnalysisDefault implements GeoAnalysis {
 
     private static final Map<String, String> GEO_MAP = new HashMap<>(4096);
 
     private static final Map<String, AreaWithGeo> AREA_WITH_GEO_MAP = new HashMap<>(4096);
 
-    private GeoUtil() {
-    }
 
-    /**
-     * 初始化 地区经纬度数据
-     */
-    public static void init() {
+    @Override
+    public void init() {
         long start = System.currentTimeMillis();
         List<AreaWithGeo> areaList = CsvUtil.getReader().read(
                 ResourceUtil.getUtf8Reader("areas_with_geo.csv"), AreaWithGeo.class);
@@ -50,14 +46,7 @@ public class GeoUtil {
         log.info("init success, cost:{}ms", System.currentTimeMillis() - start);
     }
 
-    /**
-     * 根据经纬度获取相似地区
-     *
-     * @param lon 经度
-     * @param lat 纬度
-     * @return 相似地区
-     */
-    public static List<AreaWithGeo> getSimilarPcaByGeo(double lon, double lat) {
+    private List<AreaWithGeo> getSimilarPcaByGeo(double lon, double lat) {
         List<AreaWithGeo> list = new ArrayList<>();
         String key = Math.round(lon) + "," + Math.round(lat);
         String areaCodes = GEO_MAP.get(key);
@@ -72,14 +61,8 @@ public class GeoUtil {
         return list;
     }
 
-    /**
-     * 根据经纬度获取地区
-     *
-     * @param lon 经度
-     * @param lat 纬度
-     * @return 地区
-     */
-    public static Pca getPcaByGeo(double lon, double lat) {
+    @Override
+    public Pca analysis(double lon, double lat) {
         List<AreaWithGeo> areaWithGeos = getSimilarPcaByGeo(lon, lat);
         if (CollUtil.isEmpty(areaWithGeos)) {
             return null;
@@ -102,29 +85,16 @@ public class GeoUtil {
         return result;
     }
 
-    /**
-     * 根据经纬度获取地区
-     *
-     * @param lonAndLat 经纬度字符串，格式必须是 "经度,纬度"
-     * @return 地区
-     */
-    public static Pca getPcaByGeo(String lonAndLat) {
+    @Override
+    public Pca analysis(String lonAndLat) {
         try {
             String[] split = lonAndLat.split(",");
             double lon = Double.parseDouble(split[0]);
             double lat = Double.parseDouble(split[1]);
-            return getPcaByGeo(lon, lat);
+            return analysis(lon, lat);
         } catch (Exception e) {
             log.error("经纬度格式错误");
             return null;
         }
-    }
-
-    public static void main(String[] args) {
-        AdocUtil.init();
-        init();
-        // 116.867584,39.542294
-        Pca pcaByGeo = getPcaByGeo("116.867584,39.542294");
-        log.info("pcaByGeo:{}", pcaByGeo);
     }
 }

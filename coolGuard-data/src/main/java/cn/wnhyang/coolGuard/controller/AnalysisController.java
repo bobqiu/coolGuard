@@ -1,14 +1,15 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.entity.ad.Pca;
+import cn.wnhyang.coolGuard.analysis.GeoAnalysis;
+import cn.wnhyang.coolGuard.analysis.IpAnalysis;
+import cn.wnhyang.coolGuard.analysis.PhoneNoAnalysis;
+import cn.wnhyang.coolGuard.analysis.ad.Pca;
+import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
+import cn.wnhyang.coolGuard.analysis.pn.PhoneNoInfo;
 import cn.wnhyang.coolGuard.util.AdocUtil;
-import cn.wnhyang.coolGuard.util.GeoUtil;
-import cn.wnhyang.coolGuard.util.IpUtil;
-import cn.wnhyang.coolGuard.util.PhoneNumberUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.ihxq.projects.pna.PhoneNumberInfo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,9 +28,13 @@ public class AnalysisController {
     @PostConstruct
     public void init() {
         AdocUtil.init();
-        IpUtil.init();
-        GeoUtil.init();
     }
+
+    private final PhoneNoAnalysis phoneNoAnalysis;
+
+    private final IpAnalysis ipAnalysis;
+
+    private final GeoAnalysis geoAnalysis;
 
     @GetMapping("/pca")
     public Pca getPca(@RequestParam("code") String code) {
@@ -38,18 +43,18 @@ public class AnalysisController {
     }
 
     @GetMapping("/phone")
-    public PhoneNumberInfo getPhone(@RequestParam("phone") String phone) {
-        return PhoneNumberUtil.lookup(phone);
+    public PhoneNoInfo getPhone(@RequestParam("phone") String phone) {
+        return phoneNoAnalysis.analysis(phone);
     }
 
     @GetMapping("/ip")
-    public String getIp(@RequestParam("ip") String ip) {
-        return IpUtil.search(ip);
+    public Ip2Region getIp(@RequestParam("ip") String ip) {
+        return ipAnalysis.analysis(ip);
     }
 
     @GetMapping("/geo")
     public Pca getGeo(@RequestParam("lonAndLat") String lonAndLat) {
-        return GeoUtil.getPcaByGeo(lonAndLat);
+        return geoAnalysis.analysis(lonAndLat);
     }
 
 }

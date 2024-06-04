@@ -4,10 +4,10 @@ import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.entity.ad.Area;
-import cn.wnhyang.coolGuard.entity.ad.City;
-import cn.wnhyang.coolGuard.entity.ad.Pca;
-import cn.wnhyang.coolGuard.entity.ad.Province;
+import cn.wnhyang.coolGuard.analysis.ad.Area;
+import cn.wnhyang.coolGuard.analysis.ad.City;
+import cn.wnhyang.coolGuard.analysis.ad.Pca;
+import cn.wnhyang.coolGuard.analysis.ad.Province;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;

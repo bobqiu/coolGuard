@@ -1,22 +1,22 @@
-package cn.wnhyang.coolGuard.entity.ip;
+package cn.wnhyang.coolGuard.analysis.pn;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * 国家|区域|省份|城市|ISP
- *
  * @author wnhyang
- * @date 2024/4/30
+ * @date 2024/5/31
  **/
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class Ip2Region {
+public class PhoneNoInfoDefault implements PhoneNoInfo {
 
     /**
-     * ip
+     * 手机号
      */
-    private String ip;
+    private String phoneNumber;
 
     /**
      * 国家
@@ -42,4 +42,8 @@ public class Ip2Region {
      * ISP
      */
     private String isp;
+
+    public static PhoneNoInfoDefault unknown(String phoneNumber) {
+        return new PhoneNoInfoDefault(phoneNumber, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN);
+    }
 }

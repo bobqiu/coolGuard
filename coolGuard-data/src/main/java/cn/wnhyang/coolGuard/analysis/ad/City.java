@@ -1,4 +1,4 @@
-package cn.wnhyang.coolGuard.entity.ad;
+package cn.wnhyang.coolGuard.analysis.ad;
 
 import lombok.Data;
 
