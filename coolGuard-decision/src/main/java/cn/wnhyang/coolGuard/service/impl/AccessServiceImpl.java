@@ -23,6 +23,7 @@ import cn.wnhyang.coolGuard.vo.update.AccessUpdateVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
+import com.yomahub.liteflow.annotation.LiteflowFact;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
@@ -168,10 +169,7 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "accessIn", nodeType = NodeTypeEnum.COMMON)
-    public void accessIn(NodeComponent bindCmp) {
-        DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
-        // 处理入参
-        Map<String, String> params = decisionRequest.getParams();
+    public void accessIn(NodeComponent bindCmp, @LiteflowFact("params") Map<String, String> params) {
         log.info("入参：{}", params);
 
     }

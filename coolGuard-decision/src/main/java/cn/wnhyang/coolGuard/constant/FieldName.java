@@ -6,6 +6,9 @@ package cn.wnhyang.coolGuard.constant;
  **/
 public interface FieldName {
 
+    String appName = "N_S_appName";
+    String strategySetCode = "N_S_strategySetCode";
+
     String seqId = "N_S_seqId";
     String payerPhoneNumber = "N_S_payerPhoneNumber";
     String payerIDNumber = "N_S_payerIDNumber";

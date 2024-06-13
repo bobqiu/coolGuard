@@ -20,7 +20,7 @@
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
         <dynamic-datasource.version>4.2.0</dynamic-datasource.version>
         <redisson.version>3.24.3</redisson.version>
-        <liteflow.version>2.12.0</liteflow.version>
+        <liteflow.version>2.12.1</liteflow.version>
         <jsoup.version>1.17.2</jsoup.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.24</lombok.version>

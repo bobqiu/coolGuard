@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.context.DecisionResponse;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
@@ -129,8 +130,8 @@ public class StrategySetServiceImpl implements StrategySetService {
 
         DecisionRequest decisionRequest = bindCmp.getContextBean(DecisionRequest.class);
 
-        String appName = decisionRequest.getStringData("N_S_appName");
-        String strategySetCode = decisionRequest.getStringData("N_S_strategySetCode");
+        String appName = decisionRequest.getStringData(FieldName.appName);
+        String strategySetCode = decisionRequest.getStringData(FieldName.strategySetCode);
 
         // 查询策略集
         StrategySet strategySet = strategySetMapper.selectByAppNameAndCode(appName, strategySetCode);
