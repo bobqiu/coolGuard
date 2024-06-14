@@ -18,4 +18,9 @@ public class ListDataPageVO extends PageParam {
      * 主键
      */
     private Long id;
+
+    /**
+     * 名单数据
+     */
+    private String value;
 }

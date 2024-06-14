@@ -31,11 +31,6 @@ public class ListDataDTO implements Serializable {
     private String value;
 
     /**
-     * 名单集类型
-     */
-    private String type;
-
-    /**
      * 名单数据来源
      */
     private String source;

@@ -42,12 +42,6 @@ public class ListData extends BasePO {
     private String value;
 
     /**
-     * 名单集类型
-     */
-    @TableField("type")
-    private String type;
-
-    /**
      * 名单数据来源
      */
     @TableField("source")

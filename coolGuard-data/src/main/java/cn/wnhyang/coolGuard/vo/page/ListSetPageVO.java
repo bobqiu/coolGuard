@@ -18,4 +18,9 @@ public class ListSetPageVO extends PageParam {
      * 主键
      */
     private Long id;
+
+    /**
+     * 名单集名称
+     */
+    private String name;
 }

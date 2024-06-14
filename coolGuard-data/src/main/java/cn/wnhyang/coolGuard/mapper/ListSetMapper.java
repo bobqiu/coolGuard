@@ -17,6 +17,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface ListSetMapper extends BaseMapperX<ListSet> {
 
     default PageResult<ListSet> selectPage(ListSetPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<ListSet>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<ListSet>()
+                .likeIfPresent(ListSet::getName, pageVO.getName()));
     }
 }

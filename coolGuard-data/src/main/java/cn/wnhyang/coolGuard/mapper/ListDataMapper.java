@@ -17,6 +17,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface ListDataMapper extends BaseMapperX<ListData> {
 
     default PageResult<ListData> selectPage(ListDataPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<ListData>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<ListData>()
+                .inIfPresent(ListData::getValue, pageVO.getValue()));
     }
 }
