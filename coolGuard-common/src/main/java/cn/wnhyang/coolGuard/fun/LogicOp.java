@@ -9,5 +9,5 @@ import cn.wnhyang.coolGuard.enums.LogicType;
 @FunctionalInterface
 public interface LogicOp<T> {
 
-    Boolean logicOp(T a, LogicType logicType, T b);
+    boolean logicOp(T a, LogicType logicType, T b);
 }

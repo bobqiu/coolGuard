@@ -199,7 +199,7 @@ create table de_rule
 (
     id          bigint auto_increment comment '主键'
         primary key,
-    strategy_id bigint                                                not null comment '策略id',
+    policy_id   bigint                                                not null comment '策略id',
     chain_name  varchar(64)                 default ''                null comment 'chain名',
     code        varchar(64)                 default ''                not null comment '规则编码',
     name        varchar(64)                 default ''                not null comment '规则名',
@@ -238,28 +238,28 @@ create table de_rule_script
 )
     comment '规则脚本表';
 
-create table de_strategy
+create table de_policy
 (
-    id              bigint auto_increment comment '主键'
+    id            bigint auto_increment comment '主键'
         primary key,
-    chain_name      varchar(64)                                           not null,
-    strategy_set_id bigint                      default 0                 not null comment '策略集id',
-    code            varchar(64)                 default ''                not null comment '策略编码',
-    name            varchar(64)                 default ''                not null comment '策略名',
-    mode            varchar(32)                 default 'order'           not null comment '策略模式',
-    status          int                         default 0                 not null comment '策略状态',
-    description     varchar(64) charset utf8mb4 default ''                null comment '描述',
-    creator         varchar(64) charset utf8mb4 default ''                null comment '创建者',
-    create_time     datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater         varchar(64) charset utf8mb4 default ''                null comment '更新者',
-    update_time     datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    deleted         bit                         default b'0'              not null comment '是否删除',
+    chain_name    varchar(64)                                           not null,
+    policy_set_id bigint                      default 0                 not null comment '策略集id',
+    code          varchar(64)                 default ''                not null comment '策略编码',
+    name          varchar(64)                 default ''                not null comment '策略名',
+    mode          varchar(32)                 default 'order'           not null comment '策略模式',
+    status        int                         default 0                 not null comment '策略状态',
+    description   varchar(64) charset utf8mb4 default ''                null comment '描述',
+    creator       varchar(64) charset utf8mb4 default ''                null comment '创建者',
+    create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater       varchar(64) charset utf8mb4 default ''                null comment '更新者',
+    update_time   datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted       bit                         default b'0'              not null comment '是否删除',
     constraint uk_code
         unique (code)
 )
     comment '策略表';
 
-create table de_strategy_set
+create table de_policy_set
 (
     id          bigint auto_increment comment '主键'
         primary key,
@@ -285,7 +285,7 @@ create table de_strategy_set
 
 # TODO 规则控制，规则免疫、规则免疫历史、时间控制（每天什么时间段开启），权重、首次、最坏
 
-# strategy disposal
+# policy disposal
 
 
 INSERT INTO coolGuard.de_disposal (code, name, description)
@@ -293,8 +293,8 @@ VALUES ('pass', '通过', '');
 
 INSERT INTO coolGuard.de_field (display_name, name, group_id, standard, type, description, default_value, dynamic)
 VALUES ('应用名', 'N_S_appName', 1, true, 'S', '应用名', null, false),
-       ('策略集code', 'N_S_strategySetCode', 1, true, 'S', '策略集code', null, false),
-       ('策略code', 'N_S_strategyCode', 1, true, 'S', '策略code', null, false),
+       ('策略集code', 'N_S_policySetCode', 1, true, 'S', '策略集code', null, false),
+       ('策略code', 'N_S_policyCode', 1, true, 'S', '策略code', null, false),
        ('交易时间', 'N_D_transTime', 1, true, 'D', '交易时间', null, false),
        ('交易金额', 'N_F_transAmount', 1, true, 'F', '交易金额', null, false),
        ('交易流水号', 'N_S_transSerialNo', 1, true, 'S', '交易流水号', null, false),

@@ -32,8 +32,8 @@ public class Rule extends BasePO {
     /**
      * 策略id
      */
-    @TableField("strategy_id")
-    private Long strategyId;
+    @TableField("policy_id")
+    private Long policyId;
 
     /**
      * chain名

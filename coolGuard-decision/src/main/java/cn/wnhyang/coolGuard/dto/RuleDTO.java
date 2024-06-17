@@ -23,7 +23,7 @@ public class RuleDTO implements Serializable {
     /**
      * 策略id
      */
-    private Long strategyId;
+    private Long policyId;
 
     /**
      * chain名

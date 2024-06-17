@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.mapper;
 import cn.wnhyang.coolGuard.AdminApplication;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.vo.page.IndicatorByStrategySetPageVO;
+import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -30,8 +30,8 @@ public class IndicatorMapperTest {
 
     @Test
     public void test2() {
-        IndicatorByStrategySetPageVO pageParam = new IndicatorByStrategySetPageVO();
-        pageParam.setStrategySetId(1L);
+        IndicatorByPolicySetPageVO pageParam = new IndicatorByPolicySetPageVO();
+        pageParam.setPolicySetId(1L);
         pageParam.setPageNo(1).setPageSize(10);
         PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPage(pageParam, "Phone", "Phone_Login");
         log.info("indicatorPageResult: {}", indicatorPageResult);

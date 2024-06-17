@@ -8,7 +8,6 @@ import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.OutputFieldVO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -27,9 +26,6 @@ public class DecisionRequest implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 8326347921307896577L;
-
-    @Setter
-    private String routeStatus;
 
     private final String accessName;
 

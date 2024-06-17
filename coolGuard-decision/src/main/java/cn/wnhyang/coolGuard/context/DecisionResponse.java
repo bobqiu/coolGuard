@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.context;
 
-import cn.wnhyang.coolGuard.vo.StrategySetResult;
+import cn.wnhyang.coolGuard.vo.PolicySetResult;
 import lombok.Data;
 
 import java.io.Serial;
@@ -18,7 +18,7 @@ public class DecisionResponse implements Serializable {
     @Serial
     private static final long serialVersionUID = -1627715296419489019L;
 
-    private StrategySetResult strategySetResult;
+    private PolicySetResult policySetResult;
 
     private final Map<String, String> outputFields = new ConcurrentHashMap<>();
 

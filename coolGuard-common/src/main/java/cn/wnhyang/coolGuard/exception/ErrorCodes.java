@@ -38,12 +38,12 @@ public interface ErrorCodes {
 
     ErrorCode RULE_CODE_EXIST = new ErrorCode(1005001001, "规则code已存在");
 
-    ErrorCode STRATEGY_NOT_EXIST = new ErrorCode(1006001000, "策略不存在");
+    ErrorCode POLICY_NOT_EXIST = new ErrorCode(1006001000, "策略不存在");
 
-    ErrorCode STRATEGY_CODE_EXIST = new ErrorCode(1006001001, "策略code已存在");
+    ErrorCode POLICY_CODE_EXIST = new ErrorCode(1006001001, "策略code已存在");
 
-    ErrorCode STRATEGY_SET_NOT_EXIST = new ErrorCode(1006001002, "策略集不存在");
+    ErrorCode POLICY_SET_NOT_EXIST = new ErrorCode(1006001002, "策略集不存在");
 
-    ErrorCode STRATEGY_SET_CODE_EXIST = new ErrorCode(1006001003, "策略集code已存在");
+    ErrorCode POLICY_SET_CODE_EXIST = new ErrorCode(1006001003, "策略集code已存在");
 
 }

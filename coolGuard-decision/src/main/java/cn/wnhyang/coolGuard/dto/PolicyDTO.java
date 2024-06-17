@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @since 2024/04/04
  */
 @Data
-public class StrategyDTO implements Serializable {
+public class PolicyDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,7 +28,7 @@ public class StrategyDTO implements Serializable {
     /**
      * 策略集id
      */
-    private Long strategySetId;
+    private Long policySetId;
 
     /**
      * 策略编码

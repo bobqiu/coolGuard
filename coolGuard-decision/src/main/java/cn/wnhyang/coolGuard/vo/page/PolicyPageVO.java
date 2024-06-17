@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2024/04/04
  */
 @Data
-public class StrategyPageVO extends PageParam {
+public class PolicyPageVO extends PageParam {
 
     private static final long serialVersionUID = 1L;
 

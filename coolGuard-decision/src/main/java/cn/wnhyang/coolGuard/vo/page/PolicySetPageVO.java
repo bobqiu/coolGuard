@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2024/04/04
  */
 @Data
-public class StrategySetPageVO extends PageParam {
+public class PolicySetPageVO extends PageParam {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,12 +32,12 @@ public class StrategySetPageVO extends PageParam {
     /**
      * 策略编码
      */
-    private String strategyCode;
+    private String policyCode;
 
     /**
      * 策略名
      */
-    private String strategyName;
+    private String policyName;
 
     /**
      * 规则编码

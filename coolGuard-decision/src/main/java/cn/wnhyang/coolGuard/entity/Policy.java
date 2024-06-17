@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 /**
- * 策略集表
+ * 策略表
  *
  * @author wnhyang
  * @since 2024/04/04
@@ -18,8 +18,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_strategy_set")
-public class StrategySet extends BasePO {
+@TableName("de_policy")
+public class Policy extends BasePO {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,28 +30,40 @@ public class StrategySet extends BasePO {
     private Long id;
 
     /**
-     * app名
+     * chain名
      */
-    @TableField("app_name")
-    private String appName;
+    @TableField("chain_name")
+    private String chainName;
 
     /**
-     * 策略集编码
+     * 策略集id
+     */
+    @TableField("policy_set_id")
+    private Long policySetId;
+
+    /**
+     * 策略编码
      */
     @TableField("code")
     private String code;
 
     /**
-     * 策略集名
+     * 策略名
      */
     @TableField("name")
     private String name;
 
     /**
-     * 策略集状态
+     * 策略模式
+     */
+    @TableField("mode")
+    private String mode;
+
+    /**
+     * 策略状态，应该包含开启、关闭、待发布
      */
     @TableField("status")
-    private Boolean status;
+    private Integer status;
 
     /**
      * 描述

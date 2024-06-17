@@ -10,7 +10,6 @@ import cn.wnhyang.coolGuard.analysis.ad.Pca;
 import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoInfo;
 import cn.wnhyang.coolGuard.constant.FieldName;
-import cn.wnhyang.coolGuard.constant.RouteStatus;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.convert.FieldConvert;
 import cn.wnhyang.coolGuard.entity.Field;
@@ -100,7 +99,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public String testDynamicFieldScript(TestDynamicFieldScript testDynamicFieldScript) {
-        DecisionRequest decisionRequest = new DecisionRequest(RouteStatus.STRATEGY_SET_P, null, null, null, null, null);
+        DecisionRequest decisionRequest = new DecisionRequest(null, null, null, null, null);
         Map<String, String> params = testDynamicFieldScript.getParams();
         for (Map.Entry<String, String> entry : params.entrySet()) {
             Field field = fieldMapper.selectByName(entry.getKey());

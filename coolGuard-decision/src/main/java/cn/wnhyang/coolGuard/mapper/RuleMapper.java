@@ -32,20 +32,20 @@ public interface RuleMapper extends BaseMapperX<Rule> {
         return selectOne(Rule::getCode, code);
     }
 
-    @Cacheable(cacheNames = RedisKey.RULES + "::sId", key = "#strategyId", unless = "#result == null")
-    default List<Rule> selectByStrategyId(Long strategyId) {
-        return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getStrategyId, strategyId).orderByDesc(Rule::getSort));
+    @Cacheable(cacheNames = RedisKey.RULES + "::sId", key = "#policyId", unless = "#result == null")
+    default List<Rule> selectByPolicyId(Long policyId) {
+        return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getPolicyId, policyId).orderByDesc(Rule::getSort));
     }
 
-    @Cacheable(cacheNames = RedisKey.RULES + "::sId", key = "#strategyId+'-'+#status", unless = "#result == null")
-    default List<Rule> selectByStrategyIdAndStatus(Long strategyId, String status) {
-        return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getStrategyId, strategyId).eq(Rule::getStatus, status).orderByDesc(Rule::getSort));
+    @Cacheable(cacheNames = RedisKey.RULES + "::sId", key = "#policyId+'-'+#status", unless = "#result == null")
+    default List<Rule> selectByPolicyIdAndStatus(Long policyId, String status) {
+        return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getPolicyId, policyId).eq(Rule::getStatus, status).orderByDesc(Rule::getSort));
     }
 
-    default List<Long> selectStrategyId(String name, String code) {
+    default List<Long> selectPolicyId(String name, String code) {
         return selectObjs(new LambdaQueryWrapperX<Rule>()
                 .likeIfPresent(Rule::getName, name)
                 .eqIfPresent(Rule::getCode, code)
-                .select(Rule::getStrategyId));
+                .select(Rule::getPolicyId));
     }
 }

@@ -9,7 +9,7 @@ import lombok.Getter;
  **/
 @AllArgsConstructor
 @Getter
-public enum StrategyMode {
+public enum PolicyMode {
 
     ORDER("order"),
     WORST("worst"),
@@ -17,8 +17,8 @@ public enum StrategyMode {
 
     private final String mode;
 
-    public static StrategyMode getByMode(String mode) {
-        for (StrategyMode value : StrategyMode.values()) {
+    public static PolicyMode getByMode(String mode) {
+        for (PolicyMode value : PolicyMode.values()) {
             if (value.getMode().equals(mode)) {
                 return value;
             }

@@ -1,18 +1,18 @@
 package cn.wnhyang.coolGuard.service;
 
-import cn.wnhyang.coolGuard.entity.Strategy;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.vo.create.StrategyCreateVO;
-import cn.wnhyang.coolGuard.vo.page.StrategyPageVO;
-import cn.wnhyang.coolGuard.vo.update.StrategyUpdateVO;
+import cn.wnhyang.coolGuard.vo.PolicySetVO;
+import cn.wnhyang.coolGuard.vo.create.PolicySetCreateVO;
+import cn.wnhyang.coolGuard.vo.page.PolicySetPageVO;
+import cn.wnhyang.coolGuard.vo.update.PolicySetUpdateVO;
 
 /**
- * 策略表 服务类
+ * 策略集表 服务类
  *
  * @author wnhyang
  * @since 2024/04/04
  */
-public interface StrategyService {
+public interface PolicySetService {
 
     /**
      * 新建
@@ -20,21 +20,21 @@ public interface StrategyService {
      * @param createVO 新建VO
      * @return id
      */
-    Long createStrategy(StrategyCreateVO createVO);
+    Long createPolicySet(PolicySetCreateVO createVO);
 
     /**
      * 更新
      *
      * @param updateVO 更新VO
      */
-    void updateStrategy(StrategyUpdateVO updateVO);
+    void updatePolicySet(PolicySetUpdateVO updateVO);
 
     /**
      * 删除
      *
      * @param id id
      */
-    void deleteStrategy(Long id);
+    void deletePolicySet(Long id);
 
     /**
      * 查询单个
@@ -42,7 +42,7 @@ public interface StrategyService {
      * @param id id
      * @return po
      */
-    Strategy getStrategy(Long id);
+    PolicySetVO getPolicySet(Long id);
 
     /**
      * 分页查询
@@ -50,6 +50,6 @@ public interface StrategyService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<Strategy> pageStrategy(StrategyPageVO pageVO);
+    PageResult<PolicySetVO> pagePolicySet(PolicySetPageVO pageVO);
 
 }

@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.vo.update;
 
-import cn.wnhyang.coolGuard.vo.base.StrategyBaseVO;
+import cn.wnhyang.coolGuard.vo.base.PolicyBaseVO;
 import lombok.Data;
 
 import java.io.Serial;
@@ -12,7 +12,7 @@ import java.io.Serial;
  * @since 2024/04/04
  */
 @Data
-public class StrategyUpdateVO extends StrategyBaseVO {
+public class PolicyUpdateVO extends PolicyBaseVO {
 
     @Serial
     private static final long serialVersionUID = -4291651620526104689L;

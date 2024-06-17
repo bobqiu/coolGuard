@@ -53,8 +53,8 @@ public interface RedisKey {
 
     String ACCESS = "access";
 
-    String STRATEGY = "strategy";
+    String POLICY = "policy";
 
-    String STRATEGY_SET = "strategy_set";
+    String POLICY_SET = "policy_set";
 
 }

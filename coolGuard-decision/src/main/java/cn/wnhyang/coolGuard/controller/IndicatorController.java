@@ -6,7 +6,7 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
-import cn.wnhyang.coolGuard.vo.page.IndicatorByStrategySetPageVO;
+import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
 import jakarta.validation.Valid;
@@ -91,8 +91,8 @@ public class IndicatorController {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    @GetMapping("/strategySet/page")
-    public CommonResult<PageResult<IndicatorVO>> pageIndicatorByStrategySet(@Valid IndicatorByStrategySetPageVO pageVO) {
-        return success(IndicatorConvert.INSTANCE.convert(indicatorService.pageIndicatorByStrategySet(pageVO)));
+    @GetMapping("/policySet/page")
+    public CommonResult<PageResult<IndicatorVO>> pageIndicatorByPolicySet(@Valid IndicatorByPolicySetPageVO pageVO) {
+        return success(IndicatorConvert.INSTANCE.convert(indicatorService.pageIndicatorByPolicySet(pageVO)));
     }
 }

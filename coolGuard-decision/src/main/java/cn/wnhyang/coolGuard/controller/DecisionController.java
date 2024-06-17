@@ -26,7 +26,7 @@ public class DecisionController {
     private final DecisionService decisionService;
 
     /**
-     * 同步风险
+     * 同步决策
      *
      * @param name   服务名
      * @param params 参数
@@ -38,7 +38,7 @@ public class DecisionController {
     }
 
     /**
-     * 异步风险
+     * 异步决策
      *
      * @param name   服务名
      * @param params 参数

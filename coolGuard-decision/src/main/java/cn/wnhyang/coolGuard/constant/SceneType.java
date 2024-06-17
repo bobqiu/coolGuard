@@ -14,7 +14,7 @@ public interface SceneType {
     /**
      * 策略集场景
      */
-    String STRATEGY_SET = "strategySet";
+    String POLICY_SET = "policySet";
 
 
 }

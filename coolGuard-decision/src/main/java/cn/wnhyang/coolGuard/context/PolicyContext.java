@@ -15,13 +15,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2024/4/3
  **/
 @Data
-public class StrategyContext {
+public class PolicyContext {
 
     private final Map<Long, Disposal> disposalMap = new ConcurrentHashMap<>();
 
-    private StrategySetVO strategySetVO;
+    private PolicySetVO policySetVO;
 
-    private final Map<Long, StrategyVO> strategyMap = new ConcurrentHashMap<>();
+    private final Map<Long, PolicyVO> policyMap = new ConcurrentHashMap<>();
 
     private final Map<Long, List<RuleVO>> ruleListMap = new ConcurrentHashMap<>();
 
@@ -37,16 +37,16 @@ public class StrategyContext {
         return disposalMap.containsKey(id);
     }
 
-    public void addStrategy(Long id, StrategyVO strategyVO) {
-        strategyMap.put(id, strategyVO);
+    public void addPolicy(Long id, PolicyVO policyVO) {
+        policyMap.put(id, policyVO);
     }
 
-    public StrategyVO getStrategy(Long id) {
-        return strategyMap.get(id);
+    public PolicyVO getPolicy(Long id) {
+        return policyMap.get(id);
     }
 
-    public boolean hasStrategy(Long id) {
-        return strategyMap.containsKey(id);
+    public boolean hasPolicy(Long id) {
+        return policyMap.containsKey(id);
     }
 
     public void initRuleList(Long id) {
@@ -65,18 +65,18 @@ public class StrategyContext {
         return ruleListMap.containsKey(id);
     }
 
-    public StrategySetResult convert() {
-        StrategySetResult strategySetResult = new StrategySetResult(strategySetVO.getName(), strategySetVO.getCode());
+    public PolicySetResult convert() {
+        PolicySetResult policySetResult = new PolicySetResult(policySetVO.getName(), policySetVO.getCode());
         // TODO
-        strategySetResult.setDisposalName("通过");
-        strategySetResult.setDisposalCode("pass");
-        for (Map.Entry<Long, StrategyVO> entry : strategyMap.entrySet()) {
-            StrategyVO strategyVO = entry.getValue();
-            StrategyResult strategyResult = new StrategyResult(strategyVO.getName(), strategyVO.getCode(), strategyVO.getMode());
+        policySetResult.setDisposalName("通过");
+        policySetResult.setDisposalCode("pass");
+        for (Map.Entry<Long, PolicyVO> entry : policyMap.entrySet()) {
+            PolicyVO policyVO = entry.getValue();
+            PolicyResult policyResult = new PolicyResult(policyVO.getName(), policyVO.getCode(), policyVO.getMode());
             // TODO
-            strategyResult.setDisposalName("通过");
-            strategyResult.setDisposalCode("pass");
-            List<RuleVO> ruleVOList = ruleListMap.get(strategyVO.getId());
+            policyResult.setDisposalName("通过");
+            policyResult.setDisposalCode("pass");
+            List<RuleVO> ruleVOList = ruleListMap.get(policyVO.getId());
             if (CollUtil.isNotEmpty(ruleVOList)) {
                 for (RuleVO ruleVO : ruleVOList) {
                     RuleResult ruleResult = new RuleResult(ruleVO.getName(), ruleVO.getCode());
@@ -87,13 +87,13 @@ public class StrategyContext {
                         ruleResult.setDisposalCode(disposal.getCode());
                     }
                     ruleResult.setScore(ruleVO.getScore());
-                    strategyResult.addRuleResult(ruleResult);
+                    policyResult.addRuleResult(ruleResult);
                 }
             }
-            strategySetResult.addStrategyResult(strategyResult);
+            policySetResult.addPolicyResult(policyResult);
         }
 
-        return strategySetResult;
+        return policySetResult;
     }
 
 }

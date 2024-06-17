@@ -1,10 +1,9 @@
 package cn.wnhyang.coolGuard.service.impl;
 
-import cn.wnhyang.coolGuard.constant.RouteStatus;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.context.DecisionResponse;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
-import cn.wnhyang.coolGuard.context.StrategyContext;
+import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.entity.Access;
 import cn.wnhyang.coolGuard.entity.Disposal;
 import cn.wnhyang.coolGuard.mapper.DisposalMapper;
@@ -48,14 +47,14 @@ public class DecisionServiceImpl implements DecisionService {
         List<InputFieldVO> inputFields = accessService.getAccessInputFieldList(access.getId());
         List<OutputFieldVO> outputFields = accessService.getAccessOutputFieldList(access.getId());
 
-        DecisionRequest decisionRequest = new DecisionRequest(RouteStatus.STRATEGY_SET_P, name, params, access, inputFields, outputFields);
-        StrategyContext strategyContext = new StrategyContext();
+        DecisionRequest decisionRequest = new DecisionRequest(name, params, access, inputFields, outputFields);
+        PolicyContext policyContext = new PolicyContext();
         for (Disposal disposal : disposalMapper.selectList()) {
-            strategyContext.addDisposal(disposal.getId(), disposal);
+            policyContext.addDisposal(disposal.getId(), disposal);
         }
         IndicatorContext indicatorContext = new IndicatorContext();
 
-        LiteflowResponse syncRisk = flowExecutor.execute2Resp("decisionChain", null, decisionRequest, indicatorContext, strategyContext, decisionResponse);
+        LiteflowResponse syncRisk = flowExecutor.execute2Resp("decisionChain", null, decisionRequest, indicatorContext, policyContext, decisionResponse);
 
 
         return decisionResponse;

@@ -53,8 +53,8 @@ class ConfigFieldTest {
     void test02() throws JsonProcessingException {
         String json = "[\n" +
                 "{\"paramName\":\"appName\",\"required\":false,\"fieldName\":\"N_S_appName\"},\n" +
-                "{\"paramName\":\"strategySetCode\",\"required\":false,\"fieldName\":\"N_S_strategySetCode\"},\n" +
-                "{\"paramName\":\"strategyCode\",\"required\":false,\"fieldName\":\"N_S_strategyCode\"},\n" +
+                "{\"paramName\":\"policySetCode\",\"required\":false,\"fieldName\":\"N_S_policySetCode\"},\n" +
+                "{\"paramName\":\"policyCode\",\"required\":false,\"fieldName\":\"N_S_policyCode\"},\n" +
                 "{\"paramName\":\"transTime\",\"required\":false,\"fieldName\":\"N_D_transTime\"},\n" +
                 "{\"paramName\":\"transAmount\",\"required\":false,\"fieldName\":\"N_F_transAmount\"},\n" +
                 "{\"paramName\":\"transSerialNo\",\"required\":false,\"fieldName\":\"N_S_transSerialNo\"},\n" +

@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.context.StrategyContext;
+import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
 import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.mapper.RuleMapper;
@@ -72,11 +72,11 @@ public class RuleServiceImpl implements RuleService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "ruleProcess", nodeType = NodeTypeEnum.COMMON)
     public void ruleProcess(NodeComponent bindCmp) {
         String tag = bindCmp.getTag();
-        StrategyContext strategyContext = bindCmp.getContextBean(StrategyContext.class);
+        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
         Rule rule = ruleMapper.selectById(tag);
         RuleVO ruleVO = RuleConvert.INSTANCE.convert(rule);
         log.info("命中规则(id:{}, name:{}, code:{})", ruleVO.getId(), ruleVO.getName(), ruleVO.getCode());
-        strategyContext.addRuleVO(ruleVO.getStrategyId(), ruleVO);
+        policyContext.addRuleVO(ruleVO.getPolicyId(), ruleVO);
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "ruleFalse", nodeType = NodeTypeEnum.COMMON)

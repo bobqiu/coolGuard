@@ -4,7 +4,7 @@ package cn.wnhyang.coolGuard.constant;
  * @author wnhyang
  * @date 2024/5/10
  **/
-public interface StrategyStatus {
+public interface PolicyStatus {
 
     String ON = "on";
 

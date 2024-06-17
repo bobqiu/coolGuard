@@ -5,16 +5,16 @@ import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.entity.Indicator;
-import cn.wnhyang.coolGuard.entity.StrategySet;
+import cn.wnhyang.coolGuard.entity.PolicySet;
 import cn.wnhyang.coolGuard.enums.WinSize;
 import cn.wnhyang.coolGuard.indicator.AbstractIndicator;
 import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
-import cn.wnhyang.coolGuard.mapper.StrategySetMapper;
+import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
-import cn.wnhyang.coolGuard.vo.page.IndicatorByStrategySetPageVO;
+import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
@@ -42,12 +42,12 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     private final IndicatorMapper indicatorMapper;
 
-    private final StrategySetMapper strategySetMapper;
+    private final PolicySetMapper policySetMapper;
 
-    public IndicatorServiceImpl(List<AbstractIndicator> indicatorList, IndicatorMapper indicatorMapper, StrategySetMapper strategySetMapper) {
+    public IndicatorServiceImpl(List<AbstractIndicator> indicatorList, IndicatorMapper indicatorMapper, PolicySetMapper policySetMapper) {
         addIndicator(indicatorList);
         this.indicatorMapper = indicatorMapper;
-        this.strategySetMapper = strategySetMapper;
+        this.policySetMapper = policySetMapper;
     }
 
     private void addIndicator(List<AbstractIndicator> indicatorList) {
@@ -85,11 +85,11 @@ public class IndicatorServiceImpl implements IndicatorService {
     }
 
     @Override
-    public PageResult<Indicator> pageIndicatorByStrategySet(IndicatorByStrategySetPageVO pageVO) {
-        Long strategySetId = pageVO.getStrategySetId();
-        StrategySet strategySet = strategySetMapper.selectById(strategySetId);
-        if (ObjectUtil.isNotNull(strategySet)) {
-            indicatorMapper.selectPage(pageVO, strategySet.getAppName(), strategySet.getCode());
+    public PageResult<Indicator> pageIndicatorByPolicySet(IndicatorByPolicySetPageVO pageVO) {
+        Long policySetId = pageVO.getPolicySetId();
+        PolicySet policySet = policySetMapper.selectById(policySetId);
+        if (ObjectUtil.isNotNull(policySet)) {
+            indicatorMapper.selectPage(pageVO, policySet.getAppName(), policySet.getCode());
         }
         return PageResult.empty();
     }

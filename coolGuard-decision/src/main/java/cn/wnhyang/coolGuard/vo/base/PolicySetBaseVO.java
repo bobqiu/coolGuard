@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @date 2024/4/16
  **/
 @Data
-public class StrategySetBaseVO implements Serializable {
+public class PolicySetBaseVO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -267362598649710050L;

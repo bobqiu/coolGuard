@@ -42,12 +42,12 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
     default PageResult<Indicator> selectPage(PageParam pageVO, String appName, String code) {
         return selectPage(pageVO, new LambdaQueryWrapperX<Indicator>()
                 .and(q -> q.eq(Indicator::getSceneType, SceneType.APP).eq(Indicator::getScene, appName))
-                .or(q -> q.eq(Indicator::getSceneType, SceneType.STRATEGY_SET).eq(Indicator::getScene, code)));
+                .or(q -> q.eq(Indicator::getSceneType, SceneType.POLICY_SET).eq(Indicator::getScene, code)));
     }
 
     default List<Indicator> selectList(String appName, String code) {
         return selectList(new LambdaQueryWrapperX<Indicator>()
                 .and(q -> q.eq(Indicator::getSceneType, SceneType.APP).eq(Indicator::getScene, appName))
-                .or(q -> q.eq(Indicator::getSceneType, SceneType.STRATEGY_SET).eq(Indicator::getScene, code)));
+                .or(q -> q.eq(Indicator::getSceneType, SceneType.POLICY_SET).eq(Indicator::getScene, code)));
     }
 }

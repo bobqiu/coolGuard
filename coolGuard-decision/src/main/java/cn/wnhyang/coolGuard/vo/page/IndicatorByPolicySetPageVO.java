@@ -11,11 +11,11 @@ import java.io.Serial;
  * @date 2024/5/8
  **/
 @Data
-public class IndicatorByStrategySetPageVO extends PageParam {
+public class IndicatorByPolicySetPageVO extends PageParam {
 
     @Serial
     private static final long serialVersionUID = -3210964069305813159L;
 
     @NotNull(message = "策略集id不能为空")
-    private Long strategySetId;
+    private Long policySetId;
 }

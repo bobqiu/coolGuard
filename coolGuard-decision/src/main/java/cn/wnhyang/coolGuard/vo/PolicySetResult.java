@@ -13,10 +13,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @date 2024/4/8
  **/
 @Getter
-public class StrategyResult implements Serializable {
+public class PolicySetResult implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 4730115285395630037L;
+    private static final long serialVersionUID = 2469991094328679575L;
 
     /**
      * 策略名称
@@ -24,14 +24,9 @@ public class StrategyResult implements Serializable {
     private final String name;
 
     /**
-     * 策略编码
+     * 策略集编码
      */
     private final String code;
-
-    /**
-     * 策略模式
-     */
-    private final String mode;
 
     /**
      * 处置名称
@@ -45,18 +40,18 @@ public class StrategyResult implements Serializable {
     @Setter
     private String disposalCode;
 
-    public StrategyResult(String name, String code, String mode) {
+    public PolicySetResult(String name, String code) {
         this.name = name;
         this.code = code;
-        this.mode = mode;
     }
 
     /**
-     * 规则处置结果
+     * 策略集处置结果
      */
-    private final List<RuleResult> ruleResultList = new CopyOnWriteArrayList<>();
+    private final List<PolicyResult> policyResultList = new CopyOnWriteArrayList<>();
 
-    public void addRuleResult(RuleResult ruleResult) {
-        ruleResultList.add(ruleResult);
+    public void addPolicyResult(PolicyResult policyResult) {
+        policyResultList.add(policyResult);
     }
+
 }
