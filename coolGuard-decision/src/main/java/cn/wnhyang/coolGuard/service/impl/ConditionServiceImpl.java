@@ -8,7 +8,7 @@ import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.convert.ConditionConvert;
 import cn.wnhyang.coolGuard.entity.Condition;
 import cn.wnhyang.coolGuard.enums.FieldType;
-import cn.wnhyang.coolGuard.enums.OperateType;
+import cn.wnhyang.coolGuard.enums.LogicType;
 import cn.wnhyang.coolGuard.mapper.ConditionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ConditionService;
@@ -86,7 +86,7 @@ public class ConditionServiceImpl implements ConditionService {
         FieldType fieldType = FieldType.getByFieldName(fieldName);
 
 
-        OperateType byType = OperateType.getByType(condition.getOperateType());
+        LogicType byType = LogicType.getByType(condition.getOperateType());
 
         String expectValue = condition.getExpectValue();
         if (ExpectType.CONTEXT.equals(condition.getExpectedType())) {

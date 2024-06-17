@@ -9,7 +9,7 @@ import lombok.Getter;
  **/
 @AllArgsConstructor
 @Getter
-public enum OperateType {
+public enum LogicType {
 
     NULL("null"),
     NOT_NULL("not_null"),
@@ -24,14 +24,19 @@ public enum OperateType {
     PREFIX("prefix"),
     NOT_PREFIX("not_prefix"),
     SUFFIX("suffix"),
-    NOT_SUFFIX("not_suffix");
+    NOT_SUFFIX("not_suffix"),
+
+    MATCH("match"),
+    NOT_MATCH("not_match"),
+    MATCH_IGNORE_CASE("match_ignore_case"),
+    NOT_MATCH_IGNORE_CASE("not_match_ignore_case");
 
     private final String type;
 
-    public static OperateType getByType(String type) {
-        for (OperateType operateType : OperateType.values()) {
-            if (operateType.getType().equals(type)) {
-                return operateType;
+    public static LogicType getByType(String type) {
+        for (LogicType logicType : LogicType.values()) {
+            if (logicType.getType().equals(type)) {
+                return logicType;
             }
         }
         return null;

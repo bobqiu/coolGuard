@@ -1,9 +1,13 @@
 package cn.wnhyang.coolGuard.util;
 
+import cn.hutool.core.util.ReUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.fun.LogicOp;
 import cn.wnhyang.coolGuard.fun.StartTimePointFun;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Objects;
 
 /**
  * @author wnhyang
@@ -50,5 +54,80 @@ public class FunUtil {
         LocalDateTime now = LocalDateTime.now();
         return now.minusDays(30);
     };
+
+    public LogicOp<String> stringLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
+        case NULL -> StrUtil.isBlank(a);
+        case NOT_NULL -> !StrUtil.isBlank(a);
+        case EQ -> a.equals(b);
+        case NOT_EQ -> !a.equals(b);
+        case CONTAINS -> a.contains(b);
+        case NOT_CONTAINS -> !a.contains(b);
+        case PREFIX -> a.startsWith(b);
+        case NOT_PREFIX -> !a.startsWith(b);
+        case SUFFIX -> a.endsWith(b);
+        case NOT_SUFFIX -> !a.endsWith(b);
+        default -> false;
+    };
+
+    public LogicOp<Integer> integerLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
+        case NULL -> a == null;
+        case NOT_NULL -> a != null;
+        case EQ -> a.equals(b);
+        case NOT_EQ -> !a.equals(b);
+        case LT -> a < b;
+        case LTE -> a <= b;
+        case GT -> a > b;
+        case GTE -> a >= b;
+        default -> false;
+    };
+
+    public LogicOp<Double> doubleLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
+        case NULL -> a == null;
+        case NOT_NULL -> a != null;
+        case EQ -> a.equals(b);
+        case NOT_EQ -> !a.equals(b);
+        case LT -> a < b;
+        case LTE -> a <= b;
+        case GT -> a > b;
+        case GTE -> a >= b;
+        default -> false;
+    };
+
+    public LogicOp<LocalDateTime> dateLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
+        case NULL -> a == null;
+        case NOT_NULL -> a != null;
+        case EQ -> a.equals(b);
+        case NOT_EQ -> !a.equals(b);
+        case LT -> a.isBefore(b);
+        case LTE -> a.isBefore(b) || a.equals(b);
+        case GT -> a.isAfter(b);
+        case GTE -> a.isAfter(b) || a.equals(b);
+        default -> false;
+    };
+
+    public LogicOp<String> enumLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
+        case NULL -> a == null;
+        case NOT_NULL -> a != null;
+        case EQ -> a.equals(b);
+        case NOT_EQ -> !a.equals(b);
+        default -> false;
+    };
+
+    public LogicOp<Boolean> booleanLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
+        case NULL -> a == null;
+        case NOT_NULL -> a != null;
+        case EQ -> a.equals(b);
+        case NOT_EQ -> !a.equals(b);
+        default -> false;
+    };
+
+    public LogicOp<String> regularLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
+        case MATCH -> ReUtil.isMatch(b, a);
+        case MATCH_IGNORE_CASE -> ReUtil.isMatch("(?i)" + b, a);
+        case NOT_MATCH -> !ReUtil.isMatch(b, a);
+        case NOT_MATCH_IGNORE_CASE -> !ReUtil.isMatch("(?i)" + b, a);
+        default -> false;
+    };
+
 
 }
