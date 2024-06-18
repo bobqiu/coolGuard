@@ -5,8 +5,8 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author wnhyang
@@ -48,10 +48,10 @@ public class PolicySetResult implements Serializable {
     /**
      * 策略集处置结果
      */
-    private final List<PolicyResult> policyResultList = new CopyOnWriteArrayList<>();
+    private final List<PolicyResult> policyResults = new ArrayList<>();
 
     public void addPolicyResult(PolicyResult policyResult) {
-        policyResultList.add(policyResult);
+        policyResults.add(policyResult);
     }
 
 }

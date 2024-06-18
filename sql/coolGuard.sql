@@ -60,8 +60,9 @@ create table de_condition
 (
     id           bigint auto_increment comment '主键'
         primary key,
-    field_name   varchar(32)                 default ''                not null comment '字段名',
-    operate_type varchar(32)                 default 'null'            not null comment '操作类型',
+    type         varchar(20)                 default 'normal'          not null comment '类型',
+    value        varchar(32)                 default ''                not null comment '操作对象',
+    logic_type   varchar(32)                 default 'null'            not null comment '逻辑类型',
     expect_type  varchar(32)                 default 'input'           not null comment '期望值类型',
     expect_value varchar(32)                 default ''                not null comment '期望值',
     description  varchar(64) charset utf8mb4 default ''                null comment '描述',
@@ -195,6 +196,46 @@ create table de_list_set
 )
     comment '名单集表';
 
+create table de_policy
+(
+    id            bigint auto_increment comment '主键'
+        primary key,
+    chain_name    varchar(64)                                           not null,
+    policy_set_id bigint                      default 0                 not null comment '策略集id',
+    code          varchar(64)                 default ''                not null comment '策略编码',
+    name          varchar(64)                 default ''                not null comment '策略名',
+    mode          varchar(32)                 default 'order'           not null comment '策略模式',
+    status        int                         default 0                 not null comment '策略状态',
+    description   varchar(64) charset utf8mb4 default ''                null comment '描述',
+    creator       varchar(64) charset utf8mb4 default ''                null comment '创建者',
+    create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater       varchar(64) charset utf8mb4 default ''                null comment '更新者',
+    update_time   datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted       bit                         default b'0'              not null comment '是否删除',
+    constraint uk_code
+        unique (code)
+)
+    comment '策略表';
+
+create table de_policy_set
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    app_name    varchar(32)                 default 'ALL'             not null comment '应用名',
+    code        varchar(64)                 default ''                not null comment '策略集编码',
+    name        varchar(64)                 default ''                not null comment '策略集名',
+    status      bit                         default b'0'              not null comment '策略集状态',
+    description varchar(64) charset utf8mb4 default ''                null comment '描述',
+    creator     varchar(64) charset utf8mb4 default ''                null comment '创建者',
+    create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater     varchar(64) charset utf8mb4 default ''                null comment '更新者',
+    update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted     bit                         default b'0'              not null comment '是否删除',
+    constraint uk_code
+        unique (code)
+)
+    comment '策略集表';
+
 create table de_rule
 (
     id          bigint auto_increment comment '主键'
@@ -238,45 +279,6 @@ create table de_rule_script
 )
     comment '规则脚本表';
 
-create table de_policy
-(
-    id            bigint auto_increment comment '主键'
-        primary key,
-    chain_name    varchar(64)                                           not null,
-    policy_set_id bigint                      default 0                 not null comment '策略集id',
-    code          varchar(64)                 default ''                not null comment '策略编码',
-    name          varchar(64)                 default ''                not null comment '策略名',
-    mode          varchar(32)                 default 'order'           not null comment '策略模式',
-    status        int                         default 0                 not null comment '策略状态',
-    description   varchar(64) charset utf8mb4 default ''                null comment '描述',
-    creator       varchar(64) charset utf8mb4 default ''                null comment '创建者',
-    create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater       varchar(64) charset utf8mb4 default ''                null comment '更新者',
-    update_time   datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    deleted       bit                         default b'0'              not null comment '是否删除',
-    constraint uk_code
-        unique (code)
-)
-    comment '策略表';
-
-create table de_policy_set
-(
-    id          bigint auto_increment comment '主键'
-        primary key,
-    app_name    varchar(32)                 default 'ALL'             not null comment '应用名',
-    code        varchar(64)                 default ''                not null comment '策略集编码',
-    name        varchar(64)                 default ''                not null comment '策略集名',
-    status      bit                         default b'0'              not null comment '策略集状态',
-    description varchar(64) charset utf8mb4 default ''                null comment '描述',
-    creator     varchar(64) charset utf8mb4 default ''                null comment '创建者',
-    create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater     varchar(64) charset utf8mb4 default ''                null comment '更新者',
-    update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    deleted     bit                         default b'0'              not null comment '是否删除',
-    constraint uk_code
-        unique (code)
-)
-    comment '策略集表';
 
 
 # TODO 数据，名单集、名单数据、标签、数据源、数据集

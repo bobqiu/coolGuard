@@ -30,16 +30,22 @@ public class Condition extends BasePO {
     private Long id;
 
     /**
-     * 字段名
+     * 条件类型
      */
-    @TableField("field_name")
-    private String fieldName;
+    @TableField("type")
+    private String type;
+
+    /**
+     * 操作对象
+     */
+    @TableField("value")
+    private String value;
 
     /**
      * 操作类型
      */
-    @TableField("operate_type")
-    private String operateType;
+    @TableField("logic_type")
+    private String logicType;
 
     /**
      * 期望类型

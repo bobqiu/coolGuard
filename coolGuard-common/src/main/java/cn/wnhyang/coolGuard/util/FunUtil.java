@@ -4,6 +4,7 @@ import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.fun.LogicOp;
 import cn.wnhyang.coolGuard.fun.StartTimePointFun;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -13,6 +14,7 @@ import java.util.Objects;
  * @author wnhyang
  * @date 2024/5/16
  **/
+@Slf4j
 public class FunUtil {
 
     private FunUtil() {

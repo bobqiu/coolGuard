@@ -21,19 +21,19 @@ public class ConditionDTO implements Serializable {
     private Long id;
 
     /**
-     * chain名
+     * 条件类型
      */
-    private String chainName;
+    private String type;
 
     /**
-     * 字段名
+     * 操作对象
      */
-    private String fieldName;
+    private String value;
 
     /**
      * 操作类型
      */
-    private String operateType;
+    private String logicType;
 
     /**
      * 期望类型

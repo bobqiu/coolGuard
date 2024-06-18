@@ -29,4 +29,8 @@ public class IndicatorContext {
         indicatorMap.get(id).setValue(String.valueOf(value));
     }
 
+    public String getIndicatorValue(Long id) {
+        return indicatorMap.get(id).getValue();
+    }
+
 }

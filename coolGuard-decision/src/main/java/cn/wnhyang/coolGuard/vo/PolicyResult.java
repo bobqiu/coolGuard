@@ -5,8 +5,8 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author wnhyang
@@ -52,11 +52,20 @@ public class PolicyResult implements Serializable {
     }
 
     /**
-     * 规则处置结果
+     * 正式规则处置结果
      */
-    private final List<RuleResult> ruleResultList = new CopyOnWriteArrayList<>();
+    private final List<RuleResult> ruleResults = new ArrayList<>();
+
+    /**
+     * 模拟规则处置结果
+     */
+    private final List<RuleResult> mockRuleResults = new ArrayList<>();
 
     public void addRuleResult(RuleResult ruleResult) {
-        ruleResultList.add(ruleResult);
+        ruleResults.add(ruleResult);
+    }
+
+    public void addMockRuleResult(RuleResult ruleResult) {
+        mockRuleResults.add(ruleResult);
     }
 }

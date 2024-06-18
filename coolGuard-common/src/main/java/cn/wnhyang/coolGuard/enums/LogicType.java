@@ -26,9 +26,24 @@ public enum LogicType {
     SUFFIX("suffix"),
     NOT_SUFFIX("not_suffix"),
 
+    /**
+     * 适用正则、名单条件
+     */
     MATCH("match"),
+
+    /**
+     * 适用正则、名单条件
+     */
     NOT_MATCH("not_match"),
+
+    /**
+     * 适用正则条件
+     */
     MATCH_IGNORE_CASE("match_ignore_case"),
+
+    /**
+     * 适用正则条件
+     */
     NOT_MATCH_IGNORE_CASE("not_match_ignore_case");
 
     private final String type;

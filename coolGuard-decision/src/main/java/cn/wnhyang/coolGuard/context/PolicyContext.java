@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.context;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.entity.Disposal;
 import cn.wnhyang.coolGuard.vo.*;
 import lombok.Data;
@@ -67,31 +68,38 @@ public class PolicyContext {
 
     public PolicySetResult convert() {
         PolicySetResult policySetResult = new PolicySetResult(policySetVO.getName(), policySetVO.getCode());
-        // TODO
-        policySetResult.setDisposalName("通过");
-        policySetResult.setDisposalCode("pass");
+
         for (Map.Entry<Long, PolicyVO> entry : policyMap.entrySet()) {
             PolicyVO policyVO = entry.getValue();
             PolicyResult policyResult = new PolicyResult(policyVO.getName(), policyVO.getCode(), policyVO.getMode());
-            // TODO
-            policyResult.setDisposalName("通过");
-            policyResult.setDisposalCode("pass");
+
             List<RuleVO> ruleVOList = ruleListMap.get(policyVO.getId());
             if (CollUtil.isNotEmpty(ruleVOList)) {
                 for (RuleVO ruleVO : ruleVOList) {
                     RuleResult ruleResult = new RuleResult(ruleVO.getName(), ruleVO.getCode());
-                    // TODO 模拟规则不返回
+
                     Disposal disposal = disposalMap.get(ruleVO.getDisposalId());
                     if (null != disposal) {
                         ruleResult.setDisposalName(disposal.getName());
                         ruleResult.setDisposalCode(disposal.getCode());
                     }
                     ruleResult.setScore(ruleVO.getScore());
-                    policyResult.addRuleResult(ruleResult);
+                    // 模拟/正式规则区分开
+                    if (RuleStatus.MOCK.equals(ruleVO.getStatus())) {
+                        policyResult.addMockRuleResult(ruleResult);
+                    } else {
+                        policyResult.addRuleResult(ruleResult);
+                    }
                 }
             }
+            // TODO 根据策略模式确定处置结果
+            policyResult.setDisposalName("通过");
+            policyResult.setDisposalCode("pass");
             policySetResult.addPolicyResult(policyResult);
         }
+        // TODO
+        policySetResult.setDisposalName("通过");
+        policySetResult.setDisposalCode("pass");
 
         return policySetResult;
     }

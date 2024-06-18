@@ -84,8 +84,10 @@ public class PolicyServiceImpl implements PolicyService {
         PolicyVO policy = policyContext.getPolicy(Long.valueOf(tag));
         log.info("当前策略(id:{}, name:{}, code:{})", policy.getId(), policy.getName(), policy.getCode());
 
+        // TODO 路由规则运行
+
+        List<Rule> ruleList = ruleMapper.selectByPolicyId(policy.getId());
         // TODO 开启和模拟状态规则都要运行
-        List<Rule> ruleList = ruleMapper.selectByPolicyIdAndStatus(policy.getId(), "1");
         if (CollUtil.isEmpty(ruleList)) {
             log.info("策略(name:{})下没有规则运行", policy.getName());
             return;
@@ -96,21 +98,6 @@ public class PolicyServiceImpl implements PolicyService {
 
         bindCmp.invoke2Resp(policy.getChainName(), null);
 
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "policyOrder", nodeType = NodeTypeEnum.COMMON)
-    public void policyOrder(NodeComponent bindCmp) {
-        log.info("策略顺序");
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "policyWorst", nodeType = NodeTypeEnum.COMMON)
-    public void policyWorst(NodeComponent bindCmp) {
-        log.info("策略最坏");
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "policyWeight", nodeType = NodeTypeEnum.COMMON)
-    public void policyWeight(NodeComponent bindCmp) {
-        log.info("策略权重");
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.IS_END, nodeId = "policyProcess", nodeType = NodeTypeEnum.COMMON)

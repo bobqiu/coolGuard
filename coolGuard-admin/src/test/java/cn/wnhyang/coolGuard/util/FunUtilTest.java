@@ -22,7 +22,7 @@ public class FunUtilTest {
 
     @Test
     public void test1() {
-        boolean b = FunUtil.INSTANCE.stringLogicOp.logicOp("123", LogicType.EQ, "123");
+        boolean b = FunUtil.INSTANCE.stringLogicOp.apply("123", LogicType.EQ, "123");
         log.info("b: {}", Optional.of(b));
     }
 }
