@@ -7,6 +7,8 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.ListDataPageVO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 名单数据表 Mapper 接口
  *
@@ -19,5 +21,10 @@ public interface ListDataMapper extends BaseMapperX<ListData> {
     default PageResult<ListData> selectPage(ListDataPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<ListData>()
                 .inIfPresent(ListData::getValue, pageVO.getValue()));
+    }
+
+    default List<String> selectList(Long setId) {
+        return selectObjs(new LambdaQueryWrapperX<ListData>()
+                .eq(ListData::getListSetId, setId).select(ListData::getValue));
     }
 }

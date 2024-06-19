@@ -6,6 +6,8 @@ import cn.wnhyang.coolGuard.vo.create.DisposalCreateVO;
 import cn.wnhyang.coolGuard.vo.page.DisposalPageVO;
 import cn.wnhyang.coolGuard.vo.update.DisposalUpdateVO;
 
+import java.util.List;
+
 /**
  * 处置表 服务类
  *
@@ -51,5 +53,12 @@ public interface DisposalService {
      * @return pageResult
      */
     PageResult<Disposal> pageDisposal(DisposalPageVO pageVO);
+
+    /**
+     * 查询列表
+     *
+     * @return list
+     */
+    List<Disposal> listDisposal();
 
 }

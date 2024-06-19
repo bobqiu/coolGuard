@@ -6,6 +6,8 @@ package cn.wnhyang.coolGuard.constant;
  **/
 public interface RedisKey {
 
+    String LOCK = "lock";
+
     /**
      * 指标
      */
@@ -56,5 +58,9 @@ public interface RedisKey {
     String POLICY = "policy";
 
     String POLICY_SET = "policy_set";
+
+    String LIST_DATA = "list_data";
+
+    String VALUES = "values";
 
 }

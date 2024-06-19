@@ -1,8 +1,12 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.convert.ListDataConvert;
 import cn.wnhyang.coolGuard.entity.ListData;
+import cn.wnhyang.coolGuard.entity.ListSet;
 import cn.wnhyang.coolGuard.mapper.ListDataMapper;
+import cn.wnhyang.coolGuard.mapper.ListSetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ListDataService;
 import cn.wnhyang.coolGuard.vo.create.ListDataCreateVO;
@@ -10,8 +14,16 @@ import cn.wnhyang.coolGuard.vo.page.ListDataPageVO;
 import cn.wnhyang.coolGuard.vo.update.ListDataUpdateVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RList;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 名单数据表 服务实现类
@@ -25,6 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ListDataServiceImpl implements ListDataService {
 
     private final ListDataMapper listDataMapper;
+
+    private final ListSetMapper listSetMapper;
+
+    private final RedissonClient redissonClient;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -55,6 +71,50 @@ public class ListDataServiceImpl implements ListDataService {
     @Override
     public PageResult<ListData> page(ListDataPageVO pageVO) {
         return listDataMapper.selectPage(pageVO);
+    }
+
+    @Override
+    public List<String> getListData(Long setId) {
+        RList<String> values = redissonClient.getList(RedisKey.LIST_DATA + RedisKey.VALUES);
+        // 使用分布式锁
+        RLock lock = redissonClient.getLock(RedisKey.LIST_DATA + RedisKey.LOCK + setId);
+        try {
+            // 尝试获取锁，最多等待10秒
+            lock.lock(10, TimeUnit.SECONDS);
+
+            if (!values.isEmpty()) {
+                return values.readAll();
+            }
+
+            List<String> listDataList = listDataMapper.selectList(setId);
+            if (!listDataList.isEmpty()) {
+                values.addAll(listDataList);
+                values.expire(Duration.ofMinutes(30));
+            }
+            return listDataList;
+        } catch (Exception e) {
+            log.error("Failed to process getListData for setId: {}", setId, e);
+            // 根据实际情况决定是否需要抛出自定义异常或返回空列表等
+            return Collections.emptyList();
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();  // 释放锁
+            }
+        }
+    }
+
+    @Override
+    public boolean hasListData(Long setId, String value) {
+        ListSet listSet = listSetMapper.selectById(setId);
+        if (listSet != null && listSet.getStatus()) {
+            // 两种方式，1、查询名单集id和名单数据作为一次查询；2、查询名单集所有名单数据做集合，再判断是否存在名单数据
+            // 区别：1做缓存会是很多个，2做缓存更值得一些
+            List<String> listData = getListData(setId);
+            if (CollUtil.isNotEmpty(listData)) {
+                return listData.contains(value);
+            }
+        }
+        return false;
     }
 
 }

@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.convert.DisposalConvert;
 import cn.wnhyang.coolGuard.entity.Disposal;
 import cn.wnhyang.coolGuard.mapper.DisposalMapper;
@@ -10,7 +11,11 @@ import cn.wnhyang.coolGuard.vo.create.DisposalCreateVO;
 import cn.wnhyang.coolGuard.vo.page.DisposalPageVO;
 import cn.wnhyang.coolGuard.vo.update.DisposalUpdateVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
@@ -28,6 +33,7 @@ public class DisposalServiceImpl implements DisposalService {
     private final DisposalMapper disposalMapper;
 
     @Override
+    @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
     public Long createDisposal(DisposalCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getCode());
         Disposal disposal = DisposalConvert.INSTANCE.convert(createVO);
@@ -36,6 +42,7 @@ public class DisposalServiceImpl implements DisposalService {
     }
 
     @Override
+    @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
     public void updateDisposal(DisposalUpdateVO updateVO) {
         validateForUpdate(updateVO.getId());
         Disposal disposal = DisposalConvert.INSTANCE.convert(updateVO);
@@ -43,6 +50,7 @@ public class DisposalServiceImpl implements DisposalService {
     }
 
     @Override
+    @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
     public void deleteDisposal(Long id) {
         validateForDelete(id);
         disposalMapper.deleteById(id);
@@ -56,6 +64,12 @@ public class DisposalServiceImpl implements DisposalService {
     @Override
     public PageResult<Disposal> pageDisposal(DisposalPageVO pageVO) {
         return disposalMapper.selectPage(pageVO);
+    }
+
+    @Override
+    @Cacheable(cacheNames = RedisKey.DISPOSAL + "::list", unless = "#result == null")
+    public List<Disposal> listDisposal() {
+        return disposalMapper.selectList();
     }
 
     private void validateForDelete(Long id) {

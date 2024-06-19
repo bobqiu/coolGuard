@@ -37,18 +37,6 @@ public class DecisionRequest implements Serializable {
 
     private final List<OutputFieldVO> outputFields;
 
-    public void setParamsData(String key, String value) {
-        params.put(key, value);
-    }
-
-    public String getParamsData(String key) {
-        return params.get(key);
-    }
-
-    public boolean hasParamsData(String key) {
-        return params.containsKey(key);
-    }
-
     private final Map<String, Object> fields = new ConcurrentHashMap<>();
 
     public void setDataByType(String key, String value, FieldType type) {

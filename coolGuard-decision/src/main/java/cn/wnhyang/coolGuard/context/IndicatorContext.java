@@ -1,7 +1,9 @@
 package cn.wnhyang.coolGuard.context;
 
+import cn.wnhyang.coolGuard.vo.IndicatorResult;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,6 +33,11 @@ public class IndicatorContext {
 
     public String getIndicatorValue(Long id) {
         return indicatorMap.get(id).getValue();
+    }
+
+    public List<IndicatorResult> convert() {
+        return indicatorMap.values().stream().map(
+                indicatorVO -> new IndicatorResult(indicatorVO.getId(), indicatorVO.getName(), indicatorVO.getType(), indicatorVO.getVersion(), indicatorVO.getValue())).toList();
     }
 
 }

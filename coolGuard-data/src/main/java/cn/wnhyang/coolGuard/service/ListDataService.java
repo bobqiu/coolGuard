@@ -6,6 +6,8 @@ import cn.wnhyang.coolGuard.vo.create.ListDataCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ListDataPageVO;
 import cn.wnhyang.coolGuard.vo.update.ListDataUpdateVO;
 
+import java.util.List;
+
 /**
  * 名单数据表 服务类
  *
@@ -51,5 +53,22 @@ public interface ListDataService {
      * @return pageResult
      */
     PageResult<ListData> page(ListDataPageVO pageVO);
+
+    /**
+     * 获取名单数据
+     *
+     * @param setId 名单集id
+     * @return 名单数据
+     */
+    List<String> getListData(Long setId);
+
+    /**
+     * 判断名单数据是否存在
+     *
+     * @param setId 名单集id
+     * @param value 名单数据
+     * @return true存在/false不存在
+     */
+    boolean hasListData(Long setId, String value);
 
 }

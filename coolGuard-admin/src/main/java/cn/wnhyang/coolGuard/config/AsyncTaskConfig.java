@@ -18,7 +18,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class AsyncTaskConfig {
 
-    @Bean
+    @Bean("asyncExecutor")
     public AsyncTaskExecutor asyncTask() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         // 设置核心线程数

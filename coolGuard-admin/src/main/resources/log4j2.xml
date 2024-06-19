@@ -13,6 +13,7 @@
                   value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] [%t] %-5level %logger{36} - %msg%n"/>
         <!-- 定义日志存储的路径 -->
         <property name="FILE_PATH" value="logs/coolGuard"/>
+        <property name="EVENT_ES_DATA_FILE" value="${FILE_PATH}/event-es-data.log"/>
     </Properties>
 
     <appenders>
@@ -59,6 +60,17 @@
             <DefaultRolloverStrategy max="3"/>
         </RollingFile>
 
+        <!-- 添加针对EventESDataConsumer类的单独日志文件 -->
+        <RollingFile name="EventESDataFile" fileName="${EVENT_ES_DATA_FILE}"
+                     filePattern="${EVENT_ES_DATA_FILE}.%d{yyyy-MM-dd}_%i.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingFile>
+
     </appenders>
 
     <!--Logger节点用来单独指定日志的形式，比如要为指定包下的class指定不同的日志级别等。-->
@@ -69,6 +81,11 @@
             <appender-ref ref="RollingFileInfo"/>
             <appender-ref ref="RollingFileError"/>
         </root>
+
+        <!-- 为EventESDataConsumer类单独配置logger -->
+        <logger name="cn.wnhyang.coolGuard.kafka.consumer.EventESDataConsumer" level="INFO" additivity="false">
+            <appender-ref ref="EventESDataFile"/>
+        </logger>
     </loggers>
 
 </configuration>

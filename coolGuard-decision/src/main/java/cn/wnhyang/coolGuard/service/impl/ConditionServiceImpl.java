@@ -13,6 +13,7 @@ import cn.wnhyang.coolGuard.enums.LogicType;
 import cn.wnhyang.coolGuard.mapper.ConditionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ConditionService;
+import cn.wnhyang.coolGuard.service.ListDataService;
 import cn.wnhyang.coolGuard.util.FunUtil;
 import cn.wnhyang.coolGuard.vo.create.ConditionCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ConditionPageVO;
@@ -41,6 +42,8 @@ import java.time.LocalDateTime;
 public class ConditionServiceImpl implements ConditionService {
 
     private final ConditionMapper conditionMapper;
+
+    private final ListDataService listDataService;
 
     @Override
     public Long createCondition(ConditionCreateVO createVO) {
@@ -139,12 +142,15 @@ public class ConditionServiceImpl implements ConditionService {
                 }
 
             } else if (ConditionType.ZB.equals(type)) {
-                // TODO 指标条件
                 log.info("指标条件");
                 String indicatorId = condition.getValue();
                 IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
                 String indicatorValue = indicatorContext.getIndicatorValue(Long.valueOf(indicatorId));
-                cond = FunUtil.INSTANCE.doubleLogicOp.apply(Double.parseDouble(indicatorValue), byType, Double.parseDouble(condition.getExpectValue()));
+                String expectValue = condition.getExpectValue();
+                if (ExpectType.CONTEXT.equals(condition.getExpectedType())) {
+                    expectValue = decisionRequest.getStringData(expectValue);
+                }
+                cond = FunUtil.INSTANCE.doubleLogicOp.apply(Double.parseDouble(indicatorValue), byType, Double.valueOf(expectValue));
             } else if (ConditionType.REGULAR.equals(type)) {
                 log.info("正则条件");
 
@@ -153,13 +159,12 @@ public class ConditionServiceImpl implements ConditionService {
                 String stringData = decisionRequest.getStringData(fieldName);
                 cond = FunUtil.INSTANCE.regularLogicOp.apply(stringData, byType, condition.getExpectValue());
             } else if (ConditionType.LIST.equals(type)) {
-                // TODO 名单条件
                 log.info("名单条件");
                 String fieldName = condition.getValue();
 
                 String stringData = decisionRequest.getStringData(fieldName);
                 // 查名单集做匹配
-
+                cond = listDataService.hasListData(Long.valueOf(condition.getExpectValue()), stringData);
             } else if (ConditionType.SCRIPT.equals(type)) {
                 // TODO 脚本条件
                 log.info("脚本条件");
