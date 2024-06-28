@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.wnhyang.coolGuard.constant.KafkaConstant;
 import cn.wnhyang.coolGuard.context.DecisionRequest;
 import cn.wnhyang.coolGuard.context.DecisionResponse;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
@@ -66,11 +67,11 @@ public class DecisionServiceImpl implements DecisionService {
 
         // 将上下文拼在一块，将此任务丢到线程中执行
         Map<String, Object> esData = new HashMap<>();
-        esData.put("input", decisionRequest.getFields());
-        esData.put("zb", indicatorContext.convert());
+        esData.put("fields", decisionRequest.getFields());
+        esData.put("zbs", indicatorContext.convert());
         esData.put("result", decisionResponse.getPolicySetResult());
         try {
-            commonProducer.send("event-es-data", objectMapper.writeValueAsString(esData));
+            commonProducer.send(KafkaConstant.EVENT_ES_DATA, objectMapper.writeValueAsString(esData));
         } catch (JsonProcessingException e) {
             log.error("esData json error", e);
         } catch (Exception e) {

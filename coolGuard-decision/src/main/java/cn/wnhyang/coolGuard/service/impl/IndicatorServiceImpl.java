@@ -17,12 +17,12 @@ import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
+import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.Map;
  * @since 2024/03/14
  */
 @Slf4j
-@Service
+@LiteflowComponent
 public class IndicatorServiceImpl implements IndicatorService {
 
     private static final Map<String, AbstractIndicator> INDICATOR_MAP = new HashMap<>();
@@ -112,9 +112,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         IndicatorVO indicator = indicatorContext.getIndicator(Long.valueOf(tag));
         AbstractIndicator abstractIndicator = INDICATOR_MAP.get(indicator.getType());
         log.info("指标计算");
-        abstractIndicator.compute(indicator, decisionRequest.getFields());
-        double result = abstractIndicator.getResult();
-        indicatorContext.setIndicatorValue(indicator.getId(), result);
+        indicatorContext.setIndicatorValue(indicator.getId(), abstractIndicator.compute(indicator, decisionRequest.getFields()));
         log.info("指标计算结束");
     }
 

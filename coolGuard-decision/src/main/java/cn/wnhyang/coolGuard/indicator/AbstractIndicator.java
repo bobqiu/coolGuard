@@ -129,10 +129,10 @@ public abstract class AbstractIndicator {
      * @param indicator   指标
      * @param eventDetail 事件详情
      */
-    public void compute(IndicatorVO indicator, Map<String, Object> eventDetail) {
+    public double compute(IndicatorVO indicator, Map<String, Object> eventDetail) {
 
         if (indicator == null) {
-            return;
+            return 0.0d;
         } else {
             this.indicator = indicator;
         }
@@ -157,7 +157,7 @@ public abstract class AbstractIndicator {
             // 5、清理过期数据
             cleanExpiredDate(currentTime, set);
         }
-
+        return getResult();
     }
 
     /**
