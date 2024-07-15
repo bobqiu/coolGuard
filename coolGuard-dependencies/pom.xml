@@ -151,7 +151,7 @@
 
             <dependency>
                 <groupId>cn.wnhyang</groupId>
-                <artifactId>coolGuard-decision</artifactId>
+                <artifactId>coolGuard-access</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.config;
 
 import cn.hutool.core.date.DatePattern;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -15,8 +15,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,12 +30,6 @@ import java.util.TimeZone;
 @Configuration
 @Slf4j
 public class JacksonConfig {
-
-    @Bean
-    @Primary
-    public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
-        return builder.build();
-    }
 
     public static JavaTimeModule buildJavaTimeModule() {
         JavaTimeModule javaTimeModule = new JavaTimeModule();
@@ -58,6 +50,7 @@ public class JacksonConfig {
         return builder -> {
             builder.locale(Locale.CHINA);
             builder.timeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
+            builder.serializationInclusion(JsonInclude.Include.NON_NULL);
             builder.simpleDateFormat(DatePattern.NORM_DATETIME_PATTERN);
             builder.serializerByType(Long.class, ToStringSerializer.instance);
             builder.modules(buildJavaTimeModule());

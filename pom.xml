@@ -13,7 +13,7 @@
         <module>coolGuard-common</module>
         <module>coolGuard-admin</module>
         <module>coolGuard-system</module>
-        <module>coolGuard-decision</module>
+        <module>coolGuard-access</module>
         <module>coolGuard-dependencies</module>
         <module>coolGuard-data</module>
         <module>coolGuard-monitor</module>
@@ -112,4 +112,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>apache</id>
+            <name>apache</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
 </project>

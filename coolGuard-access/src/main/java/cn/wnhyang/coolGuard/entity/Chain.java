@@ -1,0 +1,73 @@
+package cn.wnhyang.coolGuard.entity;
+
+import cn.wnhyang.coolGuard.pojo.BasePO;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.*;
+
+/**
+ * chain表
+ *
+ * @author wnhyang
+ * @since 2024/04/04
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName("de_chain")
+public class Chain extends BasePO {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键
+     */
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
+
+    /**
+     * 应用名
+     */
+    @TableField("application_name")
+    private String applicationName;
+
+    /**
+     * chain名
+     */
+    @TableField("chain_name")
+    private String chainName;
+
+    /**
+     * el数据
+     */
+    @TableField("el_data")
+    private String elData;
+
+    /**
+     * chain状态
+     */
+    @TableField("enable")
+    private Boolean enable;
+
+    /**
+     * 路由
+     */
+    @TableField("route")
+    private String route;
+
+    /**
+     * 命名空间
+     */
+    @TableField("namespace")
+    private String namespace;
+
+    /**
+     * 描述
+     */
+    @TableField("description")
+    private String description;
+}

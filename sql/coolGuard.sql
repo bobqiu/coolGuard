@@ -45,6 +45,8 @@ create table de_chain
     chain_name       varchar(64)                 default ''                not null comment 'chain名',
     el_data          text                                                  not null comment 'el数据',
     enable           bit                         default b'0'              not null comment 'chain状态',
+    route            text                                                  null comment '路由',
+    namespace        varchar(64)                                           null comment '命名空间',
     description      varchar(64) charset utf8mb4 default ''                null comment '描述',
     creator          varchar(64) charset utf8mb4 default ''                null comment '创建者',
     create_time      datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
