@@ -10,6 +10,7 @@ import cn.wnhyang.coolGuard.vo.page.RuleScriptPageVO;
 import cn.wnhyang.coolGuard.vo.update.RuleScriptUpdateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 规则脚本表 服务实现类
@@ -24,6 +25,7 @@ public class RuleScriptServiceImpl implements RuleScriptService {
     private final RuleScriptMapper ruleScriptMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long createRuleScript(RuleScriptCreateVO createVO) {
         RuleScript ruleScript = RuleScriptConvert.INSTANCE.convert(createVO);
         ruleScriptMapper.insert(ruleScript);
@@ -31,12 +33,14 @@ public class RuleScriptServiceImpl implements RuleScriptService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateRuleScript(RuleScriptUpdateVO updateVO) {
         RuleScript ruleScript = RuleScriptConvert.INSTANCE.convert(updateVO);
         ruleScriptMapper.updateById(ruleScript);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteRuleScript(Long id) {
         ruleScriptMapper.deleteById(id);
     }

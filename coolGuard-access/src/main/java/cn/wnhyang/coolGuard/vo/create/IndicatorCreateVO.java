@@ -1,33 +1,22 @@
 package cn.wnhyang.coolGuard.vo.create;
 
+import cn.wnhyang.coolGuard.vo.base.IndicatorBaseVO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.io.Serial;
 
 /**
  * @author wnhyang
  * @date 2024/3/14
  **/
 @Data
-public class IndicatorCreateVO {
+public class IndicatorCreateVO extends IndicatorBaseVO {
 
-    /**
-     * 指标名
-     */
-    @NotBlank(message = "指标名不能为空")
-    @Size(min = 1, max = 50, message = "指标名长度必须在1-50之间")
-    private String name;
-
-    /**
-     * 状态
-     */
-    private Boolean status;
-
-    /**
-     * chain名
-     */
-    private String chainName;
+    @Serial
+    private static final long serialVersionUID = 1380185008381630457L;
 
     /**
      * 类型
@@ -84,15 +73,13 @@ public class IndicatorCreateVO {
     /**
      * 场景
      */
+    @NotBlank(message = "场景不能为空")
     private String scene;
 
     /**
      * 场景类型
      */
+    @NotBlank(message = "场景类型不能为空")
     private String sceneType;
 
-    /**
-     * 描述
-     */
-    private String description;
 }

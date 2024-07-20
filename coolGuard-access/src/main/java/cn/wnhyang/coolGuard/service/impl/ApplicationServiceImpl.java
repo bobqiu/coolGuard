@@ -11,6 +11,7 @@ import cn.wnhyang.coolGuard.vo.page.ApplicationPageVO;
 import cn.wnhyang.coolGuard.vo.update.ApplicationUpdateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.APPLICATION_NAME_EXIST;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.APPLICATION_NOT_EXIST;
@@ -29,6 +30,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationMapper applicationMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long createApplication(ApplicationCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getName());
         Application application = ApplicationConvert.INSTANCE.convert(createVO);
@@ -37,12 +39,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateApplication(ApplicationUpdateVO updateVO) {
         Application application = ApplicationConvert.INSTANCE.convert(updateVO);
         applicationMapper.updateById(application);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteApplication(Long id) {
         // TODO 有引用不可删除
         validateExists(id);

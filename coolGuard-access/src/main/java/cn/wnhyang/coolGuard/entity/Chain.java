@@ -54,18 +54,6 @@ public class Chain extends BasePO {
     private Boolean enable;
 
     /**
-     * 路由
-     */
-    @TableField("route")
-    private String route;
-
-    /**
-     * 命名空间
-     */
-    @TableField("namespace")
-    private String namespace;
-
-    /**
      * 描述
      */
     @TableField("description")

@@ -15,6 +15,7 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ConditionService;
 import cn.wnhyang.coolGuard.service.ListDataService;
 import cn.wnhyang.coolGuard.util.FunUtil;
+import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.create.ConditionCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ConditionPageVO;
 import cn.wnhyang.coolGuard.vo.update.ConditionUpdateVO;
@@ -26,6 +27,7 @@ import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -46,6 +48,7 @@ public class ConditionServiceImpl implements ConditionService {
     private final ListDataService listDataService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long createCondition(ConditionCreateVO createVO) {
         Condition condition = ConditionConvert.INSTANCE.convert(createVO);
         conditionMapper.insert(condition);
@@ -53,12 +56,14 @@ public class ConditionServiceImpl implements ConditionService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateCondition(ConditionUpdateVO updateVO) {
         Condition condition = ConditionConvert.INSTANCE.convert(updateVO);
         conditionMapper.updateById(condition);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteCondition(Long id) {
         conditionMapper.deleteById(id);
     }
@@ -73,7 +78,7 @@ public class ConditionServiceImpl implements ConditionService {
         return conditionMapper.selectPage(pageVO);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = "cond", nodeType = NodeTypeEnum.BOOLEAN)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.CONDITION_COMMON_NODE, nodeType = NodeTypeEnum.BOOLEAN)
     public boolean cond(NodeComponent bindCmp) {
 
         // 获取当前tag
@@ -90,6 +95,7 @@ public class ConditionServiceImpl implements ConditionService {
 
         LogicType byType = LogicType.getByType(condition.getLogicType());
         try {
+            // 普通条件，适用指标、规则
             if (ConditionType.NORMAL.equals(type)) {
 
                 // 获取条件字段

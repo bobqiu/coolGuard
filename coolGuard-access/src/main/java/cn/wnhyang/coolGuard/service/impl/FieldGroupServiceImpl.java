@@ -13,6 +13,7 @@ import cn.wnhyang.coolGuard.vo.page.FieldGroupPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldGroupUpdateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
@@ -32,6 +33,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
     private final FieldMapper fieldMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long createFieldGroup(FieldGroupCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getName());
         FieldGroup fieldGroup = FieldGroupConvert.INSTANCE.convert(createVO);
@@ -40,6 +42,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateFieldGroup(FieldGroupUpdateVO updateVO) {
         validateForUpdate(updateVO.getId());
         FieldGroup fieldGroup = FieldGroupConvert.INSTANCE.convert(updateVO);
@@ -47,6 +50,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteFieldGroup(Long id) {
         validateForDelete(id);
         fieldGroupMapper.deleteById(id);

@@ -5,6 +5,7 @@ import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.ChainPageVO;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -18,5 +19,17 @@ public interface ChainMapper extends BaseMapperX<Chain> {
 
     default PageResult<Chain> selectPage(ChainPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<Chain>());
+    }
+
+    default boolean selectByChainName(String chainName) {
+        return selectCount(Chain::getChainName, chainName) > 0;
+    }
+
+    default int updateByChainName(String chainName, Chain chain) {
+        return update(chain, new LambdaUpdateWrapper<Chain>().eq(Chain::getChainName, chainName));
+    }
+
+    default Chain getByChainName(String chainName) {
+        return selectOne(Chain::getChainName, chainName);
     }
 }

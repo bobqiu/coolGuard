@@ -27,11 +27,9 @@ public class AccessRequest implements Serializable {
     @Serial
     private static final long serialVersionUID = 8326347921307896577L;
 
-    private final String accessName;
+    private final Access access;
 
     private final Map<String, String> params;
-
-    private final Access access;
 
     private final List<InputFieldVO> inputFields;
 

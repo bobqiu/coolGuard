@@ -22,11 +22,6 @@ public class RuleCreateVO implements Serializable {
     private Long policyId;
 
     /**
-     * chain名
-     */
-    private String chainName;
-
-    /**
      * 规则编码
      */
     private String code;

@@ -21,11 +21,6 @@ public class PolicyDTO implements Serializable {
     private Long id;
 
     /**
-     * chain名
-     */
-    private String chainName;
-
-    /**
      * 策略集id
      */
     private Long policySetId;
@@ -48,7 +43,7 @@ public class PolicyDTO implements Serializable {
     /**
      * 策略状态
      */
-    private Integer status;
+    private String status;
 
     /**
      * 描述

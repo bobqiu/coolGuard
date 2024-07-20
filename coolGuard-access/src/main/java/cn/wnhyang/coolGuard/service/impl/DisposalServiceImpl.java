@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class DisposalServiceImpl implements DisposalService {
     private final DisposalMapper disposalMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
     public Long createDisposal(DisposalCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getCode());
@@ -42,6 +44,7 @@ public class DisposalServiceImpl implements DisposalService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
     public void updateDisposal(DisposalUpdateVO updateVO) {
         validateForUpdate(updateVO.getId());
@@ -50,6 +53,7 @@ public class DisposalServiceImpl implements DisposalService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
     public void deleteDisposal(Long id) {
         validateForDelete(id);

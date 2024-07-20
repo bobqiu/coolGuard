@@ -20,6 +20,7 @@ import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.AccessService;
 import cn.wnhyang.coolGuard.service.DisposalService;
+import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.AccessVO;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.OutputFieldVO;
@@ -86,14 +87,15 @@ public class AccessServiceImpl implements AccessService {
         List<InputFieldVO> inputFields = getAccessInputFieldList(access.getId());
         List<OutputFieldVO> outputFields = getAccessOutputFieldList(access.getId());
 
-        AccessRequest accessRequest = new AccessRequest(name, params, access, inputFields, outputFields);
+        AccessRequest accessRequest = new AccessRequest(access, params, inputFields, outputFields);
         PolicyContext policyContext = new PolicyContext();
         for (Disposal disposal : disposalService.listDisposal()) {
             policyContext.addDisposal(disposal.getId(), disposal);
         }
         IndicatorContext indicatorContext = new IndicatorContext();
 
-        LiteflowResponse syncRisk = flowExecutor.execute2Resp("accessChain", null, accessRequest, indicatorContext, policyContext, accessResponse);
+        // TODO 加上校验必输字段如：appName、policySet等
+        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getId()), null, accessRequest, indicatorContext, policyContext, accessResponse);
 
         // 将上下文拼在一块，将此任务丢到线程中执行
         Map<String, Object> esData = new HashMap<>();
@@ -129,6 +131,7 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateAccess(AccessUpdateVO updateVO) {
         Access access = AccessConvert.INSTANCE.convert(updateVO);
 
@@ -136,6 +139,7 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteAccess(Long id) {
         validateExists(id);
         accessMapper.deleteById(id);
@@ -227,13 +231,18 @@ public class AccessServiceImpl implements AccessService {
         return outputFieldVOList;
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "accessIn", nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.EMPTY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    public void empty(NodeComponent bindCmp) {
+        log.info("空节点");
+    }
+
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ACCESS_IN_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public void accessIn(NodeComponent bindCmp, @LiteflowFact("params") Map<String, String> params) {
         log.info("入参：{}", params);
 
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "accessOut", nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ACCESS_OUT_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public void accessOut(NodeComponent bindCmp) {
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
         AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);

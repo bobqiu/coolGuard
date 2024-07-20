@@ -30,12 +30,6 @@ public class Policy extends BasePO {
     private Long id;
 
     /**
-     * chain名
-     */
-    @TableField("chain_name")
-    private String chainName;
-
-    /**
      * 策略集id
      */
     @TableField("policy_set_id")
@@ -63,7 +57,7 @@ public class Policy extends BasePO {
      * 策略状态，应该包含开启、关闭、待发布
      */
     @TableField("status")
-    private Integer status;
+    private String status;
 
     /**
      * 描述

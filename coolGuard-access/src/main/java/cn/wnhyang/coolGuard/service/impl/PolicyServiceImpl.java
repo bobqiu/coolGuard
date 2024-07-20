@@ -1,16 +1,17 @@
 package cn.wnhyang.coolGuard.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.PolicyStatus;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
+import cn.wnhyang.coolGuard.entity.Chain;
 import cn.wnhyang.coolGuard.entity.Policy;
-import cn.wnhyang.coolGuard.entity.Rule;
-import cn.wnhyang.coolGuard.enums.PolicyMode;
+import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.PolicyMapper;
-import cn.wnhyang.coolGuard.mapper.RuleMapper;
+import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicyService;
+import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.PolicyVO;
 import cn.wnhyang.coolGuard.vo.create.PolicyCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicyPageVO;
@@ -23,8 +24,7 @@ import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_CODE_EXIST;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_NOT_EXIST;
@@ -44,25 +44,43 @@ public class PolicyServiceImpl implements PolicyService {
 
     private final PolicyMapper policyMapper;
 
-    private final RuleMapper ruleMapper;
+    private final PolicySetMapper policySetMapper;
+
+    private final ChainMapper chainMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long createPolicy(PolicyCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getCode());
         Policy policy = PolicyConvert.INSTANCE.convert(createVO);
         policyMapper.insert(policy);
+
+        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetId());
+        if (!chainMapper.selectByChainName(psChain)) {
+            Chain chain = new Chain().setChainName(psChain)
+                    .setElData(StrUtil.format(LFUtil.WHEN_EL,
+                            LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getId())));
+            chainMapper.insert(chain);
+        } else {
+            Chain chain = chainMapper.getByChainName(psChain);
+            chain.setElData(LFUtil.elAdd(chain.getElData(),
+                    LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getId())));
+            chainMapper.updateByChainName(psChain, chain);
+        }
         return policy.getId();
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updatePolicy(PolicyUpdateVO updateVO) {
         Policy policy = PolicyConvert.INSTANCE.convert(updateVO);
         policyMapper.updateById(policy);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deletePolicy(Long id) {
-        // TODO 有引用不可删除
+        // TODO 有引用不可删除，删除规则即规则条件
         validateExists(id);
         policyMapper.deleteById(id);
     }
@@ -77,32 +95,28 @@ public class PolicyServiceImpl implements PolicyService {
         return policyMapper.selectPage(pageVO);
     }
 
-    // TODO 未来替换成路由
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "policyProcess", nodeType = NodeTypeEnum.COMMON)
-    public void policyProcess(NodeComponent bindCmp) {
-        String tag = bindCmp.getTag();
-        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        PolicyVO policy = policyContext.getPolicy(Long.valueOf(tag));
-        log.info("当前策略(id:{}, name:{}, code:{})", policy.getId(), policy.getName(), policy.getCode());
-
-        // TODO 路由规则运行
-
-        List<Rule> ruleList = ruleMapper.selectByPolicyId(policy.getId());
-        // TODO 开启和模拟状态规则都要运行
-        if (CollUtil.isEmpty(ruleList)) {
-            log.info("策略(name:{})下没有规则运行", policy.getName());
-            return;
-        }
-        policyContext.initRuleList(policy.getId());
-        PolicyMode byMode = PolicyMode.getByMode(policy.getMode());
-
-
-        bindCmp.invoke2Resp(policy.getChainName(), null);
-
+    @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    public boolean policyAccess(NodeComponent bindCmp) {
+        Policy policy = policyMapper.selectById(bindCmp.getTag());
+        return PolicyStatus.ON.equals(policy.getStatus());
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.IS_END, nodeId = "policyProcess", nodeType = NodeTypeEnum.COMMON)
-    public boolean policyProcessEnd(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    public void policy(NodeComponent bindCmp) {
+        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
+        Policy policy = policyMapper.selectById(bindCmp.getTag());
+        PolicyVO policyVO = PolicyConvert.INSTANCE.convert(policy);
+        policyContext.addPolicy(policyVO.getId(), policyVO);
+
+        log.info("当前策略(id:{}, name:{}, code:{})", policy.getId(), policy.getName(), policy.getCode());
+
+        policyContext.initRuleList(policy.getId());
+
+        bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_CHAIN, policy.getId()), null);
+    }
+
+    @LiteflowMethod(value = LiteFlowMethodEnum.IS_END, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    public boolean policyEnd(NodeComponent bindCmp) {
         // isEnd 用于顺序模式，提前终止流程
         log.info("终止");
         return false;

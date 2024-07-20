@@ -41,16 +41,6 @@ public class ChainDTO implements Serializable {
     private Boolean enable;
 
     /**
-     * 路由
-     */
-    private String route;
-
-    /**
-     * 命名空间
-     */
-    private String namespace;
-
-    /**
      * 描述
      */
     private String description;

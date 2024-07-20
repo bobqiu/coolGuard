@@ -19,6 +19,7 @@ import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.FieldService;
 import cn.wnhyang.coolGuard.util.AdocUtil;
+import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.create.FieldCreateVO;
 import cn.wnhyang.coolGuard.vo.create.TestDynamicFieldScript;
@@ -36,6 +37,7 @@ import com.yomahub.liteflow.flow.LiteflowResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -66,6 +68,7 @@ public class FieldServiceImpl implements FieldService {
     private final GeoAnalysis geoAnalysis;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long createField(FieldCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getName());
         Field field = FieldConvert.INSTANCE.convert(createVO);
@@ -74,6 +77,7 @@ public class FieldServiceImpl implements FieldService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateField(FieldUpdateVO updateVO) {
         validateForUpdate(updateVO.getId());
         validateForCreateOrUpdate(updateVO.getId(), updateVO.getName());
@@ -82,6 +86,7 @@ public class FieldServiceImpl implements FieldService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteField(Long id) {
         validateForDelete(id);
         fieldMapper.deleteById(id);
@@ -99,7 +104,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public String testDynamicFieldScript(TestDynamicFieldScript testDynamicFieldScript) {
-        AccessRequest accessRequest = new AccessRequest(null, null, null, null, null);
+        AccessRequest accessRequest = new AccessRequest(null, null, null, null);
         Map<String, String> params = testDynamicFieldScript.getParams();
         for (Map.Entry<String, String> entry : params.entrySet()) {
             Field field = fieldMapper.selectByName(entry.getKey());
@@ -116,11 +121,11 @@ public class FieldServiceImpl implements FieldService {
                     .setScript(testDynamicFieldScript.getScript())
                     .build();
 
-            LiteFlowChainELBuilder.createChain().setChainId("testDynamicFieldScriptChain").setEL(
+            LiteFlowChainELBuilder.createChain().setChainId(LFUtil.DYNAMIC_TEST_CHAIN).setEL(
                     "THEN(testDynamicFieldScript)"
             ).build();
 
-            LiteflowResponse response = flowExecutor.execute2Resp("testDynamicFieldScriptChain", null, accessRequest);
+            LiteflowResponse response = flowExecutor.execute2Resp(LFUtil.DYNAMIC_TEST_CHAIN, null, accessRequest);
             if (response.isSuccess()) {
                 String fieldName = testDynamicFieldScript.getFieldName();
                 FieldType byFieldName = FieldType.getByFieldName(fieldName);
@@ -142,8 +147,8 @@ public class FieldServiceImpl implements FieldService {
         return result;
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "normalFieldProcess", nodeType = NodeTypeEnum.COMMON)
-    public void normalFieldProcess(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.NORMAL_FIELD_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    public void normalField(NodeComponent bindCmp) {
 
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
 
@@ -219,8 +224,8 @@ public class FieldServiceImpl implements FieldService {
     }
 
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "dynamicFieldProcess", nodeType = NodeTypeEnum.COMMON)
-    public void dynamicFieldProcess(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.DYNAMIC_FIELD_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    public void dynamicField(NodeComponent bindCmp) {
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
 
         List<InputFieldVO> inputFields = accessRequest.getInputFields();

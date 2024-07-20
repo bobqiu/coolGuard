@@ -10,6 +10,7 @@ import cn.wnhyang.coolGuard.vo.page.ChainPageVO;
 import cn.wnhyang.coolGuard.vo.update.ChainUpdateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * chain表 服务实现类
@@ -24,6 +25,7 @@ public class ChainServiceImpl implements ChainService {
     private final ChainMapper chainMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long createChain(ChainCreateVO createVO) {
         Chain chain = ChainConvert.INSTANCE.convert(createVO);
         chainMapper.insert(chain);
@@ -31,12 +33,14 @@ public class ChainServiceImpl implements ChainService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateChain(ChainUpdateVO updateVO) {
         Chain chain = ChainConvert.INSTANCE.convert(updateVO);
         chainMapper.updateById(chain);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteChain(Long id) {
         chainMapper.deleteById(id);
     }

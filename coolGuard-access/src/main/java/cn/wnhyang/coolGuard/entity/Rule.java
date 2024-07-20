@@ -36,12 +36,6 @@ public class Rule extends BasePO {
     private Long policyId;
 
     /**
-     * chain名
-     */
-    @TableField("chain_name")
-    private String chainName;
-
-    /**
      * 规则编码
      */
     @TableField("code")

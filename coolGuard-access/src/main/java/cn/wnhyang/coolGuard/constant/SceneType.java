@@ -7,9 +7,9 @@ package cn.wnhyang.coolGuard.constant;
 public interface SceneType {
 
     /**
-     * app场景
+     * appName场景
      */
-    String APP = "app";
+    String APP = "appName";
 
     /**
      * 策略集场景

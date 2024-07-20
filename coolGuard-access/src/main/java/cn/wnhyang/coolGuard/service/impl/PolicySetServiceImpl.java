@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.context.AccessRequest;
@@ -8,14 +7,16 @@ import cn.wnhyang.coolGuard.context.AccessResponse;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.convert.PolicySetConvert;
+import cn.wnhyang.coolGuard.entity.Chain;
 import cn.wnhyang.coolGuard.entity.Policy;
 import cn.wnhyang.coolGuard.entity.PolicySet;
-import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
+import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.PolicyMapper;
 import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicySetService;
+import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.PolicySetVO;
 import cn.wnhyang.coolGuard.vo.PolicyVO;
 import cn.wnhyang.coolGuard.vo.create.PolicySetCreateVO;
@@ -23,15 +24,13 @@ import cn.wnhyang.coolGuard.vo.page.PolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.update.PolicySetUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.builder.el.LiteFlowChainELBuilder;
-import com.yomahub.liteflow.builder.el.WhenELWrapper;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
-import com.yomahub.liteflow.exception.LiteFlowException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -40,7 +39,6 @@ import java.util.stream.Collectors;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_SET_CODE_EXIST;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_SET_NOT_EXIST;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
-import static com.yomahub.liteflow.builder.el.ELBus.node;
 
 /**
  * 策略集表 服务实现类
@@ -60,23 +58,38 @@ public class PolicySetServiceImpl implements PolicySetService {
 
     private final RuleMapper ruleMapper;
 
-    private final IndicatorMapper indicatorMapper;
+    private final ChainMapper chainMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long createPolicySet(PolicySetCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getName());
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(createVO);
         policySetMapper.insert(policySet);
+
+        if (!chainMapper.selectByChainName(LFUtil.POLICY_SET_ROUTE_CHAIN)) {
+            Chain chain = new Chain().setChainName(LFUtil.POLICY_SET_ROUTE_CHAIN)
+                    .setElData(StrUtil.format(LFUtil.WHEN_EL,
+                            LFUtil.getNodeWithTag(LFUtil.POLICY_SET_COMMON_NODE, policySet.getId())));
+            chainMapper.insert(chain);
+        } else {
+            Chain chain = chainMapper.getByChainName(LFUtil.POLICY_SET_ROUTE_CHAIN);
+            chain.setElData(LFUtil.elAdd(chain.getElData(),
+                    LFUtil.getNodeWithTag(LFUtil.POLICY_SET_COMMON_NODE, policySet.getId())));
+            chainMapper.updateByChainName(LFUtil.POLICY_SET_ROUTE_CHAIN, chain);
+        }
         return policySet.getId();
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updatePolicySet(PolicySetUpdateVO updateVO) {
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(updateVO);
         policySetMapper.updateById(policySet);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deletePolicySet(Long id) {
         // TODO 有引用不可删除
         policySetMapper.deleteById(id);
@@ -121,66 +134,40 @@ public class PolicySetServiceImpl implements PolicySetService {
         return new PageResult<>(collect, (long) policySetList.size());
     }
 
-    // TODO 未来替换成路由
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = "policySetRoute", nodeType = NodeTypeEnum.COMMON)
-    public void policySetRoute(NodeComponent bindCmp) {
-
+    @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.POLICY_SET_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    public boolean policySetAccess(NodeComponent bindCmp) {
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
+        String tag = bindCmp.getTag();
 
         String appName = accessRequest.getStringData(FieldName.appName);
         String policySetCode = accessRequest.getStringData(FieldName.policySetCode);
 
         // 查询策略集
         PolicySet policySet = policySetMapper.selectByAppNameAndCode(appName, policySetCode);
+        if (tag.equals(policySet.getId().toString())) {
+            return policySet.getStatus();
+        }
+        return false;
+    }
 
-        if (policySet == null) {
-            log.error("应用名:{}, 策略集编码:{}, 对应的策略集不存在", appName, policySetCode);
-            throw new LiteFlowException("策略集不存在");
-        }
-        if (!policySet.getStatus()) {
-            log.error("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})未启用", appName, policySetCode, policySet.getName());
-            throw new LiteFlowException("策略集未启用");
-        }
-        log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", appName, policySetCode, policySet.getName());
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_SET_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    public void policySetRoute(NodeComponent bindCmp) {
+
+        PolicySet policySet = policySetMapper.selectById(bindCmp.getTag());
+
+        log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", policySet.getAppName(), policySet.getCode(), policySet.getName());
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
         PolicySetVO policySetVO = PolicySetConvert.INSTANCE.convert(policySet);
         policyContext.setPolicySetVO(policySetVO);
 
-        // TODO 策略集决策流
-        // 查询策略列表
-        List<Policy> policyList = policyMapper.selectListBySetId(policySet.getId());
+        // TODO 策略集决策流，默认并行策略运行
 
-        // 策略列表为空
-        if (CollUtil.isEmpty(policyList)) {
-            log.error("策略集(name:{})下没有策略", policySet.getName());
-            throw new LiteFlowException("策略集下没有策略");
-        }
-        WhenELWrapper when = new WhenELWrapper();
-        for (Policy policy : policyList) {
-            // TODO 策略状态
-            if (policy.getStatus().equals(1)) {
-                when.when(
-                        node("policyProcess").tag(String.valueOf(policy.getId()))
-                );
-                PolicyVO policyVO = PolicyConvert.INSTANCE.convert(policy);
-                policyContext.addPolicy(policyVO.getId(), policyVO);
-            }
-        }
-        String el = when.toEL();
-        log.debug("策略集(name:{})下策略表达式:{}", policySet.getName(), el);
-
-        LiteFlowChainELBuilder.createChain().setChainId("policyChain").setEL(
-                // 输出el表达式
-                when.toEL()
-        ).build();
-
-        bindCmp.invoke2Resp("policyChain", null);
+        bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getId()), null);
 
         AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);
 
         accessResponse.setPolicySetResult(policyContext.convert());
         log.info("策略集(name:{})执行完毕", policyContext.getPolicySetVO().getName());
-
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

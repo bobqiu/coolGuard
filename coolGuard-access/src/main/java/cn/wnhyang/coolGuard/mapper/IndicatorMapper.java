@@ -32,11 +32,13 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
 
     @Cacheable(cacheNames = RedisKey.INDICATOR + "::s-st", key = "#scene+'-'+#sceneType", unless = "#result == null")
     default List<Indicator> selectListByScene(String scene, String sceneType) {
-        return selectList(new LambdaQueryWrapperX<Indicator>().eq(Indicator::getScene, scene).eq(Indicator::getSceneType, sceneType));
+        return selectList(new LambdaQueryWrapperX<Indicator>().eq(Indicator::getScene, scene)
+                .eq(Indicator::getSceneType, sceneType));
     }
 
     default List<Long> selectIdListByScene(String scene, String sceneType) {
-        return selectObjs(new LambdaQueryWrapperX<Indicator>().eq(Indicator::getScene, scene).eq(Indicator::getSceneType, sceneType).select(Indicator::getId));
+        return selectObjs(new LambdaQueryWrapperX<Indicator>().eq(Indicator::getScene, scene)
+                .eq(Indicator::getSceneType, sceneType).select(Indicator::getId));
     }
 
     default PageResult<Indicator> selectPage(PageParam pageVO, String appName, String code) {
