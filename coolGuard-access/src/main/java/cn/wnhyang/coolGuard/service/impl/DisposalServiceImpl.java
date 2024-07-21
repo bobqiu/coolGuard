@@ -1,10 +1,13 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.convert.DisposalConvert;
 import cn.wnhyang.coolGuard.entity.Disposal;
+import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.mapper.DisposalMapper;
+import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.DisposalService;
 import cn.wnhyang.coolGuard.vo.create.DisposalCreateVO;
@@ -32,6 +35,8 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
 public class DisposalServiceImpl implements DisposalService {
 
     private final DisposalMapper disposalMapper;
+
+    private final RuleMapper ruleMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -78,7 +83,10 @@ public class DisposalServiceImpl implements DisposalService {
 
     private void validateForDelete(Long id) {
         validateForUpdate(id);
-        // TODO 查找引用 规则等
+        List<Rule> ruleList = ruleMapper.selectByDisposalId(id);
+        if (CollUtil.isNotEmpty(ruleList)) {
+            throw exception(DISPOSAL_REFERENCE);
+        }
     }
 
     private void validateForUpdate(Long id) {

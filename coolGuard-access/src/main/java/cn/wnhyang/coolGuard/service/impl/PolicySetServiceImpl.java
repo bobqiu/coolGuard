@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.context.AccessRequest;
@@ -15,7 +16,9 @@ import cn.wnhyang.coolGuard.mapper.PolicyMapper;
 import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.service.PolicyService;
 import cn.wnhyang.coolGuard.service.PolicySetService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.PolicySetVO;
 import cn.wnhyang.coolGuard.vo.PolicyVO;
@@ -32,12 +35,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_SET_CODE_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_SET_NOT_EXIST;
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -60,6 +64,8 @@ public class PolicySetServiceImpl implements PolicySetService {
 
     private final ChainMapper chainMapper;
 
+    private final PolicyService policyService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createPolicySet(PolicySetCreateVO createVO) {
@@ -69,7 +75,7 @@ public class PolicySetServiceImpl implements PolicySetService {
 
         if (!chainMapper.selectByChainName(LFUtil.POLICY_SET_ROUTE_CHAIN)) {
             Chain chain = new Chain().setChainName(LFUtil.POLICY_SET_ROUTE_CHAIN)
-                    .setElData(StrUtil.format(LFUtil.WHEN_EL,
+                    .setElData(StrUtil.format(LFUtil.WHEN_EMPTY_NODE_EL,
                             LFUtil.getNodeWithTag(LFUtil.POLICY_SET_COMMON_NODE, policySet.getId())));
             chainMapper.insert(chain);
         } else {
@@ -78,6 +84,9 @@ public class PolicySetServiceImpl implements PolicySetService {
                     LFUtil.getNodeWithTag(LFUtil.POLICY_SET_COMMON_NODE, policySet.getId())));
             chainMapper.updateByChainName(LFUtil.POLICY_SET_ROUTE_CHAIN, chain);
         }
+        // TODO 创建chain
+        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getId());
+        chainMapper.insert(new Chain().setChainName(psChain));
         return policySet.getId();
     }
 
@@ -91,8 +100,32 @@ public class PolicySetServiceImpl implements PolicySetService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deletePolicySet(Long id) {
-        // TODO 有引用不可删除
-        policySetMapper.deleteById(id);
+        validateExists(id);
+        deletePolicySet(Collections.singleton(id));
+    }
+
+    @Override
+    public void deletePolicySet(Collection<Long> ids) {
+        ids.forEach(id -> {
+            // 1、确认是否还有运行的策略
+            List<Policy> policyList = policyMapper.selectRunningListBySetId(id);
+            if (CollUtil.isNotEmpty(policyList)) {
+                throw exception(POLICY_SET_REFERENCE);
+            }
+            PolicySet policySet = policySetMapper.selectById(id);
+            // 2、没有运行的策略就可以删除策略集了
+            // 3、删除策略集下的所有规则
+            policyList = policyMapper.selectListBySetId(id);
+            policyService.deletePolicy(CollectionUtils.convertSet(policyList, Policy::getId));
+            // 4、删除chain
+            String psChain = LFUtil.POLICY_SET_ROUTE_CHAIN;
+            Chain chain = chainMapper.getByChainName(psChain);
+            chain.setElData(LFUtil.removeEl(chain.getElData(),
+                    LFUtil.getNodeWithTag(LFUtil.POLICY_SET_COMMON_NODE, id)));
+            chainMapper.updateByChainName(psChain, chain);
+            policySetMapper.deleteById(id);
+            chainMapper.deleteByChainName(StrUtil.format(LFUtil.POLICY_SET_CHAIN, id));
+        });
     }
 
     @Override

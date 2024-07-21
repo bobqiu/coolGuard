@@ -23,6 +23,16 @@ public class LFUtil {
     public static final String WHEN_EL = "WHEN({});";
 
     /**
+     * 串行EL，带上空节点
+     */
+    public static final String THEN_EMPTY_NODE_EL = "THEN(e_cn,{});";
+
+    /**
+     * 并行EL，带上空节点
+     */
+    public static final String WHEN_EMPTY_NODE_EL = "WHEN(e_cn,{});";
+
+    /**
      * accessId
      */
     public static final String ACCESS_CHAIN = "A_C#{}";
@@ -153,13 +163,32 @@ public class LFUtil {
 
     public static final String NODE_WITH_TAG = "{}.tag\"{}\"";
 
+    /**
+     * @param nodeId 节点id
+     * @param tag    标签
+     * @return 带标签的节点
+     */
     public static String getNodeWithTag(String nodeId, Object tag) {
         return StrUtil.format(NODE_WITH_TAG, nodeId, tag.toString());
     }
 
+    /**
+     * @param oEl 原el
+     * @param el  el
+     * @return 新el
+     */
     public static String elAdd(String oEl, String el) {
         StringBuilder sb = new StringBuilder(oEl);
         sb.insert(sb.lastIndexOf(")"), ", " + el);
         return sb.toString();
+    }
+
+    /**
+     * @param oEl 原el
+     * @param el  要移除的el
+     * @return 去除el后的el
+     */
+    public static String removeEl(String oEl, String el) {
+        return oEl.replace(el, "");
     }
 }

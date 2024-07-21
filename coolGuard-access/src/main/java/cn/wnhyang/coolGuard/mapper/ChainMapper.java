@@ -32,4 +32,8 @@ public interface ChainMapper extends BaseMapperX<Chain> {
     default Chain getByChainName(String chainName) {
         return selectOne(Chain::getChainName, chainName);
     }
+
+    default void deleteByChainName(String chainName) {
+        delete(new LambdaQueryWrapperX<Chain>().eq(Chain::getChainName, chainName));
+    }
 }

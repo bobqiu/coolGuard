@@ -48,7 +48,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteApplication(Long id) {
-        // TODO 有引用不可删除
+        // TODO 有引用不可删除 指标和策略集
         validateExists(id);
         applicationMapper.deleteById(id);
     }

@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.mapper;
 
 import cn.wnhyang.coolGuard.constant.RedisKey;
+import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -47,5 +48,15 @@ public interface RuleMapper extends BaseMapperX<Rule> {
                 .likeIfPresent(Rule::getName, name)
                 .eqIfPresent(Rule::getCode, code)
                 .select(Rule::getPolicyId));
+    }
+
+    default List<Rule> selectByDisposalId(Long disposal) {
+        return selectList(Rule::getDisposalId, disposal);
+    }
+
+    default List<Rule> selectRunningListByPolicyId(Long policyId) {
+        return selectList(new LambdaQueryWrapperX<Rule>()
+                .eq(Rule::getPolicyId, policyId)
+                .or(q -> q.eq(Rule::getStatus, RuleStatus.ON).eq(Rule::getStatus, RuleStatus.MOCK)));
     }
 }

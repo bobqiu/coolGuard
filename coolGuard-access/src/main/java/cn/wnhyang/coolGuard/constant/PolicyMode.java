@@ -7,6 +7,8 @@ package cn.wnhyang.coolGuard.constant;
 public interface PolicyMode {
 
     String ORDER = "order";
+
     String WEIGHT = "weight";
+
     String WORST = "worst";
 }

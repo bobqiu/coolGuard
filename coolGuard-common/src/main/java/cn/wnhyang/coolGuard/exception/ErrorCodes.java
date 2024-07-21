@@ -16,6 +16,9 @@ public interface ErrorCodes {
 
     ErrorCode DISPOSAL_STANDARD = new ErrorCode(1002001002, "标准处置不可更改");
 
+    // TODO 引用详细说明
+    ErrorCode DISPOSAL_REFERENCE = new ErrorCode(1002001003, "处置有引用不可删除");
+
     ErrorCode ACCESS_NOT_EXIST = new ErrorCode(1003001000, "接入不存在");
 
     ErrorCode ACCESS_NAME_EXIST = new ErrorCode(1003001001, "接入名已存在");
@@ -46,4 +49,7 @@ public interface ErrorCodes {
 
     ErrorCode POLICY_SET_CODE_EXIST = new ErrorCode(1006001003, "策略集code已存在");
 
+    ErrorCode POLICY_REFERENCE = new ErrorCode(1006001004, "策略有引用不可删除");
+
+    ErrorCode POLICY_SET_REFERENCE = new ErrorCode(1006001005, "策略集有引用不可删除");
 }

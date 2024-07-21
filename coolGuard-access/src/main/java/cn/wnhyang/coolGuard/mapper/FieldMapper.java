@@ -9,6 +9,8 @@ import cn.wnhyang.coolGuard.vo.page.FieldPageVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.cache.annotation.Cacheable;
 
+import java.util.List;
+
 /**
  * 字段表 Mapper 接口
  *
@@ -35,5 +37,9 @@ public interface FieldMapper extends BaseMapperX<Field> {
 
     default Long selectCountByFieldGroupId(Long groupId) {
         return selectCount(Field::getGroupId, groupId);
+    }
+
+    default List<Field> selectByGroupId(Long groupId) {
+        return selectList(Field::getGroupId, groupId);
     }
 }

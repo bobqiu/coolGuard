@@ -85,7 +85,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         }
         if (!chainMapper.selectByChainName(isChain)) {
             Chain chain = new Chain().setChainName(isChain)
-                    .setElData(StrUtil.format(LFUtil.WHEN_EL,
+                    .setElData(StrUtil.format(LFUtil.WHEN_EMPTY_NODE_EL,
                             LFUtil.getNodeWithTag(LFUtil.INDICATOR_COMMON_NODE, indicator.getId())));
             chainMapper.insert(chain);
         } else {

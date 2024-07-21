@@ -1,16 +1,20 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.constant.PolicyStatus;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.entity.Chain;
 import cn.wnhyang.coolGuard.entity.Policy;
+import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.PolicyMapper;
 import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
+import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicyService;
+import cn.wnhyang.coolGuard.service.RuleService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.PolicyVO;
 import cn.wnhyang.coolGuard.vo.create.PolicyCreateVO;
@@ -26,8 +30,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_CODE_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_NOT_EXIST;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -48,6 +55,10 @@ public class PolicyServiceImpl implements PolicyService {
 
     private final ChainMapper chainMapper;
 
+    private final RuleMapper ruleMapper;
+
+    private final RuleService ruleService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createPolicy(PolicyCreateVO createVO) {
@@ -58,7 +69,7 @@ public class PolicyServiceImpl implements PolicyService {
         String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetId());
         if (!chainMapper.selectByChainName(psChain)) {
             Chain chain = new Chain().setChainName(psChain)
-                    .setElData(StrUtil.format(LFUtil.WHEN_EL,
+                    .setElData(StrUtil.format(LFUtil.WHEN_EMPTY_NODE_EL,
                             LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getId())));
             chainMapper.insert(chain);
         } else {
@@ -67,6 +78,9 @@ public class PolicyServiceImpl implements PolicyService {
                     LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getId())));
             chainMapper.updateByChainName(psChain, chain);
         }
+        // TODO 创建chain
+        String pChain = StrUtil.format(LFUtil.POLICY_CHAIN, policy.getId());
+        chainMapper.insert(new Chain().setChainName(pChain));
         return policy.getId();
     }
 
@@ -80,9 +94,32 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deletePolicy(Long id) {
-        // TODO 有引用不可删除，删除规则即规则条件
         validateExists(id);
-        policyMapper.deleteById(id);
+        deletePolicy(Collections.singleton(id));
+    }
+
+    @Override
+    public void deletePolicy(Collection<Long> ids) {
+        ids.forEach(id -> {
+            // 1、确认是否还有运行的规则
+            List<Rule> ruleList = ruleMapper.selectRunningListByPolicyId(id);
+            if (CollUtil.isNotEmpty(ruleList)) {
+                throw exception(POLICY_REFERENCE);
+            }
+            Policy policy = policyMapper.selectById(id);
+            // 2、没有运行的规则就可以删除策略了
+            // 3、删除策略下的所有规则
+            ruleList = ruleMapper.selectByPolicyId(id);
+            ruleService.deleteRule(CollectionUtils.convertSet(ruleList, Rule::getId));
+            // 4、删除chain
+            String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetId());
+            Chain chain = chainMapper.getByChainName(psChain);
+            chain.setElData(LFUtil.removeEl(chain.getElData(),
+                    LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, id)));
+            chainMapper.updateByChainName(psChain, chain);
+            policyMapper.deleteById(id);
+            chainMapper.deleteByChainName(StrUtil.format(LFUtil.POLICY_CHAIN, id));
+        });
     }
 
     @Override
@@ -98,7 +135,7 @@ public class PolicyServiceImpl implements PolicyService {
     @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public boolean policyAccess(NodeComponent bindCmp) {
         Policy policy = policyMapper.selectById(bindCmp.getTag());
-        return PolicyStatus.ON.equals(policy.getStatus());
+        return policy.getStatus();
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)

@@ -28,6 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.RULE_CODE_EXIST;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.RULE_NOT_EXIST;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
@@ -63,10 +66,10 @@ public class RuleServiceImpl implements RuleService {
             String mode = policy.getMode();
             Chain chain = new Chain().setChainName(pChain);
             if (PolicyMode.WORST.equals(mode) || PolicyMode.WEIGHT.equals(mode)) {
-                chain.setElData(StrUtil.format(LFUtil.WHEN_EL,
+                chain.setElData(StrUtil.format(LFUtil.WHEN_EMPTY_NODE_EL,
                         LFUtil.getNodeWithTag(LFUtil.RULE_COMMON_NODE, rule.getId())));
             } else if (PolicyMode.ORDER.equals(mode)) {
-                chain.setElData(StrUtil.format(LFUtil.THEN_EL,
+                chain.setElData(StrUtil.format(LFUtil.THEN_EMPTY_NODE_EL,
                         LFUtil.getNodeWithTag(LFUtil.RULE_COMMON_NODE, rule.getId())));
             }
             chainMapper.insert(chain);
@@ -94,7 +97,25 @@ public class RuleServiceImpl implements RuleService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteRule(Long id) {
         validateExists(id);
-        ruleMapper.deleteById(id);
+        deleteRule(Collections.singleton(id));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteRule(Collection<Long> ids) {
+        ids.forEach(id -> {
+            Rule rule = ruleMapper.selectById(id);
+            // 1、TODO 删除规则条件
+
+            // 2、确认策略，从策略chain中删除规则chain
+            String pChain = StrUtil.format(LFUtil.POLICY_CHAIN, rule.getPolicyId());
+            Chain chain = chainMapper.getByChainName(pChain);
+            chain.setElData(LFUtil.removeEl(chain.getElData(),
+                    LFUtil.getNodeWithTag(LFUtil.RULE_COMMON_NODE, id)));
+            chainMapper.updateByChainName(pChain, chain);
+            ruleMapper.deleteById(id);
+            chainMapper.deleteByChainName(StrUtil.format(LFUtil.RULE_CHAIN, id));
+        });
     }
 
     @Override

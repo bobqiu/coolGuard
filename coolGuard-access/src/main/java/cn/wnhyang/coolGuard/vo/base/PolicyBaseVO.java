@@ -23,7 +23,7 @@ public class PolicyBaseVO implements Serializable {
     /**
      * 策略状态
      */
-    private String status;
+    private Boolean status;
 
     /**
      * 描述

@@ -10,12 +10,10 @@ import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.AccessConvert;
 import cn.wnhyang.coolGuard.convert.FieldConvert;
-import cn.wnhyang.coolGuard.entity.Access;
-import cn.wnhyang.coolGuard.entity.ConfigField;
-import cn.wnhyang.coolGuard.entity.Disposal;
-import cn.wnhyang.coolGuard.entity.Field;
+import cn.wnhyang.coolGuard.entity.*;
 import cn.wnhyang.coolGuard.kafka.producer.CommonProducer;
 import cn.wnhyang.coolGuard.mapper.AccessMapper;
+import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.AccessService;
@@ -75,6 +73,8 @@ public class AccessServiceImpl implements AccessService {
 
     private final FieldMapper fieldMapper;
 
+    private final ChainMapper chainMapper;
+
     @Override
     public AccessResponse syncRisk(String name, Map<String, String> params) {
 
@@ -94,7 +94,6 @@ public class AccessServiceImpl implements AccessService {
         }
         IndicatorContext indicatorContext = new IndicatorContext();
 
-        // TODO 加上校验必输字段如：appName、policySet等
         LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getId()), null, accessRequest, indicatorContext, policyContext, accessResponse);
 
         // 将上下文拼在一块，将此任务丢到线程中执行
@@ -127,6 +126,9 @@ public class AccessServiceImpl implements AccessService {
         validateForCreateOrUpdate(null, createVO.getName());
         Access access = AccessConvert.INSTANCE.convert(createVO);
         accessMapper.insert(access);
+        // TODO 创建chain
+        String aChain = StrUtil.format(LFUtil.ACCESS_CHAIN, access.getId());
+        chainMapper.insert(new Chain().setChainName(aChain));
         return access.getId();
     }
 
@@ -143,6 +145,7 @@ public class AccessServiceImpl implements AccessService {
     public void deleteAccess(Long id) {
         validateExists(id);
         accessMapper.deleteById(id);
+        chainMapper.deleteByChainName(StrUtil.format(LFUtil.ACCESS_CHAIN, id));
     }
 
     @Override

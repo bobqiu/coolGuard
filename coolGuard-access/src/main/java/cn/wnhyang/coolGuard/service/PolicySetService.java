@@ -6,6 +6,8 @@ import cn.wnhyang.coolGuard.vo.create.PolicySetCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.update.PolicySetUpdateVO;
 
+import java.util.Collection;
+
 /**
  * 策略集表 服务类
  *
@@ -35,6 +37,13 @@ public interface PolicySetService {
      * @param id id
      */
     void deletePolicySet(Long id);
+
+    /**
+     * 批量删除，与单删除区别是，已知id存在
+     *
+     * @param ids id集合
+     */
+    void deletePolicySet(Collection<Long> ids);
 
     /**
      * 查询单个

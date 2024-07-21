@@ -6,6 +6,8 @@ import cn.wnhyang.coolGuard.vo.create.RuleCreateVO;
 import cn.wnhyang.coolGuard.vo.page.RulePageVO;
 import cn.wnhyang.coolGuard.vo.update.RuleUpdateVO;
 
+import java.util.Collection;
+
 /**
  * 规则表 服务类
  *
@@ -35,6 +37,14 @@ public interface RuleService {
      * @param id id
      */
     void deleteRule(Long id);
+
+    /**
+     * 批量删除，与单删除区别是，已知id存在
+     * 另外主要用于策略删除时关联删除
+     *
+     * @param ids dis
+     */
+    void deleteRule(Collection<Long> ids);
 
     /**
      * 查询单个
