@@ -72,18 +72,6 @@ public class PolicySetServiceImpl implements PolicySetService {
         validateForCreateOrUpdate(null, createVO.getName());
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(createVO);
         policySetMapper.insert(policySet);
-
-        if (!chainMapper.selectByChainName(LFUtil.POLICY_SET_ROUTE_CHAIN)) {
-            Chain chain = new Chain().setChainName(LFUtil.POLICY_SET_ROUTE_CHAIN)
-                    .setElData(StrUtil.format(LFUtil.WHEN_EMPTY_NODE_EL,
-                            LFUtil.getNodeWithTag(LFUtil.POLICY_SET_COMMON_NODE, policySet.getId())));
-            chainMapper.insert(chain);
-        } else {
-            Chain chain = chainMapper.getByChainName(LFUtil.POLICY_SET_ROUTE_CHAIN);
-            chain.setElData(LFUtil.elAdd(chain.getElData(),
-                    LFUtil.getNodeWithTag(LFUtil.POLICY_SET_COMMON_NODE, policySet.getId())));
-            chainMapper.updateByChainName(LFUtil.POLICY_SET_ROUTE_CHAIN, chain);
-        }
         // TODO 创建chain
         String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getId());
         chainMapper.insert(new Chain().setChainName(psChain));
@@ -112,17 +100,11 @@ public class PolicySetServiceImpl implements PolicySetService {
             if (CollUtil.isNotEmpty(policyList)) {
                 throw exception(POLICY_SET_REFERENCE);
             }
-            PolicySet policySet = policySetMapper.selectById(id);
             // 2、没有运行的策略就可以删除策略集了
             // 3、删除策略集下的所有规则
             policyList = policyMapper.selectListBySetId(id);
             policyService.deletePolicy(CollectionUtils.convertSet(policyList, Policy::getId));
             // 4、删除chain
-            String psChain = LFUtil.POLICY_SET_ROUTE_CHAIN;
-            Chain chain = chainMapper.getByChainName(psChain);
-            chain.setElData(LFUtil.removeEl(chain.getElData(),
-                    LFUtil.getNodeWithTag(LFUtil.POLICY_SET_COMMON_NODE, id)));
-            chainMapper.updateByChainName(psChain, chain);
             policySetMapper.deleteById(id);
             chainMapper.deleteByChainName(StrUtil.format(LFUtil.POLICY_SET_CHAIN, id));
         });
@@ -167,40 +149,28 @@ public class PolicySetServiceImpl implements PolicySetService {
         return new PageResult<>(collect, (long) policySetList.size());
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.POLICY_SET_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
-    public boolean policySetAccess(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_SET_ROUTE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    public void policySetRoute(NodeComponent bindCmp) {
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
-        String tag = bindCmp.getTag();
-
         String appName = accessRequest.getStringData(FieldName.appName);
         String policySetCode = accessRequest.getStringData(FieldName.policySetCode);
 
-        // 查询策略集
         PolicySet policySet = policySetMapper.selectByAppNameAndCode(appName, policySetCode);
-        if (tag.equals(policySet.getId().toString())) {
-            return policySet.getStatus();
+        if (policySet != null && policySet.getStatus()) {
+            log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", policySet.getAppName(), policySet.getCode(), policySet.getName());
+            PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
+            PolicySetVO policySetVO = PolicySetConvert.INSTANCE.convert(policySet);
+            policyContext.setPolicySetVO(policySetVO);
+
+            // TODO 策略集决策流，默认并行策略运行
+
+            bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getId()), null);
+
+            AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);
+            accessResponse.setPolicySetResult(policyContext.convert());
+            log.info("策略集(name:{})执行完毕", policyContext.getPolicySetVO().getName());
         }
-        return false;
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_SET_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
-    public void policySetRoute(NodeComponent bindCmp) {
-
-        PolicySet policySet = policySetMapper.selectById(bindCmp.getTag());
-
-        log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", policySet.getAppName(), policySet.getCode(), policySet.getName());
-        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        PolicySetVO policySetVO = PolicySetConvert.INSTANCE.convert(policySet);
-        policyContext.setPolicySetVO(policySetVO);
-
-        // TODO 策略集决策流，默认并行策略运行
-
-        bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getId()), null);
-
-        AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);
-
-        accessResponse.setPolicySetResult(policyContext.convert());
-        log.info("策略集(name:{})执行完毕", policyContext.getPolicySetVO().getName());
+        log.info("未匹配应用名:{}, 策略集编码:{}", appName, policySetCode);
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

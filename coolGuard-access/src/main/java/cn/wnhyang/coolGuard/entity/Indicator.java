@@ -106,6 +106,9 @@ public class Indicator extends BasePO {
 
     /**
      * 场景
+     * TODO 多个
+     * appName
+     * policySetCode
      */
     @TableField("scene")
     private String scene;

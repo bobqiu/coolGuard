@@ -37,6 +37,9 @@ public class LFUtil {
      */
     public static final String ACCESS_CHAIN = "A_C#{}";
 
+    /**
+     * 动态字段测试
+     */
     public static final String DYNAMIC_TEST_CHAIN = "D_TC";
 
     /**
@@ -65,11 +68,6 @@ public class LFUtil {
      * indicatorId
      */
     public static final String INDICATOR_CHAIN = "I_C#{}";
-
-    /**
-     * 策略集路由chainId
-     */
-    public static final String POLICY_SET_ROUTE_CHAIN = "PS_RC";
 
     /**
      * policySetId
@@ -132,6 +130,11 @@ public class LFUtil {
     public static final String INDICATOR_FALSE_COMMON_NODE = "i_fcn";
 
     /**
+     * 策略集路由普通组件
+     */
+    public static final String POLICY_SET_ROUTE_COMMON_NODE = "ps_rcn";
+
+    /**
      * 策略集普通组件
      */
     public static final String POLICY_SET_COMMON_NODE = "ps_cn";
@@ -173,13 +176,15 @@ public class LFUtil {
     }
 
     /**
+     * 针对THEN和WHEN编排
+     *
      * @param oEl 原el
      * @param el  el
      * @return 新el
      */
     public static String elAdd(String oEl, String el) {
         StringBuilder sb = new StringBuilder(oEl);
-        sb.insert(sb.lastIndexOf(")"), ", " + el);
+        sb.insert(sb.lastIndexOf(")"), "," + el);
         return sb.toString();
     }
 
@@ -189,6 +194,11 @@ public class LFUtil {
      * @return 去除el后的el
      */
     public static String removeEl(String oEl, String el) {
-        return oEl.replace(el, "");
+        return oEl.replace("," + el, "");
+    }
+
+    public static void main(String[] args) {
+        String oEL = "WHEN(e_cn,p_cn.tag(\"1\"),p_cn.tag(\"2\"));";
+        System.out.println(removeEl(oEL, "p_cn.tag(\"1\")"));
     }
 }
