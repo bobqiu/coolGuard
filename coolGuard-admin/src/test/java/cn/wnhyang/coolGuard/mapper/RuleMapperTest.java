@@ -18,7 +18,7 @@ public class RuleMapperTest {
     private RuleMapper ruleMapper;
 
     @Test
-    public void test(){
+    public void test() {
         ruleMapper.selectRunningListByPolicyId(1L);
     }
 }

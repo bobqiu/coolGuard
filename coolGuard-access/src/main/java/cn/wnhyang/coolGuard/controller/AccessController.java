@@ -17,7 +17,7 @@ import java.util.Map;
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
- * 接入配置
+ * 接入
  *
  * @author wnhyang
  * @since 2024/03/14

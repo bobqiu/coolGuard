@@ -78,6 +78,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 
         String sceneType = indicator.getSceneType();
         String isChain = "";
+        // TODO 单个指标场景会有多个
         if (SceneType.APP.equals(sceneType)) {
             isChain = StrUtil.format(LFUtil.INDICATOR_APP_CHAIN, indicator.getScene());
         } else if (SceneType.POLICY_SET.equals(sceneType)) {

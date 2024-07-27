@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.vo.create;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @Data
 public class ConditionCreateVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -33,7 +35,7 @@ public class ConditionCreateVO implements Serializable {
     /**
      * 期望类型
      */
-    private String expectedType;
+    private String expectType;
 
     /**
      * 期望值

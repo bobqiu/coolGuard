@@ -1,24 +1,27 @@
-package cn.wnhyang.coolGuard.dto;
+package cn.wnhyang.coolGuard.vo;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * 规则条件表
- *
  * @author wnhyang
- * @since 2024/04/04
- */
+ * @date 2024/7/27
+ **/
 @Data
-public class ConditionDTO implements Serializable {
+public class Cond implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = -1831587613757992692L;
 
     /**
-     * 主键
+     * AND｜OR｜NOT
      */
-    private Long id;
+    private String logicOp;
+
+    private List<Cond> children;
 
     /**
      * 条件类型

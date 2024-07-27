@@ -51,7 +51,7 @@ public class Condition extends BasePO {
      * 期望类型
      */
     @TableField("expect_type")
-    private String expectedType;
+    private String expectType;
 
     /**
      * 期望值

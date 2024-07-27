@@ -103,7 +103,7 @@ public class ConditionServiceImpl implements ConditionService {
                 FieldType fieldType = FieldType.getByFieldName(fieldName);
 
                 String expectValue = condition.getExpectValue();
-                if (ExpectType.CONTEXT.equals(condition.getExpectedType())) {
+                if (ExpectType.CONTEXT.equals(condition.getExpectType())) {
                     expectValue = accessRequest.getStringData(expectValue);
                 }
 
@@ -153,7 +153,7 @@ public class ConditionServiceImpl implements ConditionService {
                 IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
                 String indicatorValue = indicatorContext.getIndicatorValue(Long.valueOf(indicatorId));
                 String expectValue = condition.getExpectValue();
-                if (ExpectType.CONTEXT.equals(condition.getExpectedType())) {
+                if (ExpectType.CONTEXT.equals(condition.getExpectType())) {
                     expectValue = accessRequest.getStringData(expectValue);
                 }
                 cond = FunUtil.INSTANCE.doubleLogicOp.apply(Double.parseDouble(indicatorValue), byType, Double.valueOf(expectValue));

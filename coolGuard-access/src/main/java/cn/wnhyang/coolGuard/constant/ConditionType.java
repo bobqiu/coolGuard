@@ -6,14 +6,29 @@ package cn.wnhyang.coolGuard.constant;
  **/
 public interface ConditionType {
 
+    /**
+     * 普通条件
+     */
     String NORMAL = "normal";
 
+    /**
+     * 指标条件
+     */
     String ZB = "zb";
 
+    /**
+     * 正则条件
+     */
     String REGULAR = "regular";
 
+    /**
+     * 名单条件
+     */
     String LIST = "list";
 
+    /**
+     * 脚本条件
+     */
     String SCRIPT = "script";
 
 }

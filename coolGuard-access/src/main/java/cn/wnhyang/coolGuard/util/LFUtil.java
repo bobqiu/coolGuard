@@ -1,12 +1,29 @@
 package cn.wnhyang.coolGuard.util;
 
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.vo.Cond;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static cn.wnhyang.coolGuard.util.JsonUtil.buildJavaTimeModule;
 
 /**
  * @author wnhyang
  * @date 2024/7/18
  **/
 public class LFUtil {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.registerModules(buildJavaTimeModule());
+    }
 
     public static final String THEN = "THEN()";
 
@@ -197,8 +214,93 @@ public class LFUtil {
         return oEl.replace("," + el, "");
     }
 
-    public static void main(String[] args) {
-        String oEL = "WHEN(e_cn,p_cn.tag(\"1\"),p_cn.tag(\"2\"));";
-        System.out.println(removeEl(oEL, "p_cn.tag(\"1\")"));
+    private static String[] splitExpressions(String expression) {
+        List<String> parts = new ArrayList<>();
+        int level = 0;
+        int startIndex = 0;
+
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+            if (c == '(') {
+                level++;
+            } else if (c == ')') {
+                level--;
+            } else if (c == ',' && level == 0) {
+                parts.add(expression.substring(startIndex, i));
+                startIndex = i + 1;
+            }
+        }
+        parts.add(expression.substring(startIndex));
+
+        return parts.toArray(new String[0]);
     }
+
+    @SneakyThrows
+    private static String buildCondEl(Cond cond) {
+        if (cond != null) {
+            if (cond.getLogicOp() != null && cond.getChildren() != null && !cond.getChildren().isEmpty()) {
+                List<String> expressions = cond.getChildren().stream()
+                        .map(LFUtil::buildCondEl)
+                        .collect(Collectors.toList());
+                return cond.getLogicOp() + "(" + String.join(", ", expressions) + ")";
+            } else {
+                return "c_cn.data('" + objectMapper.writeValueAsString(cond) + "')";
+            }
+        }
+        return "";
+    }
+
+    public static Cond parseToCond(String expression) throws Exception {
+        expression = expression.replaceAll("\\s+", "");
+        return parseExpressionToCond(expression);
+    }
+
+    private static Cond parseExpressionToCond(String expression) throws Exception {
+        if (expression.startsWith("AND(")) {
+            return parseLogicExpression("AND", expression.substring(4, expression.length() - 1));
+        } else if (expression.startsWith("OR(")) {
+            return parseLogicExpression("OR", expression.substring(3, expression.length() - 1));
+        } else if (expression.startsWith("NOT(")) {
+            return parseLogicExpression("NOT", expression.substring(4, expression.length() - 1));
+        } else {
+            return parseVariable(expression);
+        }
+    }
+
+    private static Cond parseVariable(String variableExpression) throws Exception {
+        if (variableExpression.contains(".data('")) {
+            int dataIndex = variableExpression.indexOf(".data('");
+            String jsonData = variableExpression.substring(dataIndex + 7, variableExpression.length() - 2).trim();
+            return objectMapper.readValue(jsonData, Cond.class);
+        }
+        return new Cond();
+    }
+
+    private static Cond parseLogicExpression(String operator, String subExpression) throws Exception {
+        Cond cond = new Cond();
+        cond.setLogicOp(operator);
+        cond.setChildren(new ArrayList<>());
+        String[] subExpressions = splitExpressions(subExpression);
+        for (String subExp : subExpressions) {
+            cond.getChildren().add(parseExpressionToCond(subExp.trim()));
+        }
+        return cond;
+    }
+
+
+    public static void main(String[] args) throws Exception {
+
+        Cond cond = new Cond();
+        cond.setLogicOp("AND");
+        List<Cond> children = new ArrayList<>();
+        children.add(new Cond().setType("normal").setValue("N_S_appName").setLogicType("eq").setExpectType("input").setExpectValue("Phone"));
+        children.add(new Cond().setType("normal").setValue("N_F_transAmount").setLogicType("lt").setExpectType("input").setExpectValue("100"));
+        cond.setChildren(children);
+
+        String condEl = buildCondEl(cond);
+        System.out.println(condEl);
+
+        System.out.println(parseToCond(condEl));
+    }
+
 }
