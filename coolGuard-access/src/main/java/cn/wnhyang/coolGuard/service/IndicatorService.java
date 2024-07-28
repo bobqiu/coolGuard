@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.service;
 
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.IndicatorVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
@@ -43,7 +44,7 @@ public interface IndicatorService {
      * @param id id
      * @return po
      */
-    Indicator getIndicator(Long id);
+    IndicatorVO getIndicator(Long id);
 
     /**
      * 分页查询
@@ -51,7 +52,7 @@ public interface IndicatorService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<Indicator> pageIndicator(IndicatorPageVO pageVO);
+    PageResult<IndicatorVO> pageIndicator(IndicatorPageVO pageVO);
 
     /**
      * 分页查询

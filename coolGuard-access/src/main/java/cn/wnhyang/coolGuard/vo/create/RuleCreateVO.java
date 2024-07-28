@@ -1,9 +1,9 @@
 package cn.wnhyang.coolGuard.vo.create;
 
+import cn.wnhyang.coolGuard.vo.base.RuleBaseVO;
 import lombok.Data;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * 规则表
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @since 2024/04/04
  */
 @Data
-public class RuleCreateVO implements Serializable {
+public class RuleCreateVO extends RuleBaseVO {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -22,38 +22,4 @@ public class RuleCreateVO implements Serializable {
      */
     private Long policyId;
 
-    /**
-     * 规则编码
-     */
-    private String code;
-
-    /**
-     * 规则名
-     */
-    private String name;
-
-    /**
-     * 处理编码
-     */
-    private Long disposalId;
-
-    /**
-     * 分数
-     */
-    private Integer score;
-
-    /**
-     * 状态
-     */
-    private String status;
-
-    /**
-     * 排序
-     */
-    private Integer sort;
-
-    /**
-     * 描述
-     */
-    private String description;
 }

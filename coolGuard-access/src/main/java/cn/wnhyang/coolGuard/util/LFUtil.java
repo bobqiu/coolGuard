@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import static cn.wnhyang.coolGuard.util.JsonUtil.buildJavaTimeModule;
@@ -25,19 +26,10 @@ public class LFUtil {
         objectMapper.registerModules(buildJavaTimeModule());
     }
 
-    public static final String THEN = "THEN()";
-
-    public static final String WHEN = "WHEN()";
-
     /**
-     * 串行EL
+     * if
      */
-    public static final String THEN_EL = "THEN({});";
-
-    /**
-     * 并行EL
-     */
-    public static final String WHEN_EL = "WHEN({});";
+    public static final String IF_EL = "IF({},{},{});";
 
     /**
      * 串行EL，带上空节点
@@ -45,9 +37,19 @@ public class LFUtil {
     public static final String THEN_EMPTY_NODE_EL = "THEN(e_cn,{});";
 
     /**
+     * 串行EL，带上空节点
+     */
+    public static final String THEN_EMPTY_NODE = "THEN(e_cn);";
+
+    /**
      * 并行EL，带上空节点
      */
     public static final String WHEN_EMPTY_NODE_EL = "WHEN(e_cn,{});";
+
+    /**
+     * 并行EL，带上空节点
+     */
+    public static final String WHEN_EMPTY_NODE = "WHEN(e_cn);";
 
     /**
      * accessId
@@ -236,7 +238,7 @@ public class LFUtil {
     }
 
     @SneakyThrows
-    private static String buildCondEl(Cond cond) {
+    public static String buildCondEl(Cond cond) {
         if (cond != null) {
             if (cond.getLogicOp() != null && cond.getChildren() != null && !cond.getChildren().isEmpty()) {
                 List<String> expressions = cond.getChildren().stream()
@@ -250,7 +252,8 @@ public class LFUtil {
         return "";
     }
 
-    public static Cond parseToCond(String expression) throws Exception {
+    @SneakyThrows
+    public static Cond parseToCond(String expression) {
         expression = expression.replaceAll("\\s+", "");
         return parseExpressionToCond(expression);
     }
@@ -288,6 +291,47 @@ public class LFUtil {
     }
 
 
+    public static List<String> parseIfEl(String el) {
+        el = el.replaceAll("\\s+", "");
+        el = el.substring(3, el.length() - 2);
+        List<String> params = new ArrayList<>();
+        Stack<Character> stack = new Stack<>();
+        StringBuilder currentParam = new StringBuilder();
+        boolean inQuotes = false;
+
+        for (char c : el.toCharArray()) {
+            if (c == '(' || c == '[' || c == '{') {
+                stack.push(c);
+            } else if (c == ')' || c == ']' || c == '}') {
+                if (!stack.isEmpty() && stack.peek() == getMatchingOpeningBracket(c)) {
+                    stack.pop();
+                }
+            } else if (c == ',' && stack.isEmpty() && !inQuotes) {
+                params.add(currentParam.toString().trim());
+                currentParam.setLength(0);
+                continue;
+            } else if (c == '"' || c == '\'') {
+                inQuotes = !inQuotes;
+            }
+            currentParam.append(c);
+        }
+
+        if (!currentParam.isEmpty()) {
+            params.add(currentParam.toString().trim());
+        }
+
+        return params;
+    }
+
+    private static char getMatchingOpeningBracket(char closingBracket) {
+        return switch (closingBracket) {
+            case ')' -> '(';
+            case ']' -> '[';
+            case '}' -> '{';
+            default -> '\0';
+        };
+    }
+
     public static void main(String[] args) throws Exception {
 
         Cond cond = new Cond();
@@ -301,6 +345,18 @@ public class LFUtil {
         System.out.println(condEl);
 
         System.out.println(parseToCond(condEl));
+
+        String content = "IF(OR(c_cn.data('{\"type\":\"normal\",\"value\":\"N_S_appName\",\"logicType\":\"eq\",\"expectType\":\"input\",\"expectValue\":\"Phone\"}'),c_cn.data('{\"type\":\"normal\",\"value\":\"N_S_payerAccount\",\"logicType\":\"eq\",\"expectType\":\"input\",\"expectValue\":\"123456\"}'),c_cn.data('{\"type\":\"normal\",\"value\":\"N_F_transAmount\",\"logicType\":\"gt\",\"expectType\":\"input\",\"expectValue\":\"15\"}')),r_tcn.tag(\"1\"),r_fcn);";
+
+        List<String> ifEl = parseIfEl(content);
+        for (String parseParam : ifEl) {
+            System.out.println(parseParam);
+        }
+
+        Cond parseToCond = parseToCond(ifEl.get(0));
+        System.out.println(parseToCond);
+
+
     }
 
 }

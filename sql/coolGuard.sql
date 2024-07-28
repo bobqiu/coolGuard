@@ -56,24 +56,6 @@ create table de_chain
 )
     comment 'chain表';
 
-create table de_condition
-(
-    id           bigint auto_increment comment '主键'
-        primary key,
-    type         varchar(20)                 default 'normal'          not null comment '类型',
-    value        varchar(32)                 default ''                not null comment '操作对象',
-    logic_type   varchar(32)                 default 'null'            not null comment '逻辑类型',
-    expect_type  varchar(32)                 default 'input'           not null comment '期望值类型',
-    expect_value varchar(32)                 default ''                not null comment '期望值',
-    description  varchar(64) charset utf8mb4 default ''                null comment '描述',
-    creator      varchar(64) charset utf8mb4 default ''                null comment '创建者',
-    create_time  datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater      varchar(64) charset utf8mb4 default ''                null comment '更新者',
-    update_time  datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    deleted      bit                         default b'0'              not null comment '是否删除'
-)
-    comment '规则条件表';
-
 create table de_disposal
 (
     id          bigint auto_increment comment '主键'

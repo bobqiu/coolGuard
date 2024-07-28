@@ -72,9 +72,9 @@ public class PolicySetServiceImpl implements PolicySetService {
         validateForCreateOrUpdate(null, createVO.getName());
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(createVO);
         policySetMapper.insert(policySet);
-        // TODO 创建chain
         String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getId());
-        chainMapper.insert(new Chain().setChainName(psChain));
+        // TODO 策略集el，默认并行
+        chainMapper.insert(new Chain().setChainName(psChain).setElData(LFUtil.WHEN_EMPTY_NODE));
         return policySet.getId();
     }
 
@@ -82,6 +82,12 @@ public class PolicySetServiceImpl implements PolicySetService {
     @Transactional(rollbackFor = Exception.class)
     public void updatePolicySet(PolicySetUpdateVO updateVO) {
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(updateVO);
+        if (!policySet.getStatus()) {
+            List<Policy> policyList = policyMapper.selectRunningListBySetId(policySet.getId());
+            if (CollUtil.isNotEmpty(policyList)) {
+                throw exception(POLICY_SET_REFERENCE_UPDATE);
+            }
+        }
         policySetMapper.updateById(policySet);
     }
 
@@ -98,7 +104,7 @@ public class PolicySetServiceImpl implements PolicySetService {
             // 1、确认是否还有运行的策略
             List<Policy> policyList = policyMapper.selectRunningListBySetId(id);
             if (CollUtil.isNotEmpty(policyList)) {
-                throw exception(POLICY_SET_REFERENCE);
+                throw exception(POLICY_SET_REFERENCE_DELETE);
             }
             // 2、没有运行的策略就可以删除策略集了
             // 3、删除策略集下的所有规则
@@ -161,8 +167,6 @@ public class PolicySetServiceImpl implements PolicySetService {
             PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
             PolicySetVO policySetVO = PolicySetConvert.INSTANCE.convert(policySet);
             policyContext.setPolicySetVO(policySetVO);
-
-            // TODO 策略集决策流，默认并行策略运行
 
             bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getId()), null);
 

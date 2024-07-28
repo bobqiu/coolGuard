@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.convert.RuleConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleService;
@@ -70,7 +69,7 @@ public class RuleController {
      */
     @GetMapping("/{id}")
     public CommonResult<RuleVO> getRule(@PathVariable("id") Long id) {
-        return success(RuleConvert.INSTANCE.convert(ruleService.getRule(id)));
+        return success(ruleService.getRule(id));
     }
 
     /**
@@ -81,6 +80,6 @@ public class RuleController {
      */
     @GetMapping("/page")
     public CommonResult<PageResult<RuleVO>> pageRule(@Valid RulePageVO pageVO) {
-        return success(RuleConvert.INSTANCE.convert(ruleService.pageRule(pageVO)));
+        return success(ruleService.pageRule(pageVO));
     }
 }

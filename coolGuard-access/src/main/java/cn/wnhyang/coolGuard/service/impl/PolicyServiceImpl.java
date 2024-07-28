@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.PolicyMode;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.entity.Chain;
@@ -67,19 +68,17 @@ public class PolicyServiceImpl implements PolicyService {
         policyMapper.insert(policy);
 
         String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetId());
-        if (!chainMapper.selectByChainName(psChain)) {
-            Chain chain = new Chain().setChainName(psChain)
-                    .setElData(StrUtil.format(LFUtil.WHEN_EMPTY_NODE_EL,
-                            LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getId())));
-            chainMapper.insert(chain);
-        } else {
-            Chain chain = chainMapper.getByChainName(psChain);
-            chain.setElData(LFUtil.elAdd(chain.getElData(),
-                    LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getId())));
-            chainMapper.updateByChainName(psChain, chain);
-        }
-        // TODO 创建chain
+        Chain chain = chainMapper.getByChainName(psChain);
+        chain.setElData(LFUtil.elAdd(chain.getElData(),
+                LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getId())));
+        chainMapper.updateByChainName(psChain, chain);
+
         String pChain = StrUtil.format(LFUtil.POLICY_CHAIN, policy.getId());
+        if (PolicyMode.WORST.equals(policy.getMode()) || PolicyMode.WEIGHT.equals(policy.getMode())) {
+            chain.setElData(LFUtil.WHEN_EMPTY_NODE);
+        } else if (PolicyMode.ORDER.equals(policy.getMode())) {
+            chain.setElData(LFUtil.THEN_EMPTY_NODE);
+        }
         chainMapper.insert(new Chain().setChainName(pChain));
         return policy.getId();
     }
@@ -88,6 +87,12 @@ public class PolicyServiceImpl implements PolicyService {
     @Transactional(rollbackFor = Exception.class)
     public void updatePolicy(PolicyUpdateVO updateVO) {
         Policy policy = PolicyConvert.INSTANCE.convert(updateVO);
+        if (!policy.getStatus()) {
+            List<Rule> ruleList = ruleMapper.selectRunningListByPolicyId(policy.getId());
+            if (CollUtil.isNotEmpty(ruleList)) {
+                throw exception(POLICY_REFERENCE_UPDATE);
+            }
+        }
         policyMapper.updateById(policy);
     }
 
@@ -104,7 +109,7 @@ public class PolicyServiceImpl implements PolicyService {
             // 1、确认是否还有运行的规则
             List<Rule> ruleList = ruleMapper.selectRunningListByPolicyId(id);
             if (CollUtil.isNotEmpty(ruleList)) {
-                throw exception(POLICY_REFERENCE);
+                throw exception(POLICY_REFERENCE_DELETE);
             }
             Policy policy = policyMapper.selectById(id);
             // 2、没有运行的规则就可以删除策略了

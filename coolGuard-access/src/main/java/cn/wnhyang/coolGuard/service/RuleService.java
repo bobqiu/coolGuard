@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.service;
 
-import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.RuleVO;
 import cn.wnhyang.coolGuard.vo.create.RuleCreateVO;
 import cn.wnhyang.coolGuard.vo.page.RulePageVO;
 import cn.wnhyang.coolGuard.vo.update.RuleUpdateVO;
@@ -52,7 +52,7 @@ public interface RuleService {
      * @param id id
      * @return po
      */
-    Rule getRule(Long id);
+    RuleVO getRule(Long id);
 
     /**
      * 分页查询
@@ -60,6 +60,6 @@ public interface RuleService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<Rule> pageRule(RulePageVO pageVO);
+    PageResult<RuleVO> pageRule(RulePageVO pageVO);
 
 }

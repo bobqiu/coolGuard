@@ -1,7 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.constant.PolicyMode;
 import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
@@ -14,6 +13,7 @@ import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleService;
 import cn.wnhyang.coolGuard.util.LFUtil;
+import cn.wnhyang.coolGuard.vo.Cond;
 import cn.wnhyang.coolGuard.vo.RuleVO;
 import cn.wnhyang.coolGuard.vo.create.RuleCreateVO;
 import cn.wnhyang.coolGuard.vo.page.RulePageVO;
@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.RULE_CODE_EXIST;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.RULE_NOT_EXIST;
@@ -62,26 +63,16 @@ public class RuleServiceImpl implements RuleService {
 
         Policy policy = policyMapper.selectById(rule.getPolicyId());
         String pChain = StrUtil.format(LFUtil.POLICY_CHAIN, policy.getId());
-        if (!chainMapper.selectByChainName(pChain)) {
-            String mode = policy.getMode();
-            Chain chain = new Chain().setChainName(pChain);
-            if (PolicyMode.WORST.equals(mode) || PolicyMode.WEIGHT.equals(mode)) {
-                chain.setElData(StrUtil.format(LFUtil.WHEN_EMPTY_NODE_EL,
-                        LFUtil.getNodeWithTag(LFUtil.RULE_COMMON_NODE, rule.getId())));
-            } else if (PolicyMode.ORDER.equals(mode)) {
-                chain.setElData(StrUtil.format(LFUtil.THEN_EMPTY_NODE_EL,
-                        LFUtil.getNodeWithTag(LFUtil.RULE_COMMON_NODE, rule.getId())));
-            }
-            chainMapper.insert(chain);
-        } else {
-            Chain chain = chainMapper.getByChainName(pChain);
-            chain.setElData(LFUtil.elAdd(chain.getElData(),
-                    LFUtil.getNodeWithTag(LFUtil.RULE_COMMON_NODE, rule.getId())));
-            chainMapper.updateByChainName(pChain, chain);
-        }
-        // TODO 创建规则chain，即IF
+
+        Chain chain = chainMapper.getByChainName(pChain);
+        chain.setElData(LFUtil.elAdd(chain.getElData(),
+                LFUtil.getNodeWithTag(LFUtil.RULE_COMMON_NODE, rule.getId())));
+        chainMapper.updateByChainName(pChain, chain);
+
+        String condEl = LFUtil.buildCondEl(createVO.getCond());
         String rChain = StrUtil.format(LFUtil.RULE_CHAIN, rule.getId());
-        chainMapper.insert(new Chain().setChainName(rChain));
+        chainMapper.insert(new Chain().setChainName(rChain).setElData(StrUtil.format(LFUtil.IF_EL, condEl,
+                rChain, LFUtil.RULE_FALSE_COMMON_NODE)));
         return rule.getId();
     }
 
@@ -105,9 +96,7 @@ public class RuleServiceImpl implements RuleService {
     public void deleteRule(Collection<Long> ids) {
         ids.forEach(id -> {
             Rule rule = ruleMapper.selectById(id);
-            // 1、TODO 删除规则条件
-
-            // 2、确认策略，从策略chain中删除规则chain
+            // 从策略chain中删除规则chain
             String pChain = StrUtil.format(LFUtil.POLICY_CHAIN, rule.getPolicyId());
             Chain chain = chainMapper.getByChainName(pChain);
             chain.setElData(LFUtil.removeEl(chain.getElData(),
@@ -119,13 +108,27 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
-    public Rule getRule(Long id) {
-        return ruleMapper.selectById(id);
+    public RuleVO getRule(Long id) {
+        Rule rule = ruleMapper.selectById(id);
+        RuleVO ruleVO = RuleConvert.INSTANCE.convert(rule);
+        ruleVO.setCond(getCond(id));
+        return ruleVO;
     }
 
     @Override
-    public PageResult<Rule> pageRule(RulePageVO pageVO) {
-        return ruleMapper.selectPage(pageVO);
+    public PageResult<RuleVO> pageRule(RulePageVO pageVO) {
+        PageResult<Rule> rulePageResult = ruleMapper.selectPage(pageVO);
+
+        PageResult<RuleVO> voPageResult = RuleConvert.INSTANCE.convert(rulePageResult);
+
+        voPageResult.getList().forEach(ruleVO -> ruleVO.setCond(getCond(ruleVO.getId())));
+        return voPageResult;
+    }
+
+    private Cond getCond(Long id) {
+        Chain chain = chainMapper.getByChainName(StrUtil.format(LFUtil.RULE_CHAIN, id));
+        List<String> ifEl = LFUtil.parseIfEl(chain.getElData());
+        return LFUtil.parseToCond(ifEl.get(0));
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.RULE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)

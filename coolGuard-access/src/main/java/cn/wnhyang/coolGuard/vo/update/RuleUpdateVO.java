@@ -1,7 +1,9 @@
 package cn.wnhyang.coolGuard.vo.update;
 
-import cn.wnhyang.coolGuard.vo.create.RuleCreateVO;
+import cn.wnhyang.coolGuard.vo.base.RuleBaseVO;
 import lombok.Data;
+
+import java.io.Serial;
 
 /**
  * 规则表
@@ -10,12 +12,14 @@ import lombok.Data;
  * @since 2024/04/04
  */
 @Data
-public class RuleUpdateVO extends RuleCreateVO {
+public class RuleUpdateVO extends RuleBaseVO {
 
-    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = -8130415488267597266L;
 
     /**
      * 主键
      */
     private Long id;
+
 }

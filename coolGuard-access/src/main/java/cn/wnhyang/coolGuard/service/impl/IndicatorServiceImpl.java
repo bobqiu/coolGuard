@@ -18,6 +18,7 @@ import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
 import cn.wnhyang.coolGuard.util.LFUtil;
+import cn.wnhyang.coolGuard.vo.Cond;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
@@ -26,7 +27,6 @@ import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.builder.el.LiteFlowChainELBuilder;
-import com.yomahub.liteflow.core.FlowExecutor;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
@@ -55,14 +55,11 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     private final ChainMapper chainMapper;
 
-    private final FlowExecutor flowExecutor;
-
-    public IndicatorServiceImpl(List<AbstractIndicator> indicatorList, IndicatorMapper indicatorMapper, PolicySetMapper policySetMapper, ChainMapper chainMapper, FlowExecutor flowExecutor) {
+    public IndicatorServiceImpl(List<AbstractIndicator> indicatorList, IndicatorMapper indicatorMapper, PolicySetMapper policySetMapper, ChainMapper chainMapper) {
         addIndicator(indicatorList);
         this.indicatorMapper = indicatorMapper;
         this.policySetMapper = policySetMapper;
         this.chainMapper = chainMapper;
-        this.flowExecutor = flowExecutor;
     }
 
     private void addIndicator(List<AbstractIndicator> indicatorList) {
@@ -76,28 +73,24 @@ public class IndicatorServiceImpl implements IndicatorService {
         indicator.setTimeSlice(WinSize.getWinSizeValue(createVO.getWinSize()));
         indicatorMapper.insert(indicator);
 
-        String sceneType = indicator.getSceneType();
-        String isChain = "";
-        // TODO 单个指标场景会有多个
-        if (SceneType.APP.equals(sceneType)) {
-            isChain = StrUtil.format(LFUtil.INDICATOR_APP_CHAIN, indicator.getScene());
-        } else if (SceneType.POLICY_SET.equals(sceneType)) {
-            isChain = StrUtil.format(LFUtil.INDICATOR_POLICY_SET_CHAIN, indicator.getScene());
+        for (String s : indicator.getSceneType().split(",")) {
+            String iChain = SceneType.APP.equals(indicator.getSceneType()) ?
+                    StrUtil.format(LFUtil.INDICATOR_APP_CHAIN, s) : StrUtil.format(LFUtil.INDICATOR_POLICY_SET_CHAIN, s);
+            if (!chainMapper.selectByChainName(iChain)) {
+                Chain chain = new Chain().setChainName(iChain)
+                        .setElData(StrUtil.format(LFUtil.WHEN_EMPTY_NODE_EL,
+                                LFUtil.getNodeWithTag(LFUtil.INDICATOR_COMMON_NODE, indicator.getId())));
+                chainMapper.insert(chain);
+            } else {
+                Chain chain = chainMapper.getByChainName(iChain);
+                chain.setElData(LFUtil.elAdd(chain.getElData(), LFUtil.getNodeWithTag(LFUtil.INDICATOR_COMMON_NODE, indicator.getId())));
+                chainMapper.updateByChainName(iChain, chain);
+            }
         }
-        if (!chainMapper.selectByChainName(isChain)) {
-            Chain chain = new Chain().setChainName(isChain)
-                    .setElData(StrUtil.format(LFUtil.WHEN_EMPTY_NODE_EL,
-                            LFUtil.getNodeWithTag(LFUtil.INDICATOR_COMMON_NODE, indicator.getId())));
-            chainMapper.insert(chain);
-        } else {
-            Chain chain = chainMapper.getByChainName(isChain);
-            chain.setElData(LFUtil.elAdd(chain.getElData(), LFUtil.getNodeWithTag(LFUtil.INDICATOR_COMMON_NODE, indicator.getId())));
-            chainMapper.updateByChainName(isChain, chain);
-        }
-        log.info("createIndicator:{}", indicator);
-        // TODO 创建指标chain，即IF
+        String condEl = LFUtil.buildCondEl(createVO.getCond());
         String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getId());
-        chainMapper.insert(new Chain().setChainName(iChain));
+        chainMapper.insert(new Chain().setChainName(iChain).setElData(StrUtil.format(LFUtil.IF_EL, condEl,
+                iChain, LFUtil.INDICATOR_FALSE_COMMON_NODE)));
         return indicator.getId();
     }
 
@@ -111,19 +104,45 @@ public class IndicatorServiceImpl implements IndicatorService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteIndicator(Long id) {
-        // TODO 删除时，删除对应的chain，即从对应chain中移除指标chain
+        Indicator indicator = indicatorMapper.selectById(id);
+        if (ObjectUtil.isNotNull(indicator)) {
+            for (String s : indicator.getSceneType().split(",")) {
+                String iChain = SceneType.APP.equals(indicator.getSceneType()) ?
+                        StrUtil.format(LFUtil.INDICATOR_APP_CHAIN, s) : StrUtil.format(LFUtil.INDICATOR_POLICY_SET_CHAIN, s);
+                Chain chain = chainMapper.getByChainName(iChain);
+                chain.setElData(LFUtil.removeEl(chain.getElData(),
+                        LFUtil.getNodeWithTag(LFUtil.INDICATOR_COMMON_NODE, id)));
+                chainMapper.updateByChainName(iChain, chain);
+            }
+        }
         indicatorMapper.deleteById(id);
+        chainMapper.deleteByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, id));
     }
 
     @Override
-    public Indicator getIndicator(Long id) {
-        return indicatorMapper.selectById(id);
+    public IndicatorVO getIndicator(Long id) {
+        Indicator indicator = indicatorMapper.selectById(id);
+        IndicatorVO indicatorVO = IndicatorConvert.INSTANCE.convert(indicator);
+        indicatorVO.setCond(getCond(id));
+        return indicatorVO;
     }
 
     @Override
-    public PageResult<Indicator> pageIndicator(IndicatorPageVO pageVO) {
-        return indicatorMapper.selectPage(pageVO);
+    public PageResult<IndicatorVO> pageIndicator(IndicatorPageVO pageVO) {
+        PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPage(pageVO);
+
+        PageResult<IndicatorVO> voPageResult = IndicatorConvert.INSTANCE.convert(indicatorPageResult);
+
+        voPageResult.getList().forEach(indicatorVO -> indicatorVO.setCond(getCond(indicatorVO.getId())));
+        return voPageResult;
     }
+
+    private Cond getCond(Long id) {
+        Chain chain = chainMapper.getByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, id));
+        List<String> ifEl = LFUtil.parseIfEl(chain.getElData());
+        return LFUtil.parseToCond(ifEl.get(0));
+    }
+
 
     @Override
     public PageResult<Indicator> pageIndicatorByPolicySet(IndicatorByPolicySetPageVO pageVO) {

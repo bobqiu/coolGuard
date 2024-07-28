@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.vo.base;
 
+import cn.wnhyang.coolGuard.vo.Cond;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -33,4 +34,6 @@ public class IndicatorBaseVO implements Serializable {
      * 描述
      */
     private String description;
+
+    private Cond cond;
 }

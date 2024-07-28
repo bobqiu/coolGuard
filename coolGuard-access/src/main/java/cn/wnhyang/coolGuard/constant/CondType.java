@@ -4,7 +4,7 @@ package cn.wnhyang.coolGuard.constant;
  * @author wnhyang
  * @date 2024/6/18
  **/
-public interface ConditionType {
+public interface CondType {
 
     /**
      * 普通条件

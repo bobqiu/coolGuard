@@ -71,7 +71,7 @@ public class IndicatorController {
      */
     @GetMapping("/{id}")
     public CommonResult<IndicatorVO> getIndicator(@PathVariable("id") Long id) {
-        return success(IndicatorConvert.INSTANCE.convert(indicatorService.getIndicator(id)));
+        return success(indicatorService.getIndicator(id));
     }
 
     /**
@@ -82,7 +82,7 @@ public class IndicatorController {
      */
     @GetMapping("/page")
     public CommonResult<PageResult<IndicatorVO>> pageIndicator(@Valid IndicatorPageVO pageVO) {
-        return success(IndicatorConvert.INSTANCE.convert(indicatorService.pageIndicator(pageVO)));
+        return success(indicatorService.pageIndicator(pageVO));
     }
 
     /**
