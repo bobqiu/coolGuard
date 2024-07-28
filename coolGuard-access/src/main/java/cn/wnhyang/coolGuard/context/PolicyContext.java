@@ -73,17 +73,22 @@ public class PolicyContext {
             PolicyVO policyVO = entry.getValue();
             PolicyResult policyResult = new PolicyResult(policyVO.getName(), policyVO.getCode(), policyVO.getMode());
 
+            long disposalId = 0L;
+            int maxScore = 0;
             List<RuleVO> ruleVOList = ruleListMap.get(policyVO.getId());
             if (CollUtil.isNotEmpty(ruleVOList)) {
                 for (RuleVO ruleVO : ruleVOList) {
-                    RuleResult ruleResult = new RuleResult(ruleVO.getName(), ruleVO.getCode());
+                    RuleResult ruleResult = new RuleResult(ruleVO.getName(), ruleVO.getCode(), ruleVO.getScore());
 
                     Disposal disposal = disposalMap.get(ruleVO.getDisposalId());
                     if (null != disposal) {
                         ruleResult.setDisposalName(disposal.getName());
                         ruleResult.setDisposalCode(disposal.getCode());
+                        if (disposal.getGrade() > maxScore) {
+                            maxScore = disposal.getGrade();
+                            disposalId = ruleVO.getDisposalId();
+                        }
                     }
-                    ruleResult.setScore(ruleVO.getScore());
                     // 模拟/正式规则区分开
                     if (RuleStatus.MOCK.equals(ruleVO.getStatus())) {
                         policyResult.addMockRuleResult(ruleResult);
@@ -93,8 +98,8 @@ public class PolicyContext {
                 }
             }
             // TODO 根据策略模式确定处置结果
-            policyResult.setDisposalName("通过");
-            policyResult.setDisposalCode("pass");
+            policyResult.setDisposalName(disposalMap.get(disposalId).getName());
+            policyResult.setDisposalCode(disposalMap.get(disposalId).getCode());
             policySetResult.addPolicyResult(policyResult);
         }
         // TODO

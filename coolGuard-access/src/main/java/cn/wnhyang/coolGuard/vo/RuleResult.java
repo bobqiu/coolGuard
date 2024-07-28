@@ -26,9 +26,10 @@ public class RuleResult implements Serializable {
      */
     private final String code;
 
-    public RuleResult(String name, String code) {
+    public RuleResult(String name, String code, Integer score) {
         this.name = name;
         this.code = code;
+        this.score = score;
     }
 
     /**

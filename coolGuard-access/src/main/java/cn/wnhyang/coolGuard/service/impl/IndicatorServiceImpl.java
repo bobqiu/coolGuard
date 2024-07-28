@@ -99,6 +99,11 @@ public class IndicatorServiceImpl implements IndicatorService {
     public void updateIndicator(IndicatorUpdateVO updateVO) {
         Indicator indicator = IndicatorConvert.INSTANCE.convert(updateVO);
         indicatorMapper.updateById(indicator);
+        String condEl = LFUtil.buildCondEl(updateVO.getCond());
+        String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getId());
+        Chain chain = chainMapper.getByChainName(iChain);
+        chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl, iChain, LFUtil.INDICATOR_FALSE_COMMON_NODE));
+        chainMapper.updateById(chain);
     }
 
     @Override
@@ -179,16 +184,14 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public void indicatorTrue(NodeComponent bindCmp) {
+        Indicator indicator = indicatorMapper.selectById(bindCmp.getTag());
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
 
-        Indicator indicator = indicatorMapper.selectById(bindCmp.getTag());
-        log.info("当前计算指标(id:{}, name:{})", indicator.getId(), indicator.getName());
         IndicatorVO indicatorVO = IndicatorConvert.INSTANCE.convert(indicator);
         indicatorContext.addIndicator(indicatorVO.getId(), indicatorVO);
-        AbstractIndicator abstractIndicator = INDICATOR_MAP.get(indicatorVO.getType());
-        indicatorContext.setIndicatorValue(indicatorVO.getId(), abstractIndicator.compute(indicatorVO, accessRequest.getFields()));
-        log.info("指标计算结束");
+        indicatorContext.setIndicatorValue(indicatorVO.getId(), INDICATOR_MAP.get(indicatorVO.getType()).compute(indicatorVO, accessRequest.getFields()));
+        log.info("当前计算指标(id:{}, name:{}, value:{})", indicatorVO.getId(), indicatorVO.getName(), indicatorVO.getValue());
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)

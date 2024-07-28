@@ -165,14 +165,13 @@ public class PolicySetServiceImpl implements PolicySetService {
         if (policySet != null && policySet.getStatus()) {
             log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", policySet.getAppName(), policySet.getCode(), policySet.getName());
             PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-            PolicySetVO policySetVO = PolicySetConvert.INSTANCE.convert(policySet);
-            policyContext.setPolicySetVO(policySetVO);
+            policyContext.setPolicySetVO(PolicySetConvert.INSTANCE.convert(policySet));
 
             bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getId()), null);
 
             AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);
             accessResponse.setPolicySetResult(policyContext.convert());
-            log.info("策略集(name:{})执行完毕", policyContext.getPolicySetVO().getName());
+            log.info("策略集(name:{})执行完毕", policySet.getName());
         }
         log.info("未匹配应用名:{}, 策略集编码:{}", appName, policySetCode);
     }

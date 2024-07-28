@@ -82,6 +82,11 @@ public class RuleServiceImpl implements RuleService {
         validateForCreateOrUpdate(updateVO.getId(), updateVO.getCode());
         Rule rule = RuleConvert.INSTANCE.convert(updateVO);
         ruleMapper.updateById(rule);
+        String condEl = LFUtil.buildCondEl(updateVO.getCond());
+        String rChain = StrUtil.format(LFUtil.RULE_CHAIN, rule.getId());
+        Chain chain = chainMapper.getByChainName(rChain);
+        chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl, rChain, LFUtil.RULE_FALSE_COMMON_NODE));
+        chainMapper.updateById(chain);
     }
 
     @Override
@@ -144,12 +149,10 @@ public class RuleServiceImpl implements RuleService {
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public void ruleTrue(NodeComponent bindCmp) {
-        String tag = bindCmp.getTag();
+        Rule rule = ruleMapper.selectById(bindCmp.getTag());
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        Rule rule = ruleMapper.selectById(tag);
-        RuleVO ruleVO = RuleConvert.INSTANCE.convert(rule);
-        log.info("命中规则(id:{}, name:{}, code:{})", ruleVO.getId(), ruleVO.getName(), ruleVO.getCode());
-        policyContext.addRuleVO(ruleVO.getPolicyId(), ruleVO);
+        log.info("命中规则(id:{}, name:{}, code:{})", rule.getId(), rule.getName(), rule.getCode());
+        policyContext.addRuleVO(rule.getPolicyId(), RuleConvert.INSTANCE.convert(rule));
         // TODO 后置操作，除了处置方式外
 
     }

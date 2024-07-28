@@ -105,8 +105,7 @@ public class Indicator extends BasePO {
     private Integer version;
 
     /**
-     * 场景
-     * TODO 多个
+     * 场景，多个
      * appName
      * policySetCode
      */

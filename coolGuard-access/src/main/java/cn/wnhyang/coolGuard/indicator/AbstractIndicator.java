@@ -6,6 +6,7 @@ import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.WinType;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RedissonClient;
@@ -28,11 +29,10 @@ public abstract class AbstractIndicator {
      */
     protected IndicatorVO indicator;
 
-    protected String redisKey;
-
     /**
      * 指标类型
      */
+    @Getter
     protected final IndicatorType INDICATOR_TYPE;
 
     /**
@@ -55,20 +55,11 @@ public abstract class AbstractIndicator {
     }
 
     /**
-     * 获取指标状态
-     *
-     * @return true/false
-     */
-    public boolean getStatus() {
-        return indicator.getStatus();
-    }
-
-    /**
      * 过滤
      *
      * @return true/false
      */
-    public boolean filter(Map<String, Object> eventDetail) {
+    private boolean filter(Map<String, Object> eventDetail) {
 
         // 1、主属性不能为空，并且主属性取值也不能为空
         if (StrUtil.isNotBlank(indicator.getMasterField()) && ObjectUtil.isNotNull(eventDetail.get(indicator.getMasterField()))) {
@@ -88,14 +79,13 @@ public abstract class AbstractIndicator {
     /**
      * 设置redis key
      */
-    public void setRedisKey(Map<String, Object> eventDetail) {
-
-        this.redisKey = RedisKey.ZB + indicator.getId() + ":"
+    private String setRedisKey(Map<String, Object> eventDetail) {
+        String redisKey = RedisKey.ZB + indicator.getId() + ":"
                 + INDICATOR_TYPE.getType() + ":" + eventDetail.get(indicator.getMasterField());
         if (StrUtil.isNotBlank(indicator.getSlaveFields())) {
-            this.redisKey += "-" + eventDetail.get(indicator.getSlaveFields());
+            redisKey += "-" + eventDetail.get(indicator.getSlaveFields());
         }
-
+        return redisKey;
     }
 
     /**
@@ -112,7 +102,7 @@ public abstract class AbstractIndicator {
      *
      * @return 计算指标结果
      */
-    public double getResult() {
+    public double getResult(String redisKey) {
         // 1、获取当前时间戳
         long currentTime = System.currentTimeMillis();
         // 2、获取redis中数据
@@ -136,10 +126,9 @@ public abstract class AbstractIndicator {
         } else {
             this.indicator = indicator;
         }
+        String redisKey = setRedisKey(eventDetail);
         // 1、状态检查和过滤
-        if (getStatus() && filter(eventDetail)) {
-
-            setRedisKey(eventDetail);
+        if (filter(eventDetail)) {
             // 2、获取当前时间戳
             long currentTime = System.currentTimeMillis();
             // 3、获取redis中数据
@@ -157,7 +146,7 @@ public abstract class AbstractIndicator {
             // 5、清理过期数据
             cleanExpiredDate(currentTime, set);
         }
-        return getResult();
+        return getResult(redisKey);
     }
 
     /**
@@ -189,7 +178,7 @@ public abstract class AbstractIndicator {
      * @param now 当前时间
      * @return 时间戳
      */
-    public long calculateEpochMilli(LocalDateTime now) {
+    private long calculateEpochMilli(LocalDateTime now) {
         ZoneId zoneId = ZoneId.systemDefault();
         // 这个default分支仅处理WindowSize枚举中未包含的情况
         return switch (indicator.getWinSize()) {
