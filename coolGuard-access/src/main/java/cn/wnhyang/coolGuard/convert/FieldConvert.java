@@ -9,6 +9,8 @@ import cn.wnhyang.coolGuard.vo.update.FieldUpdateVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * @author wnhyang
  * @date 2024/3/14
@@ -27,4 +29,6 @@ public interface FieldConvert {
     InputFieldVO convert2InputFieldVO(Field po);
 
     PageResult<FieldVO> convert(PageResult<Field> pageResult);
+
+    List<FieldVO> convert(List<Field> list);
 }

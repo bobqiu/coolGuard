@@ -57,7 +57,6 @@ public class IndicatorCreateVO extends IndicatorBaseVO {
     /**
      * 从字段
      */
-    @NotBlank(message = "从字段不能为空")
     private String slaveFields;
 
     /**
@@ -74,7 +73,7 @@ public class IndicatorCreateVO extends IndicatorBaseVO {
      * 场景
      */
     @NotBlank(message = "场景不能为空")
-    private String scene;
+    private String scenes;
 
     /**
      * 场景类型

@@ -72,7 +72,8 @@ public class RuleServiceImpl implements RuleService {
         String condEl = LFUtil.buildCondEl(createVO.getCond());
         String rChain = StrUtil.format(LFUtil.RULE_CHAIN, rule.getId());
         chainMapper.insert(new Chain().setChainName(rChain).setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                rChain, LFUtil.RULE_FALSE_COMMON_NODE)));
+                LFUtil.getNodeWithTag(LFUtil.RULE_TRUE_COMMON_NODE, rule.getId()),
+                LFUtil.RULE_FALSE_COMMON_NODE)));
         return rule.getId();
     }
 
@@ -85,7 +86,9 @@ public class RuleServiceImpl implements RuleService {
         String condEl = LFUtil.buildCondEl(updateVO.getCond());
         String rChain = StrUtil.format(LFUtil.RULE_CHAIN, rule.getId());
         Chain chain = chainMapper.getByChainName(rChain);
-        chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl, rChain, LFUtil.RULE_FALSE_COMMON_NODE));
+        chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl,
+                LFUtil.getNodeWithTag(LFUtil.RULE_TRUE_COMMON_NODE, rule.getId()),
+                LFUtil.RULE_FALSE_COMMON_NODE));
         chainMapper.updateById(chain);
     }
 

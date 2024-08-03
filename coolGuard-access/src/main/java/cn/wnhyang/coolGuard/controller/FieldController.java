@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
@@ -96,6 +98,16 @@ public class FieldController {
     @PostMapping("/testDynamicFieldScript")
     public CommonResult<String> testDynamicFieldScript(@RequestBody @Valid TestDynamicFieldScript testDynamicFieldScript) {
         return success(fieldService.testDynamicFieldScript(testDynamicFieldScript));
+    }
+
+    /**
+     * 查询列表
+     *
+     * @return list
+     */
+    @GetMapping("/list")
+    public CommonResult<List<FieldVO>> listField() {
+        return success(FieldConvert.INSTANCE.convert(fieldService.listField()));
     }
 
 }

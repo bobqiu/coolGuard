@@ -10,13 +10,14 @@ public interface ErrorCodes {
 
     ErrorCode APPLICATION_NAME_EXIST = new ErrorCode(1001001001, "应用名已存在");
 
+    ErrorCode APPLICATION_REFERENCE_DELETE = new ErrorCode(1006001002, "应用有引用不可删除");
+
     ErrorCode DISPOSAL_NOT_EXIST = new ErrorCode(1002001000, "处置不存在");
 
     ErrorCode DISPOSAL_CODE_EXIST = new ErrorCode(1002001001, "处置代码已存在");
 
     ErrorCode DISPOSAL_STANDARD = new ErrorCode(1002001002, "标准处置不可更改");
 
-    // TODO 引用详细说明
     ErrorCode DISPOSAL_REFERENCE = new ErrorCode(1002001003, "处置有引用不可删除");
 
     ErrorCode ACCESS_NOT_EXIST = new ErrorCode(1003001000, "接入不存在");

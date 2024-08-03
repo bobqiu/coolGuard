@@ -147,6 +147,11 @@ public class FieldServiceImpl implements FieldService {
         return result;
     }
 
+    @Override
+    public List<Field> listField() {
+        return fieldMapper.selectList();
+    }
+
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.NORMAL_FIELD_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public void normalField(NodeComponent bindCmp) {
 

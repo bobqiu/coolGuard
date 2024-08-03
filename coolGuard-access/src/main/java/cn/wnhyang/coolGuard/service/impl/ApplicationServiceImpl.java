@@ -1,9 +1,15 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.convert.ApplicationConvert;
 import cn.wnhyang.coolGuard.entity.Application;
+import cn.wnhyang.coolGuard.entity.Indicator;
+import cn.wnhyang.coolGuard.entity.PolicySet;
 import cn.wnhyang.coolGuard.mapper.ApplicationMapper;
+import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
+import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ApplicationService;
 import cn.wnhyang.coolGuard.vo.create.ApplicationCreateVO;
@@ -13,8 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.APPLICATION_NAME_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.APPLICATION_NOT_EXIST;
+import java.util.List;
+
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -28,6 +35,9 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
 public class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationMapper applicationMapper;
+
+    private final IndicatorMapper indicatorMapper;
+    private final PolicySetMapper policySetMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -48,8 +58,18 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteApplication(Long id) {
-        // TODO 有引用不可删除 指标和策略集
         validateExists(id);
+        Application application = applicationMapper.selectById(id);
+        // 确认是否有指标引用
+        List<Indicator> indicatorList = indicatorMapper.selectList(SceneType.APP, application.getName());
+        if (CollUtil.isNotEmpty(indicatorList)) {
+            throw exception(APPLICATION_REFERENCE_DELETE);
+        }
+        // 确认是否有策略集引用
+        List<PolicySet> policySets = policySetMapper.selectList(null, application.getName(), null, null);
+        if (CollUtil.isNotEmpty(policySets)) {
+            throw exception(APPLICATION_REFERENCE_DELETE);
+        }
         applicationMapper.deleteById(id);
     }
 

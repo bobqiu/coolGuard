@@ -90,7 +90,8 @@ public class IndicatorServiceImpl implements IndicatorService {
         String condEl = LFUtil.buildCondEl(createVO.getCond());
         String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getId());
         chainMapper.insert(new Chain().setChainName(iChain).setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                iChain, LFUtil.INDICATOR_FALSE_COMMON_NODE)));
+                LFUtil.getNodeWithTag(LFUtil.INDICATOR_TRUE_COMMON_NODE, indicator.getId()),
+                LFUtil.INDICATOR_FALSE_COMMON_NODE)));
         return indicator.getId();
     }
 
@@ -102,7 +103,9 @@ public class IndicatorServiceImpl implements IndicatorService {
         String condEl = LFUtil.buildCondEl(updateVO.getCond());
         String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getId());
         Chain chain = chainMapper.getByChainName(iChain);
-        chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl, iChain, LFUtil.INDICATOR_FALSE_COMMON_NODE));
+        chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl,
+                LFUtil.getNodeWithTag(LFUtil.INDICATOR_TRUE_COMMON_NODE, indicator.getId()),
+                LFUtil.INDICATOR_FALSE_COMMON_NODE));
         chainMapper.updateById(chain);
     }
 
@@ -134,7 +137,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     public PageResult<IndicatorVO> pageIndicator(IndicatorPageVO pageVO) {
-        PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPage(pageVO);
+        PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPageByScene(pageVO);
 
         PageResult<IndicatorVO> voPageResult = IndicatorConvert.INSTANCE.convert(indicatorPageResult);
 
@@ -154,9 +157,14 @@ public class IndicatorServiceImpl implements IndicatorService {
         Long policySetId = pageVO.getPolicySetId();
         PolicySet policySet = policySetMapper.selectById(policySetId);
         if (ObjectUtil.isNotNull(policySet)) {
-            indicatorMapper.selectPage(pageVO, policySet.getAppName(), policySet.getCode());
+            indicatorMapper.selectPageByScene(pageVO, SceneType.POLICY_SET, policySet.getCode());
         }
         return PageResult.empty();
+    }
+
+    @Override
+    public List<Indicator> listIndicator() {
+        return indicatorMapper.selectList();
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_ROUTE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)

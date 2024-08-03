@@ -73,7 +73,7 @@ public class PolicyContext {
             PolicyVO policyVO = entry.getValue();
             PolicyResult policyResult = new PolicyResult(policyVO.getName(), policyVO.getCode(), policyVO.getMode());
 
-            long disposalId = 0L;
+            long disposalId = 1L;
             int maxScore = 0;
             List<RuleVO> ruleVOList = ruleListMap.get(policyVO.getId());
             if (CollUtil.isNotEmpty(ruleVOList)) {

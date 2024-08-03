@@ -68,7 +68,7 @@ public class IndicatorVO extends IndicatorBaseVO {
     /**
      * 场景
      */
-    private String scene;
+    private String scenes;
 
     /**
      * 场景类型

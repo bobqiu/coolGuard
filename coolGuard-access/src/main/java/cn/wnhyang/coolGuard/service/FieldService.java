@@ -7,6 +7,8 @@ import cn.wnhyang.coolGuard.vo.create.TestDynamicFieldScript;
 import cn.wnhyang.coolGuard.vo.page.FieldPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldUpdateVO;
 
+import java.util.List;
+
 /**
  * 字段表 服务类
  *
@@ -61,4 +63,10 @@ public interface FieldService {
      */
     String testDynamicFieldScript(TestDynamicFieldScript testDynamicFieldScript);
 
+    /**
+     * 获取所有字段
+     *
+     * @return 字段列表
+     */
+    List<Field> listField();
 }

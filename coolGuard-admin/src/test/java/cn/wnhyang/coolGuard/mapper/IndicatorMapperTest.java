@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.mapper;
 
 import cn.wnhyang.coolGuard.AdminApplication;
+import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
@@ -24,7 +25,7 @@ public class IndicatorMapperTest {
 
     @Test
     public void test() {
-        List<Long> longs = indicatorMapper.selectIdListByScene("test", "test");
+        List<Long> longs = indicatorMapper.selectIdListByScene(SceneType.APP, "phone");
         log.info("longs: {}", longs);
     }
 
@@ -33,13 +34,13 @@ public class IndicatorMapperTest {
         IndicatorByPolicySetPageVO pageParam = new IndicatorByPolicySetPageVO();
         pageParam.setPolicySetId(1L);
         pageParam.setPageNo(1).setPageSize(10);
-        PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPage(pageParam, "Phone", "Phone_Login");
+        PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPageByScene(pageParam, SceneType.POLICY_SET, "phone_login");
         log.info("indicatorPageResult: {}", indicatorPageResult);
     }
 
     @Test
     public void test3() {
-        List<Indicator> resultList = indicatorMapper.selectList("Phone", "Phone_Login");
+        List<Indicator> resultList = indicatorMapper.selectListByScene(SceneType.APP, "phone");
         log.info("resultList: {}", resultList);
 
     }

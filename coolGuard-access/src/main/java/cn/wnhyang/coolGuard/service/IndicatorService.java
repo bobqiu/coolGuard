@@ -8,6 +8,8 @@ import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
 
+import java.util.List;
+
 /**
  * 指标表 服务类
  *
@@ -61,4 +63,12 @@ public interface IndicatorService {
      * @return pageResult
      */
     PageResult<Indicator> pageIndicatorByPolicySet(IndicatorByPolicySetPageVO pageVO);
+
+    /**
+     * 查询列表
+     *
+     * @return poList
+     */
+    List<Indicator> listIndicator();
+
 }

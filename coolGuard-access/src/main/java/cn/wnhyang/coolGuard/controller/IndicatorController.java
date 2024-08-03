@@ -13,6 +13,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
@@ -94,5 +96,10 @@ public class IndicatorController {
     @GetMapping("/policySet/page")
     public CommonResult<PageResult<IndicatorVO>> pageIndicatorByPolicySet(@Valid IndicatorByPolicySetPageVO pageVO) {
         return success(IndicatorConvert.INSTANCE.convert(indicatorService.pageIndicatorByPolicySet(pageVO)));
+    }
+
+    @GetMapping("/list")
+    public CommonResult<List<IndicatorVO>> listIndicator() {
+        return success(IndicatorConvert.INSTANCE.convert(indicatorService.listIndicator()));
     }
 }
