@@ -172,8 +172,9 @@ public class PolicySetServiceImpl implements PolicySetService {
             AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);
             accessResponse.setPolicySetResult(policyContext.convert());
             log.info("策略集(name:{})执行完毕", policySet.getName());
+        } else {
+            log.info("未匹配应用名:{}, 策略集编码:{}", appName, policySetCode);
         }
-        log.info("未匹配应用名:{}, 策略集编码:{}", appName, policySetCode);
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

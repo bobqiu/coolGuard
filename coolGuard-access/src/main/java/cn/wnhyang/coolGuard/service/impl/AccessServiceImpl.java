@@ -18,6 +18,7 @@ import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.AccessService;
 import cn.wnhyang.coolGuard.service.DisposalService;
+import cn.wnhyang.coolGuard.util.JsonUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.AccessVO;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
@@ -25,8 +26,6 @@ import cn.wnhyang.coolGuard.vo.OutputFieldVO;
 import cn.wnhyang.coolGuard.vo.create.AccessCreateVO;
 import cn.wnhyang.coolGuard.vo.page.AccessPageVO;
 import cn.wnhyang.coolGuard.vo.update.AccessUpdateVO;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowFact;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
@@ -35,15 +34,13 @@ import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
 import com.yomahub.liteflow.flow.LiteflowResponse;
+import com.yomahub.liteflow.flow.entity.CmpStep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_NAME_EXIST;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_NOT_EXIST;
@@ -68,8 +65,6 @@ public class AccessServiceImpl implements AccessService {
     private final FlowExecutor flowExecutor;
 
     private final CommonProducer commonProducer;
-
-    private final ObjectMapper objectMapper;
 
     private final FieldMapper fieldMapper;
 
@@ -96,15 +91,18 @@ public class AccessServiceImpl implements AccessService {
 
         LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getId()), null, accessRequest, indicatorContext, policyContext, accessResponse);
 
+        Queue<CmpStep> executeStepQueue = syncRisk.getExecuteStepQueue();
+        for (CmpStep cmpStep : executeStepQueue) {
+            log.info("cmpStep:{}", cmpStep.buildStringWithTime());
+        }
+
         // 将上下文拼在一块，将此任务丢到线程中执行
         Map<String, Object> esData = new HashMap<>();
         esData.put("fields", accessRequest.getFields());
         esData.put("zbs", indicatorContext.convert());
         esData.put("result", accessResponse.getPolicySetResult());
         try {
-            commonProducer.send(KafkaConstant.EVENT_ES_DATA, objectMapper.writeValueAsString(esData));
-        } catch (JsonProcessingException e) {
-            log.error("esData json error", e);
+            commonProducer.send(KafkaConstant.EVENT_ES_DATA, JsonUtils.toJsonString(esData));
         } catch (Exception e) {
             log.error("esData error", e);
         }
@@ -172,13 +170,8 @@ public class AccessServiceImpl implements AccessService {
     @Override
     public List<ConfigField> getInputFieldList(Long id) {
         String json = accessMapper.selectInputConfig(id);
-        try {
-            if (StrUtil.isNotBlank(json)) {
-                return objectMapper.readValue(json,
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, ConfigField.class));
-            }
-        } catch (JsonProcessingException e) {
-            log.error("inputConfig转换失败", e);
+        if (StrUtil.isNotBlank(json)) {
+            return JsonUtils.parseArray(json, ConfigField.class);
         }
         return List.of();
     }
@@ -186,13 +179,8 @@ public class AccessServiceImpl implements AccessService {
     @Override
     public List<ConfigField> getOutputFieldList(Long id) {
         String json = accessMapper.selectOutputConfig(id);
-        try {
-            if (StrUtil.isNotBlank(json)) {
-                return objectMapper.readValue(json,
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, ConfigField.class));
-            }
-        } catch (JsonProcessingException e) {
-            log.error("outputConfig转换失败", e);
+        if (StrUtil.isNotBlank(json)) {
+            return JsonUtils.parseArray(json, ConfigField.class);
         }
         return List.of();
     }

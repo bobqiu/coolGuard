@@ -5,7 +5,6 @@ import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
 import cn.wnhyang.coolGuard.entity.Chain;
-import cn.wnhyang.coolGuard.entity.Policy;
 import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.PolicyMapper;
@@ -61,18 +60,10 @@ public class RuleServiceImpl implements RuleService {
         Rule rule = RuleConvert.INSTANCE.convert(createVO);
         ruleMapper.insert(rule);
 
-        Policy policy = policyMapper.selectById(rule.getPolicyId());
-        String pChain = StrUtil.format(LFUtil.POLICY_CHAIN, policy.getId());
-
-        Chain chain = chainMapper.getByChainName(pChain);
-        chain.setElData(LFUtil.elAdd(chain.getElData(),
-                LFUtil.getNodeWithTag(LFUtil.RULE_COMMON_NODE, rule.getId())));
-        chainMapper.updateByChainName(pChain, chain);
-
         String condEl = LFUtil.buildCondEl(createVO.getCond());
         String rChain = StrUtil.format(LFUtil.RULE_CHAIN, rule.getId());
         chainMapper.insert(new Chain().setChainName(rChain).setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                LFUtil.getNodeWithTag(LFUtil.RULE_TRUE_COMMON_NODE, rule.getId()),
+                LFUtil.RULE_TRUE_COMMON_NODE,
                 LFUtil.RULE_FALSE_COMMON_NODE)));
         return rule.getId();
     }
@@ -87,7 +78,7 @@ public class RuleServiceImpl implements RuleService {
         String rChain = StrUtil.format(LFUtil.RULE_CHAIN, rule.getId());
         Chain chain = chainMapper.getByChainName(rChain);
         chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                LFUtil.getNodeWithTag(LFUtil.RULE_TRUE_COMMON_NODE, rule.getId()),
+                LFUtil.RULE_TRUE_COMMON_NODE,
                 LFUtil.RULE_FALSE_COMMON_NODE));
         chainMapper.updateById(chain);
     }
@@ -103,13 +94,6 @@ public class RuleServiceImpl implements RuleService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteRule(Collection<Long> ids) {
         ids.forEach(id -> {
-            Rule rule = ruleMapper.selectById(id);
-            // 从策略chain中删除规则chain
-            String pChain = StrUtil.format(LFUtil.POLICY_CHAIN, rule.getPolicyId());
-            Chain chain = chainMapper.getByChainName(pChain);
-            chain.setElData(LFUtil.removeEl(chain.getElData(),
-                    LFUtil.getNodeWithTag(LFUtil.RULE_COMMON_NODE, id)));
-            chainMapper.updateByChainName(pChain, chain);
             ruleMapper.deleteById(id);
             chainMapper.deleteByChainName(StrUtil.format(LFUtil.RULE_CHAIN, id));
         });
@@ -141,23 +125,29 @@ public class RuleServiceImpl implements RuleService {
 
     @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.RULE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public boolean ruleAccess(NodeComponent bindCmp) {
-        Rule rule = ruleMapper.selectById(bindCmp.getTag());
-        return !RuleStatus.OFF.equals(rule.getStatus());
+        long policyId = bindCmp.getSubChainReqData();
+        int index = bindCmp.getLoopIndex();
+        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
+        RuleVO ruleVO = policyContext.getRuleVO(policyId, index);
+        return !RuleStatus.OFF.equals(ruleVO.getStatus());
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public void rulProcess(NodeComponent bindCmp) {
-        bindCmp.invoke2Resp(StrUtil.format(LFUtil.RULE_CHAIN, bindCmp.getTag()), null);
+        long policyId = bindCmp.getSubChainReqData();
+        int index = bindCmp.getLoopIndex();
+        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
+        RuleVO ruleVO = policyContext.getRuleVO(policyId, index);
+        bindCmp.invoke2Resp(StrUtil.format(LFUtil.RULE_CHAIN, ruleVO.getId()), ruleVO);
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public void ruleTrue(NodeComponent bindCmp) {
-        Rule rule = ruleMapper.selectById(bindCmp.getTag());
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        log.info("命中规则(id:{}, name:{}, code:{})", rule.getId(), rule.getName(), rule.getCode());
-        policyContext.addRuleVO(rule.getPolicyId(), RuleConvert.INSTANCE.convert(rule));
+        RuleVO ruleVO = bindCmp.getSubChainReqData();
+        log.info("命中规则(id:{}, name:{}, code:{})", ruleVO.getId(), ruleVO.getName(), ruleVO.getCode());
+        policyContext.addHitRuleVO(ruleVO.getPolicyId(), ruleVO);
         // TODO 后置操作，除了处置方式外
-
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)

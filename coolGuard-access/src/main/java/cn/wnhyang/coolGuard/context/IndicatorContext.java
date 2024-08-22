@@ -2,42 +2,38 @@ package cn.wnhyang.coolGuard.context;
 
 import cn.wnhyang.coolGuard.vo.IndicatorResult;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
+import lombok.Setter;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author wnhyang
  * @date 2024/4/3
  **/
+@Setter
 public class IndicatorContext {
 
-    private final Map<Long, IndicatorVO> indicatorMap = new ConcurrentHashMap<>();
+    private List<IndicatorVO> indicatorList;
 
-    public void addIndicator(Long id, IndicatorVO indicatorVO) {
-        indicatorMap.put(id, indicatorVO);
+    public IndicatorVO getIndicator(int index) {
+        return indicatorList.get(index);
     }
 
-    public IndicatorVO getIndicator(Long id) {
-        return indicatorMap.get(id);
+    public void setIndicatorValue(int index, double value) {
+        indicatorList.get(index).setValue(String.valueOf(value));
     }
 
-    public boolean hasIndicator(Long id) {
-        return indicatorMap.containsKey(id);
-    }
-
-    public void setIndicatorValue(Long id, double value) {
-        indicatorMap.get(id).setValue(String.valueOf(value));
-    }
-
-    public String getIndicatorValue(Long id) {
-        return indicatorMap.get(id).getValue();
+    public String getIndicatorValue(long id) {
+        for (IndicatorVO indicatorVO : indicatorList) {
+            if (indicatorVO.getId() == id) {
+                return indicatorVO.getValue();
+            }
+        }
+        return "";
     }
 
     public List<IndicatorResult> convert() {
-        return indicatorMap.values().stream().map(
+        return indicatorList.stream().map(
                 indicatorVO -> new IndicatorResult(indicatorVO.getId(), indicatorVO.getName(), indicatorVO.getType(), indicatorVO.getVersion(), indicatorVO.getValue())).toList();
     }
-
 }

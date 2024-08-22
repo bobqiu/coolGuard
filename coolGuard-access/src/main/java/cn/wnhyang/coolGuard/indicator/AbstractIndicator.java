@@ -119,7 +119,7 @@ public abstract class AbstractIndicator {
      * @param indicator   指标
      * @param eventDetail 事件详情
      */
-    public double compute(IndicatorVO indicator, Map<String, Object> eventDetail) {
+    public double compute(boolean addEvent, IndicatorVO indicator, Map<String, Object> eventDetail) {
 
         if (indicator == null) {
             return 0.0d;
@@ -128,7 +128,7 @@ public abstract class AbstractIndicator {
         }
         String redisKey = setRedisKey(eventDetail);
         // 1、状态检查和过滤
-        if (filter(eventDetail)) {
+        if (addEvent && filter(eventDetail)) {
             // 2、获取当前时间戳
             long currentTime = System.currentTimeMillis();
             // 3、获取redis中数据

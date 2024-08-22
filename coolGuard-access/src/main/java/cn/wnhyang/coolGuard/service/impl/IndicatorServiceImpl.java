@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
@@ -26,7 +27,6 @@ import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.builder.el.LiteFlowChainELBuilder;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
@@ -73,24 +73,10 @@ public class IndicatorServiceImpl implements IndicatorService {
         indicator.setTimeSlice(WinSize.getWinSizeValue(createVO.getWinSize()));
         indicatorMapper.insert(indicator);
 
-        for (String s : indicator.getSceneType().split(",")) {
-            String iChain = SceneType.APP.equals(indicator.getSceneType()) ?
-                    StrUtil.format(LFUtil.INDICATOR_APP_CHAIN, s) : StrUtil.format(LFUtil.INDICATOR_POLICY_SET_CHAIN, s);
-            if (!chainMapper.selectByChainName(iChain)) {
-                Chain chain = new Chain().setChainName(iChain)
-                        .setElData(StrUtil.format(LFUtil.WHEN_EMPTY_NODE_EL,
-                                LFUtil.getNodeWithTag(LFUtil.INDICATOR_COMMON_NODE, indicator.getId())));
-                chainMapper.insert(chain);
-            } else {
-                Chain chain = chainMapper.getByChainName(iChain);
-                chain.setElData(LFUtil.elAdd(chain.getElData(), LFUtil.getNodeWithTag(LFUtil.INDICATOR_COMMON_NODE, indicator.getId())));
-                chainMapper.updateByChainName(iChain, chain);
-            }
-        }
         String condEl = LFUtil.buildCondEl(createVO.getCond());
         String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getId());
         chainMapper.insert(new Chain().setChainName(iChain).setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                LFUtil.getNodeWithTag(LFUtil.INDICATOR_TRUE_COMMON_NODE, indicator.getId()),
+                LFUtil.INDICATOR_TRUE_COMMON_NODE,
                 LFUtil.INDICATOR_FALSE_COMMON_NODE)));
         return indicator.getId();
     }
@@ -104,7 +90,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getId());
         Chain chain = chainMapper.getByChainName(iChain);
         chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                LFUtil.getNodeWithTag(LFUtil.INDICATOR_TRUE_COMMON_NODE, indicator.getId()),
+                LFUtil.INDICATOR_TRUE_COMMON_NODE,
                 LFUtil.INDICATOR_FALSE_COMMON_NODE));
         chainMapper.updateById(chain);
     }
@@ -112,17 +98,6 @@ public class IndicatorServiceImpl implements IndicatorService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteIndicator(Long id) {
-        Indicator indicator = indicatorMapper.selectById(id);
-        if (ObjectUtil.isNotNull(indicator)) {
-            for (String s : indicator.getSceneType().split(",")) {
-                String iChain = SceneType.APP.equals(indicator.getSceneType()) ?
-                        StrUtil.format(LFUtil.INDICATOR_APP_CHAIN, s) : StrUtil.format(LFUtil.INDICATOR_POLICY_SET_CHAIN, s);
-                Chain chain = chainMapper.getByChainName(iChain);
-                chain.setElData(LFUtil.removeEl(chain.getElData(),
-                        LFUtil.getNodeWithTag(LFUtil.INDICATOR_COMMON_NODE, id)));
-                chainMapper.updateByChainName(iChain, chain);
-            }
-        }
         indicatorMapper.deleteById(id);
         chainMapper.deleteByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, id));
     }
@@ -167,44 +142,52 @@ public class IndicatorServiceImpl implements IndicatorService {
         return indicatorMapper.selectList();
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_ROUTE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
-    public void indicatorRoute(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_FOR, nodeId = LFUtil.INDICATOR_FOR_NODE, nodeType = NodeTypeEnum.FOR)
+    public int indicatorFor(NodeComponent bindCmp) {
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
+        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
         String appName = accessRequest.getStringData(FieldName.appName);
         String policySetCode = accessRequest.getStringData(FieldName.policySetCode);
-        LiteFlowChainELBuilder.createChain().setChainId(LFUtil.INDICATOR_ROUTE_CHAIN).setEL(
-                StrUtil.format(LFUtil.INDICATOR_ROUTE_CHAIN_EL, appName, policySetCode)
-        ).build();
-
-        bindCmp.invoke2Resp(LFUtil.INDICATOR_ROUTE_CHAIN, null);
+        List<Indicator> indicators = indicatorMapper.selectListByScenes(appName, policySetCode);
+        indicatorContext.setIndicatorList(ListUtil.toCopyOnWriteArrayList(IndicatorConvert.INSTANCE.convert(indicators)));
+        return indicators.size();
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.INDICATOR_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public boolean indicatorAccess(NodeComponent bindCmp) {
-        Indicator indicator = indicatorMapper.selectById(bindCmp.getTag());
-        return indicator.getStatus();
+        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
+        int index = bindCmp.getLoopIndex();
+        return indicatorContext.getIndicator(index).getStatus();
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public void indicator(NodeComponent bindCmp) {
-        bindCmp.invoke2Resp(StrUtil.format(LFUtil.INDICATOR_CHAIN, bindCmp.getTag()), null);
+        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
+        int index = bindCmp.getLoopIndex();
+        bindCmp.invoke2Resp(StrUtil.format(LFUtil.INDICATOR_CHAIN, indicatorContext.getIndicator(index).getId()), index);
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public void indicatorTrue(NodeComponent bindCmp) {
-        Indicator indicator = indicatorMapper.selectById(bindCmp.getTag());
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
 
-        IndicatorVO indicatorVO = IndicatorConvert.INSTANCE.convert(indicator);
-        indicatorContext.addIndicator(indicatorVO.getId(), indicatorVO);
-        indicatorContext.setIndicatorValue(indicatorVO.getId(), INDICATOR_MAP.get(indicatorVO.getType()).compute(indicatorVO, accessRequest.getFields()));
+        int index = bindCmp.getSubChainReqData();
+        IndicatorVO indicatorVO = indicatorContext.getIndicator(index);
+        indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorVO.getType()).compute(true, indicatorVO, accessRequest.getFields()));
         log.info("当前计算指标(id:{}, name:{}, value:{})", indicatorVO.getId(), indicatorVO.getName(), indicatorVO.getValue());
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public void indicatorFalse(NodeComponent bindCmp) {
-        log.debug("指标条件不满足");
+        AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
+        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
+
+        int index = bindCmp.getSubChainReqData();
+        IndicatorVO indicatorVO = indicatorContext.getIndicator(index);
+        indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorVO.getType()).compute(false, indicatorVO, accessRequest.getFields()));
+        log.info("当前计算指标(id:{}, name:{}, value:{})", indicatorVO.getId(), indicatorVO.getName(), indicatorVO.getValue());
+
     }
 
 }

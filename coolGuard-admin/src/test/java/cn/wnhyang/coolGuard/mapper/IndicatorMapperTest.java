@@ -45,4 +45,11 @@ public class IndicatorMapperTest {
 
     }
 
+    @Test
+    public void test4() {
+        List<Indicator> indicators = indicatorMapper.selectListByScenes("phone", "phone_login");
+        log.info("indicators: {}", indicators);
+
+    }
+
 }

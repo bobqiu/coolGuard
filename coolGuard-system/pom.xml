@@ -13,4 +13,10 @@
     <packaging>jar</packaging>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.wnhyang</groupId>
+            <artifactId>coolGuard-common</artifactId>
+        </dependency>
+    </dependencies>
 </project>

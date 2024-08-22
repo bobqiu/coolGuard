@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -43,5 +44,12 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
         return selectList(new LambdaQueryWrapperX<Indicator>()
                 .eq(Indicator::getSceneType, sceneType)
                 .apply("FIND_IN_SET({0}, scenes)", scene));
+    }
+
+    default List<Indicator> selectListByScenes(String app, String policySet) {
+        return selectList(new LambdaQueryWrapperX<Indicator>()
+                .and(w -> w.eq(Indicator::getSceneType, SceneType.APP).apply("FIND_IN_SET({0}, scenes)", app))
+                .or(w -> w.eq(Indicator::getSceneType, SceneType.POLICY_SET).apply("FIND_IN_SET({0}, scenes)", policySet))
+        );
     }
 }

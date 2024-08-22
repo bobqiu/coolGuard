@@ -171,7 +171,7 @@ public class AdocUtil {
 
     public static void main(String[] args) {
         init();
-        log.info(getPca("110101").toString());
+        log.info(getPca("412726").toString());
     }
 
 }

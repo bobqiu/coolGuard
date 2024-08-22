@@ -6,7 +6,6 @@ import cn.wnhyang.coolGuard.entity.Disposal;
 import cn.wnhyang.coolGuard.vo.*;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,44 +25,29 @@ public class PolicyContext {
 
     private final Map<Long, List<RuleVO>> ruleListMap = new ConcurrentHashMap<>();
 
-    public void addDisposal(Long id, Disposal disposal) {
+    private final Map<Long, List<RuleVO>> hitRuleListMap = new ConcurrentHashMap<>();
+
+    public void addDisposal(long id, Disposal disposal) {
         disposalMap.put(id, disposal);
     }
 
-    public Disposal getDisposal(Long id) {
-        return disposalMap.get(id);
-    }
-
-    public boolean hasDisposal(Long id) {
-        return disposalMap.containsKey(id);
-    }
-
-    public void addPolicy(Long id, PolicyVO policyVO) {
+    public void addPolicy(long id, PolicyVO policyVO) {
         policyMap.put(id, policyVO);
     }
 
-    public PolicyVO getPolicy(Long id) {
-        return policyMap.get(id);
+    public void addRuleList(long id, List<RuleVO> ruleVOList) {
+        ruleListMap.put(id, ruleVOList);
     }
 
-    public boolean hasPolicy(Long id) {
-        return policyMap.containsKey(id);
+    public RuleVO getRuleVO(long policyId, int index) {
+        return ruleListMap.get(policyId).get(index);
     }
 
-    public void initRuleList(Long id) {
-        ruleListMap.put(id, new ArrayList<>());
-    }
-
-    public void addRuleVO(Long id, RuleVO ruleVO) {
-        ruleListMap.get(id).add(ruleVO);
-    }
-
-    public List<RuleVO> getRuleList(Long id) {
-        return ruleListMap.get(id);
-    }
-
-    public boolean hasRuleList(Long id) {
-        return ruleListMap.containsKey(id);
+    public void addHitRuleVO(long id, RuleVO ruleVO) {
+        if (!hitRuleListMap.containsKey(id)) {
+            hitRuleListMap.put(id, CollUtil.newArrayList());
+        }
+        hitRuleListMap.get(id).add(ruleVO);
     }
 
     public PolicySetResult convert() {
@@ -75,7 +59,7 @@ public class PolicyContext {
 
             long disposalId = 1L;
             int maxScore = 0;
-            List<RuleVO> ruleVOList = ruleListMap.get(policyVO.getId());
+            List<RuleVO> ruleVOList = hitRuleListMap.get(policyVO.getId());
             if (CollUtil.isNotEmpty(ruleVOList)) {
                 for (RuleVO ruleVO : ruleVOList) {
                     RuleResult ruleResult = new RuleResult(ruleVO.getName(), ruleVO.getCode(), ruleVO.getScore());

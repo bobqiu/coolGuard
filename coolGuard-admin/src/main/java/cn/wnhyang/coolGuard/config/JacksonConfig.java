@@ -13,7 +13,7 @@ import java.time.ZoneId;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static cn.wnhyang.coolGuard.util.JsonUtil.buildJavaTimeModule;
+import static cn.wnhyang.coolGuard.util.JsonUtils.buildJavaTimeModule;
 
 /**
  * @author wnhyang

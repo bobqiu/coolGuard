@@ -1,5 +1,9 @@
 package cn.wnhyang.coolGuard.handler;
 
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
+import cn.dev33.satoken.exception.SameTokenInvalidException;
 import cn.wnhyang.coolGuard.exception.ServiceException;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,8 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import static cn.wnhyang.coolGuard.exception.GlobalErrorCode.BAD_REQUEST;
-import static cn.wnhyang.coolGuard.exception.GlobalErrorCode.INTERNAL_SERVER_ERROR;
+import static cn.wnhyang.coolGuard.exception.GlobalErrorCode.*;
 
 
 /**
@@ -25,6 +28,46 @@ import static cn.wnhyang.coolGuard.exception.GlobalErrorCode.INTERNAL_SERVER_ERR
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    /**
+     * 权限码异常
+     */
+    @ExceptionHandler(NotPermissionException.class)
+    public CommonResult<Void> handleNotPermissionException(NotPermissionException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',权限码校验失败'{}'", requestUri, e.getMessage());
+        return CommonResult.error(FORBIDDEN);
+    }
+
+    /**
+     * 角色权限异常
+     */
+    @ExceptionHandler(NotRoleException.class)
+    public CommonResult<Void> handleNotRoleException(NotRoleException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',角色权限校验失败'{}'", requestUri, e.getMessage());
+        return CommonResult.error(FORBIDDEN);
+    }
+
+    /**
+     * 认证失败
+     */
+    @ExceptionHandler(NotLoginException.class)
+    public CommonResult<Void> handleNotLoginException(NotLoginException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',认证失败'{}',无法访问系统资源", requestUri, e.getMessage());
+        return CommonResult.error(UNAUTHORIZED);
+    }
+
+    /**
+     * 无效认证
+     */
+    @ExceptionHandler(SameTokenInvalidException.class)
+    public CommonResult<Void> handleSameTokenInvalidException(SameTokenInvalidException e, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        log.error("请求地址'{}',内网认证失败'{}',无法访问系统资源", requestUri, e.getMessage());
+        return CommonResult.error(UNAUTHORIZED);
+    }
 
     /**
      * 请求方式不支持

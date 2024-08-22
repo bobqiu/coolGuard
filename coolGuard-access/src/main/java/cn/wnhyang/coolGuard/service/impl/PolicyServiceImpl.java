@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.PolicyMode;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
+import cn.wnhyang.coolGuard.convert.RuleConvert;
 import cn.wnhyang.coolGuard.entity.Chain;
 import cn.wnhyang.coolGuard.entity.Policy;
 import cn.wnhyang.coolGuard.entity.Rule;
@@ -18,6 +19,7 @@ import cn.wnhyang.coolGuard.service.RuleService;
 import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.PolicyVO;
+import cn.wnhyang.coolGuard.vo.RuleVO;
 import cn.wnhyang.coolGuard.vo.create.PolicyCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicyPageVO;
 import cn.wnhyang.coolGuard.vo.update.PolicyUpdateVO;
@@ -67,19 +69,13 @@ public class PolicyServiceImpl implements PolicyService {
         Policy policy = PolicyConvert.INSTANCE.convert(createVO);
         policyMapper.insert(policy);
 
+        // TODO 判断有没有策略流，没有并行加入
         String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetId());
         Chain chain = chainMapper.getByChainName(psChain);
         chain.setElData(LFUtil.elAdd(chain.getElData(),
                 LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getId())));
         chainMapper.updateByChainName(psChain, chain);
 
-        String pChain = StrUtil.format(LFUtil.POLICY_CHAIN, policy.getId());
-        if (PolicyMode.WORST.equals(policy.getMode()) || PolicyMode.WEIGHT.equals(policy.getMode())) {
-            chain.setElData(LFUtil.WHEN_EMPTY_NODE);
-        } else if (PolicyMode.ORDER.equals(policy.getMode())) {
-            chain.setElData(LFUtil.THEN_EMPTY_NODE);
-        }
-        chainMapper.insert(new Chain().setChainName(pChain));
         return policy.getId();
     }
 
@@ -123,7 +119,6 @@ public class PolicyServiceImpl implements PolicyService {
                     LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, id)));
             chainMapper.updateByChainName(psChain, chain);
             policyMapper.deleteById(id);
-            chainMapper.deleteByChainName(StrUtil.format(LFUtil.POLICY_CHAIN, id));
         });
     }
 
@@ -153,16 +148,26 @@ public class PolicyServiceImpl implements PolicyService {
 
         log.info("当前策略(id:{}, name:{}, code:{})", policy.getId(), policy.getName(), policy.getCode());
 
-        policyContext.initRuleList(policy.getId());
-
-        bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_CHAIN, policy.getId()), null);
+        if (PolicyMode.ORDER.equals(policyVO.getMode())) {
+            bindCmp.invoke2Resp(LFUtil.P_F, policy.getId());
+        } else {
+            bindCmp.invoke2Resp(LFUtil.P_FP, policy.getId());
+        }
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.IS_END, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
-    public boolean policyEnd(NodeComponent bindCmp) {
-        // isEnd 用于顺序模式，提前终止流程
-        log.info("终止");
-        return false;
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_FOR, nodeId = LFUtil.POLICY_FOR_NODE, nodeType = NodeTypeEnum.FOR)
+    public int policyFor(NodeComponent bindCmp) {
+        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
+        Long policyId = bindCmp.getSubChainReqData();
+        List<RuleVO> ruleVOList = RuleConvert.INSTANCE.convert(ruleMapper.selectByPolicyId(policyId));
+        policyContext.addRuleList(policyId, ruleVOList);
+        return ruleVOList.size();
+    }
+
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.POLICY_BREAK_NODE, nodeType = NodeTypeEnum.BOOLEAN)
+    public boolean policyBreak(NodeComponent bindCmp) {
+        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
+        return CollUtil.isNotEmpty(policyContext.getHitRuleListMap());
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

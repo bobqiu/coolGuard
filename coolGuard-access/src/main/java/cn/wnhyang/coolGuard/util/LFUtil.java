@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-import static cn.wnhyang.coolGuard.util.JsonUtil.buildJavaTimeModule;
+import static cn.wnhyang.coolGuard.util.JsonUtils.buildJavaTimeModule;
 
 /**
  * @author wnhyang
@@ -32,21 +32,6 @@ public class LFUtil {
     public static final String IF_EL = "IF({},{},{});";
 
     /**
-     * 串行EL，带上空节点
-     */
-    public static final String THEN_EMPTY_NODE_EL = "THEN(e_cn,{});";
-
-    /**
-     * 串行EL，带上空节点
-     */
-    public static final String THEN_EMPTY_NODE = "THEN(e_cn);";
-
-    /**
-     * 并行EL，带上空节点
-     */
-    public static final String WHEN_EMPTY_NODE_EL = "WHEN(e_cn,{});";
-
-    /**
      * 并行EL，带上空节点
      */
     public static final String WHEN_EMPTY_NODE = "WHEN(e_cn);";
@@ -62,28 +47,6 @@ public class LFUtil {
     public static final String DYNAMIC_TEST_CHAIN = "D_TC";
 
     /**
-     * 指标，场景:应用
-     * appName
-     */
-    public static final String INDICATOR_APP_CHAIN = "IA_C#{}";
-
-    /**
-     * 指标，场景:策略集
-     * policySetCode
-     */
-    public static final String INDICATOR_POLICY_SET_CHAIN = "IPS_C#{}";
-
-    /**
-     * 指标路由chainId
-     */
-    public static final String INDICATOR_ROUTE_CHAIN = "I_RC";
-
-    /**
-     * appName,policySetCode
-     */
-    public static final String INDICATOR_ROUTE_CHAIN_EL = "WHEN(IA_C#{},IPS_C#{});";
-
-    /**
      * indicatorId
      */
     public static final String INDICATOR_CHAIN = "I_C#{}";
@@ -94,9 +57,14 @@ public class LFUtil {
     public static final String POLICY_SET_CHAIN = "PS_C#{}";
 
     /**
-     * policyId
+     * 策略并行
      */
-    public static final String POLICY_CHAIN = "P_C#{}";
+    public static final String P_FP = "P_FP";
+
+    /**
+     * 策略串行
+     */
+    public static final String P_F = "P_F";
 
     /**
      * ruleId
@@ -129,9 +97,9 @@ public class LFUtil {
     public static final String DYNAMIC_FIELD_COMMON_NODE = "df_cn";
 
     /**
-     * 指标路由普通组件
+     * 指标次数循环组件
      */
-    public static final String INDICATOR_ROUTE_COMMON_NODE = "i_rcn";
+    public static final String INDICATOR_FOR_NODE = "i_fn";
 
     /**
      * 指标普通组件
@@ -154,14 +122,19 @@ public class LFUtil {
     public static final String POLICY_SET_ROUTE_COMMON_NODE = "ps_rcn";
 
     /**
-     * 策略集普通组件
-     */
-    public static final String POLICY_SET_COMMON_NODE = "ps_cn";
-
-    /**
      * 策略普通组件
      */
     public static final String POLICY_COMMON_NODE = "p_cn";
+
+    /**
+     * 策略次数循环组件
+     */
+    public static final String POLICY_FOR_NODE = "p_fn";
+
+    /**
+     * 策略次数循环组件
+     */
+    public static final String POLICY_BREAK_NODE = "p_bn";
 
     /**
      * 条件普通组件
@@ -183,7 +156,7 @@ public class LFUtil {
      */
     public static final String RULE_FALSE_COMMON_NODE = "r_fcn";
 
-    public static final String NODE_WITH_TAG = "{}.tag\"{}\"";
+    public static final String NODE_WITH_TAG = "{}.tag(\"{}\")";
 
     /**
      * @param nodeId 节点id
