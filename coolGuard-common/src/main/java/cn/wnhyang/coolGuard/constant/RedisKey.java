@@ -44,6 +44,11 @@ public interface RedisKey {
     String INDICATOR = "indicator";
 
     /**
+     * 指标s
+     */
+    String INDICATORS = "indicators";
+
+    /**
      * 规则
      */
     String RULE = "rule";

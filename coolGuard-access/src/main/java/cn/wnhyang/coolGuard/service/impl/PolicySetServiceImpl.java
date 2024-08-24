@@ -155,8 +155,9 @@ public class PolicySetServiceImpl implements PolicySetService {
         return new PageResult<>(collect, (long) policySetList.size());
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_SET_ROUTE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
-    public void policySetRoute(NodeComponent bindCmp) {
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_SET_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略集普通组件")
+    public void policySet(NodeComponent bindCmp) {
+        // TODO 策略集下策略默认并行，运行时判断有无配置Chain，有则运行，没有则for并行
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
         String appName = accessRequest.getStringData(FieldName.appName);
         String policySetCode = accessRequest.getStringData(FieldName.policySetCode);

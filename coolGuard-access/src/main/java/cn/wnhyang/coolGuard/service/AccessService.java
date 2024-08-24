@@ -94,17 +94,19 @@ public interface AccessService {
     /**
      * 根据服务id查询
      *
-     * @param id 服务id
+     * @param access 服务
+     * @param id     服务id
      * @return inputFieldVO集合
      */
-    List<InputFieldVO> getAccessInputFieldList(Long id);
+    List<InputFieldVO> getAccessInputFieldList(Access access, Long id);
 
     /**
      * 根据服务id查询
      *
-     * @param id 服务id
+     * @param access 服务
+     * @param id     服务id
      * @return outputFieldVO集合
      */
-    List<OutputFieldVO> getAccessOutputFieldList(Long id);
+    List<OutputFieldVO> getAccessOutputFieldList(Access access, Long id);
 
 }

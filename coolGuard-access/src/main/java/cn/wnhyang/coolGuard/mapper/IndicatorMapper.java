@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
@@ -8,6 +9,7 @@ import cn.wnhyang.coolGuard.pojo.PageParam;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
@@ -46,6 +48,7 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
                 .apply("FIND_IN_SET({0}, scenes)", scene));
     }
 
+    @Cacheable(cacheNames = RedisKey.INDICATORS + "::a-p", key = "#app+'-'+#policySet", unless = "#result == null")
     default List<Indicator> selectListByScenes(String app, String policySet) {
         return selectList(new LambdaQueryWrapperX<Indicator>()
                 .and(w -> w.eq(Indicator::getSceneType, SceneType.APP).apply("FIND_IN_SET({0}, scenes)", app))

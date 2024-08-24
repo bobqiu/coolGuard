@@ -32,7 +32,7 @@ public class LFUtil {
     public static final String IF_EL = "IF({},{},{});";
 
     /**
-     * 并行EL，带上空节点
+     * 并行EL，带上空组件
      */
     public static final String WHEN_EMPTY_NODE = "WHEN(e_cn);";
 
@@ -119,7 +119,7 @@ public class LFUtil {
     /**
      * 策略集路由普通组件
      */
-    public static final String POLICY_SET_ROUTE_COMMON_NODE = "ps_rcn";
+    public static final String POLICY_SET_COMMON_NODE = "ps_cn";
 
     /**
      * 策略普通组件
@@ -159,9 +159,9 @@ public class LFUtil {
     public static final String NODE_WITH_TAG = "{}.tag(\"{}\")";
 
     /**
-     * @param nodeId 节点id
+     * @param nodeId 组件id
      * @param tag    标签
-     * @return 带标签的节点
+     * @return 带标签的组件
      */
     public static String getNodeWithTag(String nodeId, Object tag) {
         return StrUtil.format(NODE_WITH_TAG, nodeId, tag.toString());

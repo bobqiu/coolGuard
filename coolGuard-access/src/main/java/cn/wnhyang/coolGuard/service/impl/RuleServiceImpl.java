@@ -132,7 +132,7 @@ public class RuleServiceImpl implements RuleService {
         return !RuleStatus.OFF.equals(ruleVO.getStatus());
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则普通组件")
     public void rulProcess(NodeComponent bindCmp) {
         long policyId = bindCmp.getSubChainReqData();
         int index = bindCmp.getLoopIndex();
@@ -141,7 +141,7 @@ public class RuleServiceImpl implements RuleService {
         bindCmp.invoke2Resp(StrUtil.format(LFUtil.RULE_CHAIN, ruleVO.getId()), ruleVO);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则true组件")
     public void ruleTrue(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
         RuleVO ruleVO = bindCmp.getSubChainReqData();
@@ -150,7 +150,7 @@ public class RuleServiceImpl implements RuleService {
         // TODO 后置操作，除了处置方式外
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则false组件")
     public void ruleFalse(NodeComponent bindCmp) {
         log.info("规则未命中");
     }

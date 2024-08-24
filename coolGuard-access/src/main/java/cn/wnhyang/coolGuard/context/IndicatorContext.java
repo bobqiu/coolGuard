@@ -33,6 +33,9 @@ public class IndicatorContext {
     }
 
     public List<IndicatorResult> convert() {
+        if (indicatorList == null) {
+            return null;
+        }
         return indicatorList.stream().map(
                 indicatorVO -> new IndicatorResult(indicatorVO.getId(), indicatorVO.getName(), indicatorVO.getType(), indicatorVO.getVersion(), indicatorVO.getValue())).toList();
     }

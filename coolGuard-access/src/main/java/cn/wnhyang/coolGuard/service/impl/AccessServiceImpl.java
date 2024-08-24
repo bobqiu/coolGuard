@@ -79,8 +79,8 @@ public class AccessServiceImpl implements AccessService {
         Access access = getAccessByName(name);
 
         // 设置接入
-        List<InputFieldVO> inputFields = getAccessInputFieldList(access.getId());
-        List<OutputFieldVO> outputFields = getAccessOutputFieldList(access.getId());
+        List<InputFieldVO> inputFields = getAccessInputFieldList(access, access.getId());
+        List<OutputFieldVO> outputFields = getAccessOutputFieldList(access, access.getId());
 
         AccessRequest accessRequest = new AccessRequest(access, params, inputFields, outputFields);
         PolicyContext policyContext = new PolicyContext();
@@ -186,8 +186,9 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @Override
-    public List<InputFieldVO> getAccessInputFieldList(Long id) {
-        List<ConfigField> configFieldList = getInputFieldList(id);
+    public List<InputFieldVO> getAccessInputFieldList(Access access, Long id) {
+        List<ConfigField> configFieldList = access != null ?
+                JsonUtils.parseArray(access.getInputConfig(), ConfigField.class) : getInputFieldList(id);
 
         List<InputFieldVO> inputFieldVOList = new ArrayList<>();
         if (CollUtil.isNotEmpty(configFieldList)) {
@@ -205,8 +206,9 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @Override
-    public List<OutputFieldVO> getAccessOutputFieldList(Long id) {
-        List<ConfigField> configFieldList = getOutputFieldList(id);
+    public List<OutputFieldVO> getAccessOutputFieldList(Access access, Long id) {
+        List<ConfigField> configFieldList = access != null ?
+                JsonUtils.parseArray(access.getOutputConfig(), ConfigField.class) : getOutputFieldList(id);
 
         List<OutputFieldVO> outputFieldVOList = new ArrayList<>();
         if (CollUtil.isNotEmpty(configFieldList)) {
@@ -222,18 +224,18 @@ public class AccessServiceImpl implements AccessService {
         return outputFieldVOList;
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.EMPTY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.EMPTY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "空组件")
     public void empty(NodeComponent bindCmp) {
-        log.info("空节点");
+        log.info("空组件");
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ACCESS_IN_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ACCESS_IN_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "入参组件")
     public void accessIn(NodeComponent bindCmp, @LiteflowFact("params") Map<String, String> params) {
         log.info("入参：{}", params);
 
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ACCESS_OUT_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ACCESS_OUT_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "出参组件")
     public void accessOut(NodeComponent bindCmp) {
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
         AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);

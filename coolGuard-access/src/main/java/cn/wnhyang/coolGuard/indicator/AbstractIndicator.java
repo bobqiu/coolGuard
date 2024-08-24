@@ -60,7 +60,6 @@ public abstract class AbstractIndicator {
      * @return true/false
      */
     private boolean filter(Map<String, Object> eventDetail) {
-
         // 1、主属性不能为空，并且主属性取值也不能为空
         if (StrUtil.isNotBlank(indicator.getMasterField()) && ObjectUtil.isNotNull(eventDetail.get(indicator.getMasterField()))) {
             if (StrUtil.isNotBlank(indicator.getSlaveFields())) {
@@ -120,7 +119,6 @@ public abstract class AbstractIndicator {
      * @param eventDetail 事件详情
      */
     public double compute(boolean addEvent, IndicatorVO indicator, Map<String, Object> eventDetail) {
-
         if (indicator == null) {
             return 0.0d;
         } else {
@@ -142,9 +140,6 @@ public abstract class AbstractIndicator {
 
             // 4、添加事件
             addEvent(currentTime, set, eventDetail);
-
-            // 5、清理过期数据
-            cleanExpiredDate(currentTime, set);
         }
         return getResult(redisKey);
     }

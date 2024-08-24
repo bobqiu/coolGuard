@@ -142,7 +142,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         return indicatorMapper.selectList();
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_FOR, nodeId = LFUtil.INDICATOR_FOR_NODE, nodeType = NodeTypeEnum.FOR)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_FOR, nodeId = LFUtil.INDICATOR_FOR_NODE, nodeType = NodeTypeEnum.FOR, nodeName = "指标for组件")
     public int indicatorFor(NodeComponent bindCmp) {
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
@@ -156,18 +156,17 @@ public class IndicatorServiceImpl implements IndicatorService {
     @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.INDICATOR_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public boolean indicatorAccess(NodeComponent bindCmp) {
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
-        int index = bindCmp.getLoopIndex();
-        return indicatorContext.getIndicator(index).getStatus();
+        return indicatorContext.getIndicator(bindCmp.getLoopIndex()).getStatus();
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标普通组件")
     public void indicator(NodeComponent bindCmp) {
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
         int index = bindCmp.getLoopIndex();
         bindCmp.invoke2Resp(StrUtil.format(LFUtil.INDICATOR_CHAIN, indicatorContext.getIndicator(index).getId()), index);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标true组件")
     public void indicatorTrue(NodeComponent bindCmp) {
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
@@ -178,7 +177,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         log.info("当前计算指标(id:{}, name:{}, value:{})", indicatorVO.getId(), indicatorVO.getName(), indicatorVO.getValue());
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标false组件")
     public void indicatorFalse(NodeComponent bindCmp) {
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);

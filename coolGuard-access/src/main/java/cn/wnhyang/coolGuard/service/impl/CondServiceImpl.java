@@ -38,7 +38,7 @@ public class CondServiceImpl implements CondService {
 
     private final ListDataService listDataService;
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.CONDITION_COMMON_NODE, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "条件")
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.CONDITION_COMMON_NODE, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "条件组件")
     public boolean cond(NodeComponent bindCmp) {
         Cond cond = bindCmp.getCmpData(Cond.class);
 

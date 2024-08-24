@@ -278,6 +278,8 @@ create table de_rule_script
 
 # TODO 商用许可证
 
+# TODO 目标1个场景，100指标，100条规则，50ms
+
 
 # policy disposal
 

@@ -152,7 +152,7 @@ public class FieldServiceImpl implements FieldService {
         return fieldMapper.selectList();
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.NORMAL_FIELD_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.NORMAL_FIELD_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "普通字段组件")
     public void normalField(NodeComponent bindCmp) {
 
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
@@ -229,7 +229,7 @@ public class FieldServiceImpl implements FieldService {
     }
 
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.DYNAMIC_FIELD_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.DYNAMIC_FIELD_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "动态字段组件")
     public void dynamicField(NodeComponent bindCmp) {
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
 
