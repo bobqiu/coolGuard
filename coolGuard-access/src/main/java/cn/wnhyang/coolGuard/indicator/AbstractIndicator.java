@@ -77,6 +77,8 @@ public abstract class AbstractIndicator {
 
     /**
      * 设置redis key
+     * TODO key可能要加上masterField原本的字段，因为不同的field取值可能一样会出问题
+     * 如：masterField分别为a、b，其在事件中的取值可能一样，那么指标key也就一样，可以优化为a：xxx，b：xxx
      */
     private String setRedisKey(Map<String, Object> eventDetail) {
         String redisKey = RedisKey.ZB + indicator.getId() + ":"
@@ -108,7 +110,12 @@ public abstract class AbstractIndicator {
         RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(redisKey);
         // 3、清理过期数据
         cleanExpiredDate(currentTime, set);
-
+        // 4、设置过期时间
+        if (WinType.LAST.equals(this.indicator.getWinType())) {
+            set.expire(Duration.ofSeconds(this.indicator.getTimeSlice() * this.indicator.getWinCount()));
+        } else if (WinType.CUR.equals(this.indicator.getWinType())) {
+            set.expire(Duration.ofSeconds(this.indicator.getTimeSlice()));
+        }
         return getResult(currentTime, set);
     }
 
@@ -132,14 +139,9 @@ public abstract class AbstractIndicator {
             // 3、获取redis中数据
             log.info("redisKey:{}", redisKey);
             RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(redisKey);
-            if (WinType.LAST.equals(this.indicator.getWinType())) {
-                set.expire(Duration.ofSeconds(this.indicator.getTimeSlice() * this.indicator.getWinCount()));
-            } else if (WinType.CUR.equals(this.indicator.getWinType())) {
-                set.expire(Duration.ofSeconds(this.indicator.getTimeSlice()));
-            }
-
             // 4、添加事件
             addEvent(currentTime, set, eventDetail);
+
         }
         return getResult(redisKey);
     }

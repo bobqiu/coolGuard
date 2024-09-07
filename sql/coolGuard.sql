@@ -258,28 +258,29 @@ create table de_rule_script
 )
     comment '规则脚本表';
 
+create table coolGuard.de_policy_set_version
+(
+    id            bigint auto_increment comment '主键'
+        primary key,
+    policy_set_id bigint                      default 0                 not null comment '策略集id',
+    policy_id     bigint                      default 0                 not null comment '策略id',
+    version       int                         default 0                 not null comment '策略状态',
+    creator       varchar(64) charset utf8mb4 default ''                null comment '创建者',
+    create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater       varchar(64) charset utf8mb4 default ''                null comment '更新者',
+    update_time   datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted       bit                         default b'0'              not null comment '是否删除'
+)
+    comment '策略集版本表';
 
-
-# TODO 数据，名单集、名单数据、标签、数据源、数据集
-
-# TODO 策略，规则控制，规则免疫、规则免疫历史、时间控制（每天什么时间段开启），权重、首次、最坏，降级
-
-# TODO 实验室 仿真、回测、回溯、冠军挑战、A/BTest
-
-# TODO 系统，系统参数、License
-
-# TODO 接入，ETL
-
-# TODO 三方，映射关系、供应商、调用明细、账单
-
-# TODO 模型，
-
-# TODO 业务管理，公告、案件、赔付、审核、监控、免疫（客户免疫、客户免疫历史）、消息
-
-# TODO 商用许可证
-
-# TODO 目标1个场景，100指标，100条规则，50ms
-
+create table coolGuard.de_policy_set_version_ext
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    policy_flow text not null comment '策略流',
+    rule_info   text not null comment '规则信息'
+)
+    comment '策略集版本扩展表';
 
 # policy disposal
 
