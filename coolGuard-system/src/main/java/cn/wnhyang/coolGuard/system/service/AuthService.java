@@ -15,10 +15,10 @@ import cn.wnhyang.coolGuard.system.enums.login.LoginResult;
 import cn.wnhyang.coolGuard.system.enums.login.LoginType;
 import cn.wnhyang.coolGuard.system.login.LoginUser;
 import cn.wnhyang.coolGuard.system.redis.RedisKey;
-import cn.wnhyang.coolGuard.system.vo.login.EmailLoginVO;
-import cn.wnhyang.coolGuard.system.vo.login.LoginRespVO;
-import cn.wnhyang.coolGuard.system.vo.login.LoginVO;
-import cn.wnhyang.coolGuard.system.vo.login.RegisterVO;
+import cn.wnhyang.coolGuard.system.vo.core.auth.LoginReqVO;
+import cn.wnhyang.coolGuard.system.vo.core.auth.LoginRespVO;
+import cn.wnhyang.coolGuard.system.vo.core.auth.EmailLoginVO;
+import cn.wnhyang.coolGuard.system.vo.core.auth.RegisterVO;
 import cn.wnhyang.coolGuard.util.RegexUtils;
 import cn.wnhyang.coolGuard.util.ServletUtils;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,9 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Set;
 
+import static cn.wnhyang.coolGuard.exception.GlobalErrorCode.UNAUTHORIZED;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 import static cn.wnhyang.coolGuard.system.enums.ErrorCodes.*;
 
@@ -45,8 +47,8 @@ public class AuthService {
 
     private final ValueOperations<String, String> valueOperations;
 
-    public LoginRespVO login(LoginVO reqVO) {
-        String account = reqVO.getAccount();
+    public LoginRespVO login(LoginReqVO reqVO) {
+        String account = reqVO.getUsername();
         LoginUser user;
         LoginType loginType;
         if (StrUtil.isNotEmpty(account)) {
@@ -76,11 +78,12 @@ public class AuthService {
         // 创建 Token 令牌，记录登录日志
         LoginUtil.login(user, DeviceType.PC);
         createLoginLog(user.getId(), account, loginType, LoginResult.SUCCESS);
-        LoginRespVO loginRespVO = new LoginRespVO();
-        loginRespVO.setUserId(user.getId());
-        loginRespVO.setToken(StpUtil.getTokenValue());
-        loginRespVO.setRoles(user.getRoles());
-        return loginRespVO;
+        return new LoginRespVO()
+                .setUserId(user.getId())
+                .setUsername(user.getUsername())
+                .setRealName(user.getNickname())
+                .setDesc(user.getRemark())
+                .setAccessToken(StpUtil.getTokenValue());
     }
 
     public LoginRespVO login(EmailLoginVO reqVO) {
@@ -108,11 +111,20 @@ public class AuthService {
         // 创建 Token 令牌，记录登录日志
         LoginUtil.login(user, DeviceType.PC);
         createLoginLog(user.getId(), email, loginType, LoginResult.SUCCESS);
-        LoginRespVO loginRespVO = new LoginRespVO();
-        loginRespVO.setUserId(user.getId());
-        loginRespVO.setToken(StpUtil.getTokenValue());
-        loginRespVO.setRoles(user.getRoles());
-        return loginRespVO;
+        return new LoginRespVO()
+                .setUserId(user.getId())
+                .setUsername(user.getUsername())
+                .setRealName(user.getNickname())
+                .setDesc(user.getRemark())
+                .setAccessToken(StpUtil.getTokenValue());
+    }
+
+    public Set<String> codes() {
+        Login loginUser = LoginUtil.getLoginUser();
+        if (loginUser == null) {
+            throw exception(UNAUTHORIZED);
+        }
+        return loginUser.getPermissions();
     }
 
     public void generateEmailCode(String account) {

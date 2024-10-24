@@ -1,28 +1,26 @@
-package cn.wnhyang.coolGuard.system.vo.login;
+package cn.wnhyang.coolGuard.system.vo.core.auth;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 /**
  * @author wnhyang
- * @date 2023/7/24
+ * @date 2024/9/10
  **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class LoginVO {
+public class LoginReqVO {
 
     /**
-     * 手机号/邮箱/账号
+     * 用户名
      */
-    @Size(max = 30, message = "用户账号长度不能超过30个字符")
-    private String account;
+    @Size(min = 4, max = 30, message = "用户账号长度不能超过30个字符")
+    private String username;
 
     /**
      * 密码

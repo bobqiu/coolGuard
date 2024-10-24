@@ -20,7 +20,7 @@
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
         <dynamic-datasource.version>4.2.0</dynamic-datasource.version>
         <redisson.version>3.24.3</redisson.version>
-        <liteflow.version>2.12.3</liteflow.version>
+        <liteflow.version>2.12.4</liteflow.version>
         <jsoup.version>1.17.2</jsoup.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.24</lombok.version>
@@ -31,7 +31,7 @@
         <phone-number-geo.version>1.0.9-202302</phone-number-geo.version>
         <ip2region.version>2.7.0</ip2region.version>
         <lock4j.version>2.2.7</lock4j.version>
-        <sa-token.version>1.38.0</sa-token.version>
+        <sa-token.version>1.39.0</sa-token.version>
         <admin.version>3.2.3</admin.version>
     </properties>
 

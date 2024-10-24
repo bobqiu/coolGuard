@@ -1,16 +1,12 @@
 package cn.wnhyang.coolGuard.system.controller;
 
-import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.satoken.Login;
-import cn.wnhyang.coolGuard.satoken.core.util.LoginUtil;
 import cn.wnhyang.coolGuard.system.convert.UserConvert;
 import cn.wnhyang.coolGuard.system.entity.RolePO;
 import cn.wnhyang.coolGuard.system.entity.UserPO;
-import cn.wnhyang.coolGuard.system.service.MenuService;
 import cn.wnhyang.coolGuard.system.service.PermissionService;
 import cn.wnhyang.coolGuard.system.service.RoleService;
 import cn.wnhyang.coolGuard.system.service.UserService;
@@ -28,8 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static cn.wnhyang.coolGuard.exception.GlobalErrorCode.UNAUTHORIZED;
-import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
@@ -47,8 +41,6 @@ public class UserController {
     private final UserService userService;
 
     private final RoleService roleService;
-
-    private final MenuService menuService;
 
     private final PermissionService permissionService;
 
@@ -200,32 +192,4 @@ public class UserController {
         return success(true);
     }
 
-    /**
-     * 查询用户信息(登录成功后调用)
-     *
-     * @return 用户信息
-     */
-    @GetMapping("/info")
-    @OperateLog(module = "后台-用户", name = "查询用户信息")
-    @SaCheckLogin
-    public CommonResult<UserInfoVO> getUserInfo() {
-
-        Login loginUser = LoginUtil.getLoginUser();
-
-        if (loginUser == null) {
-            throw exception(UNAUTHORIZED);
-        }
-        Long id = loginUser.getId();
-
-        UserPO user = userService.getUserById(id);
-        UserInfoVO respVO = new UserInfoVO();
-        UserInfoVO.UserVO userVO = UserConvert.INSTANCE.convert03(user);
-        respVO.setUser(userVO);
-        respVO.setRoles(loginUser.getRoleValues());
-        respVO.setPermissions(loginUser.getPermissions());
-
-        List<UserInfoVO.MenuVO> userMenuTreeList = menuService.getLoginUserMenuTreeList(true);
-        respVO.setMenus(userMenuTreeList);
-        return success(respVO);
-    }
 }

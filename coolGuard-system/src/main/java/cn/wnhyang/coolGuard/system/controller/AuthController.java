@@ -3,14 +3,16 @@ package cn.wnhyang.coolGuard.system.controller;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.system.service.AuthService;
-import cn.wnhyang.coolGuard.system.vo.login.EmailLoginVO;
-import cn.wnhyang.coolGuard.system.vo.login.LoginRespVO;
-import cn.wnhyang.coolGuard.system.vo.login.LoginVO;
-import cn.wnhyang.coolGuard.system.vo.login.RegisterVO;
+import cn.wnhyang.coolGuard.system.vo.core.auth.LoginReqVO;
+import cn.wnhyang.coolGuard.system.vo.core.auth.LoginRespVO;
+import cn.wnhyang.coolGuard.system.vo.core.auth.EmailLoginVO;
+import cn.wnhyang.coolGuard.system.vo.core.auth.RegisterVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
@@ -37,8 +39,18 @@ public class AuthController {
      * @return token
      */
     @PostMapping("/login")
-    public CommonResult<LoginRespVO> login(@RequestBody @Valid LoginVO reqVO) {
+    public CommonResult<LoginRespVO> login(@RequestBody @Valid LoginReqVO reqVO) {
         return success(authService.login(reqVO));
+    }
+
+    /**
+     * 获取权限码
+     *
+     * @return 权限码集合
+     */
+    @GetMapping("/codes")
+    public CommonResult<Set<String>> codes() {
+        return success(authService.codes());
     }
 
     /**

@@ -1,4 +1,4 @@
-package cn.wnhyang.coolGuard.system.vo.login;
+package cn.wnhyang.coolGuard.system.vo.core.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
