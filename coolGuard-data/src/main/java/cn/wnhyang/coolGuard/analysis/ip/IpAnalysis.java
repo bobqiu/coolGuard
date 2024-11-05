@@ -1,6 +1,4 @@
-package cn.wnhyang.coolGuard.analysis;
-
-import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
+package cn.wnhyang.coolGuard.analysis.ip;
 
 /**
  * @author wnhyang

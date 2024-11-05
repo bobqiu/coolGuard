@@ -1,4 +1,4 @@
-package cn.wnhyang.coolGuard.analysis;
+package cn.wnhyang.coolGuard.analysis.geo;
 
 import cn.wnhyang.coolGuard.analysis.ad.Pca;
 

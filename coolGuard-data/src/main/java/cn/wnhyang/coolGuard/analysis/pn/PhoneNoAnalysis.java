@@ -1,6 +1,4 @@
-package cn.wnhyang.coolGuard.analysis;
-
-import cn.wnhyang.coolGuard.analysis.pn.PhoneNoInfo;
+package cn.wnhyang.coolGuard.analysis.pn;
 
 /**
  * @author wnhyang

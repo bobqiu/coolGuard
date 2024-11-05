@@ -1,6 +1,11 @@
 package cn.wnhyang.coolGuard.config;
 
-import cn.wnhyang.coolGuard.analysis.*;
+import cn.wnhyang.coolGuard.analysis.geo.GeoAnalysis;
+import cn.wnhyang.coolGuard.analysis.geo.GeoAnalysisDefault;
+import cn.wnhyang.coolGuard.analysis.ip.IpAnalysis;
+import cn.wnhyang.coolGuard.analysis.ip.IpAnalysisDefaultImpl;
+import cn.wnhyang.coolGuard.analysis.pn.PhoneNoAnalysis;
+import cn.wnhyang.coolGuard.analysis.pn.PhoneNoAnalysisDefault;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

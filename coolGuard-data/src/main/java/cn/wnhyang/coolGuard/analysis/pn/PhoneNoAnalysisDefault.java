@@ -1,7 +1,5 @@
-package cn.wnhyang.coolGuard.analysis;
+package cn.wnhyang.coolGuard.analysis.pn;
 
-import cn.wnhyang.coolGuard.analysis.pn.PhoneNoInfo;
-import cn.wnhyang.coolGuard.analysis.pn.PhoneNoInfoDefault;
 import lombok.extern.slf4j.Slf4j;
 import me.ihxq.projects.pna.Attribution;
 import me.ihxq.projects.pna.ISP;

@@ -1,9 +1,7 @@
-package cn.wnhyang.coolGuard.analysis;
+package cn.wnhyang.coolGuard.analysis.ip;
 
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
-import cn.wnhyang.coolGuard.analysis.ip.Ip2RegionDefault;
 import lombok.extern.slf4j.Slf4j;
 import org.lionsoul.ip2region.xdb.Searcher;
 

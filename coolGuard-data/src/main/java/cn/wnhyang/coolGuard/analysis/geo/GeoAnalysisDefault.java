@@ -1,11 +1,10 @@
-package cn.wnhyang.coolGuard.analysis;
+package cn.wnhyang.coolGuard.analysis.geo;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.analysis.ad.Pca;
-import cn.wnhyang.coolGuard.analysis.geo.AreaWithGeo;
 import cn.wnhyang.coolGuard.util.AdocUtil;
 import cn.wnhyang.coolGuard.util.DistanceCalculator;
 import lombok.extern.slf4j.Slf4j;
