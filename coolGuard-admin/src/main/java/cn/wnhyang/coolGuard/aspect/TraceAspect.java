@@ -26,12 +26,16 @@ public class TraceAspect {
      */
     @Around("execution(* cn.wnhyang.coolGuard.controller.*.*(..))")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
+        long startTime = System.currentTimeMillis();
         try {
             String traceId = IdUtil.simpleUUID();
             MDC.put("traceId", traceId);
             return pjp.proceed();
+
         } finally {
             MDC.clear();
+            log.info("cost:{}", System.currentTimeMillis() - startTime);
         }
+
     }
 }

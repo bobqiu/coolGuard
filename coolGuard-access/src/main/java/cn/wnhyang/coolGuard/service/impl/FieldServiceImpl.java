@@ -3,11 +3,11 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.analysis.ad.Pca;
 import cn.wnhyang.coolGuard.analysis.geo.GeoAnalysis;
+import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
 import cn.wnhyang.coolGuard.analysis.ip.IpAnalysis;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoAnalysis;
-import cn.wnhyang.coolGuard.analysis.ad.Pca;
-import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoInfo;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.context.AccessRequest;
@@ -19,6 +19,7 @@ import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.FieldService;
 import cn.wnhyang.coolGuard.util.AdocUtil;
+import cn.wnhyang.coolGuard.util.GeoHash;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.create.FieldCreateVO;
@@ -225,6 +226,9 @@ public class FieldServiceImpl implements FieldService {
             accessRequest.setDataByType(FieldName.geoCity, pca.getCity(), FieldType.STRING);
             accessRequest.setDataByType(FieldName.geoDistrict, pca.getArea(), FieldType.STRING);
         }
+
+        // 经纬度geoHash编码
+        accessRequest.setDataByType(FieldName.geoHash, GeoHash.geoHash(lonAndLat), FieldType.STRING);
 
     }
 

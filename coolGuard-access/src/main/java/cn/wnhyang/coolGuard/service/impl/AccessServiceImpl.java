@@ -241,6 +241,7 @@ public class AccessServiceImpl implements AccessService {
         AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);
         // 设置出参
         accessResponse.setOutputData(FieldName.seqId, accessRequest.getStringData(FieldName.seqId));
+        // TODO 增加接口耗时和流程耗时
         List<OutputFieldVO> outputFields = accessRequest.getOutputFields();
         if (CollUtil.isNotEmpty(outputFields)) {
             for (OutputFieldVO outputField : outputFields) {
