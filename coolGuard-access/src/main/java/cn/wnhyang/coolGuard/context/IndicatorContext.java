@@ -19,11 +19,20 @@ public class IndicatorContext {
         return indicatorList.get(index);
     }
 
-    public void setIndicatorValue(int index, double value) {
+    public void setIndicatorValue(int index, Object value) {
         indicatorList.get(index).setValue(String.valueOf(value));
     }
 
-    public String getIndicatorValue(long id) {
+    public String getIndicatorReturnType(long id) {
+        for (IndicatorVO indicatorVO : indicatorList) {
+            if (indicatorVO.getId() == id) {
+                return indicatorVO.getReturnType();
+            }
+        }
+        return "";
+    }
+
+    public Object getIndicatorValue(long id) {
         for (IndicatorVO indicatorVO : indicatorList) {
             if (indicatorVO.getId() == id) {
                 return indicatorVO.getValue();

@@ -31,6 +31,17 @@ public class IndicatorVO extends IndicatorBaseVO {
     private String calcField;
 
     /**
+     * 返回类型
+     */
+    private String returnType;
+
+    /**
+     * earliest latest
+     * 返回取值方式
+     */
+    private String returnFlag;
+
+    /**
      * 窗口大小
      */
     private String winSize;
@@ -83,6 +94,6 @@ public class IndicatorVO extends IndicatorBaseVO {
     /**
      * 指标值
      */
-    private String value;
+    private Object value;
 
 }

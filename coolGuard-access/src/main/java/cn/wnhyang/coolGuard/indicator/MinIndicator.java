@@ -20,7 +20,7 @@ public class MinIndicator extends AbstractIndicator {
     }
 
     @Override
-    public double getResult(long currentTime, RScoredSortedSet<String> set) {
+    public Object getResult(long currentTime, RScoredSortedSet<String> set) {
         double min = Double.MAX_VALUE;
         for (String item : set) {
             String[] split = item.split("-");

@@ -18,6 +18,7 @@ import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
 import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
+import cn.wnhyang.coolGuard.util.IndicatorUtil;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.Cond;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
@@ -70,6 +71,7 @@ public class IndicatorServiceImpl implements IndicatorService {
     @Transactional(rollbackFor = Exception.class)
     public Long createIndicator(IndicatorCreateVO createVO) {
         Indicator indicator = IndicatorConvert.INSTANCE.convert(createVO);
+        indicator.setReturnType(IndicatorUtil.getReturnType(indicator.getType(), indicator.getCalcField()));
         indicator.setTimeSlice(WinSize.getWinSizeValue(createVO.getWinSize()));
         indicatorMapper.insert(indicator);
 
@@ -85,6 +87,7 @@ public class IndicatorServiceImpl implements IndicatorService {
     @Transactional(rollbackFor = Exception.class)
     public void updateIndicator(IndicatorUpdateVO updateVO) {
         Indicator indicator = IndicatorConvert.INSTANCE.convert(updateVO);
+        indicator.setReturnType(IndicatorUtil.getReturnType(indicator.getType(), indicator.getCalcField()));
         indicatorMapper.updateById(indicator);
         String condEl = LFUtil.buildCondEl(updateVO.getCond());
         String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getId());

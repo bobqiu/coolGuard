@@ -125,6 +125,8 @@ create table de_indicator
     status         bit                         default b'0'              not null comment '状态',
     type           varchar(10)                                           null comment '类型',
     calc_field     varchar(64) charset utf8mb4 default ''                null comment '计算字段',
+    return_type    varchar(1)                  default 'F'               null comment '返回类型',
+    return_flag    varchar(10)                 default 'earliest'        null comment '返回取值方式',
     win_size       varchar(5) charset utf8mb4  default ''                not null comment '窗口大小',
     win_type       varchar(10) charset utf8mb4 default ''                not null comment '窗口类型',
     win_count      int                         default 0                 not null comment '窗口数量',
@@ -133,7 +135,7 @@ create table de_indicator
     slave_fields   varchar(64) charset utf8mb4 default ''                null comment '从字段',
     compute_script varchar(64) charset utf8mb4 default ''                null comment '计算脚本',
     version        int                         default 0                 not null comment '版本号',
-    scene          varchar(64)                                           not null comment '场景（,分割）',
+    scenes         varchar(64)                                           not null comment '场景（,分割）',
     scene_type     varchar(32)                 default 'appName'         not null comment '场景类型',
     description    varchar(64) charset utf8mb4 default ''                null comment '描述',
     creator        varchar(64) charset utf8mb4 default ''                null comment '创建者',
@@ -216,6 +218,30 @@ create table de_policy_set
 )
     comment '策略集表';
 
+create table de_policy_set_version
+(
+    id            bigint auto_increment comment '主键'
+        primary key,
+    policy_set_id bigint                      default 0                 not null comment '策略集id',
+    policy_id     bigint                      default 0                 not null comment '策略id',
+    version       int                         default 0                 not null comment '策略状态',
+    creator       varchar(64) charset utf8mb4 default ''                null comment '创建者',
+    create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater       varchar(64) charset utf8mb4 default ''                null comment '更新者',
+    update_time   datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted       bit                         default b'0'              not null comment '是否删除'
+)
+    comment '策略集版本表';
+
+create table de_policy_set_version_ext
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    policy_flow text not null comment '策略流',
+    rule_info   text not null comment '规则信息'
+)
+    comment '策略集版本扩展表';
+
 create table de_rule
 (
     id          bigint auto_increment comment '主键'
@@ -258,37 +284,13 @@ create table de_rule_script
 )
     comment '规则脚本表';
 
-create table coolGuard.de_policy_set_version
-(
-    id            bigint auto_increment comment '主键'
-        primary key,
-    policy_set_id bigint                      default 0                 not null comment '策略集id',
-    policy_id     bigint                      default 0                 not null comment '策略id',
-    version       int                         default 0                 not null comment '策略状态',
-    creator       varchar(64) charset utf8mb4 default ''                null comment '创建者',
-    create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater       varchar(64) charset utf8mb4 default ''                null comment '更新者',
-    update_time   datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    deleted       bit                         default b'0'              not null comment '是否删除'
-)
-    comment '策略集版本表';
-
-create table coolGuard.de_policy_set_version_ext
-(
-    id          bigint auto_increment comment '主键'
-        primary key,
-    policy_flow text not null comment '策略流',
-    rule_info   text not null comment '规则信息'
-)
-    comment '策略集版本扩展表';
-
 # policy disposal
 
 
-INSERT INTO coolGuard.de_disposal (code, name, description)
+INSERT INTO de_disposal (code, name, description)
 VALUES ('pass', '通过', '');
 
-INSERT INTO coolGuard.de_field (display_name, name, group_id, standard, type, description, default_value, dynamic)
+INSERT INTO de_field (display_name, name, group_id, standard, type, description, default_value, dynamic)
 VALUES ('应用名', 'N_S_appName', 1, true, 'S', '应用名', null, false),
        ('策略集code', 'N_S_policySetCode', 1, true, 'S', '策略集code', null, false),
        ('策略code', 'N_S_policyCode', 1, true, 'S', '策略code', null, false),
@@ -315,7 +317,7 @@ VALUES ('应用名', 'N_S_appName', 1, true, 'S', '应用名', null, false),
        ('付款方证件所属国家/地区', 'N_S_payerIDCountryRegion', 1, true, 'S', '付款方所属国家/地区', null, false);
 
 
-INSERT INTO coolGuard.de_field (display_name, name, group_id, standard, type, description, default_value, dynamic)
+INSERT INTO de_field (display_name, name, group_id, standard, type, description, default_value, dynamic)
 VALUES ('证件号所属省名称', 'N_S_idCardProvince', 1, true, 'S', '证件号所属省名称', null, false),
        ('证件号所属市名称', 'N_S_idCardCity', 1, true, 'S', '证件号所属市名称', null, false),
        ('证件号所属区/县名称', 'N_S_idCardDistrict', 1, true, 'S', '证件号所属区/县名称', null, false),

@@ -1,10 +1,10 @@
 package cn.wnhyang.coolGuard.controller;
 
+import cn.wnhyang.coolGuard.analysis.ad.Pca;
 import cn.wnhyang.coolGuard.analysis.geo.GeoAnalysis;
+import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
 import cn.wnhyang.coolGuard.analysis.ip.IpAnalysis;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoAnalysis;
-import cn.wnhyang.coolGuard.analysis.ad.Pca;
-import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoInfo;
 import cn.wnhyang.coolGuard.util.AdocUtil;
 import jakarta.annotation.PostConstruct;

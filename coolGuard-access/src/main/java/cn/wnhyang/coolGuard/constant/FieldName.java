@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.constant;
 
 /**
  * 内置字段，系统初始化sql中带的，不可修改删除
+ *
  * @author wnhyang
  * @date 2024/4/30
  **/

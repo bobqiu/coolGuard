@@ -20,7 +20,7 @@ public class MaxIndicator extends AbstractIndicator {
     }
 
     @Override
-    public double getResult(long currentTime, RScoredSortedSet<String> set) {
+    public Object getResult(long currentTime, RScoredSortedSet<String> set) {
         double max = 0.0;
         for (String item : set) {
             String[] split = item.split("-");

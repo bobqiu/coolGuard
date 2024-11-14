@@ -57,6 +57,19 @@ public class Indicator extends BasePO {
     private String calcField;
 
     /**
+     * 返回类型
+     */
+    @TableField("return_type")
+    private String returnType;
+
+    /**
+     * earliest latest
+     * 返回取值方式
+     */
+    @TableField("return_flag")
+    private String returnFlag;
+
+    /**
      * 窗口大小
      */
     @TableField("win_size")

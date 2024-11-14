@@ -106,12 +106,53 @@ public class CondServiceImpl implements CondService {
                 log.info("指标条件");
                 String indicatorId = cond.getValue();
                 IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
-                String indicatorValue = indicatorContext.getIndicatorValue(Long.parseLong(indicatorId));
+                String iType = indicatorContext.getIndicatorReturnType(Long.parseLong(indicatorId));
+                FieldType fieldType = FieldType.getByType(iType);
+
                 String expectValue = cond.getExpectValue();
                 if (ExpectType.CONTEXT.equals(cond.getExpectType())) {
                     expectValue = accessRequest.getStringData(expectValue);
                 }
-                b = FunUtils.INSTANCE.doubleLogicOp.apply(Double.parseDouble(indicatorValue), byType, Double.valueOf(expectValue));
+
+                if (fieldType == null || byType == null) {
+                    return false;
+                }
+
+                switch (fieldType) {
+                    case STRING:
+                        String stringData = (String) indicatorContext.getIndicatorValue(Long.parseLong(indicatorId));
+                        log.debug("字段值:{}, 操作:{}, 期望值:{}", stringData, byType, expectValue);
+                        b = FunUtils.INSTANCE.stringLogicOp.apply(stringData, byType, expectValue);
+                        break;
+                    case NUMBER:
+                        Integer numberData = (Integer) indicatorContext.getIndicatorValue(Long.parseLong(indicatorId));
+                        Integer expectInteger = Integer.parseInt(expectValue);
+                        log.debug("字段值:{}, 操作:{}, 期望值:{}", numberData, byType, expectInteger);
+                        b = FunUtils.INSTANCE.integerLogicOp.apply(numberData, byType, expectInteger);
+                        break;
+                    case FLOAT:
+                        Double floatData = (Double) indicatorContext.getIndicatorValue(Long.parseLong(indicatorId));
+                        Double expectDouble = Double.parseDouble(expectValue);
+                        log.debug("字段值:{}, 操作:{}, 期望值:{}", floatData, byType, expectDouble);
+                        b = FunUtils.INSTANCE.doubleLogicOp.apply(floatData, byType, expectDouble);
+                        break;
+                    case DATE:
+                        LocalDateTime dateData = (LocalDateTime) indicatorContext.getIndicatorValue(Long.parseLong(indicatorId));
+                        LocalDateTime expectDateTime = LocalDateTimeUtil.parse(expectValue, DatePattern.NORM_DATETIME_FORMATTER);
+                        log.debug("字段值:{}, 操作:{}, 期望值:{}", dateData, byType, expectDateTime);
+                        b = FunUtils.INSTANCE.dateLogicOp.apply(dateData, byType, expectDateTime);
+                        break;
+                    case ENUM:
+                        String enumData = (String) indicatorContext.getIndicatorValue(Long.parseLong(indicatorId));
+                        log.debug("字段值:{}, 操作:{}, 期望值:{}", enumData, byType, expectValue);
+                        b = FunUtils.INSTANCE.enumLogicOp.apply(enumData, byType, expectValue);
+                        break;
+                    case BOOLEAN:
+                        Boolean booleanData = (Boolean) indicatorContext.getIndicatorValue(Long.parseLong(indicatorId));
+                        log.debug("字段值:{}", booleanData);
+                        b = FunUtils.INSTANCE.booleanLogicOp.apply(booleanData, byType, Boolean.parseBoolean(expectValue));
+                        break;
+                }
             } else if (CondType.REGULAR.equals(type)) {
                 log.info("正则条件");
 

@@ -96,14 +96,14 @@ public abstract class AbstractIndicator {
      * @param set         redis set
      * @return 计算指标结果
      */
-    public abstract double getResult(long currentTime, RScoredSortedSet<String> set);
+    public abstract Object getResult(long currentTime, RScoredSortedSet<String> set);
 
     /**
      * 获取计算指标结果
      *
      * @return 计算指标结果
      */
-    public double getResult(String redisKey) {
+    public Object getResult(String redisKey) {
         // 1、获取当前时间戳
         long currentTime = System.currentTimeMillis();
         // 2、获取redis中数据
@@ -125,7 +125,7 @@ public abstract class AbstractIndicator {
      * @param indicator   指标
      * @param eventDetail 事件详情
      */
-    public double compute(boolean addEvent, IndicatorVO indicator, Map<String, Object> eventDetail) {
+    public Object compute(boolean addEvent, IndicatorVO indicator, Map<String, Object> eventDetail) {
         if (indicator == null) {
             return 0.0d;
         } else {

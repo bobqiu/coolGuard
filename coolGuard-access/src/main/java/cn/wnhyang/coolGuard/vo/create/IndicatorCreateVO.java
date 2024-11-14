@@ -31,6 +31,12 @@ public class IndicatorCreateVO extends IndicatorBaseVO {
     private String calcField;
 
     /**
+     * earliest latest
+     * 返回取值方式
+     */
+    private String returnFlag;
+
+    /**
      * 窗口大小
      */
     @NotBlank(message = "窗口大小不能为空")

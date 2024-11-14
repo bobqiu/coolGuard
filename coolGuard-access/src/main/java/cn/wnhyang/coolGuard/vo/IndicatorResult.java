@@ -42,5 +42,5 @@ public class IndicatorResult implements Serializable {
     /**
      * 值
      */
-    private String value;
+    private Object value;
 }

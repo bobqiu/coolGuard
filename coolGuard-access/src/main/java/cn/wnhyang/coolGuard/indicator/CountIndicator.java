@@ -20,7 +20,7 @@ public class CountIndicator extends AbstractIndicator {
     }
 
     @Override
-    public double getResult(long currentTime, RScoredSortedSet<String> set) {
+    public Object getResult(long currentTime, RScoredSortedSet<String> set) {
 
         return (double) set.size();
     }

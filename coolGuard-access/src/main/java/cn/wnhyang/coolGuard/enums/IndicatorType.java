@@ -38,7 +38,12 @@ public enum IndicatorType {
     /**
      * 关联次数，计算任意字段，返回为数字
      */
-    ASS("ass");
+    ASS("ass"),
+
+    /**
+     * 设置时需要标记取最近还是最早
+     */
+    HIS("his");
 
 
     private final String type;
