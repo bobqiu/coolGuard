@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.vo.create;
 
 import cn.wnhyang.coolGuard.vo.base.PolicyBaseVO;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.io.Serial;
@@ -18,18 +19,21 @@ public class PolicyCreateVO extends PolicyBaseVO {
     private static final long serialVersionUID = 2093290268962978058L;
 
     /**
-     * 策略集id
+     * 策略集编码
      */
-    private Long policySetId;
+    @NotBlank(message = "策略集编码不能为空")
+    private String policySetCode;
 
     /**
      * 策略编码
      */
+    @NotBlank(message = "策略编码不能为空")
     private String code;
 
     /**
      * 策略模式
      */
+    @NotBlank(message = "策略模式不能为空")
     private String mode;
 
 }

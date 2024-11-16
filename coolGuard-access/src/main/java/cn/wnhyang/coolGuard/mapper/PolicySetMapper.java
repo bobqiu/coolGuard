@@ -35,9 +35,9 @@ public interface PolicySetMapper extends BaseMapperX<PolicySet> {
         return selectOne(PolicySet::getAppName, appName, PolicySet::getCode, code);
     }
 
-    default List<PolicySet> selectList(Set<Long> ids, String appName, String name, String code) {
+    default List<PolicySet> selectList(Set<String> setCodes, String appName, String name, String code) {
         return selectList(new LambdaQueryWrapperX<PolicySet>()
-                .inIfPresent(PolicySet::getId, ids)
+                .inIfPresent(PolicySet::getCode, setCodes)
                 .eqIfPresent(PolicySet::getAppName, appName)
                 .likeIfPresent(PolicySet::getName, name)
                 .eqIfPresent(PolicySet::getCode, code));

@@ -33,6 +33,12 @@ public class Indicator extends BasePO {
     private Long id;
 
     /**
+     * uuid
+     */
+    @TableField("code")
+    private String code;
+
+    /**
      * 指标名
      */
     @TableField("name")

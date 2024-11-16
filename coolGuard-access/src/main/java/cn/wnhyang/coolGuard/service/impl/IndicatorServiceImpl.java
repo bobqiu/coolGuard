@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
@@ -71,12 +72,13 @@ public class IndicatorServiceImpl implements IndicatorService {
     @Transactional(rollbackFor = Exception.class)
     public Long createIndicator(IndicatorCreateVO createVO) {
         Indicator indicator = IndicatorConvert.INSTANCE.convert(createVO);
+        indicator.setCode(IdUtil.fastSimpleUUID());
         indicator.setReturnType(IndicatorUtil.getReturnType(indicator.getType(), indicator.getCalcField()));
         indicator.setTimeSlice(WinSize.getWinSizeValue(createVO.getWinSize()));
         indicatorMapper.insert(indicator);
 
         String condEl = LFUtil.buildCondEl(createVO.getCond());
-        String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getId());
+        String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getCode());
         chainMapper.insert(new Chain().setChainName(iChain).setElData(StrUtil.format(LFUtil.IF_EL, condEl,
                 LFUtil.INDICATOR_TRUE_COMMON_NODE,
                 LFUtil.INDICATOR_FALSE_COMMON_NODE)));
@@ -90,7 +92,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         indicator.setReturnType(IndicatorUtil.getReturnType(indicator.getType(), indicator.getCalcField()));
         indicatorMapper.updateById(indicator);
         String condEl = LFUtil.buildCondEl(updateVO.getCond());
-        String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getId());
+        String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getCode());
         Chain chain = chainMapper.getByChainName(iChain);
         chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl,
                 LFUtil.INDICATOR_TRUE_COMMON_NODE,
@@ -101,15 +103,16 @@ public class IndicatorServiceImpl implements IndicatorService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteIndicator(Long id) {
+        Indicator indicator = indicatorMapper.selectById(id);
         indicatorMapper.deleteById(id);
-        chainMapper.deleteByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, id));
+        chainMapper.deleteByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getCode()));
     }
 
     @Override
     public IndicatorVO getIndicator(Long id) {
         Indicator indicator = indicatorMapper.selectById(id);
         IndicatorVO indicatorVO = IndicatorConvert.INSTANCE.convert(indicator);
-        indicatorVO.setCond(getCond(id));
+        indicatorVO.setCond(getCond(indicator.getCode()));
         return indicatorVO;
     }
 
@@ -119,12 +122,12 @@ public class IndicatorServiceImpl implements IndicatorService {
 
         PageResult<IndicatorVO> voPageResult = IndicatorConvert.INSTANCE.convert(indicatorPageResult);
 
-        voPageResult.getList().forEach(indicatorVO -> indicatorVO.setCond(getCond(indicatorVO.getId())));
+        voPageResult.getList().forEach(indicatorVO -> indicatorVO.setCond(getCond(indicatorVO.getCode())));
         return voPageResult;
     }
 
-    private Cond getCond(Long id) {
-        Chain chain = chainMapper.getByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, id));
+    private Cond getCond(String code) {
+        Chain chain = chainMapper.getByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, code));
         List<String> ifEl = LFUtil.parseIfEl(chain.getElData());
         return LFUtil.parseToCond(ifEl.get(0));
     }
@@ -132,8 +135,8 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     public PageResult<Indicator> pageIndicatorByPolicySet(IndicatorByPolicySetPageVO pageVO) {
-        Long policySetId = pageVO.getPolicySetId();
-        PolicySet policySet = policySetMapper.selectById(policySetId);
+        String policySetCode = pageVO.getPolicySetCode();
+        PolicySet policySet = policySetMapper.selectByCode(policySetCode);
         if (ObjectUtil.isNotNull(policySet)) {
             indicatorMapper.selectPageByScene(pageVO, SceneType.POLICY_SET, policySet.getCode());
         }
@@ -166,7 +169,7 @@ public class IndicatorServiceImpl implements IndicatorService {
     public void indicator(NodeComponent bindCmp) {
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
         int index = bindCmp.getLoopIndex();
-        bindCmp.invoke2Resp(StrUtil.format(LFUtil.INDICATOR_CHAIN, indicatorContext.getIndicator(index).getId()), index);
+        bindCmp.invoke2Resp(StrUtil.format(LFUtil.INDICATOR_CHAIN, indicatorContext.getIndicator(index).getCode()), index);
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标true组件")
@@ -177,7 +180,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         int index = bindCmp.getSubChainReqData();
         IndicatorVO indicatorVO = indicatorContext.getIndicator(index);
         indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorVO.getType()).compute(true, indicatorVO, accessRequest.getFields()));
-        log.info("当前计算指标(id:{}, name:{}, value:{})", indicatorVO.getId(), indicatorVO.getName(), indicatorVO.getValue());
+        log.info("true:指标(code:{}, name:{}, value:{})", indicatorVO.getCode(), indicatorVO.getName(), indicatorVO.getValue());
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标false组件")
@@ -188,7 +191,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         int index = bindCmp.getSubChainReqData();
         IndicatorVO indicatorVO = indicatorContext.getIndicator(index);
         indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorVO.getType()).compute(false, indicatorVO, accessRequest.getFields()));
-        log.info("当前计算指标(id:{}, name:{}, value:{})", indicatorVO.getId(), indicatorVO.getName(), indicatorVO.getValue());
+        log.info("false指标(code:{}, name:{}, value:{})", indicatorVO.getCode(), indicatorVO.getName(), indicatorVO.getValue());
 
     }
 

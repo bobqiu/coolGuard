@@ -44,9 +44,9 @@ public class InputFieldVO {
     private String name;
 
     /**
-     * 字段分组
+     * 字段分组名
      */
-    private Long groupId;
+    private String groupName;
 
     /**
      * 是否标准字段

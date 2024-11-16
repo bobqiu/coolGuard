@@ -18,8 +18,8 @@ public class RuleCreateVO extends RuleBaseVO {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 策略id
+     * 策略编码
      */
-    private Long policyId;
+    private String policyCode;
 
 }

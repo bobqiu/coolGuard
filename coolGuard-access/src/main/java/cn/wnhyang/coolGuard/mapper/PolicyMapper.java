@@ -24,8 +24,8 @@ public interface PolicyMapper extends BaseMapperX<Policy> {
         return selectPage(pageVO, new LambdaQueryWrapperX<Policy>());
     }
 
-    default List<Policy> selectListBySetId(Long setId) {
-        return selectList(Policy::getPolicySetId, setId);
+    default List<Policy> selectListBySetCode(String setCode) {
+        return selectList(Policy::getPolicySetCode, setCode);
     }
 
     @Cacheable(cacheNames = RedisKey.POLICY + "::co", key = "#code", unless = "#result == null")
@@ -33,16 +33,16 @@ public interface PolicyMapper extends BaseMapperX<Policy> {
         return selectOne(Policy::getCode, code);
     }
 
-    default List<Policy> selectList(List<Long> ids, String name, String code) {
+    default List<Policy> selectList(List<String> codes, String name, String code) {
         return selectList(new LambdaQueryWrapperX<Policy>()
-                .inIfPresent(Policy::getId, ids)
+                .inIfPresent(Policy::getId, codes)
                 .likeIfPresent(Policy::getName, name)
                 .eqIfPresent(Policy::getCode, code));
     }
 
-    default List<Policy> selectRunningListBySetId(Long id) {
+    default List<Policy> selectRunningListBySetCode(String setCode) {
         return selectList(new LambdaQueryWrapperX<Policy>()
-                .eq(Policy::getPolicySetId, id)
+                .eq(Policy::getPolicySetCode, setCode)
                 .eq(Policy::getStatus, Boolean.TRUE));
     }
 }

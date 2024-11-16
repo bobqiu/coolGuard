@@ -82,14 +82,14 @@ public class DisposalServiceImpl implements DisposalService {
     }
 
     private void validateForDelete(Long id) {
-        validateForUpdate(id);
-        List<Rule> ruleList = ruleMapper.selectByDisposalId(id);
+        Disposal disposal = validateForUpdate(id);
+        List<Rule> ruleList = ruleMapper.selectByDisposalCode(disposal.getCode());
         if (CollUtil.isNotEmpty(ruleList)) {
             throw exception(DISPOSAL_REFERENCE);
         }
     }
 
-    private void validateForUpdate(Long id) {
+    private Disposal validateForUpdate(Long id) {
         Disposal disposal = disposalMapper.selectById(id);
         if (disposal == null) {
             throw exception(DISPOSAL_NOT_EXIST);
@@ -98,6 +98,7 @@ public class DisposalServiceImpl implements DisposalService {
         if (disposal.getStandard()) {
             throw exception(DISPOSAL_STANDARD);
         }
+        return disposal;
     }
 
     private void validateForCreateOrUpdate(Long id, String name) {

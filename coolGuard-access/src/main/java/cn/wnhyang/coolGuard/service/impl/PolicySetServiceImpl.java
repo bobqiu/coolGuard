@@ -72,7 +72,7 @@ public class PolicySetServiceImpl implements PolicySetService {
         validateForCreateOrUpdate(null, createVO.getName());
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(createVO);
         policySetMapper.insert(policySet);
-        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getId());
+        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode());
         // TODO 策略集el，默认并行
         chainMapper.insert(new Chain().setChainName(psChain).setElData(LFUtil.WHEN_EMPTY_NODE));
         return policySet.getId();
@@ -83,7 +83,7 @@ public class PolicySetServiceImpl implements PolicySetService {
     public void updatePolicySet(PolicySetUpdateVO updateVO) {
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(updateVO);
         if (!policySet.getStatus()) {
-            List<Policy> policyList = policyMapper.selectRunningListBySetId(policySet.getId());
+            List<Policy> policyList = policyMapper.selectRunningListBySetCode(policySet.getCode());
             if (CollUtil.isNotEmpty(policyList)) {
                 throw exception(POLICY_SET_REFERENCE_UPDATE);
             }
@@ -101,18 +101,19 @@ public class PolicySetServiceImpl implements PolicySetService {
     @Override
     public void deletePolicySet(Collection<Long> ids) {
         ids.forEach(id -> {
+            PolicySet policySet = policySetMapper.selectById(id);
             // 1、确认是否还有运行的策略
-            List<Policy> policyList = policyMapper.selectRunningListBySetId(id);
+            List<Policy> policyList = policyMapper.selectRunningListBySetCode(policySet.getCode());
             if (CollUtil.isNotEmpty(policyList)) {
                 throw exception(POLICY_SET_REFERENCE_DELETE);
             }
             // 2、没有运行的策略就可以删除策略集了
             // 3、删除策略集下的所有规则
-            policyList = policyMapper.selectListBySetId(id);
+            policyList = policyMapper.selectListBySetCode(policySet.getCode());
             policyService.deletePolicy(CollectionUtils.convertSet(policyList, Policy::getId));
             // 4、删除chain
             policySetMapper.deleteById(id);
-            chainMapper.deleteByChainName(StrUtil.format(LFUtil.POLICY_SET_CHAIN, id));
+            chainMapper.deleteByChainName(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode()));
         });
     }
 
@@ -120,7 +121,7 @@ public class PolicySetServiceImpl implements PolicySetService {
     public PolicySetVO getPolicySet(Long id) {
         PolicySet policySet = policySetMapper.selectById(id);
         PolicySetVO policySetVO = PolicySetConvert.INSTANCE.convert(policySet);
-        List<Policy> policyList = policyMapper.selectListBySetId(id);
+        List<Policy> policyList = policyMapper.selectListBySetCode(policySet.getCode());
         List<PolicyVO> strategies = PolicyConvert.INSTANCE.convert(policyList);
         policySetVO.setPolicyList(strategies);
         return policySetVO;
@@ -129,15 +130,15 @@ public class PolicySetServiceImpl implements PolicySetService {
     @Override
     public PageResult<PolicySetVO> pagePolicySet(PolicySetPageVO pageVO) {
         // 1、查询规则所属策略
-        List<Long> policyIdList = ruleMapper.selectPolicyId(pageVO.getRuleName(), pageVO.getRuleCode());
+        List<String> policyCodeList = ruleMapper.selectPolicyCodeList(pageVO.getRuleName(), pageVO.getRuleCode());
 
         // 2、查询策略所属策略集
-        List<Policy> policyList = policyMapper.selectList(policyIdList, pageVO.getPolicyName(), pageVO.getPolicyCode());
+        List<Policy> policyList = policyMapper.selectList(policyCodeList, pageVO.getPolicyName(), pageVO.getPolicyCode());
 
         // 3、过滤策略集
-        Set<Long> policySetIdSet = policyList.stream().map(Policy::getPolicySetId).collect(Collectors.toSet());
+        Set<String> policySetCodeSet = policyList.stream().map(Policy::getPolicySetCode).collect(Collectors.toSet());
 
-        List<PolicySet> policySetList = policySetMapper.selectList(policySetIdSet, pageVO.getAppName(), pageVO.getName(), pageVO.getCode());
+        List<PolicySet> policySetList = policySetMapper.selectList(policySetCodeSet, pageVO.getAppName(), pageVO.getName(), pageVO.getCode());
 
         List<PolicySetVO> policySetVOList = PolicySetConvert.INSTANCE.convert(policySetList);
 
@@ -146,7 +147,7 @@ public class PolicySetServiceImpl implements PolicySetService {
                 .skip((long) (pageVO.getPageNo() - 1) * pageVO.getPageSize())
                 .limit(pageVO.getPageSize())
                 .peek(item -> {
-                    List<Policy> strategies = policyList.stream().filter(policy -> item.getId().equals(policy.getPolicySetId()))
+                    List<Policy> strategies = policyList.stream().filter(policy -> item.getCode().equals(policy.getPolicySetCode()))
                             .toList();
                     List<PolicyVO> policyVOList = PolicyConvert.INSTANCE.convert(strategies);
                     item.setPolicyList(policyVOList);
@@ -168,7 +169,7 @@ public class PolicySetServiceImpl implements PolicySetService {
             PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
             policyContext.setPolicySetVO(PolicySetConvert.INSTANCE.convert(policySet));
 
-            bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getId()), null);
+            bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode()), null);
 
             AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);
             accessResponse.setPolicySetResult(policyContext.convert());

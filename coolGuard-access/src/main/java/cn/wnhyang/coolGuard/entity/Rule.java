@@ -30,13 +30,13 @@ public class Rule extends BasePO {
     private Long id;
 
     /**
-     * 策略id
+     * 策略编码
      */
-    @TableField("policy_id")
-    private Long policyId;
+    @TableField("policy_code")
+    private String policyCode;
 
     /**
-     * 规则编码
+     * 规则编码x
      */
     @TableField("code")
     private String code;
@@ -50,8 +50,8 @@ public class Rule extends BasePO {
     /**
      * 处理编码
      */
-    @TableField("disposal_id")
-    private Long disposalId;
+    @TableField("disposal_code")
+    private String disposalCode;
 
     /**
      * 分数

@@ -19,6 +19,6 @@ public class RuleMapperTest {
 
     @Test
     public void test() {
-        ruleMapper.selectRunningListByPolicyId(1L);
+        ruleMapper.selectRunningListByPolicyCode("phone_login_worst");
     }
 }

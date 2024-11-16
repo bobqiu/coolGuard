@@ -46,6 +46,6 @@ public class IndicatorContext {
             return null;
         }
         return indicatorList.stream().map(
-                indicatorVO -> new IndicatorResult(indicatorVO.getId(), indicatorVO.getName(), indicatorVO.getType(), indicatorVO.getVersion(), indicatorVO.getValue())).toList();
+                indicatorVO -> new IndicatorResult(indicatorVO.getCode(), indicatorVO.getName(), indicatorVO.getType(), indicatorVO.getVersion(), indicatorVO.getValue())).toList();
     }
 }

@@ -23,7 +23,7 @@ public class RuleVO extends RuleBaseVO {
     private Long id;
 
     /**
-     * 策略id
+     * 策略编码
      */
-    private Long policyId;
+    private String policyCode;
 }

@@ -26,9 +26,9 @@ public class FieldPageVO extends PageParam {
     private String name;
 
     /**
-     * 字段分组
+     * 字段分组名
      */
-    private Long groupId;
+    private String groupName;
 
     /**
      * 字段类型

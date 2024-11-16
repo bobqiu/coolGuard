@@ -25,7 +25,7 @@ public class PolicyVO extends PolicyBaseVO {
     /**
      * 策略集id
      */
-    private Long policySetId;
+    private String policySetCode;
 
     /**
      * 策略编码

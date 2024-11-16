@@ -17,37 +17,37 @@ import java.util.concurrent.ConcurrentHashMap;
 @Data
 public class PolicyContext {
 
-    private final Map<Long, Disposal> disposalMap = new ConcurrentHashMap<>();
+    private final Map<String, Disposal> disposalMap = new ConcurrentHashMap<>();
 
     private PolicySetVO policySetVO;
 
     private final Map<Long, PolicyVO> policyMap = new ConcurrentHashMap<>();
 
-    private final Map<Long, List<RuleVO>> ruleListMap = new ConcurrentHashMap<>();
+    private final Map<String, List<RuleVO>> ruleListMap = new ConcurrentHashMap<>();
 
-    private final Map<Long, List<RuleVO>> hitRuleListMap = new ConcurrentHashMap<>();
+    private final Map<String, List<RuleVO>> hitRuleListMap = new ConcurrentHashMap<>();
 
-    public void addDisposal(long id, Disposal disposal) {
-        disposalMap.put(id, disposal);
+    public void addDisposal(String disposalCode, Disposal disposal) {
+        disposalMap.put(disposalCode, disposal);
     }
 
     public void addPolicy(long id, PolicyVO policyVO) {
         policyMap.put(id, policyVO);
     }
 
-    public void addRuleList(long id, List<RuleVO> ruleVOList) {
-        ruleListMap.put(id, ruleVOList);
+    public void addRuleList(String policyCode, List<RuleVO> ruleVOList) {
+        ruleListMap.put(policyCode, ruleVOList);
     }
 
-    public RuleVO getRuleVO(long policyId, int index) {
-        return ruleListMap.get(policyId).get(index);
+    public RuleVO getRuleVO(String policyCode, int index) {
+        return ruleListMap.get(policyCode).get(index);
     }
 
-    public void addHitRuleVO(long id, RuleVO ruleVO) {
-        if (!hitRuleListMap.containsKey(id)) {
-            hitRuleListMap.put(id, CollUtil.newArrayList());
+    public void addHitRuleVO(String policyCode, RuleVO ruleVO) {
+        if (!hitRuleListMap.containsKey(policyCode)) {
+            hitRuleListMap.put(policyCode, CollUtil.newArrayList());
         }
-        hitRuleListMap.get(id).add(ruleVO);
+        hitRuleListMap.get(policyCode).add(ruleVO);
     }
 
     public PolicySetResult convert() {
@@ -57,20 +57,20 @@ public class PolicyContext {
             PolicyVO policyVO = entry.getValue();
             PolicyResult policyResult = new PolicyResult(policyVO.getName(), policyVO.getCode(), policyVO.getMode());
 
-            long disposalId = 1L;
+            String disposalCode = "pass";
             int maxScore = 0;
-            List<RuleVO> ruleVOList = hitRuleListMap.get(policyVO.getId());
+            List<RuleVO> ruleVOList = hitRuleListMap.get(policyVO.getCode());
             if (CollUtil.isNotEmpty(ruleVOList)) {
                 for (RuleVO ruleVO : ruleVOList) {
                     RuleResult ruleResult = new RuleResult(ruleVO.getName(), ruleVO.getCode(), ruleVO.getScore());
 
-                    Disposal disposal = disposalMap.get(ruleVO.getDisposalId());
+                    Disposal disposal = disposalMap.get(ruleVO.getDisposalCode());
                     if (null != disposal) {
                         ruleResult.setDisposalName(disposal.getName());
                         ruleResult.setDisposalCode(disposal.getCode());
                         if (disposal.getGrade() > maxScore) {
                             maxScore = disposal.getGrade();
-                            disposalId = ruleVO.getDisposalId();
+                            disposalCode = ruleVO.getDisposalCode();
                         }
                     }
                     // 模拟/正式规则区分开
@@ -82,8 +82,8 @@ public class PolicyContext {
                 }
             }
             // TODO 根据策略模式确定处置结果
-            policyResult.setDisposalName(disposalMap.get(disposalId).getName());
-            policyResult.setDisposalCode(disposalMap.get(disposalId).getCode());
+            policyResult.setDisposalName(disposalMap.get(disposalCode).getName());
+            policyResult.setDisposalCode(disposalMap.get(disposalCode).getCode());
             policySetResult.addPolicyResult(policyResult);
         }
         // TODO

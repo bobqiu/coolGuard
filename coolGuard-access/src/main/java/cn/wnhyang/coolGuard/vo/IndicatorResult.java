@@ -20,9 +20,9 @@ public class IndicatorResult implements Serializable {
     private static final long serialVersionUID = -1117826649441473613L;
 
     /**
-     * 自增编号
+     * 指标编号
      */
-    private Long id;
+    private String code;
 
     /**
      * 指标名

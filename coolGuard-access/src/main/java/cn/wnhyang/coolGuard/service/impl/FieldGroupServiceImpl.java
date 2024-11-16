@@ -61,7 +61,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
         FieldGroup fieldGroup = fieldGroupMapper.selectById(id);
         FieldGroupVO fieldGroupVO = FieldGroupConvert.INSTANCE.convert(fieldGroup);
         if (fieldGroupVO != null) {
-            fieldGroupVO.setCount(fieldMapper.selectCountByFieldGroupId(fieldGroup.getId()));
+            fieldGroupVO.setCount(fieldMapper.selectCountByFieldGroupName(fieldGroup.getName()));
         }
         return fieldGroupVO;
     }
@@ -70,13 +70,13 @@ public class FieldGroupServiceImpl implements FieldGroupService {
     public PageResult<FieldGroupVO> pageFieldGroup(FieldGroupPageVO pageVO) {
         PageResult<FieldGroup> pageResult = fieldGroupMapper.selectPage(pageVO);
         PageResult<FieldGroupVO> convert = FieldGroupConvert.INSTANCE.convert(pageResult);
-        convert.getList().forEach(fieldGroup -> fieldGroup.setCount(fieldMapper.selectCountByFieldGroupId(fieldGroup.getId())));
+        convert.getList().forEach(fieldGroup -> fieldGroup.setCount(fieldMapper.selectCountByFieldGroupName(fieldGroup.getName())));
         return convert;
     }
 
     private void validateForDelete(Long id) {
         validateForUpdate(id);
-        Long count = fieldMapper.selectCountByFieldGroupId(id);
+        Long count = fieldMapper.selectCountByFieldGroupName(fieldGroupMapper.selectById(id).getName());
         if (count > 0) {
             throw exception(FIELD_GROUP_HAS_FIELD);
         }

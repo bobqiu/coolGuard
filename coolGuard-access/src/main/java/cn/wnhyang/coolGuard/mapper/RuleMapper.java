@@ -25,7 +25,7 @@ public interface RuleMapper extends BaseMapperX<Rule> {
         return selectPage(pageVO, new LambdaQueryWrapperX<Rule>()
                 .likeIfPresent(Rule::getName, pageVO.getName())
                 .likeIfPresent(Rule::getCode, pageVO.getCode())
-                .eqIfPresent(Rule::getDisposalId, pageVO.getDisposalId()));
+                .eqIfPresent(Rule::getDisposalCode, pageVO.getDisposalCode()));
     }
 
     @Cacheable(cacheNames = RedisKey.RULE + "::co", key = "#code", unless = "#result == null")
@@ -33,30 +33,25 @@ public interface RuleMapper extends BaseMapperX<Rule> {
         return selectOne(Rule::getCode, code);
     }
 
-    @Cacheable(cacheNames = RedisKey.RULES + "::sId", key = "#policyId", unless = "#result == null")
-    default List<Rule> selectByPolicyId(Long policyId) {
-        return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getPolicyId, policyId).orderByDesc(Rule::getSort));
+    @Cacheable(cacheNames = RedisKey.RULES + "::sId", key = "#policyCode", unless = "#result == null")
+    default List<Rule> selectByPolicyCode(String policyCode) {
+        return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getPolicyCode, policyCode).orderByDesc(Rule::getSort));
     }
 
-    @Cacheable(cacheNames = RedisKey.RULES + "::sId", key = "#policyId+'-'+#status", unless = "#result == null")
-    default List<Rule> selectByPolicyIdAndStatus(Long policyId, String status) {
-        return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getPolicyId, policyId).eq(Rule::getStatus, status).orderByDesc(Rule::getSort));
-    }
-
-    default List<Long> selectPolicyId(String name, String code) {
+    default List<String> selectPolicyCodeList(String name, String code) {
         return selectObjs(new LambdaQueryWrapperX<Rule>()
                 .likeIfPresent(Rule::getName, name)
                 .eqIfPresent(Rule::getCode, code)
-                .select(Rule::getPolicyId));
+                .select(Rule::getPolicyCode));
     }
 
-    default List<Rule> selectByDisposalId(Long disposal) {
-        return selectList(Rule::getDisposalId, disposal);
+    default List<Rule> selectByDisposalCode(String disposalCode) {
+        return selectList(Rule::getDisposalCode, disposalCode);
     }
 
-    default List<Rule> selectRunningListByPolicyId(Long policyId) {
+    default List<Rule> selectRunningListByPolicyCode(String policyCode) {
         return selectList(new LambdaQueryWrapperX<Rule>()
-                .eq(Rule::getPolicyId, policyId)
+                .eq(Rule::getPolicyCode, policyCode)
                 .or(q -> q.eq(Rule::getStatus, RuleStatus.ON).eq(Rule::getStatus, RuleStatus.MOCK)));
     }
 }

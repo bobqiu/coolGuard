@@ -52,7 +52,7 @@ public class LFUtil {
     public static final String INDICATOR_CHAIN = "I_C#{}";
 
     /**
-     * policySetId
+     * policySetCode
      */
     public static final String POLICY_SET_CHAIN = "PS_C#{}";
 

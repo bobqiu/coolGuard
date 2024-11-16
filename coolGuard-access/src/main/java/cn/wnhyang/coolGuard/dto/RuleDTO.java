@@ -21,9 +21,9 @@ public class RuleDTO implements Serializable {
     private Long id;
 
     /**
-     * 策略id
+     * 策略编码
      */
-    private Long policyId;
+    private String policyCode;
 
     /**
      * 规则编码
@@ -38,7 +38,7 @@ public class RuleDTO implements Serializable {
     /**
      * 处理编码
      */
-    private String disposalId;
+    private String disposalCode;
 
     /**
      * 分数

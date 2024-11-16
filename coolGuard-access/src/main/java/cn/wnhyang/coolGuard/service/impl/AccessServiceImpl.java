@@ -34,13 +34,15 @@ import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
 import com.yomahub.liteflow.flow.LiteflowResponse;
-import com.yomahub.liteflow.flow.entity.CmpStep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_NAME_EXIST;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_NOT_EXIST;
@@ -85,16 +87,12 @@ public class AccessServiceImpl implements AccessService {
         AccessRequest accessRequest = new AccessRequest(access, params, inputFields, outputFields);
         PolicyContext policyContext = new PolicyContext();
         for (Disposal disposal : disposalService.listDisposal()) {
-            policyContext.addDisposal(disposal.getId(), disposal);
+            policyContext.addDisposal(disposal.getCode(), disposal);
         }
         IndicatorContext indicatorContext = new IndicatorContext();
 
-        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getId()), null, accessRequest, indicatorContext, policyContext, accessResponse);
-
-        Queue<CmpStep> executeStepQueue = syncRisk.getExecuteStepQueue();
-        for (CmpStep cmpStep : executeStepQueue) {
-            log.info("cmpStep:{}", cmpStep.buildStringWithTime());
-        }
+        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()), null, accessRequest, indicatorContext, policyContext, accessResponse);
+        // TODO chain el 打印
 
         // 将上下文拼在一块，将此任务丢到线程中执行
         Map<String, Object> esData = new HashMap<>();
@@ -125,7 +123,7 @@ public class AccessServiceImpl implements AccessService {
         Access access = AccessConvert.INSTANCE.convert(createVO);
         accessMapper.insert(access);
         // TODO 创建chain
-        String aChain = StrUtil.format(LFUtil.ACCESS_CHAIN, access.getId());
+        String aChain = StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName());
         chainMapper.insert(new Chain().setChainName(aChain));
         return access.getId();
     }
@@ -141,9 +139,9 @@ public class AccessServiceImpl implements AccessService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteAccess(Long id) {
-        validateExists(id);
+        Access access = validateExists(id);
         accessMapper.deleteById(id);
-        chainMapper.deleteByChainName(StrUtil.format(LFUtil.ACCESS_CHAIN, id));
+        chainMapper.deleteByChainName(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()));
     }
 
     @Override
@@ -258,14 +256,15 @@ public class AccessServiceImpl implements AccessService {
         validateNameUnique(id, name);
     }
 
-    private void validateExists(Long id) {
+    private Access validateExists(Long id) {
         if (id == null) {
-            return;
+            return null;
         }
         Access access = accessMapper.selectById(id);
         if (access == null) {
             throw exception(ACCESS_NOT_EXIST);
         }
+        return access;
     }
 
     private void validateNameUnique(Long id, String name) {

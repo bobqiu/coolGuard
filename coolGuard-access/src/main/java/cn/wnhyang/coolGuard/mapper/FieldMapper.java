@@ -9,8 +9,6 @@ import cn.wnhyang.coolGuard.vo.page.FieldPageVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.cache.annotation.Cacheable;
 
-import java.util.List;
-
 /**
  * 字段表 Mapper 接口
  *
@@ -24,7 +22,7 @@ public interface FieldMapper extends BaseMapperX<Field> {
         return selectPage(pageVO, new LambdaQueryWrapperX<Field>()
                 .likeIfPresent(Field::getName, pageVO.getName())
                 .likeIfPresent(Field::getDisplayName, pageVO.getDisplayName())
-                .eqIfPresent(Field::getGroupId, pageVO.getGroupId())
+                .eqIfPresent(Field::getGroupName, pageVO.getGroupName())
                 .eqIfPresent(Field::getDynamic, pageVO.getDynamic())
                 .eqIfPresent(Field::getType, pageVO.getType())
                 .eqIfPresent(Field::getStandard, pageVO.getStandard()));
@@ -35,11 +33,8 @@ public interface FieldMapper extends BaseMapperX<Field> {
         return selectOne(Field::getName, name);
     }
 
-    default Long selectCountByFieldGroupId(Long groupId) {
-        return selectCount(Field::getGroupId, groupId);
+    default Long selectCountByFieldGroupName(String groupName) {
+        return selectCount(Field::getName, groupName);
     }
 
-    default List<Field> selectByGroupId(Long groupId) {
-        return selectList(Field::getGroupId, groupId);
-    }
 }

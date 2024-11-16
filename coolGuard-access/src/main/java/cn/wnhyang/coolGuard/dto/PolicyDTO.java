@@ -23,7 +23,7 @@ public class PolicyDTO implements Serializable {
     /**
      * 策略集id
      */
-    private Long policySetId;
+    private String policySetCode;
 
     /**
      * 策略编码

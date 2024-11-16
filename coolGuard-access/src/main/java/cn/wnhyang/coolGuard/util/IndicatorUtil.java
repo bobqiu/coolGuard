@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.util;
 
+import cn.hutool.core.util.IdUtil;
 import cn.wnhyang.coolGuard.enums.FieldType;
 
 import java.util.Objects;
@@ -15,5 +16,13 @@ public class IndicatorUtil {
             case "his" -> Objects.requireNonNull(FieldType.getByFieldName(calcField)).getType();
             default -> "F";
         };
+    }
+
+    public static void main(String[] args) {
+
+        for (int i = 0; i < 3; i++) {
+            String uuid = IdUtil.fastSimpleUUID();
+            System.out.println(uuid);
+        }
     }
 }

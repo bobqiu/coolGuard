@@ -49,8 +49,8 @@ public class Field extends BasePO {
     /**
      * 字段分组
      */
-    @TableField("group_id")
-    private Long groupId;
+    @TableField("group_name")
+    private String groupName;
 
     /**
      * 是否标准字段

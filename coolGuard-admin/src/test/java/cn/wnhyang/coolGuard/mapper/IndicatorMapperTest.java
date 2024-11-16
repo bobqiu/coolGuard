@@ -32,7 +32,7 @@ public class IndicatorMapperTest {
     @Test
     public void test2() {
         IndicatorByPolicySetPageVO pageParam = new IndicatorByPolicySetPageVO();
-        pageParam.setPolicySetId(1L);
+        pageParam.setPolicySetCode("phone_login");
         pageParam.setPageNo(1).setPageSize(10);
         PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPageByScene(pageParam, SceneType.POLICY_SET, "phone_login");
         log.info("indicatorPageResult: {}", indicatorPageResult);

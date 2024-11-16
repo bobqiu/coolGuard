@@ -81,8 +81,7 @@ public abstract class AbstractIndicator {
      * 如：masterField分别为a、b，其在事件中的取值可能一样，那么指标key也就一样，可以优化为a：xxx，b：xxx
      */
     private String setRedisKey(Map<String, Object> eventDetail) {
-        String redisKey = RedisKey.ZB + indicator.getId() + ":"
-                + INDICATOR_TYPE.getType() + ":" + eventDetail.get(indicator.getMasterField());
+        String redisKey = RedisKey.ZB + indicator.getCode() + ":" + eventDetail.get(indicator.getMasterField());
         if (StrUtil.isNotBlank(indicator.getSlaveFields())) {
             redisKey += "-" + eventDetail.get(indicator.getSlaveFields());
         }

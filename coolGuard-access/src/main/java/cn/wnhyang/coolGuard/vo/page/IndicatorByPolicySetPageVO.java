@@ -16,6 +16,6 @@ public class IndicatorByPolicySetPageVO extends PageParam {
     @Serial
     private static final long serialVersionUID = -3210964069305813159L;
 
-    @NotNull(message = "策略集id不能为空")
-    private Long policySetId;
+    @NotNull(message = "策略集编码不能为空")
+    private String policySetCode;
 }

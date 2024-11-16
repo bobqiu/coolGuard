@@ -29,7 +29,7 @@ public class RuleBaseVO implements Serializable {
     /**
      * 处理编码
      */
-    private Long disposalId;
+    private String disposalCode;
 
     /**
      * 分数

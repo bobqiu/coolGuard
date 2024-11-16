@@ -32,14 +32,14 @@ public class PolicySetVersion extends BasePO {
     /**
      * 策略集id
      */
-    @TableField("policy_set_id")
-    private Long policySetId;
+    @TableField("policy_set_code")
+    private String policySetCode;
 
     /**
      * 策略id
      */
-    @TableField("policy_id")
-    private Long policyId;
+    @TableField("policy_code")
+    private String policyCode;
 
     /**
      * 策略状态

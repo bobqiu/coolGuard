@@ -1,7 +1,6 @@
 package cn.wnhyang.coolGuard.vo.create;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -29,8 +28,8 @@ public class FieldCreateVO {
     /**
      * 字段分组
      */
-    @NotNull(message = "字段分组不能为空")
-    private Long groupId;
+    @NotBlank(message = "字段分组名不能为空")
+    private String groupName;
 
     /**
      * 字段类型

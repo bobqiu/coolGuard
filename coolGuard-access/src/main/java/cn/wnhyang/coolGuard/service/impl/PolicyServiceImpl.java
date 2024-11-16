@@ -70,7 +70,7 @@ public class PolicyServiceImpl implements PolicyService {
         policyMapper.insert(policy);
 
         // TODO 判断有没有策略流，没有并行加入
-        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetId());
+        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetCode());
         Chain chain = chainMapper.getByChainName(psChain);
         chain.setElData(LFUtil.elAdd(chain.getElData(),
                 LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getId())));
@@ -84,7 +84,7 @@ public class PolicyServiceImpl implements PolicyService {
     public void updatePolicy(PolicyUpdateVO updateVO) {
         Policy policy = PolicyConvert.INSTANCE.convert(updateVO);
         if (!policy.getStatus()) {
-            List<Rule> ruleList = ruleMapper.selectRunningListByPolicyId(policy.getId());
+            List<Rule> ruleList = ruleMapper.selectRunningListByPolicyCode(policy.getCode());
             if (CollUtil.isNotEmpty(ruleList)) {
                 throw exception(POLICY_REFERENCE_UPDATE);
             }
@@ -102,18 +102,18 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public void deletePolicy(Collection<Long> ids) {
         ids.forEach(id -> {
+            Policy policy = policyMapper.selectById(id);
             // 1、确认是否还有运行的规则
-            List<Rule> ruleList = ruleMapper.selectRunningListByPolicyId(id);
+            List<Rule> ruleList = ruleMapper.selectRunningListByPolicyCode(policy.getCode());
             if (CollUtil.isNotEmpty(ruleList)) {
                 throw exception(POLICY_REFERENCE_DELETE);
             }
-            Policy policy = policyMapper.selectById(id);
             // 2、没有运行的规则就可以删除策略了
             // 3、删除策略下的所有规则
-            ruleList = ruleMapper.selectByPolicyId(id);
+            ruleList = ruleMapper.selectByPolicyCode(policy.getCode());
             ruleService.deleteRule(CollectionUtils.convertSet(ruleList, Rule::getId));
             // 4、删除chain
-            String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetId());
+            String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetCode());
             Chain chain = chainMapper.getByChainName(psChain);
             chain.setElData(LFUtil.removeEl(chain.getElData(),
                     LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, id)));
@@ -146,21 +146,21 @@ public class PolicyServiceImpl implements PolicyService {
         PolicyVO policyVO = PolicyConvert.INSTANCE.convert(policy);
         policyContext.addPolicy(policyVO.getId(), policyVO);
 
-        log.info("当前策略(id:{}, name:{}, code:{})", policy.getId(), policy.getName(), policy.getCode());
+        log.info("当前策略(code:{}, name:{}, code:{})", policy.getCode(), policy.getName(), policy.getCode());
 
         if (PolicyMode.ORDER.equals(policyVO.getMode())) {
-            bindCmp.invoke2Resp(LFUtil.P_F, policy.getId());
+            bindCmp.invoke2Resp(LFUtil.P_F, policy.getCode());
         } else {
-            bindCmp.invoke2Resp(LFUtil.P_FP, policy.getId());
+            bindCmp.invoke2Resp(LFUtil.P_FP, policy.getCode());
         }
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_FOR, nodeId = LFUtil.POLICY_FOR_NODE, nodeType = NodeTypeEnum.FOR, nodeName = "策略for组件")
     public int policyFor(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        Long policyId = bindCmp.getSubChainReqData();
-        List<RuleVO> ruleVOList = RuleConvert.INSTANCE.convert(ruleMapper.selectByPolicyId(policyId));
-        policyContext.addRuleList(policyId, ruleVOList);
+        String policyCode = bindCmp.getSubChainReqData();
+        List<RuleVO> ruleVOList = RuleConvert.INSTANCE.convert(ruleMapper.selectByPolicyCode(policyCode));
+        policyContext.addRuleList(policyCode, ruleVOList);
         return ruleVOList.size();
     }
 

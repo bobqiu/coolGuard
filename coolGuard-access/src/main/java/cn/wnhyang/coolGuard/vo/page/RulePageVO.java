@@ -27,5 +27,5 @@ public class RulePageVO extends PageParam {
     /**
      * 处理编码
      */
-    private Long disposalId;
+    private String disposalCode;
 }

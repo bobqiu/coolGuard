@@ -21,6 +21,11 @@ public class IndicatorVO extends IndicatorBaseVO {
     private Long id;
 
     /**
+     * 编码
+     */
+    private String code;
+
+    /**
      * 类型
      */
     private String type;

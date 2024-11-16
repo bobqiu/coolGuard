@@ -19,12 +19,12 @@ public class PolicySetVersionCreateVO implements Serializable {
     /**
      * 策略集id
      */
-    private Long policySetId;
+    private String policySetCode;
 
     /**
      * 策略id
      */
-    private Long policyId;
+    private String policyCode;
 
     /**
      * 策略状态
