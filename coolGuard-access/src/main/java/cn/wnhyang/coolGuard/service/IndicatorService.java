@@ -67,8 +67,8 @@ public interface IndicatorService {
     /**
      * 查询列表
      *
-     * @return poList
+     * @return voList
      */
-    List<Indicator> listIndicator();
+    List<IndicatorVO> listIndicator();
 
 }

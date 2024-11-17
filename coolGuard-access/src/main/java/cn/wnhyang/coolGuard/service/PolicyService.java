@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.service;
 
-import cn.wnhyang.coolGuard.entity.Policy;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.PolicyVO;
 import cn.wnhyang.coolGuard.vo.create.PolicyCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicyPageVO;
 import cn.wnhyang.coolGuard.vo.update.PolicyUpdateVO;
@@ -50,9 +50,9 @@ public interface PolicyService {
      * 查询单个
      *
      * @param id id
-     * @return po
+     * @return vo
      */
-    Policy getPolicy(Long id);
+    PolicyVO getPolicy(Long id);
 
     /**
      * 分页查询
@@ -60,6 +60,6 @@ public interface PolicyService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<Policy> pagePolicy(PolicyPageVO pageVO);
+    PageResult<PolicyVO> pagePolicy(PolicyPageVO pageVO);
 
 }

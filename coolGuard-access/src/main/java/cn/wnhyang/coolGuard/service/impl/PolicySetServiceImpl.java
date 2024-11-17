@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.context.AccessRequest;
 import cn.wnhyang.coolGuard.context.AccessResponse;
 import cn.wnhyang.coolGuard.context.PolicyContext;
@@ -32,6 +33,7 @@ import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +70,7 @@ public class PolicySetServiceImpl implements PolicySetService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.POLICY_SET, allEntries = true)
     public Long createPolicySet(PolicySetCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getName());
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(createVO);
@@ -80,6 +83,7 @@ public class PolicySetServiceImpl implements PolicySetService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.POLICY_SET, allEntries = true)
     public void updatePolicySet(PolicySetUpdateVO updateVO) {
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(updateVO);
         if (!policySet.getStatus()) {
@@ -93,12 +97,15 @@ public class PolicySetServiceImpl implements PolicySetService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.POLICY_SET, allEntries = true)
     public void deletePolicySet(Long id) {
         validateExists(id);
         deletePolicySet(Collections.singleton(id));
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.POLICY_SET, allEntries = true)
     public void deletePolicySet(Collection<Long> ids) {
         ids.forEach(id -> {
             PolicySet policySet = policySetMapper.selectById(id);

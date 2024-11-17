@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.PolicyMode;
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
@@ -30,6 +31,7 @@ import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +66,7 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.POLICY, allEntries = true)
     public Long createPolicy(PolicyCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getCode());
         Policy policy = PolicyConvert.INSTANCE.convert(createVO);
@@ -81,6 +84,7 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.POLICY, allEntries = true)
     public void updatePolicy(PolicyUpdateVO updateVO) {
         Policy policy = PolicyConvert.INSTANCE.convert(updateVO);
         if (!policy.getStatus()) {
@@ -94,12 +98,15 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.POLICY, allEntries = true)
     public void deletePolicy(Long id) {
         validateExists(id);
         deletePolicy(Collections.singleton(id));
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.POLICY, allEntries = true)
     public void deletePolicy(Collection<Long> ids) {
         ids.forEach(id -> {
             Policy policy = policyMapper.selectById(id);
@@ -123,14 +130,22 @@ public class PolicyServiceImpl implements PolicyService {
     }
 
     @Override
-    public Policy getPolicy(Long id) {
-        // TODO 增加策略下规则列表，运行，模拟，关闭
-        return policyMapper.selectById(id);
+    public PolicyVO getPolicy(Long id) {
+        Policy policy = policyMapper.selectById(id);
+        PolicyVO policyVO = PolicyConvert.INSTANCE.convert(policy);
+        List<Rule> ruleList = ruleMapper.selectByPolicyCode(policy.getCode());
+        List<RuleVO> ruleVOList = RuleConvert.INSTANCE.convert(ruleList);
+        policyVO.setRuleList(ruleVOList);
+        return policyVO;
     }
 
     @Override
-    public PageResult<Policy> pagePolicy(PolicyPageVO pageVO) {
-        return policyMapper.selectPage(pageVO);
+    public PageResult<PolicyVO> pagePolicy(PolicyPageVO pageVO) {
+        PageResult<Policy> policyPageResult = policyMapper.selectPage(pageVO);
+        PageResult<PolicyVO> policyVOPageResult = PolicyConvert.INSTANCE.convert(policyPageResult);
+        policyVOPageResult.getList().forEach(policyVO ->
+                policyVO.setRuleList(RuleConvert.INSTANCE.convert(ruleMapper.selectByPolicyCode(policyVO.getCode()))));
+        return policyVOPageResult;
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)

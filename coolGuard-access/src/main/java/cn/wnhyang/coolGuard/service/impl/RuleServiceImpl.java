@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
@@ -24,6 +25,7 @@ import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +57,7 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.RULE, allEntries = true)
     public Long createRule(RuleCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getCode());
         Rule rule = RuleConvert.INSTANCE.convert(createVO);
@@ -70,6 +73,7 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.RULE, allEntries = true)
     public void updateRule(RuleUpdateVO updateVO) {
         validateForCreateOrUpdate(updateVO.getId(), updateVO.getCode());
         Rule rule = RuleConvert.INSTANCE.convert(updateVO);
@@ -85,6 +89,7 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.RULE, allEntries = true)
     public void deleteRule(Long id) {
         validateExists(id);
         deleteRule(Collections.singleton(id));
@@ -92,6 +97,7 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.RULE, allEntries = true)
     public void deleteRule(Collection<Long> ids) {
         ids.forEach(id -> {
             Rule rule = ruleMapper.selectById(id);
@@ -146,7 +152,7 @@ public class RuleServiceImpl implements RuleService {
     public void ruleTrue(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
         RuleVO ruleVO = bindCmp.getSubChainReqData();
-        log.info("命中规则(id:{}, name:{}, code:{})", ruleVO.getId(), ruleVO.getName(), ruleVO.getCode());
+        log.info("命中规则(name:{}, code:{})", ruleVO.getName(), ruleVO.getCode());
         policyContext.addHitRuleVO(ruleVO.getPolicyCode(), ruleVO);
         // TODO 后置操作，除了处置方式外
     }

@@ -5,6 +5,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.context.AccessRequest;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
@@ -33,6 +34,7 @@ import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
@@ -70,6 +72,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.INDICATOR, allEntries = true)
     public Long createIndicator(IndicatorCreateVO createVO) {
         Indicator indicator = IndicatorConvert.INSTANCE.convert(createVO);
         indicator.setCode(IdUtil.fastSimpleUUID());
@@ -87,6 +90,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.INDICATOR, allEntries = true)
     public void updateIndicator(IndicatorUpdateVO updateVO) {
         Indicator indicator = IndicatorConvert.INSTANCE.convert(updateVO);
         indicator.setReturnType(IndicatorUtil.getReturnType(indicator.getType(), indicator.getCalcField()));
@@ -102,6 +106,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.INDICATOR, allEntries = true)
     public void deleteIndicator(Long id) {
         Indicator indicator = indicatorMapper.selectById(id);
         indicatorMapper.deleteById(id);
@@ -144,8 +149,10 @@ public class IndicatorServiceImpl implements IndicatorService {
     }
 
     @Override
-    public List<Indicator> listIndicator() {
-        return indicatorMapper.selectList();
+    public List<IndicatorVO> listIndicator() {
+        List<IndicatorVO> indicatorVOList = IndicatorConvert.INSTANCE.convert(indicatorMapper.selectList());
+        indicatorVOList.forEach(indicatorVO -> indicatorVO.setCond(getCond(indicatorVO.getCode())));
+        return indicatorVOList;
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_FOR, nodeId = LFUtil.INDICATOR_FOR_NODE, nodeType = NodeTypeEnum.FOR, nodeName = "指标for组件")

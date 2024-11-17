@@ -77,7 +77,6 @@ public abstract class AbstractIndicator {
 
     /**
      * 设置redis key
-     * TODO key可能要加上masterField原本的字段，因为不同的field取值可能一样会出问题
      * 如：masterField分别为a、b，其在事件中的取值可能一样，那么指标key也就一样，可以优化为a：xxx，b：xxx
      */
     private String setRedisKey(Map<String, Object> eventDetail) {

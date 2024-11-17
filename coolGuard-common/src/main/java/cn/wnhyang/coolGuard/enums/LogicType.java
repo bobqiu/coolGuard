@@ -3,6 +3,8 @@ package cn.wnhyang.coolGuard.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 /**
  * @author wnhyang
  * @date 2024/4/3
@@ -55,5 +57,18 @@ public enum LogicType {
             }
         }
         return null;
+    }
+
+    public static List<String> getTypeList(String fieldType) {
+        return switch (fieldType) {
+            // 字符，支持【等于、不等于、包含、不包含、前缀、非前缀、后缀、非后缀、为空、不为空】
+            case "S" ->
+                    List.of("null", "not_null", "eq", "not_eq", "contains", "not_contains", "prefix", "not_prefix", "suffix", "not_suffix");
+            // 整数/小数/日期，支持【等于、不等于、大于、小于、大于等于、小于等于、为空、不为空】
+            case "N", "F", "D" -> List.of("null", "not_null", "eq", "not_eq", "gt", "gte", "lt", "lte");
+            // 枚举/布尔，支持【等于、不等于、为空、不为空】
+            case "E", "B" -> List.of("null", "not_null", "eq", "not_eq");
+            default -> List.of("null", "not_null");
+        };
     }
 }

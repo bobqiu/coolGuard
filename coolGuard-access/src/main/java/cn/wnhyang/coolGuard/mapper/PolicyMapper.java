@@ -24,6 +24,7 @@ public interface PolicyMapper extends BaseMapperX<Policy> {
         return selectPage(pageVO, new LambdaQueryWrapperX<Policy>());
     }
 
+    @Cacheable(cacheNames = RedisKey.POLICY + "::sCode", key = "#setCode", unless = "#result == null")
     default List<Policy> selectListBySetCode(String setCode) {
         return selectList(Policy::getPolicySetCode, setCode);
     }
@@ -35,7 +36,7 @@ public interface PolicyMapper extends BaseMapperX<Policy> {
 
     default List<Policy> selectList(List<String> codes, String name, String code) {
         return selectList(new LambdaQueryWrapperX<Policy>()
-                .inIfPresent(Policy::getId, codes)
+                .inIfPresent(Policy::getCode, codes)
                 .likeIfPresent(Policy::getName, name)
                 .eqIfPresent(Policy::getCode, code));
     }

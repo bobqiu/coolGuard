@@ -10,6 +10,7 @@ import cn.wnhyang.coolGuard.analysis.ip.IpAnalysis;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoAnalysis;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoInfo;
 import cn.wnhyang.coolGuard.constant.FieldName;
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.context.AccessRequest;
 import cn.wnhyang.coolGuard.convert.FieldConvert;
 import cn.wnhyang.coolGuard.entity.Field;
@@ -37,6 +38,7 @@ import com.yomahub.liteflow.enums.NodeTypeEnum;
 import com.yomahub.liteflow.flow.LiteflowResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,6 +72,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.FIELD, allEntries = true)
     public Long createField(FieldCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getName());
         Field field = FieldConvert.INSTANCE.convert(createVO);
@@ -79,6 +82,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.FIELD, allEntries = true)
     public void updateField(FieldUpdateVO updateVO) {
         validateForUpdate(updateVO.getId());
         validateForCreateOrUpdate(updateVO.getId(), updateVO.getName());
@@ -88,6 +92,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.FIELD, allEntries = true)
     public void deleteField(Long id) {
         validateForDelete(id);
         fieldMapper.deleteById(id);

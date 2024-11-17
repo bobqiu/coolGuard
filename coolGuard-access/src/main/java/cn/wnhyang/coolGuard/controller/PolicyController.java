@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicyService;
@@ -70,7 +69,7 @@ public class PolicyController {
      */
     @GetMapping("/{id}")
     public CommonResult<PolicyVO> getPolicy(@PathVariable("id") Long id) {
-        return success(PolicyConvert.INSTANCE.convert(policyService.getPolicy(id)));
+        return success(policyService.getPolicy(id));
     }
 
     /**
@@ -81,6 +80,6 @@ public class PolicyController {
      */
     @GetMapping("/page")
     public CommonResult<PageResult<PolicyVO>> pagePolicy(@Valid PolicyPageVO pageVO) {
-        return success(PolicyConvert.INSTANCE.convert(policyService.pagePolicy(pageVO)));
+        return success(policyService.pagePolicy(pageVO));
     }
 }

@@ -98,8 +98,13 @@ public class IndicatorController {
         return success(IndicatorConvert.INSTANCE.convert(indicatorService.pageIndicatorByPolicySet(pageVO)));
     }
 
+    /**
+     * 查询全部指标
+     *
+     * @return 全部指标
+     */
     @GetMapping("/list")
     public CommonResult<List<IndicatorVO>> listIndicator() {
-        return success(IndicatorConvert.INSTANCE.convert(indicatorService.listIndicator()));
+        return success(indicatorService.listIndicator());
     }
 }

@@ -4,6 +4,7 @@ import cn.wnhyang.coolGuard.vo.base.PolicyBaseVO;
 import lombok.Data;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 策略表
@@ -36,4 +37,10 @@ public class PolicyVO extends PolicyBaseVO {
      * 策略模式
      */
     private String mode;
+
+    /**
+     * 规则列表
+     */
+    private List<RuleVO> ruleList;
+
 }

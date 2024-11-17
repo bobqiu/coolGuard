@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.convert.FieldGroupConvert;
 import cn.wnhyang.coolGuard.entity.FieldGroup;
 import cn.wnhyang.coolGuard.mapper.FieldGroupMapper;
@@ -12,6 +13,7 @@ import cn.wnhyang.coolGuard.vo.create.FieldGroupCreateVO;
 import cn.wnhyang.coolGuard.vo.page.FieldGroupPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldGroupUpdateVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.FIELD_GROUP, allEntries = true)
     public Long createFieldGroup(FieldGroupCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getName());
         FieldGroup fieldGroup = FieldGroupConvert.INSTANCE.convert(createVO);
@@ -43,6 +46,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.FIELD_GROUP, allEntries = true)
     public void updateFieldGroup(FieldGroupUpdateVO updateVO) {
         validateForUpdate(updateVO.getId());
         FieldGroup fieldGroup = FieldGroupConvert.INSTANCE.convert(updateVO);
@@ -51,6 +55,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.FIELD_GROUP, allEntries = true)
     public void deleteFieldGroup(Long id) {
         validateForDelete(id);
         fieldGroupMapper.deleteById(id);

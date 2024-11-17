@@ -4,6 +4,10 @@ import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author wnhyang
  * @date 2024/3/13
@@ -60,4 +64,11 @@ public enum FieldType {
         }
         return null;
     }
+
+    public static List<String> getTypeList() {
+        return Arrays.stream(values())
+                .map(FieldType::getType)
+                .collect(Collectors.toList());
+    }
+
 }

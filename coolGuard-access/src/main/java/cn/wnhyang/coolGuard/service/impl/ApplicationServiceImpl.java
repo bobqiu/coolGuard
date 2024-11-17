@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.convert.ApplicationConvert;
 import cn.wnhyang.coolGuard.entity.Application;
@@ -16,6 +17,7 @@ import cn.wnhyang.coolGuard.vo.create.ApplicationCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ApplicationPageVO;
 import cn.wnhyang.coolGuard.vo.update.ApplicationUpdateVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.APPLICATION, allEntries = true)
     public Long createApplication(ApplicationCreateVO createVO) {
         validateForCreateOrUpdate(null, createVO.getName());
         Application application = ApplicationConvert.INSTANCE.convert(createVO);
@@ -50,6 +53,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.APPLICATION, allEntries = true)
     public void updateApplication(ApplicationUpdateVO updateVO) {
         Application application = ApplicationConvert.INSTANCE.convert(updateVO);
         applicationMapper.updateById(application);
@@ -57,6 +61,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = RedisKey.APPLICATION, allEntries = true)
     public void deleteApplication(Long id) {
         validateExists(id);
         Application application = applicationMapper.selectById(id);
