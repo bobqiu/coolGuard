@@ -4,7 +4,7 @@ import cn.wnhyang.coolGuard.convert.PolicySetVersionExtConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicySetVersionExtService;
-import cn.wnhyang.coolGuard.util.ExcelUtils;
+import cn.wnhyang.coolGuard.util.ExcelUtil;
 import cn.wnhyang.coolGuard.vo.PolicySetVersionExtVO;
 import cn.wnhyang.coolGuard.vo.create.PolicySetVersionExtCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetVersionExtPageVO;
@@ -102,7 +102,7 @@ public class PolicySetVersionExtController {
     @GetMapping("/export")
     public void exportExcel(@Valid PolicySetVersionExtPageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
-        ExcelUtils.write(response, "PolicySetVersionExtVO.xls", "数据", PolicySetVersionExtVO.class, PolicySetVersionExtConvert.INSTANCE.convert(policySetVersionExtService.page(pageVO)).getList());
+        ExcelUtil.write(response, "PolicySetVersionExtVO.xls", "数据", PolicySetVersionExtVO.class, PolicySetVersionExtConvert.INSTANCE.convert(policySetVersionExtService.page(pageVO)).getList());
     }
 
     /**
@@ -114,7 +114,7 @@ public class PolicySetVersionExtController {
      */
     @PostMapping("/import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
-        List<PolicySetVersionExtVO> read = ExcelUtils.read(file, PolicySetVersionExtVO.class);
+        List<PolicySetVersionExtVO> read = ExcelUtil.read(file, PolicySetVersionExtVO.class);
         // do something
         return success(true);
     }

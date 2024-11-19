@@ -11,7 +11,7 @@ import cn.wnhyang.coolGuard.system.service.PermissionService;
 import cn.wnhyang.coolGuard.system.service.RoleService;
 import cn.wnhyang.coolGuard.system.service.UserService;
 import cn.wnhyang.coolGuard.system.vo.user.*;
-import cn.wnhyang.coolGuard.util.ExcelUtils;
+import cn.wnhyang.coolGuard.util.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -174,7 +174,7 @@ public class UserController {
     public void exportExcel(@Valid UserPageVO exportReqVO, HttpServletResponse response) throws IOException {
         List<UserRespVO> userPageList = getUserPageList(exportReqVO);
         // 输出 Excel
-        ExcelUtils.write(response, "用户数据.xls", "数据", UserRespVO.class, userPageList);
+        ExcelUtil.write(response, "用户数据.xls", "数据", UserRespVO.class, userPageList);
     }
 
     /**
@@ -186,7 +186,7 @@ public class UserController {
      */
     @PostMapping("/import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
-        List<UserPO> read = ExcelUtils.read(file, UserPO.class);
+        List<UserPO> read = ExcelUtil.read(file, UserPO.class);
         // do something
         log.info("导入用户信息：{}", read);
         return success(true);

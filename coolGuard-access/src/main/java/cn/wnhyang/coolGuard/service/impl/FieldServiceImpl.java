@@ -74,6 +74,7 @@ public class FieldServiceImpl implements FieldService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.FIELD, allEntries = true)
     public Long createField(FieldCreateVO createVO) {
+        // TODO 新增和修改要验证字段名命名规范
         validateForCreateOrUpdate(null, createVO.getName());
         Field field = FieldConvert.INSTANCE.convert(createVO);
         fieldMapper.insert(field);

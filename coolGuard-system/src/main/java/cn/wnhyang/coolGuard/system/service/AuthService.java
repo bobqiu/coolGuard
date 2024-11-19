@@ -19,7 +19,7 @@ import cn.wnhyang.coolGuard.system.vo.core.auth.EmailLoginVO;
 import cn.wnhyang.coolGuard.system.vo.core.auth.LoginReqVO;
 import cn.wnhyang.coolGuard.system.vo.core.auth.LoginRespVO;
 import cn.wnhyang.coolGuard.system.vo.core.auth.RegisterVO;
-import cn.wnhyang.coolGuard.util.RegexUtils;
+import cn.wnhyang.coolGuard.util.RegexUtil;
 import cn.wnhyang.coolGuard.util.ServletUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ValueOperations;
@@ -52,10 +52,10 @@ public class AuthService {
         LoginUser user;
         LoginType loginType;
         if (StrUtil.isNotEmpty(account)) {
-            if (ReUtil.isMatch(RegexUtils.MOBILE, account)) {
+            if (ReUtil.isMatch(RegexUtil.MOBILE, account)) {
                 user = userService.getLoginUser(account, account, "");
                 loginType = LoginType.LOGIN_MOBILE;
-            } else if (ReUtil.isMatch(RegexUtils.EMAIL, account)) {
+            } else if (ReUtil.isMatch(RegexUtil.EMAIL, account)) {
                 user = userService.getLoginUser(account, "", account);
                 loginType = LoginType.LOGIN_EMAIL;
             } else {
@@ -91,7 +91,7 @@ public class AuthService {
         String code = reqVO.getCode();
         LoginUser user;
         LoginType loginType;
-        if (StrUtil.isNotEmpty(email) && ReUtil.isMatch(RegexUtils.EMAIL, email)) {
+        if (StrUtil.isNotEmpty(email) && ReUtil.isMatch(RegexUtil.EMAIL, email)) {
             user = userService.getLoginUser("", "", email);
             loginType = LoginType.LOGIN_EMAIL_CODE;
         } else {

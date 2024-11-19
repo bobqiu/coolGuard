@@ -15,12 +15,12 @@ import java.util.Objects;
  * @date 2024/5/16
  **/
 @Slf4j
-public class FunUtils {
+public class FunUtil {
 
-    private FunUtils() {
+    private FunUtil() {
     }
 
-    public static final FunUtils INSTANCE = new FunUtils();
+    public static final FunUtil INSTANCE = new FunUtil();
 
     public StartTimePointFun today = () -> {
         LocalDateTime now = LocalDateTime.now();

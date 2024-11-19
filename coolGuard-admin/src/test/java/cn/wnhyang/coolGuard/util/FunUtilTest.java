@@ -13,16 +13,16 @@ import java.util.Optional;
  **/
 @SpringBootTest
 @Slf4j
-public class FunUtilsTest {
+public class FunUtilTest {
 
     @Test
     public void test() {
-        log.info("{}", FunUtils.INSTANCE.today.get());
+        log.info("{}", FunUtil.INSTANCE.today.get());
     }
 
     @Test
     public void test1() {
-        boolean b = FunUtils.INSTANCE.stringLogicOp.apply("123", LogicType.EQ, "123");
+        boolean b = FunUtil.INSTANCE.stringLogicOp.apply("123", LogicType.EQ, "123");
         log.info("b: {}", Optional.of(b));
     }
 }

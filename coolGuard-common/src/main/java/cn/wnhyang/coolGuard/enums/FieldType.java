@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.enums;
 
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.entity.NameValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,32 +20,34 @@ public enum FieldType {
     /**
      * 字符型，支持【等于、不等于、包含、不包含、前缀、非前缀、后缀、非后缀、为空、不为空】
      */
-    STRING("S"),
+    STRING("字符串", "S"),
 
     /**
      * 整数型，支持【等于、不等于、大于、小于、大于等于、小于等于、为空、不为空】
      */
-    NUMBER("N"),
+    NUMBER("整数", "N"),
 
     /**
      * 小数型，支持【等于、不等于、大于、小于、大于等于、小于等于、为空、不为空】
      */
-    FLOAT("F"),
+    FLOAT("小数", "F"),
 
     /**
      * 日期型，支持【等于、不等于、大于、小于、大于等于、小于等于、为空、不为空】
      */
-    DATE("D"),
+    DATE("日期", "D"),
 
     /**
      * 枚举型，支持【等于、不等于、为空、不为空】
      */
-    ENUM("E"),
+    ENUM("枚举", "E"),
 
     /**
      * 布尔型，支持【等于、不等于、为空、不为空】
      */
-    BOOLEAN("B");
+    BOOLEAN("布尔", "B");
+
+    private final String name;
 
     private final String type;
 
@@ -65,9 +68,9 @@ public enum FieldType {
         return null;
     }
 
-    public static List<String> getTypeList() {
+    public static List<NameValue> getNvList() {
         return Arrays.stream(values())
-                .map(FieldType::getType)
+                .map(fieldType -> new NameValue(fieldType.getName(), fieldType.getType()))
                 .collect(Collectors.toList());
     }
 

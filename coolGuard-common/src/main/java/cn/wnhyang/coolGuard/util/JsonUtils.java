@@ -140,6 +140,10 @@ public class JsonUtils {
         }
     }
 
+    public static String minify(String jsonStr) {
+        return parseTree(jsonStr).toString();
+    }
+
     public static boolean isJson(String text) {
         return JSONUtil.isTypeJSON(text);
     }

@@ -4,7 +4,7 @@ import cn.wnhyang.coolGuard.convert.ListDataConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ListDataService;
-import cn.wnhyang.coolGuard.util.ExcelUtils;
+import cn.wnhyang.coolGuard.util.ExcelUtil;
 import cn.wnhyang.coolGuard.vo.ListDataVO;
 import cn.wnhyang.coolGuard.vo.create.ListDataCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ListDataPageVO;
@@ -103,7 +103,7 @@ public class ListDataController {
     @GetMapping("/export")
     public void exportExcel(@Valid ListDataPageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
-        ExcelUtils.write(response, "ListDataVO.xls", "数据", ListDataVO.class, ListDataConvert.INSTANCE.convert(listDataService.page(pageVO)).getList());
+        ExcelUtil.write(response, "ListDataVO.xls", "数据", ListDataVO.class, ListDataConvert.INSTANCE.convert(listDataService.page(pageVO)).getList());
     }
 
     /**
@@ -115,7 +115,7 @@ public class ListDataController {
      */
     @PostMapping("/import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
-        List<ListDataVO> read = ExcelUtils.read(file, ListDataVO.class);
+        List<ListDataVO> read = ExcelUtil.read(file, ListDataVO.class);
         // do something
         return success(true);
     }

@@ -118,6 +118,9 @@ public class AccessServiceImpl implements AccessService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createAccess(AccessCreateVO createVO) {
+        // 校验输入输出json字符串正确性，并压缩
+        createVO.setInputConfig(JsonUtils.toJsonString(createVO.getInputConfig()));
+        createVO.setOutputConfig(JsonUtils.toJsonString(createVO.getOutputConfig()));
         // 1、校验服务name唯一性
         validateForCreateOrUpdate(null, createVO.getName());
         Access access = AccessConvert.INSTANCE.convert(createVO);

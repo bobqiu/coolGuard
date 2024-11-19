@@ -1,7 +1,12 @@
 package cn.wnhyang.coolGuard.enums;
 
+import cn.wnhyang.coolGuard.entity.NameValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author wnhyang
@@ -14,28 +19,29 @@ public enum WinSize {
     /**
      * 秒
      */
-    SECOND("s", 1L),
+    SECOND("秒", "s", 1L),
 
     /**
      * 分钟
      */
-    MINUTE("m", 60L),
+    MINUTE("分", "m", 60L),
 
     /**
      * 小时
      */
-    HOUR("H", 60 * 60L),
+    HOUR("时", "H", 60 * 60L),
 
     /**
      * 天
      */
-    DAY("d", 24 * 60 * 60L),
+    DAY("天", "d", 24 * 60 * 60L),
 
     /**
      * 月
      */
-    MONTH("M", 30 * 24 * 60 * 60L);
+    MONTH("月", "M", 30 * 24 * 60 * 60L);
 
+    private final String name;
 
     private final String size;
 
@@ -58,4 +64,11 @@ public enum WinSize {
         }
         return 7776000L;
     }
+
+    public static List<NameValue> getNvList() {
+        return Arrays.stream(values())
+                .map(winSize -> new NameValue(winSize.getName(), winSize.getSize()))
+                .collect(Collectors.toList());
+    }
+
 }

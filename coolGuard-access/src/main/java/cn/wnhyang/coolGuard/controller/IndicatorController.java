@@ -1,6 +1,9 @@
 package cn.wnhyang.coolGuard.controller;
 
 import cn.wnhyang.coolGuard.convert.IndicatorConvert;
+import cn.wnhyang.coolGuard.entity.NameValue;
+import cn.wnhyang.coolGuard.enums.IndicatorType;
+import cn.wnhyang.coolGuard.enums.WinSize;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
@@ -106,5 +109,25 @@ public class IndicatorController {
     @GetMapping("/list")
     public CommonResult<List<IndicatorVO>> listIndicator() {
         return success(indicatorService.listIndicator());
+    }
+
+    /**
+     * 获取指标类型
+     *
+     * @return 指标类型
+     */
+    @GetMapping("/indicatorType")
+    public CommonResult<List<NameValue>> getIndicatorType() {
+        return success(IndicatorType.getNvList());
+    }
+
+    /**
+     * 获取时间单位
+     *
+     * @return 时间单位
+     */
+    @GetMapping("/winSize")
+    public CommonResult<List<NameValue>> getWinSize() {
+        return success(WinSize.getNvList());
     }
 }
