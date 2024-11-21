@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.service;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
+import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
@@ -71,4 +72,10 @@ public interface IndicatorService {
      */
     List<IndicatorVO> listIndicator();
 
+    /**
+     * 提交
+     *
+     * @param submitVO 提交VO
+     */
+    void commit(VersionSubmitVO submitVO);
 }

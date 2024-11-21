@@ -1,9 +1,14 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.AdminApplication;
 import cn.wnhyang.coolGuard.constant.SceneType;
+import cn.wnhyang.coolGuard.entity.Chain;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.util.JsonUtils;
+import cn.wnhyang.coolGuard.util.LFUtil;
+import cn.wnhyang.coolGuard.vo.Cond;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +27,9 @@ public class IndicatorMapperTest {
 
     @Resource
     private IndicatorMapper indicatorMapper;
+
+    @Resource
+    private ChainMapper chainMapper;
 
     @Test
     public void test() {
@@ -50,6 +58,22 @@ public class IndicatorMapperTest {
         List<Indicator> indicators = indicatorMapper.selectListByScenes("phone", "phone_login");
         log.info("indicators: {}", indicators);
 
+    }
+
+    @Test
+    public void test5() {
+        List<Indicator> indicatorList = indicatorMapper.selectList();
+        log.info("indicatorList: {}", indicatorList);
+        for (Indicator indicator : indicatorList) {
+            indicator.setCondStr(JsonUtils.toJsonString(getCond(indicator.getCode())));
+            indicatorMapper.updateById(indicator);
+        }
+    }
+
+    private Cond getCond(String code) {
+        Chain chain = chainMapper.getByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, code));
+        List<String> ifEl = LFUtil.parseIfEl(chain.getElData());
+        return LFUtil.parseToCond(ifEl.get(0));
     }
 
 }

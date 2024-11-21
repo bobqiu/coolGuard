@@ -48,8 +48,4 @@ public class Cond implements Serializable {
      */
     private String expectValue;
 
-    /**
-     * 描述
-     */
-    private String description;
 }

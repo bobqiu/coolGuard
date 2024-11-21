@@ -210,6 +210,11 @@ public class LFUtil {
         return parts.toArray(new String[0]);
     }
 
+    public static String buildCondEl(String condString) {
+        Cond cond = JsonUtils.parseObject(condString, Cond.class);
+        return buildCondEl(cond);
+    }
+
     @SneakyThrows
     public static String buildCondEl(Cond cond) {
         if (cond != null) {

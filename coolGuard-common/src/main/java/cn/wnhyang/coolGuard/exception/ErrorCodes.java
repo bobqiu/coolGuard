@@ -58,5 +58,7 @@ public interface ErrorCodes {
 
     ErrorCode POLICY_SET_REFERENCE_UPDATE = new ErrorCode(1007001003, "策略集下有运行策略，不可关闭当前策略集");
 
+    ErrorCode INDICATOR_IS_RUNNING = new ErrorCode(1008001000, "指标正在运行中，不可删除");
+
 
 }

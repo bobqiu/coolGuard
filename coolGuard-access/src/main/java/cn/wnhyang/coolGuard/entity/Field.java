@@ -65,6 +65,12 @@ public class Field extends BasePO {
     private String type;
 
     /**
+     * 字段信息
+     */
+    @TableField("info")
+    private String info;
+
+    /**
      * 描述
      */
     @TableField("description")

@@ -38,6 +38,11 @@ public class FieldCreateVO {
     private String type;
 
     /**
+     * 字段信息
+     */
+    private String info;
+
+    /**
      * 描述
      */
     @NotBlank(message = "字段描述不能为空")

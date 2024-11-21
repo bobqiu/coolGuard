@@ -8,6 +8,7 @@ import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
+import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
@@ -65,6 +66,18 @@ public class IndicatorController {
     @DeleteMapping
     public CommonResult<Boolean> deleteIndicator(@RequestParam("id") Long id) {
         indicatorService.deleteIndicator(id);
+        return success(true);
+    }
+
+    /**
+     * 提交指标
+     *
+     * @param submitVO 提交VO
+     * @return true/false
+     */
+    @PostMapping("/submit")
+    public CommonResult<Boolean> commit(@RequestBody @Valid VersionSubmitVO submitVO) {
+        indicatorService.commit(submitVO);
         return success(true);
     }
 

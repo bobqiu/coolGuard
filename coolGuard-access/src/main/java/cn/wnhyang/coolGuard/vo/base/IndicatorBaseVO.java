@@ -35,5 +35,9 @@ public class IndicatorBaseVO implements Serializable {
      */
     private String description;
 
+    /**
+     * 条件
+     */
     private Cond cond;
+
 }

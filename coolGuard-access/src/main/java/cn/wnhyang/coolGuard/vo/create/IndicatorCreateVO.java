@@ -71,11 +71,6 @@ public class IndicatorCreateVO extends IndicatorBaseVO {
     private String filterScript;
 
     /**
-     * 版本号
-     */
-    private Integer version;
-
-    /**
      * 场景
      */
     @NotBlank(message = "场景不能为空")

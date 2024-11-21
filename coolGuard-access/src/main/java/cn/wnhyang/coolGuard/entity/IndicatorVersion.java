@@ -7,23 +7,20 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
-import java.io.Serial;
-
 /**
- * 指标表
+ * 指标表历史表
  *
  * @author wnhyang
- * @since 2024/03/14
+ * @since 2024/11/21
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_indicator")
-public class Indicator extends BasePO {
+@TableName("de_indicator_version")
+public class IndicatorVersion extends BasePO {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -33,7 +30,7 @@ public class Indicator extends BasePO {
     private Long id;
 
     /**
-     * uuid
+     * code
      */
     @TableField("code")
     private String code;
@@ -57,7 +54,7 @@ public class Indicator extends BasePO {
     private String type;
 
     /**
-     * 计算字段，必须为数值和小数类
+     * 计算字段
      */
     @TableField("calc_field")
     private String calcField;
@@ -69,7 +66,6 @@ public class Indicator extends BasePO {
     private String returnType;
 
     /**
-     * earliest latest
      * 返回取值方式
      */
     @TableField("return_flag")
@@ -100,27 +96,25 @@ public class Indicator extends BasePO {
     private Long timeSlice;
 
     /**
-     * 主字段 只能是字符类
+     * 主字段
      */
     @TableField("master_field")
     private String masterField;
 
     /**
-     * 从字段 只能是字符类
+     * 从字段
      */
     @TableField("slave_fields")
     private String slaveFields;
 
     /**
-     * 过滤脚本
+     * 计算脚本
      */
     @TableField("compute_script")
     private String computeScript;
 
     /**
-     * 场景，多个
-     * appName
-     * policySetCode
+     * 场景（,分割）
      */
     @TableField("scenes")
     private String scenes;
@@ -132,14 +126,26 @@ public class Indicator extends BasePO {
     private String sceneType;
 
     /**
-     * 条件
-     */
-    @TableField("cond_str")
-    private String condStr;
-
-    /**
      * 描述
      */
     @TableField("description")
     private String description;
+
+    /**
+     * 版本号
+     */
+    @TableField("version")
+    private Integer version;
+
+    /**
+     * 版本描述
+     */
+    @TableField("version_desc")
+    private String versionDesc;
+
+    /**
+     * 条件
+     */
+    @TableField("cond_str")
+    private String condStr;
 }

@@ -1,29 +1,34 @@
-package cn.wnhyang.coolGuard.vo;
+package cn.wnhyang.coolGuard.vo.base;
 
-import cn.wnhyang.coolGuard.vo.base.IndicatorBaseVO;
 import lombok.Data;
 
-import java.io.Serial;
+import java.io.Serializable;
 
 /**
+ * 指标表历史表
+ *
  * @author wnhyang
- * @date 2024/3/14
- **/
+ * @since 2024/11/21
+ */
 @Data
-public class IndicatorVO extends IndicatorBaseVO {
+public class IndicatorVersionBaseVO implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = -1533346951107805359L;
-
-    /**
-     * 主键
-     */
-    private Long id;
+    private static final long serialVersionUID = 1L;
 
     /**
-     * 编码
+     * code
      */
     private String code;
+
+    /**
+     * 指标名
+     */
+    private String name;
+
+    /**
+     * 状态
+     */
+    private Boolean status;
 
     /**
      * 类型
@@ -41,7 +46,6 @@ public class IndicatorVO extends IndicatorBaseVO {
     private String returnType;
 
     /**
-     * earliest latest
      * 返回取值方式
      */
     private String returnFlag;
@@ -62,6 +66,11 @@ public class IndicatorVO extends IndicatorBaseVO {
     private Integer winCount;
 
     /**
+     * 时间片
+     */
+    private Long timeSlice;
+
+    /**
      * 主字段
      */
     private String masterField;
@@ -72,17 +81,12 @@ public class IndicatorVO extends IndicatorBaseVO {
     private String slaveFields;
 
     /**
-     * 过滤脚本
+     * 计算脚本
      */
-    private String filterScript;
+    private String computeScript;
 
     /**
-     * 版本号
-     */
-    private Integer version;
-
-    /**
-     * 场景
+     * 场景（,分割）
      */
     private String scenes;
 
@@ -92,18 +96,17 @@ public class IndicatorVO extends IndicatorBaseVO {
     private String sceneType;
 
     /**
-     * 时间片
+     * 描述
      */
-    private Long timeSlice;
+    private String description;
 
     /**
-     * 指标值
+     * 版本号
      */
-    private Object value;
+    private Integer version;
 
     /**
      * 条件
      */
-    private String condStr;
-
+    private String cond;
 }
