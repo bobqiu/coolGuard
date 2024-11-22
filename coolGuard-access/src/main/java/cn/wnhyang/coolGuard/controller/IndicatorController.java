@@ -7,7 +7,9 @@ import cn.wnhyang.coolGuard.enums.WinSize;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
+import cn.wnhyang.coolGuard.vo.BatchVersionSubmitResultVO;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
+import cn.wnhyang.coolGuard.vo.base.BatchVersionSubmit;
 import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
@@ -76,9 +78,19 @@ public class IndicatorController {
      * @return true/false
      */
     @PostMapping("/submit")
-    public CommonResult<Boolean> commit(@RequestBody @Valid VersionSubmitVO submitVO) {
-        indicatorService.commit(submitVO);
-        return success(true);
+    public CommonResult<BatchVersionSubmitResultVO> submit(@RequestBody @Valid VersionSubmitVO submitVO) {
+        return success(indicatorService.submit(submitVO));
+    }
+
+    /**
+     * 批量提交指标
+     *
+     * @param submitVOList 提交VO列表
+     * @return true/false
+     */
+    @PostMapping("/batchSubmit")
+    public CommonResult<List<BatchVersionSubmitResultVO>> batchSubmit(@RequestBody @Valid BatchVersionSubmit submitVOList) {
+        return success(indicatorService.batchSubmit(submitVOList));
     }
 
     /**

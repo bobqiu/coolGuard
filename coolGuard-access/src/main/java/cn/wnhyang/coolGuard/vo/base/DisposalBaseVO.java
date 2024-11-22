@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.vo.base;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serial;
@@ -18,11 +19,13 @@ public class DisposalBaseVO implements Serializable {
     /**
      * 等级
      */
+    @NotNull(message = "等级不能为空")
     private Integer grade;
 
     /**
      * 颜色
      */
+    @NotNull(message = "颜色不能为空")
     private String color;
 
     /**

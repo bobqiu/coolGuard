@@ -6,19 +6,20 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * @author wnhyang
- * @date 2024/11/21
+ * @date 2024/11/22
  **/
 @Data
-public class VersionSubmitVO implements Serializable {
+public class BatchVersionSubmit implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = -603827310071440471L;
+    private static final long serialVersionUID = 8837081015018704771L;
 
-    @NotNull(message = "id不能为空")
-    private Long id;
+    @NotNull(message = "ids不能为空")
+    private Set<Long> ids;
 
     @NotBlank(message = "版本描述不能为空")
     private String versionDesc;

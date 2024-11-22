@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.convert.IndicatorVersionConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorVersionService;
@@ -54,7 +53,7 @@ public class IndicatorVersionController {
      */
     @GetMapping("/{id}")
     public CommonResult<IndicatorVersionVO> get(@PathVariable("id") Long id) {
-        return success(IndicatorVersionConvert.INSTANCE.convert(indicatorVersionService.get(id)));
+        return success(indicatorVersionService.get(id));
     }
 
     /**
@@ -65,7 +64,7 @@ public class IndicatorVersionController {
      */
     @GetMapping("/page")
     public CommonResult<PageResult<IndicatorVersionVO>> page(@Valid IndicatorVersionPageVO pageVO) {
-        return success(IndicatorVersionConvert.INSTANCE.convert(indicatorVersionService.page(pageVO)));
+        return success(indicatorVersionService.page(pageVO));
     }
 
     /**
@@ -78,7 +77,7 @@ public class IndicatorVersionController {
     @GetMapping("/export")
     public void exportExcel(@Valid IndicatorVersionPageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
-        ExcelUtil.write(response, "IndicatorVersionVO.xls", "数据", IndicatorVersionVO.class, IndicatorVersionConvert.INSTANCE.convert(indicatorVersionService.page(pageVO)).getList());
+        ExcelUtil.write(response, "IndicatorVersionVO.xls", "数据", IndicatorVersionVO.class, indicatorVersionService.page(pageVO).getList());
     }
 
     /**

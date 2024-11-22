@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.vo.update;
 
 import cn.wnhyang.coolGuard.vo.base.PolicyBaseVO;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serial;
@@ -20,5 +21,6 @@ public class PolicyUpdateVO extends PolicyBaseVO {
     /**
      * 主键
      */
+    @NotNull(message = "id不能为空")
     private Long id;
 }

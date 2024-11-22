@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.vo.update;
 
 import cn.wnhyang.coolGuard.vo.create.ChainCreateVO;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
@@ -17,5 +18,6 @@ public class ChainUpdateVO extends ChainCreateVO {
     /**
      * 主键
      */
+    @NotNull(message = "id不能为空")
     private Long id;
 }

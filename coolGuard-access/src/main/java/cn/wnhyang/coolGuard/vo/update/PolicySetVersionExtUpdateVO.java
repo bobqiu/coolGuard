@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.vo.update;
 
 import cn.wnhyang.coolGuard.vo.create.PolicySetVersionExtCreateVO;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
@@ -17,5 +18,6 @@ public class PolicySetVersionExtUpdateVO extends PolicySetVersionExtCreateVO {
     /**
      * 主键
      */
+    @NotNull(message = "id不能为空")
     private Long id;
 }

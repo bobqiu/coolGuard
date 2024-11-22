@@ -60,5 +60,13 @@ public interface ErrorCodes {
 
     ErrorCode INDICATOR_IS_RUNNING = new ErrorCode(1008001000, "指标正在运行中，不可删除");
 
+    ErrorCode INDICATOR_NOT_EXIST = new ErrorCode(1008001001, "指标不存在");
+
+    ErrorCode INDICATOR_CODE_EXIST = new ErrorCode(1008001002, "指标code已存在");
+
+    ErrorCode INDICATOR_REFERENCE_DELETE = new ErrorCode(1008001003, "指标有引用不可删除");
+
+    ErrorCode INDICATOR_VERSION_EXIST = new ErrorCode(1008001004, "指标版本已存在");
+
 
 }

@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.service;
 
-import cn.wnhyang.coolGuard.entity.IndicatorVersion;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.IndicatorVersionVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorVersionPageVO;
 
 /**
@@ -25,7 +25,7 @@ public interface IndicatorVersionService {
      * @param id id
      * @return po
      */
-    IndicatorVersion get(Long id);
+    IndicatorVersionVO get(Long id);
 
     /**
      * 分页查询
@@ -33,7 +33,7 @@ public interface IndicatorVersionService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<IndicatorVersion> page(IndicatorVersionPageVO pageVO);
+    PageResult<IndicatorVersionVO> page(IndicatorVersionPageVO pageVO);
 
     /**
      * 下线

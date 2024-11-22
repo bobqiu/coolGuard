@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.vo.create;
 
 import cn.wnhyang.coolGuard.vo.base.DisposalBaseVO;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.io.Serial;
@@ -20,10 +21,12 @@ public class DisposalCreateVO extends DisposalBaseVO {
     /**
      * 处置编码
      */
+    @NotBlank(message = "处置编码不能为空")
     private String code;
 
     /**
      * 处置名
      */
+    @NotBlank(message = "处置名不能为空")
     private String name;
 }

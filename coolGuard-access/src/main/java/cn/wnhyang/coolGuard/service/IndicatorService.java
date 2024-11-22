@@ -2,7 +2,9 @@ package cn.wnhyang.coolGuard.service;
 
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.BatchVersionSubmitResultVO;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
+import cn.wnhyang.coolGuard.vo.base.BatchVersionSubmit;
 import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
@@ -77,5 +79,12 @@ public interface IndicatorService {
      *
      * @param submitVO 提交VO
      */
-    void commit(VersionSubmitVO submitVO);
+    BatchVersionSubmitResultVO submit(VersionSubmitVO submitVO);
+
+    /**
+     * 批量提交
+     *
+     * @param submitVO 提交VO
+     */
+    List<BatchVersionSubmitResultVO> batchSubmit(BatchVersionSubmit submitVO);
 }

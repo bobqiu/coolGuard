@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.vo.create;
 
 import cn.wnhyang.coolGuard.vo.base.RuleBaseVO;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.io.Serial;
@@ -20,6 +21,7 @@ public class RuleCreateVO extends RuleBaseVO {
     /**
      * 策略编码
      */
+    @NotBlank(message = "策略编码不能为空")
     private String policyCode;
 
 }

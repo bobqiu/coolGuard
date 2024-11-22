@@ -15,7 +15,6 @@ public class PolicySetVersionExtCreateVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-
     /**
      * 策略流
      */

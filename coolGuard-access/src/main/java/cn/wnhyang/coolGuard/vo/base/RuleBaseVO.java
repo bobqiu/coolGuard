@@ -1,6 +1,8 @@
 package cn.wnhyang.coolGuard.vo.base;
 
 import cn.wnhyang.coolGuard.vo.Cond;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.io.Serial;
@@ -19,16 +21,20 @@ public class RuleBaseVO implements Serializable {
     /**
      * 规则编码
      */
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "规则编码只能包含字母和数字")
+    @NotBlank(message = "规则编码不能为空")
     private String code;
 
     /**
      * 规则名
      */
+    @NotBlank(message = "规则名不能为空")
     private String name;
 
     /**
      * 处理编码
      */
+    @NotBlank(message = "处理编码不能为空")
     private String disposalCode;
 
     /**
@@ -51,6 +57,9 @@ public class RuleBaseVO implements Serializable {
      */
     private String description;
 
+    /**
+     * 条件
+     */
     private Cond cond;
 
 }

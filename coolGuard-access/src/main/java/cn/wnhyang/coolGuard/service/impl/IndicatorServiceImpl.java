@@ -26,8 +26,10 @@ import cn.wnhyang.coolGuard.service.IndicatorService;
 import cn.wnhyang.coolGuard.util.IndicatorUtil;
 import cn.wnhyang.coolGuard.util.JsonUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
+import cn.wnhyang.coolGuard.vo.BatchVersionSubmitResultVO;
 import cn.wnhyang.coolGuard.vo.Cond;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
+import cn.wnhyang.coolGuard.vo.base.BatchVersionSubmit;
 import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
@@ -42,11 +44,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.INDICATOR_IS_RUNNING;
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -102,6 +105,8 @@ public class IndicatorServiceImpl implements IndicatorService {
         // TODO hash确认是否真的有更改
         Indicator indicator = IndicatorConvert.INSTANCE.convert(updateVO);
         indicator.setReturnType(IndicatorUtil.getReturnType(indicator.getType(), indicator.getCalcField()));
+        indicator.setCondStr(JsonUtils.toJsonString(updateVO.getCond()));
+        indicator.setStatus(Boolean.FALSE);
         indicatorMapper.updateById(indicator);
     }
 
@@ -127,7 +132,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     public PageResult<IndicatorVO> pageIndicator(IndicatorPageVO pageVO) {
-        PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPageByScene(pageVO);
+        PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPage(pageVO);
 
         PageResult<IndicatorVO> voPageResult = IndicatorConvert.INSTANCE.convert(indicatorPageResult);
 
@@ -161,9 +166,16 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void commit(VersionSubmitVO submitVO) {
+    public BatchVersionSubmitResultVO submit(VersionSubmitVO submitVO) {
+        BatchVersionSubmitResultVO result = new BatchVersionSubmitResultVO().setId(submitVO.getId());
         // 提交后就同时在version表中增加一条记录，表示该指标在运行状态
         Indicator indicator = indicatorMapper.selectById(submitVO.getId());
+        if (ObjectUtil.isNull(indicator)) {
+            throw exception(INDICATOR_NOT_EXIST);
+        }
+        if (indicator.getStatus()) {
+            throw exception(INDICATOR_VERSION_EXIST);
+        }
         // 1、更新当前指标为已提交
         indicatorMapper.updateById(new Indicator().setId(submitVO.getId()).setStatus(Boolean.TRUE));
         // 2、查询是否有已运行的，有版本+1，没有版本1
@@ -194,6 +206,23 @@ public class IndicatorServiceImpl implements IndicatorService {
                     LFUtil.INDICATOR_TRUE_COMMON_NODE,
                     LFUtil.INDICATOR_FALSE_COMMON_NODE)));
         }
+        result.setSuccess(Boolean.TRUE);
+        return result;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<BatchVersionSubmitResultVO> batchSubmit(BatchVersionSubmit submitVO) {
+        List<BatchVersionSubmitResultVO> result = new ArrayList<>();
+        submitVO.getIds().forEach(id -> {
+            try {
+                result.add(submit(new VersionSubmitVO().setId(id).setVersionDesc(submitVO.getVersionDesc())));
+            } catch (Exception e) {
+                log.error("指标提交失败，id:{}", id, e);
+                result.add(new BatchVersionSubmitResultVO().setId(id).setSuccess(Boolean.FALSE).setMsg(e.getMessage()));
+            }
+        });
+        return result;
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_FOR, nodeId = LFUtil.INDICATOR_FOR_NODE, nodeType = NodeTypeEnum.FOR, nodeName = "指标for组件")

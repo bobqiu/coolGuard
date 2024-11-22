@@ -22,7 +22,7 @@ import java.util.List;
 @Mapper
 public interface IndicatorMapper extends BaseMapperX<Indicator> {
 
-    default PageResult<Indicator> selectPageByScene(IndicatorPageVO pageVO) {
+    default PageResult<Indicator> selectPage(IndicatorPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<Indicator>()
                 .likeIfPresent(Indicator::getName, pageVO.getName())
                 .eqIfPresent(Indicator::getType, pageVO.getType())

@@ -15,7 +15,6 @@ public class RuleScriptCreateVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-
     /**
      * 脚本应用名
      */

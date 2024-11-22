@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.vo.create;
 
 import cn.wnhyang.coolGuard.vo.base.PolicyBaseVO;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.io.Serial;
@@ -27,6 +28,7 @@ public class PolicyCreateVO extends PolicyBaseVO {
     /**
      * 策略编码
      */
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "策略编码只能包含字母和数字")
     @NotBlank(message = "策略编码不能为空")
     private String code;
 

@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.vo.base;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.io.Serial;
@@ -18,6 +19,7 @@ public class ApplicationBaseVO implements Serializable {
     /**
      * 显示名
      */
+    @NotBlank(message = "显示名不能为空")
     private String displayName;
 
     /**

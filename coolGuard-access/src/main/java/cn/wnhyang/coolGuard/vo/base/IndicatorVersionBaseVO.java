@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.vo.base;
 
+import cn.wnhyang.coolGuard.vo.Cond;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -108,5 +109,10 @@ public class IndicatorVersionBaseVO implements Serializable {
     /**
      * 条件
      */
-    private String cond;
+    private Cond cond;
+
+    /**
+     * 条件字符串
+     */
+    private String condStr;
 }

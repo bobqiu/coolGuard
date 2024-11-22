@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.vo.create;
 
 import cn.wnhyang.coolGuard.vo.base.ApplicationBaseVO;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.io.Serial;
@@ -20,6 +21,7 @@ public class ApplicationCreateVO extends ApplicationBaseVO {
     /**
      * 应用名
      */
+    @NotBlank(message = "应用名不能为空")
     private String name;
 
     /**

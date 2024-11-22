@@ -19,6 +19,6 @@ public class AccessUpdateVO extends AccessBaseVO {
     /**
      * 主键
      */
-    @NotNull(message = "主键不能为空")
+    @NotNull(message = "id不能为空")
     private Long id;
 }
