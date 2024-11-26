@@ -68,7 +68,9 @@ public class PolicyServiceImpl implements PolicyService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.POLICY, allEntries = true)
     public Long createPolicy(PolicyCreateVO createVO) {
-        validateForCreateOrUpdate(null, createVO.getCode());
+        if (policyMapper.selectByCode(createVO.getCode()) != null) {
+            throw exception(POLICY_CODE_EXIST);
+        }
         Policy policy = PolicyConvert.INSTANCE.convert(createVO);
         policyMapper.insert(policy);
 
@@ -86,21 +88,28 @@ public class PolicyServiceImpl implements PolicyService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.POLICY, allEntries = true)
     public void updatePolicy(PolicyUpdateVO updateVO) {
-        Policy policy = PolicyConvert.INSTANCE.convert(updateVO);
-        if (!policy.getStatus()) {
-            List<Rule> ruleList = ruleMapper.selectRunningListByPolicyCode(policy.getCode());
+        Policy policy = policyMapper.selectById(updateVO.getId());
+        if (policy == null) {
+            throw exception(POLICY_NOT_EXIST);
+        }
+        Policy convert = PolicyConvert.INSTANCE.convert(updateVO);
+        if (!convert.getStatus()) {
+            List<Rule> ruleList = ruleMapper.selectRunningListByPolicyCode(convert.getCode());
             if (CollUtil.isNotEmpty(ruleList)) {
                 throw exception(POLICY_REFERENCE_UPDATE);
             }
         }
-        policyMapper.updateById(policy);
+        policyMapper.updateById(convert);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.POLICY, allEntries = true)
     public void deletePolicy(Long id) {
-        validateExists(id);
+        Policy policy = policyMapper.selectById(id);
+        if (policy == null) {
+            throw exception(POLICY_NOT_EXIST);
+        }
         deletePolicy(Collections.singleton(id));
     }
 
@@ -183,40 +192,6 @@ public class PolicyServiceImpl implements PolicyService {
     public boolean policyBreak(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
         return CollUtil.isNotEmpty(policyContext.getHitRuleListMap());
-    }
-
-    private void validateForCreateOrUpdate(Long id, String name) {
-        // 校验存在
-        validateExists(id);
-        // 校验名唯一
-        validateCodeUnique(id, name);
-    }
-
-    private void validateExists(Long id) {
-        if (id == null) {
-            return;
-        }
-        Policy policy = policyMapper.selectById(id);
-        if (policy == null) {
-            throw exception(POLICY_NOT_EXIST);
-        }
-    }
-
-    private void validateCodeUnique(Long id, String code) {
-        if (StrUtil.isBlank(code)) {
-            return;
-        }
-        Policy policy = policyMapper.selectByCode(code);
-        if (policy == null) {
-            return;
-        }
-        // 如果 id 为空，说明不用比较是否为相同 id 的用户
-        if (id == null) {
-            throw exception(POLICY_CODE_EXIST);
-        }
-        if (!policy.getId().equals(id)) {
-            throw exception(POLICY_CODE_EXIST);
-        }
     }
 
 }

@@ -118,11 +118,13 @@ public class AccessServiceImpl implements AccessService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createAccess(AccessCreateVO createVO) {
+        // 1、校验服务name唯一性
+        if (accessMapper.selectByName(createVO.getName()) != null) {
+            throw exception(ACCESS_NAME_EXIST);
+        }
         // 校验输入输出json字符串正确性，并压缩
         createVO.setInputConfig(JsonUtils.toJsonString(createVO.getInputConfig()));
         createVO.setOutputConfig(JsonUtils.toJsonString(createVO.getOutputConfig()));
-        // 1、校验服务name唯一性
-        validateForCreateOrUpdate(null, createVO.getName());
         Access access = AccessConvert.INSTANCE.convert(createVO);
         accessMapper.insert(access);
         // TODO 创建chain
@@ -134,6 +136,7 @@ public class AccessServiceImpl implements AccessService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateAccess(AccessUpdateVO updateVO) {
+        // TODO 是否可删除，最近有数据？
         Access access = AccessConvert.INSTANCE.convert(updateVO);
 
         accessMapper.updateById(access);
@@ -142,7 +145,10 @@ public class AccessServiceImpl implements AccessService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteAccess(Long id) {
-        Access access = validateExists(id);
+        Access access = accessMapper.selectById(id);
+        if (access == null) {
+            throw exception(ACCESS_NOT_EXIST);
+        }
         accessMapper.deleteById(id);
         chainMapper.deleteByChainName(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()));
     }
@@ -252,38 +258,4 @@ public class AccessServiceImpl implements AccessService {
         }
     }
 
-    private void validateForCreateOrUpdate(Long id, String name) {
-        // 校验存在
-        validateExists(id);
-        // 校验名唯一
-        validateNameUnique(id, name);
-    }
-
-    private Access validateExists(Long id) {
-        if (id == null) {
-            return null;
-        }
-        Access access = accessMapper.selectById(id);
-        if (access == null) {
-            throw exception(ACCESS_NOT_EXIST);
-        }
-        return access;
-    }
-
-    private void validateNameUnique(Long id, String name) {
-        if (StrUtil.isBlank(name)) {
-            return;
-        }
-        Access access = accessMapper.selectByName(name);
-        if (access == null) {
-            return;
-        }
-        // 如果 id 为空，说明不用比较是否为相同 id 的用户
-        if (id == null) {
-            throw exception(ACCESS_NAME_EXIST);
-        }
-        if (!access.getId().equals(id)) {
-            throw exception(ACCESS_NAME_EXIST);
-        }
-    }
 }

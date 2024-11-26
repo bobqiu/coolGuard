@@ -55,4 +55,9 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
                 .or(w -> w.eq(Indicator::getSceneType, SceneType.POLICY_SET).apply("FIND_IN_SET({0}, scenes)", policySet))
         );
     }
+
+    default Indicator selectByName(String name) {
+        return selectOne(new LambdaQueryWrapperX<Indicator>()
+                .eq(Indicator::getName, name));
+    }
 }

@@ -59,7 +59,9 @@ public class RuleServiceImpl implements RuleService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.RULE, allEntries = true)
     public Long createRule(RuleCreateVO createVO) {
-        validateForCreateOrUpdate(null, createVO.getCode());
+        if (ruleMapper.selectByCode(createVO.getCode()) != null) {
+            throw exception(RULE_CODE_EXIST);
+        }
         Rule rule = RuleConvert.INSTANCE.convert(createVO);
         ruleMapper.insert(rule);
 
@@ -75,11 +77,18 @@ public class RuleServiceImpl implements RuleService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.RULE, allEntries = true)
     public void updateRule(RuleUpdateVO updateVO) {
-        validateForCreateOrUpdate(updateVO.getId(), updateVO.getCode());
-        Rule rule = RuleConvert.INSTANCE.convert(updateVO);
-        ruleMapper.updateById(rule);
+        Rule rule = ruleMapper.selectById(updateVO.getId());
+        if (rule == null) {
+            throw exception(RULE_NOT_EXIST);
+        }
+        Rule byCode = ruleMapper.selectByCode(updateVO.getCode());
+        if (byCode != null && !byCode.getId().equals(updateVO.getId())) {
+            throw exception(RULE_CODE_EXIST);
+        }
+        Rule convert = RuleConvert.INSTANCE.convert(updateVO);
+        ruleMapper.updateById(convert);
         String condEl = LFUtil.buildCondEl(updateVO.getCond());
-        String rChain = StrUtil.format(LFUtil.RULE_CHAIN, rule.getCode());
+        String rChain = StrUtil.format(LFUtil.RULE_CHAIN, convert.getCode());
         Chain chain = chainMapper.getByChainName(rChain);
         chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl,
                 LFUtil.RULE_TRUE_COMMON_NODE,
@@ -91,7 +100,10 @@ public class RuleServiceImpl implements RuleService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.RULE, allEntries = true)
     public void deleteRule(Long id) {
-        validateExists(id);
+        Rule rule = ruleMapper.selectById(id);
+        if (rule == null) {
+            throw exception(RULE_NOT_EXIST);
+        }
         deleteRule(Collections.singleton(id));
     }
 
@@ -160,40 +172,6 @@ public class RuleServiceImpl implements RuleService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则false组件")
     public void ruleFalse(NodeComponent bindCmp) {
         log.info("规则未命中");
-    }
-
-    private void validateForCreateOrUpdate(Long id, String name) {
-        // 校验存在
-        validateExists(id);
-        // 校验名唯一
-        validateCodeUnique(id, name);
-    }
-
-    private void validateExists(Long id) {
-        if (id == null) {
-            return;
-        }
-        Rule rule = ruleMapper.selectById(id);
-        if (rule == null) {
-            throw exception(RULE_NOT_EXIST);
-        }
-    }
-
-    private void validateCodeUnique(Long id, String code) {
-        if (StrUtil.isBlank(code)) {
-            return;
-        }
-        Rule rule = ruleMapper.selectByCode(code);
-        if (rule == null) {
-            return;
-        }
-        // 如果 id 为空，说明不用比较是否为相同 id 的用户
-        if (id == null) {
-            throw exception(RULE_CODE_EXIST);
-        }
-        if (!rule.getId().equals(id)) {
-            throw exception(RULE_CODE_EXIST);
-        }
     }
 
 }

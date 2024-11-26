@@ -17,6 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.INDICATOR_VERSION_NOT_EXIST;
+import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
+
 /**
  * 指标表历史表 服务实现类
  *
@@ -35,6 +38,10 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
+        IndicatorVersion indicatorVersion = indicatorVersionMapper.selectById(id);
+        if (indicatorVersion == null) {
+            throw exception(INDICATOR_VERSION_NOT_EXIST);
+        }
         indicatorVersionMapper.deleteById(id);
     }
 
@@ -58,6 +65,9 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
     @Transactional(rollbackFor = Exception.class)
     public void offline(Long id) {
         IndicatorVersion indicatorVersion = indicatorVersionMapper.selectById(id);
+        if (indicatorVersion == null) {
+            throw exception(INDICATOR_VERSION_NOT_EXIST);
+        }
         indicatorVersionMapper.updateById(new IndicatorVersion().setId(id).setStatus(Boolean.FALSE));
         chainMapper.deleteByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, indicatorVersion.getCode()));
     }

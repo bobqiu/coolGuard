@@ -30,6 +30,8 @@ public interface ErrorCodes {
 
     ErrorCode FIELD_STANDARD = new ErrorCode(1004001002, "标准字段名不可更改");
 
+    ErrorCode FIELD_NAME_ERROR = new ErrorCode(1004001003, "字段名格式错误");
+
     ErrorCode FIELD_GROUP_NOT_EXIST = new ErrorCode(1004001002, "字段组不存在");
 
     ErrorCode FIELD_GROUP_NAME_EXIST = new ErrorCode(1004001003, "字段组名已存在");
@@ -58,15 +60,20 @@ public interface ErrorCodes {
 
     ErrorCode POLICY_SET_REFERENCE_UPDATE = new ErrorCode(1007001003, "策略集下有运行策略，不可关闭当前策略集");
 
-    ErrorCode INDICATOR_IS_RUNNING = new ErrorCode(1008001000, "指标正在运行中，不可删除");
+    ErrorCode INDICATOR_NOT_EXIST = new ErrorCode(1008001000, "指标不存在");
 
-    ErrorCode INDICATOR_NOT_EXIST = new ErrorCode(1008001001, "指标不存在");
+    ErrorCode INDICATOR_CODE_EXIST = new ErrorCode(1008001001, "指标code已存在");
 
-    ErrorCode INDICATOR_CODE_EXIST = new ErrorCode(1008001002, "指标code已存在");
+    ErrorCode INDICATOR_NAME_EXIST = new ErrorCode(1008001002, "指标名已存在");
 
     ErrorCode INDICATOR_REFERENCE_DELETE = new ErrorCode(1008001003, "指标有引用不可删除");
 
-    ErrorCode INDICATOR_VERSION_EXIST = new ErrorCode(1008001004, "指标版本已存在");
+    ErrorCode INDICATOR_VERSION_NOT_EXIST = new ErrorCode(1008001004, "指标版本不存在");
 
+    ErrorCode INDICATOR_VERSION_EXIST = new ErrorCode(1008001005, "指标版本已存在");
+
+    ErrorCode INDICATOR_IS_RUNNING = new ErrorCode(1008001006, "指标正在运行中，不可删除");
+
+    ErrorCode INDICATOR_NOT_CHANGE = new ErrorCode(1008001007, "指标未修改");
 
 }

@@ -1,7 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.convert.ApplicationConvert;
@@ -45,7 +44,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.APPLICATION, allEntries = true)
     public Long createApplication(ApplicationCreateVO createVO) {
-        validateForCreateOrUpdate(null, createVO.getName());
+        if (applicationMapper.selectByName(createVO.getName()) != null) {
+            throw exception(APPLICATION_NAME_EXIST);
+        }
         Application application = ApplicationConvert.INSTANCE.convert(createVO);
         applicationMapper.insert(application);
         return application.getId();
@@ -63,8 +64,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.APPLICATION, allEntries = true)
     public void deleteApplication(Long id) {
-        validateExists(id);
         Application application = applicationMapper.selectById(id);
+        if (application == null) {
+            throw exception(APPLICATION_NOT_EXIST);
+        }
         // 确认是否有指标引用
         List<Indicator> indicatorList = indicatorMapper.selectList(SceneType.APP, application.getName());
         if (CollUtil.isNotEmpty(indicatorList)) {
@@ -86,40 +89,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public PageResult<Application> pageApplication(ApplicationPageVO pageVO) {
         return applicationMapper.selectPage(pageVO);
-    }
-
-    private void validateForCreateOrUpdate(Long id, String name) {
-        // 校验存在
-        validateExists(id);
-        // 校验名唯一
-        validateNameUnique(id, name);
-    }
-
-    private void validateExists(Long id) {
-        if (id == null) {
-            return;
-        }
-        Application application = applicationMapper.selectById(id);
-        if (application == null) {
-            throw exception(APPLICATION_NOT_EXIST);
-        }
-    }
-
-    private void validateNameUnique(Long id, String name) {
-        if (StrUtil.isBlank(name)) {
-            return;
-        }
-        Application application = applicationMapper.selectByName(name);
-        if (application == null) {
-            return;
-        }
-        // 如果 id 为空，说明不用比较是否为相同 id 的用户
-        if (id == null) {
-            throw exception(APPLICATION_NAME_EXIST);
-        }
-        if (!application.getId().equals(id)) {
-            throw exception(APPLICATION_NAME_EXIST);
-        }
     }
 
 }

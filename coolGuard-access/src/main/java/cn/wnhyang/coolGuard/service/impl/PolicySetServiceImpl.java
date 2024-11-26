@@ -72,7 +72,9 @@ public class PolicySetServiceImpl implements PolicySetService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.POLICY_SET, allEntries = true)
     public Long createPolicySet(PolicySetCreateVO createVO) {
-        validateForCreateOrUpdate(null, createVO.getName());
+        if (policySetMapper.selectByCode(createVO.getName()) != null) {
+            throw exception(POLICY_SET_CODE_EXIST);
+        }
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(createVO);
         policySetMapper.insert(policySet);
         String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode());
@@ -85,21 +87,28 @@ public class PolicySetServiceImpl implements PolicySetService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.POLICY_SET, allEntries = true)
     public void updatePolicySet(PolicySetUpdateVO updateVO) {
-        PolicySet policySet = PolicySetConvert.INSTANCE.convert(updateVO);
-        if (!policySet.getStatus()) {
-            List<Policy> policyList = policyMapper.selectRunningListBySetCode(policySet.getCode());
+        PolicySet policySet = policySetMapper.selectById(updateVO.getId());
+        if (policySet == null) {
+            throw exception(POLICY_SET_NOT_EXIST);
+        }
+        PolicySet convert = PolicySetConvert.INSTANCE.convert(updateVO);
+        if (!convert.getStatus()) {
+            List<Policy> policyList = policyMapper.selectRunningListBySetCode(convert.getCode());
             if (CollUtil.isNotEmpty(policyList)) {
                 throw exception(POLICY_SET_REFERENCE_UPDATE);
             }
         }
-        policySetMapper.updateById(policySet);
+        policySetMapper.updateById(convert);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.POLICY_SET, allEntries = true)
     public void deletePolicySet(Long id) {
-        validateExists(id);
+        PolicySet policySet = policySetMapper.selectById(id);
+        if (policySet == null) {
+            throw exception(POLICY_SET_NOT_EXIST);
+        }
         deletePolicySet(Collections.singleton(id));
     }
 
@@ -183,40 +192,6 @@ public class PolicySetServiceImpl implements PolicySetService {
             log.info("策略集(name:{})执行完毕", policySet.getName());
         } else {
             log.info("未匹配应用名:{}, 策略集编码:{}", appName, policySetCode);
-        }
-    }
-
-    private void validateForCreateOrUpdate(Long id, String name) {
-        // 校验存在
-        validateExists(id);
-        // 校验名唯一
-        validateCodeUnique(id, name);
-    }
-
-    private void validateExists(Long id) {
-        if (id == null) {
-            return;
-        }
-        PolicySet policySet = policySetMapper.selectById(id);
-        if (policySet == null) {
-            throw exception(POLICY_SET_NOT_EXIST);
-        }
-    }
-
-    private void validateCodeUnique(Long id, String code) {
-        if (StrUtil.isBlank(code)) {
-            return;
-        }
-        PolicySet policySet = policySetMapper.selectByCode(code);
-        if (policySet == null) {
-            return;
-        }
-        // 如果 id 为空，说明不用比较是否为相同 id 的用户
-        if (id == null) {
-            throw exception(POLICY_SET_CODE_EXIST);
-        }
-        if (!policySet.getId().equals(id)) {
-            throw exception(POLICY_SET_CODE_EXIST);
         }
     }
 

@@ -2,7 +2,6 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.IdcardUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.analysis.ad.Pca;
 import cn.wnhyang.coolGuard.analysis.geo.GeoAnalysis;
 import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
@@ -74,8 +73,12 @@ public class FieldServiceImpl implements FieldService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.FIELD, allEntries = true)
     public Long createField(FieldCreateVO createVO) {
-        // TODO 新增和修改要验证字段名命名规范
-        validateForCreateOrUpdate(null, createVO.getName());
+        if (!createVO.getName().startsWith(createVO.getDynamic() ? "D" : "N" + "_" + createVO.getType() + "_")) {
+            throw exception(FIELD_NAME_ERROR);
+        }
+        if (fieldMapper.selectByName(createVO.getName()) != null) {
+            throw exception(FIELD_NAME_EXIST);
+        }
         Field field = FieldConvert.INSTANCE.convert(createVO);
         fieldMapper.insert(field);
         return field.getId();
@@ -85,17 +88,38 @@ public class FieldServiceImpl implements FieldService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.FIELD, allEntries = true)
     public void updateField(FieldUpdateVO updateVO) {
-        validateForUpdate(updateVO.getId());
-        validateForCreateOrUpdate(updateVO.getId(), updateVO.getName());
-        Field field = FieldConvert.INSTANCE.convert(updateVO);
-        fieldMapper.updateById(field);
+        if (!updateVO.getName().startsWith(updateVO.getDynamic() ? "D" : "N" + "_" + updateVO.getType() + "_")) {
+            throw exception(FIELD_NAME_ERROR);
+        }
+        Field field = fieldMapper.selectById(updateVO.getId());
+        if (field == null) {
+            throw exception(FIELD_NOT_EXIST);
+        }
+        // 标准，不允许删除
+        if (field.getStandard()) {
+            throw exception(FIELD_STANDARD);
+        }
+        Field byName = fieldMapper.selectByName(updateVO.getName());
+        if (byName != null && !byName.getId().equals(field.getId())) {
+            throw exception(FIELD_NAME_EXIST);
+        }
+        Field convert = FieldConvert.INSTANCE.convert(updateVO);
+        fieldMapper.updateById(convert);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.FIELD, allEntries = true)
     public void deleteField(Long id) {
-        validateForDelete(id);
+        Field field = fieldMapper.selectById(id);
+        if (field == null) {
+            throw exception(FIELD_NOT_EXIST);
+        }
+        // 标准，不允许删除
+        if (field.getStandard()) {
+            throw exception(FIELD_STANDARD);
+        }
+        // TODO 查找引用 指标、接入、动态字段、规则等
         fieldMapper.deleteById(id);
     }
 
@@ -254,56 +278,6 @@ public class FieldServiceImpl implements FieldService {
 
         });
         log.info("系统字段：{}", accessRequest.getFields());
-    }
-
-    private void validateForDelete(Long id) {
-        validateForUpdate(id);
-        // TODO 查找引用 指标、接入、动态字段、规则等
-    }
-
-    private void validateForUpdate(Long id) {
-        Field field = fieldMapper.selectById(id);
-        if (field == null) {
-            throw exception(FIELD_NOT_EXIST);
-        }
-        // 标准，不允许删除
-        if (field.getStandard()) {
-            throw exception(FIELD_STANDARD);
-        }
-    }
-
-    private void validateForCreateOrUpdate(Long id, String name) {
-        // 校验存在
-        validateExists(id);
-        // 校验名唯一
-        validateNameUnique(id, name);
-    }
-
-    private void validateExists(Long id) {
-        if (id == null) {
-            return;
-        }
-        Field field = fieldMapper.selectById(id);
-        if (field == null) {
-            throw exception(FIELD_NOT_EXIST);
-        }
-    }
-
-    private void validateNameUnique(Long id, String name) {
-        if (StrUtil.isBlank(name)) {
-            return;
-        }
-        Field field = fieldMapper.selectByName(name);
-        if (field == null) {
-            return;
-        }
-        // 如果 id 为空，说明不用比较是否为相同 id 的用户
-        if (id == null) {
-            throw exception(FIELD_NAME_EXIST);
-        }
-        if (!field.getId().equals(id)) {
-            throw exception(FIELD_NAME_EXIST);
-        }
     }
 
 }

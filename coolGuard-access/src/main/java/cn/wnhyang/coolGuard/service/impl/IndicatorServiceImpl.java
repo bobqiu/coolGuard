@@ -88,7 +88,9 @@ public class IndicatorServiceImpl implements IndicatorService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.INDICATOR, allEntries = true)
     public Long createIndicator(IndicatorCreateVO createVO) {
-        // TODO 校验指标名
+        if (indicatorMapper.selectByName(createVO.getName()) != null) {
+            throw exception(INDICATOR_NAME_EXIST);
+        }
         Indicator indicator = IndicatorConvert.INSTANCE.convert(createVO);
         indicator.setCode(IdUtil.fastSimpleUUID());
         indicator.setReturnType(IndicatorUtil.getReturnType(indicator.getType(), indicator.getCalcField()));
@@ -102,12 +104,22 @@ public class IndicatorServiceImpl implements IndicatorService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.INDICATOR, allEntries = true)
     public void updateIndicator(IndicatorUpdateVO updateVO) {
-        // TODO hash确认是否真的有更改
-        Indicator indicator = IndicatorConvert.INSTANCE.convert(updateVO);
-        indicator.setReturnType(IndicatorUtil.getReturnType(indicator.getType(), indicator.getCalcField()));
-        indicator.setCondStr(JsonUtils.toJsonString(updateVO.getCond()));
-        indicator.setStatus(Boolean.FALSE);
-        indicatorMapper.updateById(indicator);
+        Indicator indicator = indicatorMapper.selectById(updateVO.getId());
+        if (indicator == null) {
+            throw exception(INDICATOR_NOT_EXIST);
+        }
+        Indicator byName = indicatorMapper.selectByName(updateVO.getName());
+        if (byName != null && !indicator.getId().equals(byName.getId())) {
+            throw exception(INDICATOR_NAME_EXIST);
+        }
+        IndicatorUpdateVO converted2Update = IndicatorConvert.INSTANCE.convert2Update(getIndicator(updateVO.getId()));
+        if (updateVO.equals(converted2Update)) {
+            throw exception(INDICATOR_NOT_CHANGE);
+        }
+        Indicator convert = IndicatorConvert.INSTANCE.convert(updateVO);
+        convert.setCondStr(JsonUtils.toJsonString(updateVO.getCond()));
+        convert.setStatus(Boolean.FALSE);
+        indicatorMapper.updateById(convert);
     }
 
     @Override
@@ -115,10 +127,14 @@ public class IndicatorServiceImpl implements IndicatorService {
     @CacheEvict(value = RedisKey.INDICATOR, allEntries = true)
     public void deleteIndicator(Long id) {
         Indicator indicator = indicatorMapper.selectById(id);
+        if (indicator == null) {
+            throw exception(INDICATOR_NOT_EXIST);
+        }
         IndicatorVersion indicatorVersion = indicatorVersionMapper.selectRunningByCode(indicator.getCode());
         if (indicatorVersion != null) {
             throw exception(INDICATOR_IS_RUNNING);
         }
+        // TODO 查找引用
         indicatorMapper.deleteById(id);
     }
 
@@ -191,6 +207,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         convert.setVersion(version);
         convert.setVersionDesc(submitVO.getVersionDesc());
         convert.setStatus(Boolean.TRUE);
+        convert.setId(null);
         indicatorVersionMapper.insert(convert);
         // 4、更新chain
         String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getCode());

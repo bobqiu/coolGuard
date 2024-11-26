@@ -1,7 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.convert.DisposalConvert;
 import cn.wnhyang.coolGuard.entity.Disposal;
@@ -42,7 +41,9 @@ public class DisposalServiceImpl implements DisposalService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
     public Long createDisposal(DisposalCreateVO createVO) {
-        validateForCreateOrUpdate(null, createVO.getCode());
+        if (disposalMapper.selectByCode(createVO.getCode()) != null) {
+            throw exception(DISPOSAL_CODE_EXIST);
+        }
         Disposal disposal = DisposalConvert.INSTANCE.convert(createVO);
         disposalMapper.insert(disposal);
         return disposal.getId();
@@ -52,16 +53,34 @@ public class DisposalServiceImpl implements DisposalService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
     public void updateDisposal(DisposalUpdateVO updateVO) {
-        validateForUpdate(updateVO.getId());
-        Disposal disposal = DisposalConvert.INSTANCE.convert(updateVO);
-        disposalMapper.updateById(disposal);
+        Disposal disposal = disposalMapper.selectById(updateVO.getId());
+        if (disposal == null) {
+            throw exception(DISPOSAL_NOT_EXIST);
+        }
+        // 标准，不允许删除
+        if (disposal.getStandard()) {
+            throw exception(DISPOSAL_STANDARD);
+        }
+        Disposal convert = DisposalConvert.INSTANCE.convert(updateVO);
+        disposalMapper.updateById(convert);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
     public void deleteDisposal(Long id) {
-        validateForDelete(id);
+        Disposal disposal = disposalMapper.selectById(id);
+        if (disposal == null) {
+            throw exception(DISPOSAL_NOT_EXIST);
+        }
+        // 标准，不允许删除
+        if (disposal.getStandard()) {
+            throw exception(DISPOSAL_STANDARD);
+        }
+        List<Rule> ruleList = ruleMapper.selectByDisposalCode(disposal.getCode());
+        if (CollUtil.isNotEmpty(ruleList)) {
+            throw exception(DISPOSAL_REFERENCE);
+        }
         disposalMapper.deleteById(id);
     }
 
@@ -79,60 +98,6 @@ public class DisposalServiceImpl implements DisposalService {
     @Cacheable(cacheNames = RedisKey.DISPOSAL + "::list", unless = "#result == null")
     public List<Disposal> listDisposal() {
         return disposalMapper.selectList();
-    }
-
-    private void validateForDelete(Long id) {
-        Disposal disposal = validateForUpdate(id);
-        List<Rule> ruleList = ruleMapper.selectByDisposalCode(disposal.getCode());
-        if (CollUtil.isNotEmpty(ruleList)) {
-            throw exception(DISPOSAL_REFERENCE);
-        }
-    }
-
-    private Disposal validateForUpdate(Long id) {
-        Disposal disposal = disposalMapper.selectById(id);
-        if (disposal == null) {
-            throw exception(DISPOSAL_NOT_EXIST);
-        }
-        // 标准，不允许删除
-        if (disposal.getStandard()) {
-            throw exception(DISPOSAL_STANDARD);
-        }
-        return disposal;
-    }
-
-    private void validateForCreateOrUpdate(Long id, String name) {
-        // 校验存在
-        validateExists(id);
-        // 校验名唯一
-        validateCodeUnique(id, name);
-    }
-
-    private void validateExists(Long id) {
-        if (id == null) {
-            return;
-        }
-        Disposal disposal = disposalMapper.selectById(id);
-        if (disposal == null) {
-            throw exception(DISPOSAL_NOT_EXIST);
-        }
-    }
-
-    private void validateCodeUnique(Long id, String code) {
-        if (StrUtil.isBlank(code)) {
-            return;
-        }
-        Disposal disposal = disposalMapper.selectByCode(code);
-        if (disposal == null) {
-            return;
-        }
-        // 如果 id 为空，说明不用比较是否为相同 id 的用户
-        if (id == null) {
-            throw exception(DISPOSAL_CODE_EXIST);
-        }
-        if (!disposal.getId().equals(id)) {
-            throw exception(DISPOSAL_CODE_EXIST);
-        }
     }
 
 }
