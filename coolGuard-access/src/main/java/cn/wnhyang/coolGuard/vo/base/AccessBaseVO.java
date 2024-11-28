@@ -1,11 +1,13 @@
 package cn.wnhyang.coolGuard.vo.base;
 
+import cn.wnhyang.coolGuard.entity.ConfigField;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author wnhyang
@@ -27,12 +29,12 @@ public class AccessBaseVO implements Serializable {
     /**
      * 输入配置
      */
-    private String inputConfig;
+    private List<ConfigField> inputConfig;
 
     /**
      * 输出配置
      */
-    private String outputConfig;
+    private List<ConfigField> outputConfig;
 
     /**
      * 描述

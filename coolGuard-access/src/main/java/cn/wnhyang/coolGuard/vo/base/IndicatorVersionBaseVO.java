@@ -111,8 +111,4 @@ public class IndicatorVersionBaseVO implements Serializable {
      */
     private Cond cond;
 
-    /**
-     * 条件字符串
-     */
-    private String condStr;
 }

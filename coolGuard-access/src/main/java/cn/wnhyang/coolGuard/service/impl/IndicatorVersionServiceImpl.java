@@ -7,9 +7,7 @@ import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.IndicatorVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorVersionService;
-import cn.wnhyang.coolGuard.util.JsonUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
-import cn.wnhyang.coolGuard.vo.Cond;
 import cn.wnhyang.coolGuard.vo.IndicatorVersionVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorVersionPageVO;
 import lombok.RequiredArgsConstructor;
@@ -48,17 +46,13 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
     @Override
     public IndicatorVersionVO get(Long id) {
         IndicatorVersion indicatorVersion = indicatorVersionMapper.selectById(id);
-        IndicatorVersionVO indicatorVersionVO = IndicatorVersionConvert.INSTANCE.convert(indicatorVersion);
-        indicatorVersionVO.setCond(JsonUtils.parseObject(indicatorVersionVO.getCondStr(), Cond.class));
-        return indicatorVersionVO;
+        return IndicatorVersionConvert.INSTANCE.convert(indicatorVersion);
     }
 
     @Override
     public PageResult<IndicatorVersionVO> page(IndicatorVersionPageVO pageVO) {
         PageResult<IndicatorVersion> indicatorVersionPageResult = indicatorVersionMapper.selectPage(pageVO);
-        PageResult<IndicatorVersionVO> voPageResult = IndicatorVersionConvert.INSTANCE.convert(indicatorVersionPageResult);
-        voPageResult.getList().forEach(indicatorVO -> indicatorVO.setCond(JsonUtils.parseObject(indicatorVO.getCondStr(), Cond.class)));
-        return voPageResult;
+        return IndicatorVersionConvert.INSTANCE.convert(indicatorVersionPageResult);
     }
 
     @Override

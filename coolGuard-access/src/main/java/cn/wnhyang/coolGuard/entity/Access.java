@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 接入表
@@ -20,7 +22,7 @@ import java.io.Serial;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_access")
+@TableName(value = "de_access", autoResultMap = true)
 public class Access extends BasePO {
 
     @Serial
@@ -47,14 +49,14 @@ public class Access extends BasePO {
     /**
      * 输入配置
      */
-    @TableField("input_config")
-    private String inputConfig;
+    @TableField(value = "input_config", typeHandler = JacksonTypeHandler.class)
+    private List<ConfigField> inputConfig;
 
     /**
      * 输出配置
      */
-    @TableField("output_config")
-    private String outputConfig;
+    @TableField(value = "output_config", typeHandler = JacksonTypeHandler.class)
+    private List<ConfigField> outputConfig;
 
     /**
      * 描述

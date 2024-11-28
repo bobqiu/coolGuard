@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 
 import java.io.Serial;
@@ -20,7 +21,7 @@ import java.io.Serial;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_field")
+@TableName(value = "de_field", autoResultMap = true)
 public class Field extends BasePO {
 
     @Serial
@@ -67,8 +68,8 @@ public class Field extends BasePO {
     /**
      * 字段信息
      */
-    @TableField("info")
-    private String info;
+    @TableField(value = "info", typeHandler = JacksonTypeHandler.class)
+    private NameValue info;
 
     /**
      * 描述

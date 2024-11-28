@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.vo.create;
 
+import cn.wnhyang.coolGuard.entity.NameValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -40,7 +41,7 @@ public class FieldCreateVO {
     /**
      * 字段信息
      */
-    private String info;
+    private NameValue info;
 
     /**
      * 描述

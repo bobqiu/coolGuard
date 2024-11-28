@@ -3,10 +3,11 @@ package cn.wnhyang.coolGuard.mapper;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.AdminApplication;
 import cn.wnhyang.coolGuard.constant.SceneType;
+import cn.wnhyang.coolGuard.convert.IndicatorVersionConvert;
 import cn.wnhyang.coolGuard.entity.Chain;
 import cn.wnhyang.coolGuard.entity.Indicator;
+import cn.wnhyang.coolGuard.entity.IndicatorVersion;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.util.JsonUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.Cond;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
@@ -64,16 +65,20 @@ public class IndicatorMapperTest {
     public void test5() {
         List<Indicator> indicatorList = indicatorMapper.selectList();
         log.info("indicatorList: {}", indicatorList);
-        for (Indicator indicator : indicatorList) {
-            indicator.setCondStr(JsonUtils.toJsonString(getCond(indicator.getCode())));
-            indicatorMapper.updateById(indicator);
-        }
     }
 
     private Cond getCond(String code) {
         Chain chain = chainMapper.getByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, code));
         List<String> ifEl = LFUtil.parseIfEl(chain.getElData());
         return LFUtil.parseToCond(ifEl.get(0));
+    }
+
+    @Test
+    public void test6() {
+        Indicator indicator = indicatorMapper.selectById(1L);
+        log.info("indicator: {}", indicator);
+        IndicatorVersion indicatorVersion = IndicatorVersionConvert.INSTANCE.convert(indicator);
+        log.info("indicatorVersion: {}", indicatorVersion);
     }
 
 }

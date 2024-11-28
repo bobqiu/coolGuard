@@ -1,10 +1,12 @@
 package cn.wnhyang.coolGuard.entity;
 
 import cn.wnhyang.coolGuard.pojo.BasePO;
+import cn.wnhyang.coolGuard.vo.Cond;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 
 /**
@@ -18,7 +20,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_indicator_version")
+@TableName(value = "de_indicator_version", autoResultMap = true)
 public class IndicatorVersion extends BasePO {
 
     private static final long serialVersionUID = 1L;
@@ -146,6 +148,6 @@ public class IndicatorVersion extends BasePO {
     /**
      * 条件
      */
-    @TableField("cond_str")
-    private String condStr;
+    @TableField(value = "cond", typeHandler = JacksonTypeHandler.class)
+    private Cond cond;
 }

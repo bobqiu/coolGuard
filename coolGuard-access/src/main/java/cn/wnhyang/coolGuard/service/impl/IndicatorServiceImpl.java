@@ -24,7 +24,6 @@ import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
 import cn.wnhyang.coolGuard.util.IndicatorUtil;
-import cn.wnhyang.coolGuard.util.JsonUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.BatchVersionSubmitResultVO;
 import cn.wnhyang.coolGuard.vo.Cond;
@@ -95,7 +94,6 @@ public class IndicatorServiceImpl implements IndicatorService {
         indicator.setCode(IdUtil.fastSimpleUUID());
         indicator.setReturnType(IndicatorUtil.getReturnType(indicator.getType(), indicator.getCalcField()));
         indicator.setTimeSlice(WinSize.getWinSizeValue(indicator.getWinSize()));
-        indicator.setCondStr(JsonUtils.toJsonString(createVO.getCond()));
         indicatorMapper.insert(indicator);
         return indicator.getId();
     }
@@ -117,7 +115,6 @@ public class IndicatorServiceImpl implements IndicatorService {
             throw exception(INDICATOR_NOT_CHANGE);
         }
         Indicator convert = IndicatorConvert.INSTANCE.convert(updateVO);
-        convert.setCondStr(JsonUtils.toJsonString(updateVO.getCond()));
         convert.setStatus(Boolean.FALSE);
         indicatorMapper.updateById(convert);
     }
@@ -141,19 +138,13 @@ public class IndicatorServiceImpl implements IndicatorService {
     @Override
     public IndicatorVO getIndicator(Long id) {
         Indicator indicator = indicatorMapper.selectById(id);
-        IndicatorVO indicatorVO = IndicatorConvert.INSTANCE.convert(indicator);
-        indicatorVO.setCond(JsonUtils.parseObject(indicator.getCondStr(), Cond.class));
-        return indicatorVO;
+        return IndicatorConvert.INSTANCE.convert(indicator);
     }
 
     @Override
     public PageResult<IndicatorVO> pageIndicator(IndicatorPageVO pageVO) {
         PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPage(pageVO);
-
-        PageResult<IndicatorVO> voPageResult = IndicatorConvert.INSTANCE.convert(indicatorPageResult);
-
-        voPageResult.getList().forEach(indicatorVO -> indicatorVO.setCond(JsonUtils.parseObject(indicatorVO.getCondStr(), Cond.class)));
-        return voPageResult;
+        return IndicatorConvert.INSTANCE.convert(indicatorPageResult);
     }
 
     private Cond getCond(String code) {
@@ -175,9 +166,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     public List<IndicatorVO> listIndicator() {
-        List<IndicatorVO> indicatorVOList = IndicatorConvert.INSTANCE.convert(indicatorMapper.selectList());
-        indicatorVOList.forEach(indicatorVO -> indicatorVO.setCond(JsonUtils.parseObject(indicatorVO.getCondStr(), Cond.class)));
-        return indicatorVOList;
+        return IndicatorConvert.INSTANCE.convert(indicatorMapper.selectList());
     }
 
     @Override
@@ -207,11 +196,10 @@ public class IndicatorServiceImpl implements IndicatorService {
         convert.setVersion(version);
         convert.setVersionDesc(submitVO.getVersionDesc());
         convert.setStatus(Boolean.TRUE);
-        convert.setId(null);
         indicatorVersionMapper.insert(convert);
         // 4、更新chain
         String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getCode());
-        String condEl = LFUtil.buildCondEl(convert.getCondStr());
+        String condEl = LFUtil.buildCondEl(convert.getCond());
         if (chainMapper.selectByChainName(iChain)) {
             Chain chain = chainMapper.getByChainName(iChain);
             chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl,

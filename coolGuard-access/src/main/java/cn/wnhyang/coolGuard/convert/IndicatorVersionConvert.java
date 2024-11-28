@@ -5,6 +5,7 @@ import cn.wnhyang.coolGuard.entity.IndicatorVersion;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.IndicatorVersionVO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -22,5 +23,6 @@ public interface IndicatorVersionConvert {
 
     PageResult<IndicatorVersionVO> convert(PageResult<IndicatorVersion> pageResult);
 
+    @Mapping(target = "id", ignore = true)
     IndicatorVersion convert(Indicator indicator);
 }

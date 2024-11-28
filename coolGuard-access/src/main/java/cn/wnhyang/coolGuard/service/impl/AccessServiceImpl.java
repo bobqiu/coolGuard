@@ -81,8 +81,8 @@ public class AccessServiceImpl implements AccessService {
         Access access = getAccessByName(name);
 
         // 设置接入
-        List<InputFieldVO> inputFields = getAccessInputFieldList(access, access.getId());
-        List<OutputFieldVO> outputFields = getAccessOutputFieldList(access, access.getId());
+        List<InputFieldVO> inputFields = getAccessInputFieldList(access);
+        List<OutputFieldVO> outputFields = getAccessOutputFieldList(access);
 
         AccessRequest accessRequest = new AccessRequest(access, params, inputFields, outputFields);
         PolicyContext policyContext = new PolicyContext();
@@ -122,9 +122,6 @@ public class AccessServiceImpl implements AccessService {
         if (accessMapper.selectByName(createVO.getName()) != null) {
             throw exception(ACCESS_NAME_EXIST);
         }
-        // 校验输入输出json字符串正确性，并压缩
-        createVO.setInputConfig(JsonUtils.toJsonString(createVO.getInputConfig()));
-        createVO.setOutputConfig(JsonUtils.toJsonString(createVO.getOutputConfig()));
         Access access = AccessConvert.INSTANCE.convert(createVO);
         accessMapper.insert(access);
         // TODO 创建chain
@@ -175,27 +172,8 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @Override
-    public List<ConfigField> getInputFieldList(Long id) {
-        String json = accessMapper.selectInputConfig(id);
-        if (StrUtil.isNotBlank(json)) {
-            return JsonUtils.parseArray(json, ConfigField.class);
-        }
-        return List.of();
-    }
-
-    @Override
-    public List<ConfigField> getOutputFieldList(Long id) {
-        String json = accessMapper.selectOutputConfig(id);
-        if (StrUtil.isNotBlank(json)) {
-            return JsonUtils.parseArray(json, ConfigField.class);
-        }
-        return List.of();
-    }
-
-    @Override
-    public List<InputFieldVO> getAccessInputFieldList(Access access, Long id) {
-        List<ConfigField> configFieldList = access != null ?
-                JsonUtils.parseArray(access.getInputConfig(), ConfigField.class) : getInputFieldList(id);
+    public List<InputFieldVO> getAccessInputFieldList(Access access) {
+        List<ConfigField> configFieldList = access.getInputConfig();
 
         List<InputFieldVO> inputFieldVOList = new ArrayList<>();
         if (CollUtil.isNotEmpty(configFieldList)) {
@@ -213,9 +191,8 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @Override
-    public List<OutputFieldVO> getAccessOutputFieldList(Access access, Long id) {
-        List<ConfigField> configFieldList = access != null ?
-                JsonUtils.parseArray(access.getOutputConfig(), ConfigField.class) : getOutputFieldList(id);
+    public List<OutputFieldVO> getAccessOutputFieldList(Access access) {
+        List<ConfigField> configFieldList = access.getOutputConfig();
 
         List<OutputFieldVO> outputFieldVOList = new ArrayList<>();
         if (CollUtil.isNotEmpty(configFieldList)) {

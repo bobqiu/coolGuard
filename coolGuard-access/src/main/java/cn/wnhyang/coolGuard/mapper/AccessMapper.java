@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.mapper;
 
-import cn.hutool.core.util.ObjectUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.Access;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
@@ -30,19 +29,4 @@ public interface AccessMapper extends BaseMapperX<Access> {
         return selectOne(Access::getName, name);
     }
 
-    default String selectInputConfig(Long id) {
-        Access access = selectById(id);
-        if (ObjectUtil.isNotNull(access)) {
-            return access.getInputConfig();
-        }
-        return null;
-    }
-
-    default String selectOutputConfig(Long id) {
-        Access access = selectById(id);
-        if (ObjectUtil.isNotNull(access)) {
-            return access.getOutputConfig();
-        }
-        return null;
-    }
 }

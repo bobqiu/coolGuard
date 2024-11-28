@@ -2,7 +2,6 @@ package cn.wnhyang.coolGuard.service;
 
 import cn.wnhyang.coolGuard.context.AccessResponse;
 import cn.wnhyang.coolGuard.entity.Access;
-import cn.wnhyang.coolGuard.entity.ConfigField;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.AccessVO;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
@@ -86,27 +85,20 @@ public interface AccessService {
      */
     Access getAccessByName(String name);
 
-
-    List<ConfigField> getInputFieldList(Long id);
-
-    List<ConfigField> getOutputFieldList(Long id);
-
     /**
      * 根据服务id查询
      *
      * @param access 服务
-     * @param id     服务id
      * @return inputFieldVO集合
      */
-    List<InputFieldVO> getAccessInputFieldList(Access access, Long id);
+    List<InputFieldVO> getAccessInputFieldList(Access access);
 
     /**
      * 根据服务id查询
      *
      * @param access 服务
-     * @param id     服务id
      * @return outputFieldVO集合
      */
-    List<OutputFieldVO> getAccessOutputFieldList(Access access, Long id);
+    List<OutputFieldVO> getAccessOutputFieldList(Access access);
 
 }

@@ -101,9 +101,4 @@ public class IndicatorVO extends IndicatorBaseVO {
      */
     private Object value;
 
-    /**
-     * 条件
-     */
-    private String condStr;
-
 }
