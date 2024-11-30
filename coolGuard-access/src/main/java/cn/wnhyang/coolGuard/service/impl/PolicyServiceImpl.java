@@ -159,14 +159,14 @@ public class PolicyServiceImpl implements PolicyService {
 
     @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public boolean policyAccess(NodeComponent bindCmp) {
-        Policy policy = policyMapper.selectById(bindCmp.getTag());
+        Policy policy = policyMapper.selectByCode(bindCmp.getTag());
         return policy.getStatus();
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略普通组件")
     public void policy(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        Policy policy = policyMapper.selectById(bindCmp.getTag());
+        Policy policy = policyMapper.selectByCode(bindCmp.getTag());
         PolicyVO policyVO = PolicyConvert.INSTANCE.convert(policy);
         policyContext.addPolicy(policyVO.getId(), policyVO);
 

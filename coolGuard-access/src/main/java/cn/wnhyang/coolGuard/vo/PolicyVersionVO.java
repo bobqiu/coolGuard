@@ -1,18 +1,20 @@
-package cn.wnhyang.coolGuard.dto;
+package cn.wnhyang.coolGuard.vo;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 策略表
+ * 策略版本表
  *
  * @author wnhyang
- * @since 2024/04/04
+ * @since 2024/08/29
  */
 @Data
-public class PolicyDTO implements Serializable {
+public class PolicyVersionVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -41,9 +43,14 @@ public class PolicyDTO implements Serializable {
     private String mode;
 
     /**
-     * 策略状态
+     * 策略状态，应该包含开启、关闭、待发布
      */
     private Boolean status;
+
+    /**
+     * 策略状态
+     */
+    private Integer version;
 
     /**
      * 描述

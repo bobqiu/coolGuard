@@ -243,6 +243,7 @@ create table coolGuard.de_policy_set
     code        varchar(36)                 default ''                not null comment '策略集编码',
     name        varchar(36)                 default ''                not null comment '策略集名',
     status      bit                         default b'0'              not null comment '策略集状态',
+    chain       varchar(5000)               default ''                not null comment '策略chain',
     description varchar(64) charset utf8mb4 default ''                null comment '描述',
     creator     varchar(36) charset utf8mb4 default ''                null comment '创建者',
     create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
@@ -256,10 +257,33 @@ create table coolGuard.de_policy_set
 
 create table coolGuard.de_policy_set_version
 (
+    id          bigint auto_increment comment '主键'
+        primary key,
+    app_name    varchar(32)                 default 'ALL'             not null comment '应用名',
+    code        varchar(36)                 default ''                not null comment '策略集编码',
+    name        varchar(36)                 default ''                not null comment '策略集名',
+    status      bit                         default b'0'              not null comment '策略集状态',
+    chain       varchar(5000)               default ''                not null comment '策略集链路',
+    description varchar(64) charset utf8mb4 default ''                null comment '描述',
+    version     int                         default 0                 not null comment '版本号',
+    creator     varchar(36) charset utf8mb4 default ''                null comment '创建者',
+    create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater     varchar(36) charset utf8mb4 default ''                null comment '更新者',
+    update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted     bit                         default b'0'              not null comment '是否删除'
+)
+    comment '策略集表历史';
+
+create table coolGuard.de_policy_version
+(
     id              bigint auto_increment comment '主键'
         primary key,
     policy_set_code varchar(36)                                           not null comment '策略集编码',
-    policy_code     varchar(36)                                           not null comment '策略编码',
+    code            varchar(36)                 default ''                not null comment '策略编码',
+    name            varchar(36)                 default ''                not null comment '策略名',
+    mode            varchar(32)                 default ''                not null comment '策略模式',
+    status          bit                         default b'0'              not null comment '状态',
+    description     varchar(64)                 default ''                not null comment '描述',
     version         int                         default 0                 not null comment '策略状态',
     creator         varchar(36) charset utf8mb4 default ''                null comment '创建者',
     create_time     datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
@@ -267,16 +291,15 @@ create table coolGuard.de_policy_set_version
     update_time     datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     deleted         bit                         default b'0'              not null comment '是否删除'
 )
-    comment '策略集版本表';
+    comment '策略版本表';
 
-create table coolGuard.de_policy_set_version_ext
+create table coolGuard.de_policy_version_ext
 (
-    id          bigint auto_increment comment '主键'
+    id        bigint auto_increment comment '主键'
         primary key,
-    policy_flow text not null comment '策略流',
-    rule_info   text not null comment '规则信息'
+    rule_list text not null comment '规则列表'
 )
-    comment '策略集版本扩展表';
+    comment '策略版本扩展表';
 
 create table coolGuard.de_rule
 (
@@ -289,6 +312,7 @@ create table coolGuard.de_rule
     score         int                         default 0                 not null comment '得分',
     status        varchar(10)                 default 'off'             not null comment '状态',
     sort          int                         default 99                not null comment '排序',
+    cond          varchar(2000)                                         null comment '条件',
     description   varchar(64) charset utf8mb4 default ''                null comment '描述',
     creator       varchar(36) charset utf8mb4 default ''                null comment '创建者',
     create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
@@ -348,8 +372,8 @@ VALUES ('coolGuard', 'R_C#f1df5b70574a46a09b95f3662cffaed9',
        ('coolGuard', 'I_C#b75c84a6b5ec45ed8026ca7c873e789c',
         'IF(c_cn.data(''{"type":"normal","value":"N_F_transAmount","logicType":"lt","expectType":"input","expectValue":"1000"}''),i_tcn,i_fcn);',
         1, '', '', '2024-05-07 11:23:16', '', '2024-11-16 12:16:51', 0),
-       ('coolGuard', 'PS_C#phone_login', 'WHEN(e_cn,p_cn.tag("1"),p_cn.tag("2"));', 1, '', '', '2024-07-20 11:06:01',
-        '', '2024-11-16 11:25:56', 0),
+       ('coolGuard', 'PS_C#phone_login', 'WHEN(e_cn,p_cn.tag("phone_login_worst"),p_cn.tag("phone_login_order"));', 1,
+        '', '', '2024-07-20 11:06:01', '', '2024-11-30 20:55:31', 0),
        ('coolGuard', 'I_C#72df2843a1094b2c8b8f6c4aebeb63dd',
         'IF(c_cn.data(''{"type":"normal","value":"N_F_transAmount","logicType":"gt","expectType":"input","expectValue":"15"}''),i_tcn,i_fcn);',
         1, '', '', '2024-07-20 11:23:46', '', '2024-11-16 12:16:51', 0),
@@ -601,14 +625,20 @@ VALUES ('phone_login', 'phone_login_worst', '手机登录最坏', 'worst', 1, ''
         '2024-11-16 11:01:04', 0),
        ('phone_login', 'phone_login_order', '手机登录顺序', 'order', 1, '', '', '2024-04-07 19:55:02', '',
         '2024-11-16 11:01:04', 0);
-INSERT INTO coolGuard.de_policy_set (app_name, code, name, status, description, creator, create_time, updater,
+INSERT INTO coolGuard.de_policy_set (app_name, code, name, status, `chain`, description, creator, create_time, updater,
                                      update_time, deleted)
-VALUES ('phone', 'phone_login', '手机登录策略', 1, '', '', '2024-04-07 19:18:09', '', '2024-11-16 09:53:57', 0);
-INSERT INTO coolGuard.de_rule (policy_code, code, name, disposal_code, score, status, sort, description, creator,
+VALUES ('phone', 'phone_login', '手机登录策略', 1,
+        'WHEN(e_cn,p_cn.tag("phone_login_worst"),p_cn.tag("phone_login_order"));', '', '', '2024-04-07 19:18:09', '',
+        '2024-11-30 21:11:57', 0);
+INSERT INTO coolGuard.de_rule (policy_code, code, name, disposal_code, score, status, sort, cond, description, creator,
                                create_time, updater, update_time, deleted)
 VALUES ('phone_login_order', 'f1df5b70574a46a09b95f3662cffaed9', '付款方账号不为空或者金额大于等于100', 'pass', 0, 'on',
-        0, 'hethethethe', '', '2024-04-07 22:13:58', NULL, '2024-11-16 13:56:19', 0),
-       ('phone_login_order', '0b30510bf425492381a78aca098be029', '测试规则02', 'pass', 0, 'on', 2, '', '',
-        '2024-04-07 22:14:32', '', '2024-11-16 13:56:19', 0),
-       ('phone_login_worst', '6ae5cb587c784326b45c944e80319d50', '测试规则03', 'pass', 0, 'on', 99, '', '',
-        '2024-04-09 10:56:48', '', '2024-11-16 13:56:19', 0);
+        0,
+        '{"logicOp":"OR","children":[{"logicOp":null,"children":null,"type":"normal","value":"N_S_payerAccount","logicType":"not_null","expectType":"","expectValue":""},{"logicOp":null,"children":null,"type":"normal","value":"N_F_transAmount","logicType":"gt","expectType":"input","expectValue":"100"}],"type":null,"value":null,"logicType":null,"expectType":null,"expectValue":null}',
+        'hethethethe', '', '2024-04-07 22:13:58', NULL, '2024-11-16 13:56:19', 0),
+       ('phone_login_order', '0b30510bf425492381a78aca098be029', '测试规则02', 'pass', 0, 'on', 2,
+        '{"logicOp":"AND","children":[{"logicOp":null,"children":null,"type":"normal","value":"N_S_appName","logicType":"eq","expectType":"input","expectValue":"phone"},{"logicOp":null,"children":null,"type":"normal","value":"N_F_transAmount","logicType":"lt","expectType":"input","expectValue":"100"}],"type":null,"value":null,"logicType":null,"expectType":null,"expectValue":null}',
+        '', '', '2024-04-07 22:14:32', '', '2024-11-16 13:56:19', 0),
+       ('phone_login_worst', '6ae5cb587c784326b45c944e80319d50', '测试规则03', 'pass', 0, 'on', 99,
+        '{"logicOp":null,"children":null,"type":"normal","value":"N_F_transAmount","logicType":"gte","expectType":"input","expectValue":"20.0"}',
+        '', '', '2024-04-09 10:56:48', '', '2024-11-16 13:56:19', 0);

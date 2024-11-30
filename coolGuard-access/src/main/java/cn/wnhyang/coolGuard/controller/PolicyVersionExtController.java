@@ -1,12 +1,12 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.convert.PolicySetVersionConvert;
+import cn.wnhyang.coolGuard.convert.PolicyVersionExtConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.service.PolicySetVersionService;
+import cn.wnhyang.coolGuard.service.PolicyVersionExtService;
 import cn.wnhyang.coolGuard.util.ExcelUtil;
-import cn.wnhyang.coolGuard.vo.PolicySetVersionVO;
-import cn.wnhyang.coolGuard.vo.page.PolicySetVersionPageVO;
+import cn.wnhyang.coolGuard.vo.PolicyVersionExtVO;
+import cn.wnhyang.coolGuard.vo.page.PolicyVersionExtPageVO;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,20 +19,19 @@ import java.util.List;
 
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
-
 /**
- * 策略集表历史
+ * 策略版本扩展表
  *
  * @author wnhyang
- * @since 2024/11/30
+ * @since 2024/08/29
  */
 @Slf4j
 @RestController
-@RequestMapping("/policySetVersion")
+@RequestMapping("/policyVersionExt")
 @RequiredArgsConstructor
-public class PolicySetVersionController {
+public class PolicyVersionExtController {
 
-    private final PolicySetVersionService policySetVersionService;
+    private final PolicyVersionExtService policyVersionExtService;
 
     /**
      * 删除
@@ -42,7 +41,7 @@ public class PolicySetVersionController {
      */
     @DeleteMapping
     public CommonResult<Boolean> delete(@RequestParam("id") Long id) {
-        policySetVersionService.delete(id);
+        policyVersionExtService.delete(id);
         return success(true);
     }
 
@@ -53,8 +52,8 @@ public class PolicySetVersionController {
      * @return vo
      */
     @GetMapping("/{id}")
-    public CommonResult<PolicySetVersionVO> get(@PathVariable("id") Long id) {
-        return success(PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.get(id)));
+    public CommonResult<PolicyVersionExtVO> get(@PathVariable("id") Long id) {
+        return success(PolicyVersionExtConvert.INSTANCE.convert(policyVersionExtService.get(id)));
     }
 
     /**
@@ -64,8 +63,8 @@ public class PolicySetVersionController {
      * @return pageResult
      */
     @GetMapping("/page")
-    public CommonResult<PageResult<PolicySetVersionVO>> page(@Valid PolicySetVersionPageVO pageVO) {
-        return success(PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.page(pageVO)));
+    public CommonResult<PageResult<PolicyVersionExtVO>> page(@Valid PolicyVersionExtPageVO pageVO) {
+        return success(PolicyVersionExtConvert.INSTANCE.convert(policyVersionExtService.page(pageVO)));
     }
 
     /**
@@ -76,9 +75,9 @@ public class PolicySetVersionController {
      * @throws IOException IO异常
      */
     @GetMapping("/export")
-    public void exportExcel(@Valid PolicySetVersionPageVO pageVO, HttpServletResponse response) throws IOException {
+    public void exportExcel(@Valid PolicyVersionExtPageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
-        ExcelUtil.write(response, "PolicySetVersionVO.xls", "数据", PolicySetVersionVO.class, PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.page(pageVO)).getList());
+        ExcelUtil.write(response, "PolicySetVersionExtVO.xls", "数据", PolicyVersionExtVO.class, PolicyVersionExtConvert.INSTANCE.convert(policyVersionExtService.page(pageVO)).getList());
     }
 
     /**
@@ -90,7 +89,7 @@ public class PolicySetVersionController {
      */
     @PostMapping("/import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
-        List<PolicySetVersionVO> read = ExcelUtil.read(file, PolicySetVersionVO.class);
+        List<PolicyVersionExtVO> read = ExcelUtil.read(file, PolicyVersionExtVO.class);
         // do something
         return success(true);
     }

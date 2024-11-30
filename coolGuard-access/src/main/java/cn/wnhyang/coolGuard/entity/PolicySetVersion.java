@@ -8,10 +8,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 /**
- * 策略集版本表
+ * 策略集表历史
  *
  * @author wnhyang
- * @since 2024/08/29
+ * @since 2024/11/30
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -30,19 +30,43 @@ public class PolicySetVersion extends BasePO {
     private Long id;
 
     /**
-     * 策略集id
+     * 应用名
      */
-    @TableField("policy_set_code")
-    private String policySetCode;
+    @TableField("app_name")
+    private String appName;
 
     /**
-     * 策略id
+     * 策略集编码
      */
-    @TableField("policy_code")
-    private String policyCode;
+    @TableField("code")
+    private String code;
 
     /**
-     * 策略状态
+     * 策略集名
+     */
+    @TableField("name")
+    private String name;
+
+    /**
+     * 策略集状态
+     */
+    @TableField("status")
+    private Boolean status;
+
+    /**
+     * 策略集链路
+     */
+    @TableField("chain")
+    private String chain;
+
+    /**
+     * 描述
+     */
+    @TableField("description")
+    private String description;
+
+    /**
+     * 版本号
      */
     @TableField("version")
     private Integer version;

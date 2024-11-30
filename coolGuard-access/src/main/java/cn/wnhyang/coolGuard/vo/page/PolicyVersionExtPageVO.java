@@ -4,13 +4,13 @@ import cn.wnhyang.coolGuard.pojo.PageParam;
 import lombok.Data;
 
 /**
- * 策略集版本扩展表
+ * 策略版本扩展表
  *
  * @author wnhyang
  * @since 2024/08/29
  */
 @Data
-public class PolicySetVersionExtPageVO extends PageParam {
+public class PolicyVersionExtPageVO extends PageParam {
 
     private static final long serialVersionUID = 1L;
 

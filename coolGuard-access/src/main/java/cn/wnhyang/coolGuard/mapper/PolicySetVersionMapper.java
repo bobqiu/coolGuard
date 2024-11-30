@@ -8,10 +8,10 @@ import cn.wnhyang.coolGuard.vo.page.PolicySetVersionPageVO;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 策略集版本表 Mapper 接口
+ * 策略集表历史 Mapper 接口
  *
  * @author wnhyang
- * @since 2024/08/29
+ * @since 2024/11/30
  */
 @Mapper
 public interface PolicySetVersionMapper extends BaseMapperX<PolicySetVersion> {

@@ -4,15 +4,17 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * 策略集版本扩展表
+ * 策略版本扩展表
  *
  * @author wnhyang
  * @since 2024/08/29
@@ -21,8 +23,8 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_policy_set_version_ext")
-public class PolicySetVersionExt implements Serializable {
+@TableName(value = "de_policy_version_ext", autoResultMap = true)
+public class PolicyVersionExt implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,14 +35,8 @@ public class PolicySetVersionExt implements Serializable {
     private Long id;
 
     /**
-     * 策略流
+     * 规则列表
      */
-    @TableField("policy_flow")
-    private String policyFlow;
-
-    /**
-     * 规则信息
-     */
-    @TableField("rule_info")
-    private String ruleInfo;
+    @TableField(value = "rule_list", typeHandler = JacksonTypeHandler.class)
+    private List<Rule> ruleList;
 }

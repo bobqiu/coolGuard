@@ -1,27 +1,25 @@
 package cn.wnhyang.coolGuard.entity;
 
 import cn.wnhyang.coolGuard.pojo.BasePO;
-import cn.wnhyang.coolGuard.vo.Cond;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 
 /**
- * 规则表
+ * 策略版本表
  *
  * @author wnhyang
- * @since 2024/04/04
+ * @since 2024/08/29
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName(value = "de_rule", autoResultMap = true)
-public class Rule extends BasePO {
+@TableName("de_policy_version")
+public class PolicyVersion extends BasePO {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,52 +30,40 @@ public class Rule extends BasePO {
     private Long id;
 
     /**
-     * 策略编码
+     * 策略集id
      */
-    @TableField("policy_code")
-    private String policyCode;
+    @TableField("policy_set_code")
+    private String policySetCode;
 
     /**
-     * 规则编码x
+     * 策略编码
      */
     @TableField("code")
     private String code;
 
     /**
-     * 规则名
+     * 策略名
      */
     @TableField("name")
     private String name;
 
     /**
-     * 处理编码
+     * 策略模式
      */
-    @TableField("disposal_code")
-    private String disposalCode;
+    @TableField("mode")
+    private String mode;
 
     /**
-     * 分数
-     */
-    @TableField("score")
-    private Integer score;
-
-    /**
-     * 状态
+     * 策略状态，应该包含开启、关闭、待发布
      */
     @TableField("status")
-    private String status;
+    private Boolean status;
 
     /**
-     * 排序
+     * 策略状态
      */
-    @TableField("sort")
-    private Integer sort;
-
-    /**
-     * 条件
-     */
-    @TableField(value = "cond", typeHandler = JacksonTypeHandler.class)
-    private Cond cond;
+    @TableField("version")
+    private Integer version;
 
     /**
      * 描述

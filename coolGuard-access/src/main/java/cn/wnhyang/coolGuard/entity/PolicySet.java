@@ -54,6 +54,12 @@ public class PolicySet extends BasePO {
     private Boolean status;
 
     /**
+     * 策略集链
+     */
+    @TableField("chain")
+    private String chain;
+
+    /**
      * 描述
      */
     @TableField("description")

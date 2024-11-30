@@ -1,21 +1,59 @@
 package cn.wnhyang.coolGuard.vo;
 
-import cn.wnhyang.coolGuard.vo.create.PolicySetVersionCreateVO;
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
- * 策略集版本表
+ * 策略集表历史
  *
  * @author wnhyang
- * @since 2024/08/29
+ * @since 2024/11/30
  */
 @Data
-public class PolicySetVersionVO extends PolicySetVersionCreateVO {
+public class PolicySetVersionVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
      * 主键
      */
     private Long id;
+
+    /**
+     * 应用名
+     */
+    private String appName;
+
+    /**
+     * 策略集编码
+     */
+    private String code;
+
+    /**
+     * 策略集名
+     */
+    private String name;
+
+    /**
+     * 策略集状态
+     */
+    private Boolean status;
+
+    /**
+     * 策略集链路
+     */
+    private String chain;
+
+    /**
+     * 描述
+     */
+    private String description;
+
+    /**
+     * 版本号
+     */
+    private Integer version;
 }

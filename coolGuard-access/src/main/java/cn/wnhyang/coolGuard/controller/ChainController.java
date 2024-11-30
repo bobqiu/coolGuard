@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.controller;
 
 import cn.wnhyang.coolGuard.convert.ChainConvert;
+import cn.wnhyang.coolGuard.entity.Node;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ChainService;
@@ -12,7 +13,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
+import static cn.wnhyang.coolGuard.util.LFUtil.*;
 
 /**
  * chain
@@ -24,6 +28,26 @@ import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 @RequestMapping("/chain")
 @RequiredArgsConstructor
 public class ChainController {
+
+    private static final List<Node> NODE_LIST = List.of(
+            new Node(EMPTY_COMMON_NODE, "空节点"),
+            new Node(ACCESS_IN_COMMON_NODE, "入参组件"),
+            new Node(ACCESS_OUT_COMMON_NODE, "入参组件"),
+            new Node(NORMAL_FIELD_COMMON_NODE, "入参组件"),
+            new Node(DYNAMIC_FIELD_COMMON_NODE, "入参组件"),
+            new Node(INDICATOR_FOR_NODE, "入参组件"),
+            new Node(INDICATOR_COMMON_NODE, "入参组件"),
+            new Node(INDICATOR_TRUE_COMMON_NODE, "入参组件"),
+            new Node(INDICATOR_FALSE_COMMON_NODE, "入参组件"),
+            new Node(POLICY_SET_COMMON_NODE, "入参组件"),
+            new Node(POLICY_COMMON_NODE, "入参组件"),
+            new Node(POLICY_FOR_NODE, "入参组件"),
+            new Node(POLICY_BREAK_NODE, "入参组件"),
+            new Node(CONDITION_COMMON_NODE, "入参组件"),
+            new Node(RULE_COMMON_NODE, "入参组件"),
+            new Node(RULE_TRUE_COMMON_NODE, "入参组件"),
+            new Node(RULE_FALSE_COMMON_NODE, "入参组件")
+    );
 
     private final ChainService chainService;
 
@@ -83,4 +107,15 @@ public class ChainController {
     public CommonResult<PageResult<ChainVO>> pageChain(@Valid ChainPageVO pageVO) {
         return success(ChainConvert.INSTANCE.convert(chainService.pageChain(pageVO)));
     }
+
+    /**
+     * 获取所有节点
+     *
+     * @return 节点列表
+     */
+    @GetMapping("/nodes")
+    public CommonResult<List<Node>> nodeList() {
+        return success(NODE_LIST);
+    }
+
 }

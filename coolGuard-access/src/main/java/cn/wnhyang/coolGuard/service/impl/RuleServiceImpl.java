@@ -121,19 +121,14 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public RuleVO getRule(Long id) {
         Rule rule = ruleMapper.selectById(id);
-        RuleVO ruleVO = RuleConvert.INSTANCE.convert(rule);
-        ruleVO.setCond(getCond(rule.getCode()));
-        return ruleVO;
+        return RuleConvert.INSTANCE.convert(rule);
     }
 
     @Override
     public PageResult<RuleVO> pageRule(RulePageVO pageVO) {
         PageResult<Rule> rulePageResult = ruleMapper.selectPage(pageVO);
 
-        PageResult<RuleVO> voPageResult = RuleConvert.INSTANCE.convert(rulePageResult);
-
-        voPageResult.getList().forEach(ruleVO -> ruleVO.setCond(getCond(ruleVO.getCode())));
-        return voPageResult;
+        return RuleConvert.INSTANCE.convert(rulePageResult);
     }
 
     private Cond getCond(String code) {

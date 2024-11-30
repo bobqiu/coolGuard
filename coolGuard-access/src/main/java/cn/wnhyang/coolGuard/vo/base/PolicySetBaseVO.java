@@ -28,6 +28,11 @@ public class PolicySetBaseVO implements Serializable {
     private Boolean status;
 
     /**
+     * 策略集链路
+     */
+    private String chain;
+
+    /**
      * 描述
      */
     private String description;

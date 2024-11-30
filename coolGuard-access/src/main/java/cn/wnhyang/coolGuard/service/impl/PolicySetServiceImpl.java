@@ -76,10 +76,12 @@ public class PolicySetServiceImpl implements PolicySetService {
             throw exception(POLICY_SET_CODE_EXIST);
         }
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(createVO);
-        policySetMapper.insert(policySet);
         String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode());
         // TODO 策略集el，默认并行
-        chainMapper.insert(new Chain().setChainName(psChain).setElData(LFUtil.WHEN_EMPTY_NODE));
+        String elData = createVO.getChain().isBlank() ? LFUtil.WHEN_EMPTY_NODE : createVO.getChain();
+        chainMapper.insert(new Chain().setChainName(psChain).setElData(elData));
+        policySet.setChain(elData);
+        policySetMapper.insert(policySet);
         return policySet.getId();
     }
 
@@ -98,6 +100,11 @@ public class PolicySetServiceImpl implements PolicySetService {
                 throw exception(POLICY_SET_REFERENCE_UPDATE);
             }
         }
+        String elData = updateVO.getChain().isBlank() ? LFUtil.WHEN_EMPTY_NODE : updateVO.getChain();
+        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, convert.getCode());
+        Chain chain = chainMapper.getByChainName(psChain);
+        chain.setElData(elData);
+        chainMapper.updateById(chain);
         policySetMapper.updateById(convert);
     }
 
