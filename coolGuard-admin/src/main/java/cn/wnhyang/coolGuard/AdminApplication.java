@@ -1,8 +1,5 @@
 package cn.wnhyang.coolGuard;
 
-import cn.hutool.extra.spring.SpringUtil;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -14,6 +11,5 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AdminApplication {
     public static void main(String[] args) {
         SpringApplication.run(AdminApplication.class, args);
-        JacksonTypeHandler.setObjectMapper(SpringUtil.getBean(ObjectMapper.class));
     }
 }

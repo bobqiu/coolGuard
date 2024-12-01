@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.entity;
 
+import cn.wnhyang.coolGuard.pojo.BasePO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -10,11 +11,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-import java.util.List;
+import java.io.Serial;
 
 /**
- * 策略版本扩展表
+ * 规则版本表
  *
  * @author wnhyang
  * @since 2024/08/29
@@ -23,9 +23,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName(value = "de_policy_version_ext", autoResultMap = true)
-public class PolicyVersionExt implements Serializable {
+@TableName(value = "de_rule_version", autoResultMap = true)
+public class RuleVersion extends BasePO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -35,8 +36,26 @@ public class PolicyVersionExt implements Serializable {
     private Long id;
 
     /**
-     * 规则列表
+     * 规则编码
      */
-    @TableField(value = "rule_list", typeHandler = JacksonTypeHandler.class)
-    private List<Rule> ruleList;
+    @TableField("code")
+    private String code;
+
+    /**
+     * 条件
+     */
+    @TableField(value = "rule", typeHandler = JacksonTypeHandler.class)
+    private Rule rule;
+
+    /**
+     * 策略集状态
+     */
+    @TableField("status")
+    private Boolean status;
+
+    /**
+     * 版本号
+     */
+    @TableField("version")
+    private Integer version;
 }

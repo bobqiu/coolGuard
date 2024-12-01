@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
+import java.io.Serial;
+
 /**
  * 策略表
  *
@@ -21,6 +23,7 @@ import lombok.*;
 @TableName("de_policy")
 public class Policy extends BasePO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

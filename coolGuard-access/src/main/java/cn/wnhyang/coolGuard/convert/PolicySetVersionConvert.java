@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
- * 策略集表历史
+ * 策略集表版本
  *
  * @author wnhyang
  * @since 2024/11/30

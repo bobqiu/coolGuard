@@ -7,6 +7,7 @@ import cn.wnhyang.coolGuard.vo.page.RulePageVO;
 import cn.wnhyang.coolGuard.vo.update.RuleUpdateVO;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 规则表 服务类
@@ -62,4 +63,11 @@ public interface RuleService {
      */
     PageResult<RuleVO> pageRule(RulePageVO pageVO);
 
+    /**
+     * 根据策略code查询
+     *
+     * @param policyCode 策略code
+     * @return poList
+     */
+    List<RuleVO> listByPolicyCode(String policyCode);
 }

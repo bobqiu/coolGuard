@@ -4,6 +4,8 @@ import cn.wnhyang.coolGuard.vo.create.RuleScriptCreateVO;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.io.Serial;
+
 /**
  * 规则脚本表
  *
@@ -13,6 +15,7 @@ import lombok.Data;
 @Data
 public class RuleScriptUpdateVO extends RuleScriptCreateVO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

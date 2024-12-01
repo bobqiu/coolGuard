@@ -20,7 +20,7 @@ import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 
 /**
- * 指标表历史表
+ * 指标版本表
  *
  * @author wnhyang
  * @since 2024/11/21
@@ -54,6 +54,17 @@ public class IndicatorVersionController {
     @GetMapping("/{id}")
     public CommonResult<IndicatorVersionVO> get(@PathVariable("id") Long id) {
         return success(indicatorVersionService.get(id));
+    }
+
+    /**
+     * 根据code查询
+     *
+     * @param code code
+     * @return vo
+     */
+    @GetMapping("/code/{code}")
+    public CommonResult<IndicatorVersionVO> getByCode(@PathVariable("code") String code) {
+        return success(indicatorVersionService.getByCode(code));
     }
 
     /**

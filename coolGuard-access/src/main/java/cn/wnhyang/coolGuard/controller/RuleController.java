@@ -11,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
@@ -81,5 +83,16 @@ public class RuleController {
     @GetMapping("/page")
     public CommonResult<PageResult<RuleVO>> pageRule(@Valid RulePageVO pageVO) {
         return success(ruleService.pageRule(pageVO));
+    }
+
+    /**
+     * 根据策略编码查询列表
+     *
+     * @param policyCode 策略编码
+     * @return list
+     */
+    @GetMapping("/list/{policyCode}")
+    public CommonResult<List<RuleVO>> listByPolicyCode(@PathVariable("policyCode") String policyCode) {
+        return success(ruleService.listByPolicyCode(policyCode));
     }
 }

@@ -1,16 +1,16 @@
 package cn.wnhyang.coolGuard.service;
 
-import cn.wnhyang.coolGuard.entity.PolicyVersion;
+import cn.wnhyang.coolGuard.entity.RuleVersion;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.vo.page.PolicyVersionPageVO;
+import cn.wnhyang.coolGuard.vo.page.RuleVersionPageVO;
 
 /**
- * 策略版本表 服务类
+ * 规则版本表 服务类
  *
  * @author wnhyang
  * @since 2024/08/29
  */
-public interface PolicyVersionService {
+public interface RuleVersionService {
 
     /**
      * 删除
@@ -25,7 +25,15 @@ public interface PolicyVersionService {
      * @param id id
      * @return po
      */
-    PolicyVersion get(Long id);
+    RuleVersion get(Long id);
+
+    /**
+     * 根据code查询
+     *
+     * @param code code
+     * @return po
+     */
+    RuleVersion getByCode(String code);
 
     /**
      * 分页查询
@@ -33,6 +41,6 @@ public interface PolicyVersionService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<PolicyVersion> page(PolicyVersionPageVO pageVO);
+    PageResult<RuleVersion> page(RuleVersionPageVO pageVO);
 
 }

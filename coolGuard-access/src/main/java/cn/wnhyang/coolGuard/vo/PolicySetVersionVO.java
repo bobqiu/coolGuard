@@ -6,7 +6,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 策略集表历史
+ * 策略集表版本
  *
  * @author wnhyang
  * @since 2024/11/30
@@ -23,21 +23,6 @@ public class PolicySetVersionVO implements Serializable {
     private Long id;
 
     /**
-     * 应用名
-     */
-    private String appName;
-
-    /**
-     * 策略集编码
-     */
-    private String code;
-
-    /**
-     * 策略集名
-     */
-    private String name;
-
-    /**
      * 策略集状态
      */
     private Boolean status;
@@ -46,11 +31,6 @@ public class PolicySetVersionVO implements Serializable {
      * 策略集链路
      */
     private String chain;
-
-    /**
-     * 描述
-     */
-    private String description;
 
     /**
      * 版本号

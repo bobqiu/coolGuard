@@ -3,6 +3,8 @@ package cn.wnhyang.coolGuard.vo;
 import cn.wnhyang.coolGuard.vo.create.ChainCreateVO;
 import lombok.Data;
 
+import java.io.Serial;
+
 /**
  * chain表
  *
@@ -12,6 +14,7 @@ import lombok.Data;
 @Data
 public class ChainVO extends ChainCreateVO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

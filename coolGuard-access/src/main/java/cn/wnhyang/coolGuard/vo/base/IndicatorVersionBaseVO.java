@@ -3,10 +3,11 @@ package cn.wnhyang.coolGuard.vo.base;
 import cn.wnhyang.coolGuard.vo.Cond;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 指标表历史表
+ * 指标表版本表
  *
  * @author wnhyang
  * @since 2024/11/21
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @Data
 public class IndicatorVersionBaseVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

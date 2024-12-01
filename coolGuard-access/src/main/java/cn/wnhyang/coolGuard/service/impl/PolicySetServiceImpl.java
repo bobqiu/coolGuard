@@ -12,10 +12,8 @@ import cn.wnhyang.coolGuard.convert.PolicySetConvert;
 import cn.wnhyang.coolGuard.entity.Chain;
 import cn.wnhyang.coolGuard.entity.Policy;
 import cn.wnhyang.coolGuard.entity.PolicySet;
-import cn.wnhyang.coolGuard.mapper.ChainMapper;
-import cn.wnhyang.coolGuard.mapper.PolicyMapper;
-import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
-import cn.wnhyang.coolGuard.mapper.RuleMapper;
+import cn.wnhyang.coolGuard.entity.PolicySetVersion;
+import cn.wnhyang.coolGuard.mapper.*;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicyService;
 import cn.wnhyang.coolGuard.service.PolicySetService;
@@ -68,6 +66,8 @@ public class PolicySetServiceImpl implements PolicySetService {
 
     private final PolicyService policyService;
 
+    private final PolicySetVersionMapper policySetVersionMapper;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.POLICY_SET, allEntries = true)
@@ -82,6 +82,8 @@ public class PolicySetServiceImpl implements PolicySetService {
         chainMapper.insert(new Chain().setChainName(psChain).setElData(elData));
         policySet.setChain(elData);
         policySetMapper.insert(policySet);
+        // 创建版本
+        policySetVersionMapper.insert(new PolicySetVersion().setCode(policySet.getCode()).setStatus(Boolean.TRUE).setChain(policySet.getChain()));
         return policySet.getId();
     }
 
@@ -106,6 +108,13 @@ public class PolicySetServiceImpl implements PolicySetService {
         chain.setElData(elData);
         chainMapper.updateById(chain);
         policySetMapper.updateById(convert);
+        // 确认是否有更改
+        PolicySetVersion policySetVersion = policySetVersionMapper.selectLatest(policySet.getCode());
+        // 有更改，1、旧版本状态改为旧版本，2、创建新版本版本号为新版本号+1
+        if (!policySetVersion.getChain().equals(elData)) {
+            policySetVersionMapper.updateById(new PolicySetVersion().setId(policySetVersion.getId()).setStatus(Boolean.FALSE));
+            policySetVersionMapper.insert(new PolicySetVersion().setStatus(Boolean.TRUE).setVersion(policySetVersion.getVersion() + 1).setChain(elData));
+        }
     }
 
     @Override
@@ -137,6 +146,8 @@ public class PolicySetServiceImpl implements PolicySetService {
             // 4、删除chain
             policySetMapper.deleteById(id);
             chainMapper.deleteByChainName(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode()));
+            // 5、删除所有版本
+            policySetVersionMapper.deleteBySetCode(policySet.getCode());
         });
     }
 

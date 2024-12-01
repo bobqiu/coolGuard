@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 策略集表历史 服务实现类
+ * 策略集表版本 服务实现类
  *
  * @author wnhyang
  * @since 2024/11/30
@@ -32,6 +32,11 @@ public class PolicySetVersionServiceImpl implements PolicySetVersionService {
     @Override
     public PolicySetVersion get(Long id) {
         return policySetVersionMapper.selectById(id);
+    }
+
+    @Override
+    public PolicySetVersion getByCode(String code) {
+        return policySetVersionMapper.selectByCode(code);
     }
 
     @Override

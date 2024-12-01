@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
+import java.io.Serial;
+
 /**
  * 规则脚本表
  *
@@ -22,6 +24,7 @@ import lombok.*;
 @TableName("de_rule_script")
 public class RuleScript extends BasePO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

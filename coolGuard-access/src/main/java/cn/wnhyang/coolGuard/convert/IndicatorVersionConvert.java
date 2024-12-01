@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 /**
- * 指标表历史表
+ * 指标表版本表
  *
  * @author wnhyang
  * @since 2024/11/21

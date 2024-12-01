@@ -1,12 +1,12 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.convert.PolicyVersionExtConvert;
+import cn.wnhyang.coolGuard.convert.RuleVersionConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.service.PolicyVersionExtService;
+import cn.wnhyang.coolGuard.service.RuleVersionService;
 import cn.wnhyang.coolGuard.util.ExcelUtil;
-import cn.wnhyang.coolGuard.vo.PolicyVersionExtVO;
-import cn.wnhyang.coolGuard.vo.page.PolicyVersionExtPageVO;
+import cn.wnhyang.coolGuard.vo.RuleVersionVO;
+import cn.wnhyang.coolGuard.vo.page.RuleVersionPageVO;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.List;
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
- * 策略版本扩展表
+ * 规则版本表
  *
  * @author wnhyang
  * @since 2024/08/29
@@ -29,9 +29,9 @@ import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 @RestController
 @RequestMapping("/policyVersionExt")
 @RequiredArgsConstructor
-public class PolicyVersionExtController {
+public class RuleVersionController {
 
-    private final PolicyVersionExtService policyVersionExtService;
+    private final RuleVersionService ruleVersionService;
 
     /**
      * 删除
@@ -41,7 +41,7 @@ public class PolicyVersionExtController {
      */
     @DeleteMapping
     public CommonResult<Boolean> delete(@RequestParam("id") Long id) {
-        policyVersionExtService.delete(id);
+        ruleVersionService.delete(id);
         return success(true);
     }
 
@@ -52,8 +52,19 @@ public class PolicyVersionExtController {
      * @return vo
      */
     @GetMapping("/{id}")
-    public CommonResult<PolicyVersionExtVO> get(@PathVariable("id") Long id) {
-        return success(PolicyVersionExtConvert.INSTANCE.convert(policyVersionExtService.get(id)));
+    public CommonResult<RuleVersionVO> get(@PathVariable("id") Long id) {
+        return success(RuleVersionConvert.INSTANCE.convert(ruleVersionService.get(id)));
+    }
+
+    /**
+     * 根据code查询
+     *
+     * @param code code
+     * @return vo
+     */
+    @GetMapping("/code/{code}")
+    public CommonResult<RuleVersionVO> getByCode(@PathVariable("code") String code) {
+        return success(RuleVersionConvert.INSTANCE.convert(ruleVersionService.getByCode(code)));
     }
 
     /**
@@ -63,8 +74,8 @@ public class PolicyVersionExtController {
      * @return pageResult
      */
     @GetMapping("/page")
-    public CommonResult<PageResult<PolicyVersionExtVO>> page(@Valid PolicyVersionExtPageVO pageVO) {
-        return success(PolicyVersionExtConvert.INSTANCE.convert(policyVersionExtService.page(pageVO)));
+    public CommonResult<PageResult<RuleVersionVO>> page(@Valid RuleVersionPageVO pageVO) {
+        return success(RuleVersionConvert.INSTANCE.convert(ruleVersionService.page(pageVO)));
     }
 
     /**
@@ -75,9 +86,9 @@ public class PolicyVersionExtController {
      * @throws IOException IO异常
      */
     @GetMapping("/export")
-    public void exportExcel(@Valid PolicyVersionExtPageVO pageVO, HttpServletResponse response) throws IOException {
+    public void exportExcel(@Valid RuleVersionPageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
-        ExcelUtil.write(response, "PolicySetVersionExtVO.xls", "数据", PolicyVersionExtVO.class, PolicyVersionExtConvert.INSTANCE.convert(policyVersionExtService.page(pageVO)).getList());
+        ExcelUtil.write(response, "PolicySetVersionExtVO.xls", "数据", RuleVersionVO.class, RuleVersionConvert.INSTANCE.convert(ruleVersionService.page(pageVO)).getList());
     }
 
     /**
@@ -89,7 +100,7 @@ public class PolicyVersionExtController {
      */
     @PostMapping("/import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
-        List<PolicyVersionExtVO> read = ExcelUtil.read(file, PolicyVersionExtVO.class);
+        List<RuleVersionVO> read = ExcelUtil.read(file, RuleVersionVO.class);
         // do something
         return success(true);
     }

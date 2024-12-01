@@ -21,7 +21,7 @@ import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 
 /**
- * 策略集表历史
+ * 策略集版本
  *
  * @author wnhyang
  * @since 2024/11/30
@@ -55,6 +55,17 @@ public class PolicySetVersionController {
     @GetMapping("/{id}")
     public CommonResult<PolicySetVersionVO> get(@PathVariable("id") Long id) {
         return success(PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.get(id)));
+    }
+
+    /**
+     * 根据code查询
+     *
+     * @param code code
+     * @return vo
+     */
+    @GetMapping("/code/{code}")
+    public CommonResult<PolicySetVersionVO> getByCode(@PathVariable("code") String code) {
+        return success(PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.getByCode(code)));
     }
 
     /**

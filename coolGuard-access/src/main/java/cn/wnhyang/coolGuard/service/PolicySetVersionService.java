@@ -5,7 +5,7 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.PolicySetVersionPageVO;
 
 /**
- * 策略集表历史 服务类
+ * 策略集表版本 服务类
  *
  * @author wnhyang
  * @since 2024/11/30
@@ -26,6 +26,14 @@ public interface PolicySetVersionService {
      * @return po
      */
     PolicySetVersion get(Long id);
+
+    /**
+     * 根据code查询
+     *
+     * @param code code
+     * @return pageResult
+     */
+    PolicySetVersion getByCode(String code);
 
     /**
      * 分页查询

@@ -9,6 +9,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 
+import java.io.Serial;
+
 /**
  * 规则表
  *
@@ -23,6 +25,7 @@ import lombok.*;
 @TableName(value = "de_rule", autoResultMap = true)
 public class Rule extends BasePO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -38,7 +41,7 @@ public class Rule extends BasePO {
     private String policyCode;
 
     /**
-     * 规则编码x
+     * 规则编码
      */
     @TableField("code")
     private String code;

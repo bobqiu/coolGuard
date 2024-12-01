@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
+import java.io.Serial;
+
 /**
  * 处置表
  *
@@ -22,6 +24,7 @@ import lombok.*;
 @TableName("de_disposal")
 public class Disposal extends BasePO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

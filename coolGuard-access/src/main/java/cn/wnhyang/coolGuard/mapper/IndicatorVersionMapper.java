@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 /**
- * 指标表历史表 Mapper 接口
+ * 指标表版本表 Mapper 接口
  *
  * @author wnhyang
  * @since 2024/11/21
@@ -40,5 +40,10 @@ public interface IndicatorVersionMapper extends BaseMapperX<IndicatorVersion> {
                 .and(w -> w.eq(IndicatorVersion::getSceneType, SceneType.APP).apply("FIND_IN_SET({0}, scenes)", app))
                 .or(w -> w.eq(IndicatorVersion::getSceneType, SceneType.POLICY_SET).apply("FIND_IN_SET({0}, scenes)", policySet))
         );
+    }
+
+    default IndicatorVersion selectByCode(String code) {
+        return selectOne(new LambdaQueryWrapperX<IndicatorVersion>()
+                .eq(IndicatorVersion::getCode, code));
     }
 }

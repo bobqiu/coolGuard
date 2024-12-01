@@ -19,7 +19,7 @@ import static cn.wnhyang.coolGuard.exception.ErrorCodes.INDICATOR_VERSION_NOT_EX
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
- * 指标表历史表 服务实现类
+ * 指标表版本表 服务实现类
  *
  * @author wnhyang
  * @since 2024/11/21
@@ -46,6 +46,12 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
     @Override
     public IndicatorVersionVO get(Long id) {
         IndicatorVersion indicatorVersion = indicatorVersionMapper.selectById(id);
+        return IndicatorVersionConvert.INSTANCE.convert(indicatorVersion);
+    }
+
+    @Override
+    public IndicatorVersionVO getByCode(String code) {
+        IndicatorVersion indicatorVersion = indicatorVersionMapper.selectByCode(code);
         return IndicatorVersionConvert.INSTANCE.convert(indicatorVersion);
     }
 

@@ -157,6 +157,12 @@ public class PolicyServiceImpl implements PolicyService {
         return policyVOPageResult;
     }
 
+    @Override
+    public List<PolicyVO> listByPolicySetCode(String setCode) {
+        List<Policy> policyList = policyMapper.selectListBySetCode(setCode);
+        return PolicyConvert.INSTANCE.convert(policyList);
+    }
+
     @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public boolean policyAccess(NodeComponent bindCmp) {
         Policy policy = policyMapper.selectByCode(bindCmp.getTag());

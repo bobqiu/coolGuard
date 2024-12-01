@@ -7,9 +7,11 @@ import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
 import cn.wnhyang.coolGuard.entity.Chain;
 import cn.wnhyang.coolGuard.entity.Rule;
+import cn.wnhyang.coolGuard.entity.RuleVersion;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.PolicyMapper;
 import cn.wnhyang.coolGuard.mapper.RuleMapper;
+import cn.wnhyang.coolGuard.mapper.RuleVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleService;
 import cn.wnhyang.coolGuard.util.LFUtil;
@@ -55,6 +57,8 @@ public class RuleServiceImpl implements RuleService {
 
     private final ChainMapper chainMapper;
 
+    private final RuleVersionMapper ruleVersionMapper;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.RULE, allEntries = true)
@@ -70,6 +74,8 @@ public class RuleServiceImpl implements RuleService {
         chainMapper.insert(new Chain().setChainName(rChain).setElData(StrUtil.format(LFUtil.IF_EL, condEl,
                 LFUtil.RULE_TRUE_COMMON_NODE,
                 LFUtil.RULE_FALSE_COMMON_NODE)));
+        // 创建版本
+        ruleVersionMapper.insert(new RuleVersion().setCode(rule.getCode()).setRule(rule).setStatus(Boolean.TRUE));
         return rule.getId();
     }
 
@@ -94,6 +100,13 @@ public class RuleServiceImpl implements RuleService {
                 LFUtil.RULE_TRUE_COMMON_NODE,
                 LFUtil.RULE_FALSE_COMMON_NODE));
         chainMapper.updateById(chain);
+        // 确认是否有更改
+        RuleVersion ruleVersion = ruleVersionMapper.selectLatest(convert.getCode());
+        // 有更改，1、旧版本状态改为旧版本，2、创建新版本版本号为新版本号+1
+        if (!convert.equals(ruleVersion.getRule())) {
+            ruleVersionMapper.updateById(new RuleVersion().setId(ruleVersion.getId()).setStatus(Boolean.FALSE));
+            ruleVersionMapper.insert(new RuleVersion().setCode(convert.getCode()).setRule(convert).setStatus(Boolean.TRUE).setVersion(ruleVersion.getVersion() + 1));
+        }
     }
 
     @Override
@@ -115,6 +128,8 @@ public class RuleServiceImpl implements RuleService {
             Rule rule = ruleMapper.selectById(id);
             ruleMapper.deleteById(id);
             chainMapper.deleteByChainName(StrUtil.format(LFUtil.RULE_CHAIN, rule.getCode()));
+            // 删除所有版本
+            ruleVersionMapper.deleteBySetCode(rule.getCode());
         });
     }
 
@@ -129,6 +144,12 @@ public class RuleServiceImpl implements RuleService {
         PageResult<Rule> rulePageResult = ruleMapper.selectPage(pageVO);
 
         return RuleConvert.INSTANCE.convert(rulePageResult);
+    }
+
+    @Override
+    public List<RuleVO> listByPolicyCode(String policyCode) {
+        List<Rule> ruleList = ruleMapper.selectByPolicyCode(policyCode);
+        return RuleConvert.INSTANCE.convert(ruleList);
     }
 
     private Cond getCond(String code) {

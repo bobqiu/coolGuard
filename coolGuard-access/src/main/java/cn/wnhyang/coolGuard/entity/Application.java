@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
+import java.io.Serial;
+
 /**
  * 应用表
  *
@@ -22,6 +24,7 @@ import lombok.*;
 @TableName("de_application")
 public class Application extends BasePO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

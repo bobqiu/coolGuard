@@ -7,6 +7,7 @@ import cn.wnhyang.coolGuard.vo.page.PolicyPageVO;
 import cn.wnhyang.coolGuard.vo.update.PolicyUpdateVO;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 策略表 服务类
@@ -62,4 +63,11 @@ public interface PolicyService {
      */
     PageResult<PolicyVO> pagePolicy(PolicyPageVO pageVO);
 
+    /**
+     * 根据策略集code查询列表
+     *
+     * @param setCode 策略集code
+     * @return list
+     */
+    List<PolicyVO> listByPolicySetCode(String setCode);
 }
