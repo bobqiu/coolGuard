@@ -262,7 +262,6 @@ public class FieldServiceImpl implements FieldService {
 
     }
 
-
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.DYNAMIC_FIELD_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "动态字段组件")
     public void dynamicField(NodeComponent bindCmp) {
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
@@ -278,6 +277,11 @@ public class FieldServiceImpl implements FieldService {
 
         });
         log.info("系统字段：{}", accessRequest.getFields());
+    }
+
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.SET_FIELD, nodeType = NodeTypeEnum.COMMON, nodeName = "设置字段组件")
+    public void setField(NodeComponent bindCmp) {
+
     }
 
 }

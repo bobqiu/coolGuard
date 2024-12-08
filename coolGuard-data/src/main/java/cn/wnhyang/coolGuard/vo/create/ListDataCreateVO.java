@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.vo.create;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -13,13 +14,13 @@ import java.io.Serializable;
 @Data
 public class ListDataCreateVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
 
     /**
      * 名单集id
      */
-    private Long listSetId;
+    private String listSetCode;
 
     /**
      * 名单数据

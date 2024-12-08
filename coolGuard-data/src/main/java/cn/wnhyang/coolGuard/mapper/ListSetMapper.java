@@ -20,4 +20,8 @@ public interface ListSetMapper extends BaseMapperX<ListSet> {
         return selectPage(pageVO, new LambdaQueryWrapperX<ListSet>()
                 .likeIfPresent(ListSet::getName, pageVO.getName()));
     }
+
+    default ListSet selectByCode(String setCode) {
+        return selectOne(ListSet::getCode, setCode);
+    }
 }

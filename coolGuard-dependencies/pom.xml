@@ -106,6 +106,12 @@
 
             <dependency>
                 <groupId>cn.hutool</groupId>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
@@ -173,6 +179,12 @@
             <dependency>
                 <groupId>cn.wnhyang</groupId>
                 <artifactId>coolGuard-data</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.wnhyang</groupId>
+                <artifactId>coolGuard-liteflow</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

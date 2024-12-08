@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.vo.base;
 
-import cn.wnhyang.coolGuard.vo.Cond;
+import cn.wnhyang.coolGuard.entity.Cond;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;

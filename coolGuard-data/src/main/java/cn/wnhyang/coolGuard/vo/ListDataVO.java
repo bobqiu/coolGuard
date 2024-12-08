@@ -3,6 +3,8 @@ package cn.wnhyang.coolGuard.vo;
 import cn.wnhyang.coolGuard.vo.create.ListDataCreateVO;
 import lombok.Data;
 
+import java.io.Serial;
+
 /**
  * 名单数据表
  *
@@ -12,6 +14,7 @@ import lombok.Data;
 @Data
 public class ListDataVO extends ListDataCreateVO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

@@ -5,6 +5,7 @@ import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.wnhyang.coolGuard.constant.ExpectType;
 import cn.wnhyang.coolGuard.context.AccessRequest;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
+import cn.wnhyang.coolGuard.entity.Cond;
 import cn.wnhyang.coolGuard.enums.CondType;
 import cn.wnhyang.coolGuard.enums.FieldType;
 import cn.wnhyang.coolGuard.enums.LogicType;
@@ -12,7 +13,6 @@ import cn.wnhyang.coolGuard.service.CondService;
 import cn.wnhyang.coolGuard.service.ListDataService;
 import cn.wnhyang.coolGuard.util.FunUtil;
 import cn.wnhyang.coolGuard.util.LFUtil;
-import cn.wnhyang.coolGuard.vo.Cond;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
@@ -168,7 +168,7 @@ public class CondServiceImpl implements CondService {
 
                     String stringData = accessRequest.getStringData(fieldName);
                     // 查名单集做匹配
-                    b = listDataService.hasListData(Long.valueOf(cond.getExpectValue()), stringData);
+                    b = listDataService.hasListData(cond.getExpectValue(), stringData);
                 }
                 case SCRIPT -> {
                     // TODO 脚本条件

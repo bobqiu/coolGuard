@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
+import java.io.Serial;
+
 /**
  * 名单集表
  *
@@ -21,6 +23,7 @@ import lombok.*;
 @TableName("de_list_set")
 public class ListSet extends BasePO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -28,6 +31,12 @@ public class ListSet extends BasePO {
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
+
+    /**
+     * 名单集编码
+     */
+    @TableField("code")
+    private String code;
 
     /**
      * 名单集名

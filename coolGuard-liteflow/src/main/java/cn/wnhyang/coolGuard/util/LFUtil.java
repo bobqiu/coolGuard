@@ -1,9 +1,7 @@
 package cn.wnhyang.coolGuard.util;
 
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.vo.Cond;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.wnhyang.coolGuard.entity.Cond;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
@@ -11,20 +9,11 @@ import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-import static cn.wnhyang.coolGuard.util.JsonUtils.buildJavaTimeModule;
-
 /**
  * @author wnhyang
  * @date 2024/7/18
  **/
 public class LFUtil {
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    static {
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.registerModules(buildJavaTimeModule());
-    }
 
     /**
      * if
@@ -97,6 +86,11 @@ public class LFUtil {
     public static final String DYNAMIC_FIELD_COMMON_NODE = "df_cn";
 
     /**
+     * 设置字段组件
+     */
+    public static final String SET_FIELD = "setField";
+
+    /**
      * 指标次数循环组件
      */
     public static final String INDICATOR_FOR_NODE = "i_fn";
@@ -141,6 +135,10 @@ public class LFUtil {
      */
     public static final String CONDITION_COMMON_NODE = "c_cn";
 
+    public static final String ADD_LIST = "addListData";
+
+    public static final String ADD_TAG = "addTag";
+
     /**
      * 规则普通组件
      */
@@ -149,12 +147,12 @@ public class LFUtil {
     /**
      * 规则true普通组件
      */
-    public static final String RULE_TRUE_COMMON_NODE = "r_tcn";
+    public static final String RULE_TRUE = "ruleTrue";
 
     /**
      * 规则false普通组件
      */
-    public static final String RULE_FALSE_COMMON_NODE = "r_fcn";
+    public static final String RULE_FALSE = "ruleFalse";
 
     public static final String NODE_WITH_TAG = "{}.tag(\"{}\")";
 
@@ -224,7 +222,7 @@ public class LFUtil {
                         .collect(Collectors.toList());
                 return cond.getLogicOp() + "(" + String.join(", ", expressions) + ")";
             } else {
-                return "c_cn.data('" + objectMapper.writeValueAsString(cond) + "')";
+                return "c_cn.data('" + JsonUtils.toJsonString(cond) + "')";
             }
         }
         return "";
@@ -252,7 +250,7 @@ public class LFUtil {
         if (variableExpression.contains(".data('")) {
             int dataIndex = variableExpression.indexOf(".data('");
             String jsonData = variableExpression.substring(dataIndex + 7, variableExpression.length() - 2).trim();
-            return objectMapper.readValue(jsonData, Cond.class);
+            return JsonUtils.parseObject(jsonData, Cond.class);
         }
         return new Cond();
     }

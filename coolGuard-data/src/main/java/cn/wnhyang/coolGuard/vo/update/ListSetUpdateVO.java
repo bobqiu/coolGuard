@@ -1,7 +1,8 @@
 package cn.wnhyang.coolGuard.vo.update;
 
-import cn.wnhyang.coolGuard.vo.create.ListSetCreateVO;
 import lombok.Data;
+
+import java.io.Serial;
 
 /**
  * 名单集表
@@ -10,8 +11,9 @@ import lombok.Data;
  * @since 2024/05/28
  */
 @Data
-public class ListSetUpdateVO extends ListSetCreateVO {
+public class ListSetUpdateVO extends ListDataUpdateVO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

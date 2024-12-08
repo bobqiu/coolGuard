@@ -57,18 +57,18 @@ public interface ListDataService {
     /**
      * 获取名单数据
      *
-     * @param setId 名单集id
+     * @param setCode 名单集code
      * @return 名单数据
      */
-    List<String> getListData(Long setId);
+    List<String> getListData(String setCode);
 
     /**
      * 判断名单数据是否存在
      *
-     * @param setId 名单集id
-     * @param value 名单数据
+     * @param setCode 名单集code
+     * @param value   名单数据
      * @return true存在/false不存在
      */
-    boolean hasListData(Long setId, String value);
+    boolean hasListData(String setCode, String value);
 
 }

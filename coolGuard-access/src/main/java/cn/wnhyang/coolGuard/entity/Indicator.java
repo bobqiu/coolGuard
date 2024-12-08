@@ -1,7 +1,6 @@
 package cn.wnhyang.coolGuard.entity;
 
 import cn.wnhyang.coolGuard.pojo.BasePO;
-import cn.wnhyang.coolGuard.vo.Cond;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;

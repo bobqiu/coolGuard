@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.vo;
 
+import cn.wnhyang.coolGuard.entity.Cond;
 import lombok.Data;
 
 import java.io.Serial;

@@ -6,6 +6,7 @@ import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
 import cn.wnhyang.coolGuard.entity.Chain;
+import cn.wnhyang.coolGuard.entity.Cond;
 import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.entity.RuleVersion;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
@@ -15,7 +16,6 @@ import cn.wnhyang.coolGuard.mapper.RuleVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleService;
 import cn.wnhyang.coolGuard.util.LFUtil;
-import cn.wnhyang.coolGuard.vo.Cond;
 import cn.wnhyang.coolGuard.vo.RuleVO;
 import cn.wnhyang.coolGuard.vo.create.RuleCreateVO;
 import cn.wnhyang.coolGuard.vo.page.RulePageVO;
@@ -71,8 +71,8 @@ public class RuleServiceImpl implements RuleService {
         String condEl = LFUtil.buildCondEl(createVO.getCond());
         String rChain = StrUtil.format(LFUtil.RULE_CHAIN, rule.getCode());
         chainMapper.insert(new Chain().setChainName(rChain).setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                LFUtil.RULE_TRUE_COMMON_NODE,
-                LFUtil.RULE_FALSE_COMMON_NODE)));
+                LFUtil.RULE_TRUE,
+                LFUtil.RULE_FALSE)));
         // 创建版本
         ruleVersionMapper.insert(new RuleVersion().setCode(rule.getCode()).setRule(rule).setLatest(Boolean.TRUE));
         return rule.getId();
@@ -96,8 +96,8 @@ public class RuleServiceImpl implements RuleService {
         String rChain = StrUtil.format(LFUtil.RULE_CHAIN, convert.getCode());
         Chain chain = chainMapper.getByChainName(rChain);
         chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                LFUtil.RULE_TRUE_COMMON_NODE,
-                LFUtil.RULE_FALSE_COMMON_NODE));
+                LFUtil.RULE_TRUE,
+                LFUtil.RULE_FALSE));
         chainMapper.updateById(chain);
         // 确认是否有更改
         RuleVersion ruleVersion = ruleVersionMapper.selectLatest(convert.getCode());
@@ -177,7 +177,7 @@ public class RuleServiceImpl implements RuleService {
         bindCmp.invoke2Resp(StrUtil.format(LFUtil.RULE_CHAIN, ruleVO.getCode()), ruleVO);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则true组件")
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_TRUE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则true组件")
     public void ruleTrue(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
         RuleVO ruleVO = bindCmp.getSubChainReqData();
@@ -186,7 +186,7 @@ public class RuleServiceImpl implements RuleService {
         // TODO 后置操作，除了处置方式外
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则false组件")
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_FALSE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则false组件")
     public void ruleFalse(NodeComponent bindCmp) {
         log.info("规则未命中");
     }

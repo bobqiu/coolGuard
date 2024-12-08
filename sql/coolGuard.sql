@@ -184,18 +184,18 @@ create table coolGuard.de_indicator_version
 
 create table coolGuard.de_list_data
 (
-    id          bigint auto_increment comment '主键'
+    id            bigint auto_increment comment '主键'
         primary key,
-    list_set_id bigint                                                not null comment '名单集id',
-    value       varchar(64)                                           not null comment '名单数据',
-    source      varchar(10)                 default ''                not null comment '名单数据来源',
-    status      bit                         default b'0'              not null comment '名单数据状态',
-    description varchar(64) charset utf8mb4 default ''                null comment '描述',
-    creator     varchar(36) charset utf8mb4 default ''                null comment '创建者',
-    create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater     varchar(36) charset utf8mb4 default ''                null comment '更新者',
-    update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    deleted     bit                         default b'0'              not null comment '是否删除'
+    list_set_code varchar(30)                                           not null comment '名单集code',
+    value         varchar(64)                                           not null comment '名单数据',
+    source        varchar(10)                 default ''                not null comment '名单数据来源',
+    status        bit                         default b'0'              not null comment '名单数据状态',
+    description   varchar(64) charset utf8mb4 default ''                null comment '描述',
+    creator       varchar(36) charset utf8mb4 default ''                null comment '创建者',
+    create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater       varchar(36) charset utf8mb4 default ''                null comment '更新者',
+    update_time   datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted       bit                         default b'0'              not null comment '是否删除'
 )
     comment '名单数据表';
 
@@ -203,6 +203,7 @@ create table coolGuard.de_list_set
 (
     id          bigint auto_increment comment '主键'
         primary key,
+    code        varchar(30)                                           null comment '名单集code',
     name        varchar(36)                                           not null comment '名单集名',
     type        varchar(10)                                           not null comment '名单集类型',
     status      bit                         default b'0'              not null comment '名单集状态',
@@ -211,7 +212,9 @@ create table coolGuard.de_list_set
     create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
     updater     varchar(36) charset utf8mb4 default ''                null comment '更新者',
     update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    deleted     bit                         default b'0'              not null comment '是否删除'
+    deleted     bit                         default b'0'              not null comment '是否删除',
+    constraint uk_code
+        unique (code)
 )
     comment '名单集表';
 
@@ -330,6 +333,43 @@ create table coolGuard.de_rule_version
 )
     comment '策略版本扩展表';
 
+create table coolGuard.de_sms_template
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    code        varchar(36)                 default ''                not null comment '消息编码',
+    name        varchar(36)                 default ''                not null comment '消息名',
+    content     varchar(1000)               default ''                not null comment '消息内容',
+    params      varchar(300)                                          null comment '消息参数',
+    description varchar(64) charset utf8mb4 default ''                null comment '描述',
+    creator     varchar(36) charset utf8mb4 default ''                null comment '创建者',
+    create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater     varchar(36) charset utf8mb4 default ''                null comment '更新者',
+    update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted     bit                         default b'0'              not null comment '是否删除',
+    constraint uk_code
+        unique (code)
+)
+    comment '消息模版表';
+
+create table coolGuard.de_tag
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    code        varchar(36)                 default ''                not null comment '标签编码',
+    name        varchar(36)                 default ''                not null comment '标签名',
+    color       varchar(36)                                           null comment '颜色',
+    description varchar(64) charset utf8mb4 default ''                null comment '描述',
+    creator     varchar(36) charset utf8mb4 default ''                null comment '创建者',
+    create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater     varchar(36) charset utf8mb4 default ''                null comment '更新者',
+    update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted     bit                         default b'0'              not null comment '是否删除',
+    constraint uk_code
+        unique (code)
+)
+    comment '标签表';
+
 INSERT INTO coolGuard.de_access (display_name, name, input_config, output_config, description, creator, create_time,
                                  updater, update_time, deleted)
 VALUES ('公共接口', 'publicInterface',
@@ -345,14 +385,14 @@ VALUES ('手机', 'phone', 'thtrshtrshtaqq32t4y4hg', 'ewgwregw', NULL, '2024-11-
 INSERT INTO coolGuard.de_chain (application_name, chain_name, el_data, enable, description, creator, create_time,
                                 updater, update_time, deleted)
 VALUES ('coolGuard', 'R_C#f1df5b70574a46a09b95f3662cffaed9',
-        'IF(OR(c_cn.data(''{"type":"normal","value":"N_S_payerAccount","logicType":"not_null","expectType":"","expectValue":""}''), c_cn.data(''{"type":"normal","value":"N_F_transAmount","logicType":"gt","expectType":"input","expectValue":"100"}'')),r_tcn,r_fcn);',
-        1, '', '', '2024-04-08 15:34:32', '', '2024-11-16 12:16:51', 0),
+        'IF(OR(c_cn.data(''{"type":"normal","value":"N_S_payerAccount","logicType":"not_null","expectType":"","expectValue":""}''), c_cn.data(''{"type":"normal","value":"N_F_transAmount","logicType":"gt","expectType":"input","expectValue":"100"}'')),ruleTrue,ruleFalse);',
+        1, '', '', '2024-04-08 15:34:32', '', '2024-12-08 20:03:21', 0),
        ('coolGuard', 'R_C#0b30510bf425492381a78aca098be029',
-        'IF(AND(c_cn.data(''{"type":"normal","value":"N_S_appName","logicType":"eq","expectType":"input","expectValue":"phone"}''),c_cn.data(''{"type":"normal","value":"N_F_transAmount","logicType":"lt","expectType":"input","expectValue":"100"}'')),r_tcn,r_fcn);',
-        1, '', '', '2024-04-08 15:34:32', '', '2024-11-16 12:16:51', 0),
+        'IF(AND(c_cn.data(''{"type":"normal","value":"N_S_appName","logicType":"eq","expectType":"input","expectValue":"phone"}''),c_cn.data(''{"type":"normal","value":"N_F_transAmount","logicType":"lt","expectType":"input","expectValue":"100"}'')),ruleTrue,ruleFalse);',
+        1, '', '', '2024-04-08 15:34:32', '', '2024-12-08 20:03:21', 0),
        ('coolGuard', 'R_C#6ae5cb587c784326b45c944e80319d50',
-        'IF(c_cn.data(''{"type":"normal","value":"N_F_transAmount","logicType":"gte","expectType":"input","expectValue":"20.0"}''),r_tcn,r_fcn);',
-        1, '', '', '2024-04-09 10:57:57', '', '2024-11-16 12:16:51', 0),
+        'IF(c_cn.data(''{"type":"normal","value":"N_F_transAmount","logicType":"gte","expectType":"input","expectValue":"20.0"}''),ruleTrue,ruleFalse);',
+        1, '', '', '2024-04-09 10:57:57', '', '2024-12-08 20:03:21', 0),
        ('coolGuard', 'A_C#publicInterface', 'THEN(a_icn,nf_cn,df_cn,I_F,ps_cn,a_ocn);', 1, '', '',
         '2024-04-09 15:34:47', '', '2024-11-16 11:32:51', 0),
        ('coolGuard', 'I_C#b75c84a6b5ec45ed8026ca7c873e789c',

@@ -17,6 +17,7 @@
         <module>coolGuard-dependencies</module>
         <module>coolGuard-data</module>
         <module>coolGuard-monitor</module>
+        <module>coolGuard-liteflow</module>
     </modules>
 
     <properties>
