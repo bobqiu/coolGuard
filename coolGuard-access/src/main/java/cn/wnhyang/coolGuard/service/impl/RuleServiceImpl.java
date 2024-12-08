@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.RULE_CODE_EXIST;
@@ -75,7 +74,7 @@ public class RuleServiceImpl implements RuleService {
                 LFUtil.RULE_TRUE_COMMON_NODE,
                 LFUtil.RULE_FALSE_COMMON_NODE)));
         // 创建版本
-        ruleVersionMapper.insert(new RuleVersion().setCode(rule.getCode()).setRule(rule).setStatus(Boolean.TRUE));
+        ruleVersionMapper.insert(new RuleVersion().setCode(rule.getCode()).setRule(rule).setLatest(Boolean.TRUE));
         return rule.getId();
     }
 
@@ -104,8 +103,8 @@ public class RuleServiceImpl implements RuleService {
         RuleVersion ruleVersion = ruleVersionMapper.selectLatest(convert.getCode());
         // 有更改，1、旧版本状态改为旧版本，2、创建新版本版本号为新版本号+1
         if (!convert.equals(ruleVersion.getRule())) {
-            ruleVersionMapper.updateById(new RuleVersion().setId(ruleVersion.getId()).setStatus(Boolean.FALSE));
-            ruleVersionMapper.insert(new RuleVersion().setCode(convert.getCode()).setRule(convert).setStatus(Boolean.TRUE).setVersion(ruleVersion.getVersion() + 1));
+            ruleVersionMapper.updateById(new RuleVersion().setId(ruleVersion.getId()).setLatest(Boolean.FALSE));
+            ruleVersionMapper.insert(new RuleVersion().setCode(convert.getCode()).setRule(convert).setLatest(Boolean.TRUE).setVersion(ruleVersion.getVersion() + 1));
         }
     }
 
@@ -117,20 +116,17 @@ public class RuleServiceImpl implements RuleService {
         if (rule == null) {
             throw exception(RULE_NOT_EXIST);
         }
-        deleteRule(Collections.singleton(id));
+        ruleMapper.deleteById(id);
+        chainMapper.deleteByChainName(StrUtil.format(LFUtil.RULE_CHAIN, rule.getCode()));
+        // 删除所有版本
+        ruleVersionMapper.deleteBySetCode(rule.getCode());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.RULE, allEntries = true)
     public void deleteRule(Collection<Long> ids) {
-        ids.forEach(id -> {
-            Rule rule = ruleMapper.selectById(id);
-            ruleMapper.deleteById(id);
-            chainMapper.deleteByChainName(StrUtil.format(LFUtil.RULE_CHAIN, rule.getCode()));
-            // 删除所有版本
-            ruleVersionMapper.deleteBySetCode(rule.getCode());
-        });
+        ids.forEach(this::deleteRule);
     }
 
     @Override
@@ -150,6 +146,11 @@ public class RuleServiceImpl implements RuleService {
     public List<RuleVO> listByPolicyCode(String policyCode) {
         List<Rule> ruleList = ruleMapper.selectByPolicyCode(policyCode);
         return RuleConvert.INSTANCE.convert(ruleList);
+    }
+
+    @Override
+    public void submit(Long id) {
+
     }
 
     private Cond getCond(String code) {

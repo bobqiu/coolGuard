@@ -70,4 +70,11 @@ public interface RuleService {
      * @return poList
      */
     List<RuleVO> listByPolicyCode(String policyCode);
+
+    /**
+     * 提交
+     *
+     * @param id id
+     */
+    void submit(Long id);
 }

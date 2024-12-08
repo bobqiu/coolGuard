@@ -57,12 +57,6 @@ public class Policy extends BasePO {
     private String mode;
 
     /**
-     * 策略状态，应该包含开启、关闭、待发布
-     */
-    @TableField("status")
-    private Boolean status;
-
-    /**
      * 描述
      */
     @TableField("description")

@@ -26,7 +26,7 @@ public class RuleVersionMapperTest {
     void test() {
         for (Rule rule : ruleMapper.selectList()) {
             log.info("{}", rule);
-            ruleVersionMapper.insert(new RuleVersion().setCode(rule.getCode()).setRule(rule).setStatus(Boolean.TRUE));
+            ruleVersionMapper.insert(new RuleVersion().setCode(rule.getCode()).setRule(rule).setLatest(Boolean.TRUE));
         }
     }
 }

@@ -34,14 +34,14 @@ public class RuleVersionController {
     private final RuleVersionService ruleVersionService;
 
     /**
-     * 删除
+     * 下线
      *
      * @param id id
      * @return true/false
      */
-    @DeleteMapping
-    public CommonResult<Boolean> delete(@RequestParam("id") Long id) {
-        ruleVersionService.delete(id);
+    @PostMapping("/offline")
+    public CommonResult<Boolean> offline(@RequestParam("id") Long id) {
+        ruleVersionService.offline(id);
         return success(true);
     }
 

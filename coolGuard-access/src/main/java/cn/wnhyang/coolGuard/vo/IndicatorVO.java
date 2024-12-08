@@ -77,6 +77,11 @@ public class IndicatorVO extends IndicatorBaseVO {
     private String filterScript;
 
     /**
+     * 是否发布
+     */
+    private Boolean publish;
+
+    /**
      * 版本号
      */
     private Integer version;

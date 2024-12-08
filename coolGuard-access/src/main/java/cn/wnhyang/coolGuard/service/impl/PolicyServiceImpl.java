@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
@@ -93,12 +92,6 @@ public class PolicyServiceImpl implements PolicyService {
             throw exception(POLICY_NOT_EXIST);
         }
         Policy convert = PolicyConvert.INSTANCE.convert(updateVO);
-        if (!convert.getStatus()) {
-            List<Rule> ruleList = ruleMapper.selectRunningListByPolicyCode(convert.getCode());
-            if (CollUtil.isNotEmpty(ruleList)) {
-                throw exception(POLICY_REFERENCE_UPDATE);
-            }
-        }
         policyMapper.updateById(convert);
     }
 
@@ -110,32 +103,29 @@ public class PolicyServiceImpl implements PolicyService {
         if (policy == null) {
             throw exception(POLICY_NOT_EXIST);
         }
-        deletePolicy(Collections.singleton(id));
+        // 1、确认是否还有运行的规则
+        List<Rule> ruleList = ruleMapper.selectRunningListByPolicyCode(policy.getCode());
+        if (CollUtil.isNotEmpty(ruleList)) {
+            throw exception(POLICY_REFERENCE_DELETE);
+        }
+        // 2、没有运行的规则就可以删除策略了
+        // 3、删除策略下的所有规则
+        ruleList = ruleMapper.selectByPolicyCode(policy.getCode());
+        ruleService.deleteRule(CollectionUtils.convertSet(ruleList, Rule::getId));
+        // 4、删除chain
+        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetCode());
+        Chain chain = chainMapper.getByChainName(psChain);
+        chain.setElData(LFUtil.removeEl(chain.getElData(),
+                LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, id)));
+        chainMapper.updateByChainName(psChain, chain);
+        policyMapper.deleteById(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.POLICY, allEntries = true)
     public void deletePolicy(Collection<Long> ids) {
-        ids.forEach(id -> {
-            Policy policy = policyMapper.selectById(id);
-            // 1、确认是否还有运行的规则
-            List<Rule> ruleList = ruleMapper.selectRunningListByPolicyCode(policy.getCode());
-            if (CollUtil.isNotEmpty(ruleList)) {
-                throw exception(POLICY_REFERENCE_DELETE);
-            }
-            // 2、没有运行的规则就可以删除策略了
-            // 3、删除策略下的所有规则
-            ruleList = ruleMapper.selectByPolicyCode(policy.getCode());
-            ruleService.deleteRule(CollectionUtils.convertSet(ruleList, Rule::getId));
-            // 4、删除chain
-            String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetCode());
-            Chain chain = chainMapper.getByChainName(psChain);
-            chain.setElData(LFUtil.removeEl(chain.getElData(),
-                    LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, id)));
-            chainMapper.updateByChainName(psChain, chain);
-            policyMapper.deleteById(id);
-        });
+        ids.forEach(this::deletePolicy);
     }
 
     @Override
@@ -161,12 +151,6 @@ public class PolicyServiceImpl implements PolicyService {
     public List<PolicyVO> listByPolicySetCode(String setCode) {
         List<Policy> policyList = policyMapper.selectListBySetCode(setCode);
         return PolicyConvert.INSTANCE.convert(policyList);
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
-    public boolean policyAccess(NodeComponent bindCmp) {
-        Policy policy = policyMapper.selectByCode(bindCmp.getTag());
-        return policy.getStatus();
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略普通组件")

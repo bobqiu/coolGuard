@@ -47,10 +47,10 @@ public class IndicatorVersion extends BasePO {
     private String name;
 
     /**
-     * 状态
+     * 最新
      */
-    @TableField("status")
-    private Boolean status;
+    @TableField("latest")
+    private Boolean latest;
 
     /**
      * 类型

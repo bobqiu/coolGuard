@@ -21,22 +21,22 @@ public interface IndicatorVersionMapper extends BaseMapperX<IndicatorVersion> {
 
     default PageResult<IndicatorVersion> selectPage(IndicatorVersionPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<IndicatorVersion>()
-                .eq(IndicatorVersion::getStatus, Boolean.TRUE)
+                .eq(IndicatorVersion::getLatest, Boolean.TRUE)
                 .likeIfPresent(IndicatorVersion::getName, pageVO.getName())
                 .eqIfPresent(IndicatorVersion::getType, pageVO.getType())
                 .eqIfPresent(IndicatorVersion::getSceneType, pageVO.getSceneType())
                 .eqIfPresent(IndicatorVersion::getScenes, pageVO.getScene()));
     }
 
-    default IndicatorVersion selectRunningByCode(String code) {
+    default IndicatorVersion selectLatestByCode(String code) {
         return selectOne(new LambdaQueryWrapperX<IndicatorVersion>()
                 .eq(IndicatorVersion::getCode, code)
-                .eq(IndicatorVersion::getStatus, Boolean.TRUE));
+                .eq(IndicatorVersion::getLatest, Boolean.TRUE));
     }
 
-    default List<IndicatorVersion> selectRunningListByScenes(String app, String policySet) {
+    default List<IndicatorVersion> selectLatestListByScenes(String app, String policySet) {
         return selectList(new LambdaQueryWrapperX<IndicatorVersion>()
-                .eq(IndicatorVersion::getStatus, Boolean.TRUE)
+                .eq(IndicatorVersion::getLatest, Boolean.TRUE)
                 .and(w -> w.eq(IndicatorVersion::getSceneType, SceneType.APP).apply("FIND_IN_SET({0}, scenes)", app))
                 .or(w -> w.eq(IndicatorVersion::getSceneType, SceneType.POLICY_SET).apply("FIND_IN_SET({0}, scenes)", policySet))
         );

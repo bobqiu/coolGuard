@@ -23,11 +23,6 @@ public class PolicyBaseVO implements Serializable {
     private String name;
 
     /**
-     * 策略状态
-     */
-    private Boolean status;
-
-    /**
      * 描述
      */
     private String description;

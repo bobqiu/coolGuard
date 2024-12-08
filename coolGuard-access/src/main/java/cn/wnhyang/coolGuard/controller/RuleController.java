@@ -64,6 +64,18 @@ public class RuleController {
     }
 
     /**
+     * 提交
+     *
+     * @param id id
+     * @return true/false
+     */
+    @PostMapping("/submit")
+    public CommonResult<Boolean> submit(@RequestParam("id") Long id) {
+        ruleService.submit(id);
+        return success(true);
+    }
+
+    /**
      * 查询单个
      *
      * @param id id

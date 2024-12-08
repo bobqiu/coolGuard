@@ -49,8 +49,8 @@ public class Indicator extends BasePO {
     /**
      * 状态
      */
-    @TableField("status")
-    private Boolean status;
+    @TableField("publish")
+    private Boolean publish;
 
     /**
      * 类型

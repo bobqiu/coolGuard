@@ -23,7 +23,7 @@ public interface PolicySetVersionMapper extends BaseMapperX<PolicySetVersion> {
     default PolicySetVersion selectLatest(String code) {
         return selectOne(new LambdaQueryWrapperX<PolicySetVersion>()
                 .eq(PolicySetVersion::getCode, code)
-                .eq(PolicySetVersion::getStatus, Boolean.TRUE));
+                .eq(PolicySetVersion::getLatest, Boolean.TRUE));
     }
 
     default void deleteBySetCode(String code) {

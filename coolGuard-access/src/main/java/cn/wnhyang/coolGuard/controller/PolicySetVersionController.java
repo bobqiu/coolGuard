@@ -35,14 +35,14 @@ public class PolicySetVersionController {
     private final PolicySetVersionService policySetVersionService;
 
     /**
-     * 删除
+     * 下线
      *
      * @param id id
      * @return true/false
      */
-    @DeleteMapping
-    public CommonResult<Boolean> delete(@RequestParam("id") Long id) {
-        policySetVersionService.delete(id);
+    @PostMapping("/offline")
+    public CommonResult<Boolean> offline(@RequestParam("id") Long id) {
+        policySetVersionService.offline(id);
         return success(true);
     }
 

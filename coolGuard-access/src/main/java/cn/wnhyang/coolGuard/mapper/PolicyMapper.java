@@ -41,9 +41,4 @@ public interface PolicyMapper extends BaseMapperX<Policy> {
                 .eqIfPresent(Policy::getCode, code));
     }
 
-    default List<Policy> selectRunningListBySetCode(String setCode) {
-        return selectList(new LambdaQueryWrapperX<Policy>()
-                .eq(Policy::getPolicySetCode, setCode)
-                .eq(Policy::getStatus, Boolean.TRUE));
-    }
 }

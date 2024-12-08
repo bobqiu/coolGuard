@@ -77,6 +77,12 @@ public class Rule extends BasePO {
     private Integer sort;
 
     /**
+     * 发布
+     */
+    @TableField("publish")
+    private Boolean publish;
+
+    /**
      * 条件
      */
     @TableField(value = "cond", typeHandler = JacksonTypeHandler.class)

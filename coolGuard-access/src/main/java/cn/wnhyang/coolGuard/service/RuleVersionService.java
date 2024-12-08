@@ -43,4 +43,10 @@ public interface RuleVersionService {
      */
     PageResult<RuleVersion> page(RuleVersionPageVO pageVO);
 
+    /**
+     * 下线
+     *
+     * @param id id
+     */
+    void offline(Long id);
 }

@@ -43,4 +43,10 @@ public interface PolicySetVersionService {
      */
     PageResult<PolicySetVersion> page(PolicySetVersionPageVO pageVO);
 
+    /**
+     * 下线
+     *
+     * @param id id
+     */
+    void offline(Long id);
 }

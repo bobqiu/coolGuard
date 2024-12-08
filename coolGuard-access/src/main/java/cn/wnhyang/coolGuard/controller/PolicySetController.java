@@ -6,6 +6,7 @@ import cn.wnhyang.coolGuard.service.PolicySetService;
 import cn.wnhyang.coolGuard.vo.PolicySetVO;
 import cn.wnhyang.coolGuard.vo.create.PolicySetCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetPageVO;
+import cn.wnhyang.coolGuard.vo.update.PolicySetChainUpdateVO;
 import cn.wnhyang.coolGuard.vo.update.PolicySetUpdateVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,30 @@ public class PolicySetController {
     @DeleteMapping
     public CommonResult<Boolean> deletePolicySet(@RequestParam("id") Long id) {
         policySetService.deletePolicySet(id);
+        return success(true);
+    }
+
+    /**
+     * 修改策略集chain
+     *
+     * @param updateVO 修改VO
+     * @return true/false
+     */
+    @PostMapping("/chain")
+    public CommonResult<Boolean> updatePolicySetChain(@RequestBody @Valid PolicySetChainUpdateVO updateVO) {
+        policySetService.updatePolicySetChain(updateVO);
+        return success(true);
+    }
+
+    /**
+     * 提交
+     *
+     * @param id id
+     * @return true/false
+     */
+    @PostMapping("/submit")
+    public CommonResult<Boolean> submit(@RequestParam("id") Long id) {
+        policySetService.submit(id);
         return success(true);
     }
 

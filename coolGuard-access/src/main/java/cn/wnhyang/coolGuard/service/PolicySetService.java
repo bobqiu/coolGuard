@@ -4,6 +4,7 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.PolicySetVO;
 import cn.wnhyang.coolGuard.vo.create.PolicySetCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetPageVO;
+import cn.wnhyang.coolGuard.vo.update.PolicySetChainUpdateVO;
 import cn.wnhyang.coolGuard.vo.update.PolicySetUpdateVO;
 
 import java.util.Collection;
@@ -60,5 +61,19 @@ public interface PolicySetService {
      * @return pageResult
      */
     PageResult<PolicySetVO> pagePolicySet(PolicySetPageVO pageVO);
+
+    /**
+     * 更新策略集链
+     *
+     * @param updateVO 更新VO
+     */
+    void updatePolicySetChain(PolicySetChainUpdateVO updateVO);
+
+    /**
+     * 提交
+     *
+     * @param id id
+     */
+    void submit(Long id);
 
 }

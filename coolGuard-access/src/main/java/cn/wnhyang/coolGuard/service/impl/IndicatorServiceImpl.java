@@ -115,7 +115,7 @@ public class IndicatorServiceImpl implements IndicatorService {
             throw exception(INDICATOR_NOT_CHANGE);
         }
         Indicator convert = IndicatorConvert.INSTANCE.convert(updateVO);
-        convert.setStatus(Boolean.FALSE);
+        convert.setPublish(Boolean.FALSE);
         indicatorMapper.updateById(convert);
     }
 
@@ -127,7 +127,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         if (indicator == null) {
             throw exception(INDICATOR_NOT_EXIST);
         }
-        IndicatorVersion indicatorVersion = indicatorVersionMapper.selectRunningByCode(indicator.getCode());
+        IndicatorVersion indicatorVersion = indicatorVersionMapper.selectLatestByCode(indicator.getCode());
         if (indicatorVersion != null) {
             throw exception(INDICATOR_IS_RUNNING);
         }
@@ -178,24 +178,24 @@ public class IndicatorServiceImpl implements IndicatorService {
         if (ObjectUtil.isNull(indicator)) {
             throw exception(INDICATOR_NOT_EXIST);
         }
-        if (indicator.getStatus()) {
+        if (indicator.getPublish()) {
             throw exception(INDICATOR_VERSION_EXIST);
         }
         // 1、更新当前指标为已提交
-        indicatorMapper.updateById(new Indicator().setId(submitVO.getId()).setStatus(Boolean.TRUE));
+        indicatorMapper.updateById(new Indicator().setId(submitVO.getId()).setPublish(Boolean.TRUE));
         // 2、查询是否有已运行的，有版本+1，没有版本1
-        IndicatorVersion indicatorVersion = indicatorVersionMapper.selectRunningByCode(indicator.getCode());
-        int version = 1;
+        IndicatorVersion indicatorVersion = indicatorVersionMapper.selectLatestByCode(indicator.getCode());
+        int version = 0;
         if (indicatorVersion != null) {
             version = indicatorVersion.getVersion() + 1;
             // 关闭已运行的
-            indicatorVersionMapper.updateById(new IndicatorVersion().setId(indicatorVersion.getId()).setStatus(Boolean.FALSE));
+            indicatorVersionMapper.updateById(new IndicatorVersion().setId(indicatorVersion.getId()).setLatest(Boolean.FALSE));
         }
         // 3、插入新纪录并加入chain
         IndicatorVersion convert = IndicatorVersionConvert.INSTANCE.convert(indicator);
         convert.setVersion(version);
         convert.setVersionDesc(submitVO.getVersionDesc());
-        convert.setStatus(Boolean.TRUE);
+        convert.setLatest(Boolean.TRUE);
         indicatorVersionMapper.insert(convert);
         // 4、更新chain
         String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getCode());
@@ -236,15 +236,9 @@ public class IndicatorServiceImpl implements IndicatorService {
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
         String appName = accessRequest.getStringData(FieldName.appName);
         String policySetCode = accessRequest.getStringData(FieldName.policySetCode);
-        List<IndicatorVersion> indicatorVersionList = indicatorVersionMapper.selectRunningListByScenes(appName, policySetCode);
+        List<IndicatorVersion> indicatorVersionList = indicatorVersionMapper.selectLatestListByScenes(appName, policySetCode);
         indicatorContext.setIndicatorList(ListUtil.toCopyOnWriteArrayList(IndicatorConvert.INSTANCE.convertVersion(indicatorVersionList)));
         return indicatorVersionList.size();
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.INDICATOR_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
-    public boolean indicatorAccess(NodeComponent bindCmp) {
-        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
-        return indicatorContext.getIndicator(bindCmp.getLoopIndex()).getStatus();
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标普通组件")

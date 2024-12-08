@@ -25,7 +25,7 @@ public class PolicySetVersionVO implements Serializable {
     /**
      * 策略集状态
      */
-    private Boolean status;
+    private Boolean latest;
 
     /**
      * 策略集链路

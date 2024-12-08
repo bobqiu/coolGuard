@@ -51,7 +51,7 @@ public class PolicyContext {
     }
 
     public PolicySetResult convert() {
-        PolicySetResult policySetResult = new PolicySetResult(policySetVO.getName(), policySetVO.getCode());
+        PolicySetResult policySetResult = new PolicySetResult(policySetVO.getName(), policySetVO.getCode(), policySetVO.getChain(), policySetVO.getVersion());
 
         for (Map.Entry<Long, PolicyVO> entry : policyMap.entrySet()) {
             PolicyVO policyVO = entry.getValue();

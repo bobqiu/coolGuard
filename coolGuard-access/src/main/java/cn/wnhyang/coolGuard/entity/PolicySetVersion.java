@@ -39,10 +39,10 @@ public class PolicySetVersion extends BasePO {
     private String code;
 
     /**
-     * 策略集状态
+     * 最新
      */
-    @TableField("status")
-    private Boolean status;
+    @TableField("latest")
+    private Boolean latest;
 
     /**
      * 策略集链路

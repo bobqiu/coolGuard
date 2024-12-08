@@ -68,7 +68,7 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
         if (indicatorVersion == null) {
             throw exception(INDICATOR_VERSION_NOT_EXIST);
         }
-        indicatorVersionMapper.updateById(new IndicatorVersion().setId(id).setStatus(Boolean.FALSE));
+        indicatorVersionMapper.updateById(new IndicatorVersion().setId(id).setLatest(Boolean.FALSE));
         chainMapper.deleteByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, indicatorVersion.getCode()));
     }
 

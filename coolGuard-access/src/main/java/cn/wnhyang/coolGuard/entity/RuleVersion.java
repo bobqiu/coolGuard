@@ -48,10 +48,10 @@ public class RuleVersion extends BasePO {
     private Rule rule;
 
     /**
-     * 策略集状态
+     * 最新
      */
-    @TableField("status")
-    private Boolean status;
+    @TableField("latest")
+    private Boolean latest;
 
     /**
      * 版本号

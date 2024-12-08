@@ -29,6 +29,16 @@ public class PolicySetResult implements Serializable {
     private final String code;
 
     /**
+     * 策略集链
+     */
+    private final String chain;
+
+    /**
+     * 策略集版本
+     */
+    private final Integer version;
+
+    /**
      * 处置名称
      */
     @Setter
@@ -40,9 +50,11 @@ public class PolicySetResult implements Serializable {
     @Setter
     private String disposalCode;
 
-    public PolicySetResult(String name, String code) {
+    public PolicySetResult(String name, String code, String chain, Integer version) {
         this.name = name;
         this.code = code;
+        this.chain = chain;
+        this.version = version;
     }
 
     /**

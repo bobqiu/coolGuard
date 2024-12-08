@@ -53,8 +53,8 @@ public class PolicySet extends BasePO {
     /**
      * 策略集状态
      */
-    @TableField("status")
-    private Boolean status;
+    @TableField("publish")
+    private Boolean publish;
 
     /**
      * 策略集链

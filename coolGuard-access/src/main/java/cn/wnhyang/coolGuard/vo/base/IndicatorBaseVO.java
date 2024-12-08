@@ -26,11 +26,6 @@ public class IndicatorBaseVO implements Serializable {
     private String name;
 
     /**
-     * 状态
-     */
-    private Boolean status;
-
-    /**
      * 描述
      */
     private String description;

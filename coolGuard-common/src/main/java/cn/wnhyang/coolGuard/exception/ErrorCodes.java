@@ -60,6 +60,8 @@ public interface ErrorCodes {
 
     ErrorCode POLICY_SET_REFERENCE_UPDATE = new ErrorCode(1007001003, "策略集下有运行策略，不可关闭当前策略集");
 
+    ErrorCode POLICY_SET_CHAIN_NOT_CHANGE = new ErrorCode(1007001004, "策略集链路没有修改");
+
     ErrorCode INDICATOR_NOT_EXIST = new ErrorCode(1008001000, "指标不存在");
 
     ErrorCode INDICATOR_CODE_EXIST = new ErrorCode(1008001001, "指标code已存在");
@@ -75,5 +77,11 @@ public interface ErrorCodes {
     ErrorCode INDICATOR_IS_RUNNING = new ErrorCode(1008001006, "指标正在运行中，不可删除");
 
     ErrorCode INDICATOR_NOT_CHANGE = new ErrorCode(1008001007, "指标未修改");
+
+    ErrorCode POLICY_SET_VERSION_NOT_EXIST = new ErrorCode(1009001001, "策略集版本不存在");
+
+    ErrorCode POLICY_SET_VERSION_EXIST = new ErrorCode(1009001002, "策略集版本已存在");
+
+    ErrorCode RULE_VERSION_NOT_EXIST = new ErrorCode(1010001001, "规则版本不存在");
 
 }

@@ -26,7 +26,7 @@ public class PolicySetVersionMapperTest {
     public void test() {
         for (PolicySet policySet : policySetMapper.selectList()) {
             log.info("{}", policySet);
-            policySetVersionMapper.insert(new PolicySetVersion().setCode(policySet.getCode()).setStatus(Boolean.TRUE).setChain(policySet.getChain()));
+            policySetVersionMapper.insert(new PolicySetVersion().setCode(policySet.getCode()).setLatest(Boolean.TRUE).setChain(policySet.getChain()));
         }
     }
 }

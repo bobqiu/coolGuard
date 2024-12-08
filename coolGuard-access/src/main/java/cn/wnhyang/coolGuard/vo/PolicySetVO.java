@@ -34,6 +34,21 @@ public class PolicySetVO extends PolicySetBaseVO {
     private String code;
 
     /**
+     * 策略集链
+     */
+    private String chain;
+
+    /**
+     * 发布
+     */
+    private Boolean publish;
+
+    /**
+     * 版本
+     */
+    private Integer version;
+
+    /**
      * 策略
      */
     private List<PolicyVO> policyList;
