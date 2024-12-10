@@ -26,11 +26,6 @@ public class SmsTemplateBase implements Serializable {
     private String content;
 
     /**
-     * 消息参数
-     */
-    private String params;
-
-    /**
      * 描述
      */
     private String description;

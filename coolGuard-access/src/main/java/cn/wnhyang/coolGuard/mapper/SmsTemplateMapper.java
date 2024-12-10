@@ -19,4 +19,8 @@ public interface SmsTemplateMapper extends BaseMapperX<SmsTemplate> {
     default PageResult<SmsTemplate> selectPage(SmsTemplatePageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<SmsTemplate>());
     }
+
+    default SmsTemplate selectByCode(String code) {
+        return selectOne(SmsTemplate::getCode, code);
+    }
 }

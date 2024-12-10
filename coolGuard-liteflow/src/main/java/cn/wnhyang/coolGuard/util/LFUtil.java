@@ -133,11 +133,22 @@ public class LFUtil {
     /**
      * 条件普通组件
      */
-    public static final String CONDITION_COMMON_NODE = "c_cn";
+    public static final String COND = "cond";
 
-    public static final String ADD_LIST = "addListData";
+    /**
+     * 加入list组件
+     */
+    public static final String ADD_LIST_DATA = "addListData";
 
+    /**
+     * 加入标签组件
+     */
     public static final String ADD_TAG = "addTag";
+
+    /**
+     * 发送消息组件
+     */
+    public static final String SEND_SMS = "sendSms";
 
     /**
      * 规则普通组件
@@ -163,6 +174,14 @@ public class LFUtil {
      */
     public static String getNodeWithTag(String nodeId, Object tag) {
         return StrUtil.format(NODE_WITH_TAG, nodeId, tag.toString());
+    }
+
+    public static String buildElWithData(String nodeId, String data) {
+        return StrUtil.format("{}.data(\"{}\")", nodeId, data);
+    }
+
+    public static String buildWhen(String... el) {
+        return "when(" + StrUtil.join(",", el) + ");";
     }
 
     /**
@@ -209,7 +228,7 @@ public class LFUtil {
     }
 
     public static String buildCondEl(String condStr) {
-        Cond cond = JsonUtils.parseObject(condStr, Cond.class);
+        Cond cond = JsonUtil.parseObject(condStr, Cond.class);
         return buildCondEl(cond);
     }
 
@@ -222,7 +241,7 @@ public class LFUtil {
                         .collect(Collectors.toList());
                 return cond.getLogicOp() + "(" + String.join(", ", expressions) + ")";
             } else {
-                return "c_cn.data('" + JsonUtils.toJsonString(cond) + "')";
+                return "c_cn.data('" + JsonUtil.toJsonString(cond) + "')";
             }
         }
         return "";
@@ -250,7 +269,7 @@ public class LFUtil {
         if (variableExpression.contains(".data('")) {
             int dataIndex = variableExpression.indexOf(".data('");
             String jsonData = variableExpression.substring(dataIndex + 7, variableExpression.length() - 2).trim();
-            return JsonUtils.parseObject(jsonData, Cond.class);
+            return JsonUtil.parseObject(jsonData, Cond.class);
         }
         return new Cond();
     }
@@ -333,6 +352,6 @@ public class LFUtil {
         System.out.println(parseToCond);
 
 
+        System.out.println(buildWhen("3244", "323r", "ergre", "regreg"));
     }
-
 }

@@ -24,11 +24,6 @@
             <artifactId>coolGuard-access</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>cn.wnhyang</groupId>
-            <artifactId>coolGuard-data</artifactId>
-        </dependency>
-
 
     </dependencies>
 

@@ -4,6 +4,7 @@ import cn.wnhyang.coolGuard.vo.base.SmsTemplateBase;
 import lombok.Data;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 消息模版表
@@ -26,4 +27,9 @@ public class SmsTemplateVO extends SmsTemplateBase {
      * 消息编码
      */
     private String code;
+
+    /**
+     * 消息参数
+     */
+    private List<String> params;
 }

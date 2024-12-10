@@ -16,7 +16,7 @@ import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
-import static cn.wnhyang.coolGuard.util.JsonUtils.buildJavaTimeModule;
+import static cn.wnhyang.coolGuard.util.JsonUtil.buildJavaTimeModule;
 
 
 /**

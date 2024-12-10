@@ -11,4 +11,6 @@ public interface PolicyMode {
     String WEIGHT = "weight";
 
     String WORST = "worst";
+
+    String VOTE = "vote";
 }

@@ -2,9 +2,11 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
+import cn.wnhyang.coolGuard.context.AccessRequest;
 import cn.wnhyang.coolGuard.convert.ListDataConvert;
 import cn.wnhyang.coolGuard.entity.ListData;
 import cn.wnhyang.coolGuard.entity.ListSet;
+import cn.wnhyang.coolGuard.entity.RuleBingo;
 import cn.wnhyang.coolGuard.mapper.ListDataMapper;
 import cn.wnhyang.coolGuard.mapper.ListSetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
@@ -13,6 +15,7 @@ import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.create.ListDataCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ListDataPageVO;
 import cn.wnhyang.coolGuard.vo.update.ListDataUpdateVO;
+import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
@@ -38,6 +41,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Service
+@LiteflowComponent
 @RequiredArgsConstructor
 public class ListDataServiceImpl implements ListDataService {
 
@@ -122,9 +126,19 @@ public class ListDataServiceImpl implements ListDataService {
         return false;
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ADD_LIST, nodeType = NodeTypeEnum.COMMON, nodeName = "加入名单组件")
-    public void addList(NodeComponent bindCmp) {
-
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ADD_LIST_DATA, nodeType = NodeTypeEnum.COMMON, nodeName = "加入名单组件")
+    public void addListData(NodeComponent bindCmp) {
+        // TODO 完善
+        log.info("addListData");
+        List<RuleBingo.AddList> addLists = bindCmp.getCmpDataList(RuleBingo.AddList.class);
+        AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
+        for (RuleBingo.AddList addList : addLists) {
+            ListData listData = new ListData();
+            listData.setListSetCode(addList.getListSetCode());
+            listData.setValue(accessRequest.getStringData(addList.getFieldName()));
+            listData.setSource("规则生成");
+            listDataMapper.insert(listData);
+        }
     }
 
 }

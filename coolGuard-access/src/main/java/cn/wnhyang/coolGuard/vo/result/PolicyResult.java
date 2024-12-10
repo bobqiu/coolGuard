@@ -1,4 +1,4 @@
-package cn.wnhyang.coolGuard.vo;
+package cn.wnhyang.coolGuard.vo.result;
 
 import lombok.Getter;
 import lombok.Setter;

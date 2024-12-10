@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.convert;
 
+import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.RuleVO;
@@ -30,4 +31,6 @@ public interface RuleConvert {
     PageResult<RuleVO> convert(PageResult<Rule> pageResult);
 
     List<RuleVO> convert(List<Rule> list);
+
+    List<PolicyContext.RuleCtx> convert2Ctx(List<Rule> rules);
 }

@@ -4,13 +4,13 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.constant.KafkaConstant;
-import cn.wnhyang.coolGuard.context.AccessRequest;
-import cn.wnhyang.coolGuard.context.AccessResponse;
-import cn.wnhyang.coolGuard.context.IndicatorContext;
-import cn.wnhyang.coolGuard.context.PolicyContext;
+import cn.wnhyang.coolGuard.context.*;
 import cn.wnhyang.coolGuard.convert.AccessConvert;
 import cn.wnhyang.coolGuard.convert.FieldConvert;
-import cn.wnhyang.coolGuard.entity.*;
+import cn.wnhyang.coolGuard.entity.Access;
+import cn.wnhyang.coolGuard.entity.Chain;
+import cn.wnhyang.coolGuard.entity.ConfigField;
+import cn.wnhyang.coolGuard.entity.Field;
 import cn.wnhyang.coolGuard.kafka.producer.CommonProducer;
 import cn.wnhyang.coolGuard.mapper.AccessMapper;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
@@ -18,7 +18,7 @@ import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.AccessService;
 import cn.wnhyang.coolGuard.service.DisposalService;
-import cn.wnhyang.coolGuard.util.JsonUtils;
+import cn.wnhyang.coolGuard.util.JsonUtil;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.AccessVO;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
@@ -86,12 +86,10 @@ public class AccessServiceImpl implements AccessService {
 
         AccessRequest accessRequest = new AccessRequest(access, params, inputFields, outputFields);
         PolicyContext policyContext = new PolicyContext();
-        for (Disposal disposal : disposalService.listDisposal()) {
-            policyContext.addDisposal(disposal.getCode(), disposal);
-        }
+        EventContext eventContext = new EventContext();
         IndicatorContext indicatorContext = new IndicatorContext();
 
-        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()), null, accessRequest, indicatorContext, policyContext, accessResponse);
+        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()), null, accessRequest, indicatorContext, policyContext, eventContext, accessResponse);
         // TODO chain el 打印
 
         // 将上下文拼在一块，将此任务丢到线程中执行
@@ -100,7 +98,7 @@ public class AccessServiceImpl implements AccessService {
         esData.put("zbs", indicatorContext.convert());
         esData.put("result", accessResponse.getPolicySetResult());
         try {
-            commonProducer.send(KafkaConstant.EVENT_ES_DATA, JsonUtils.toJsonString(esData));
+            commonProducer.send(KafkaConstant.EVENT_ES_DATA, JsonUtil.toJsonString(esData));
         } catch (Exception e) {
             log.error("esData error", e);
         }

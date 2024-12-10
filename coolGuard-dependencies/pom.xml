@@ -112,7 +112,13 @@
 
             <dependency>
                 <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
+                <artifactId>hutool-extra</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-crypto</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
 
@@ -173,12 +179,6 @@
             <dependency>
                 <groupId>cn.wnhyang</groupId>
                 <artifactId>coolGuard-access</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.wnhyang</groupId>
-                <artifactId>coolGuard-data</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

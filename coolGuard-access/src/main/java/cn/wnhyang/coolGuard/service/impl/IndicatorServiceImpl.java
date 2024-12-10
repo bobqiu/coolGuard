@@ -233,7 +233,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         String appName = accessRequest.getStringData(FieldName.appName);
         String policySetCode = accessRequest.getStringData(FieldName.policySetCode);
         List<IndicatorVersion> indicatorVersionList = indicatorVersionMapper.selectLatestListByScenes(appName, policySetCode);
-        indicatorContext.setIndicatorList(ListUtil.toCopyOnWriteArrayList(IndicatorConvert.INSTANCE.convertVersion(indicatorVersionList)));
+        indicatorContext.setIndicatorList(ListUtil.toCopyOnWriteArrayList(IndicatorVersionConvert.INSTANCE.convert2Ctx(indicatorVersionList)));
         return indicatorVersionList.size();
     }
 
@@ -250,9 +250,9 @@ public class IndicatorServiceImpl implements IndicatorService {
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
 
         int index = bindCmp.getSubChainReqData();
-        IndicatorVO indicatorVO = indicatorContext.getIndicator(index);
-        indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorVO.getType()).compute(true, indicatorVO, accessRequest.getFields()));
-        log.info("true:指标(code:{}, name:{}, value:{})", indicatorVO.getCode(), indicatorVO.getName(), indicatorVO.getValue());
+        IndicatorContext.IndicatorCtx indicatorCtx = indicatorContext.getIndicator(index);
+        indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorCtx.getType()).compute(true, indicatorCtx, accessRequest.getFields()));
+        log.info("true:指标(code:{}, name:{}, value:{})", indicatorCtx.getCode(), indicatorCtx.getName(), indicatorCtx.getValue());
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标false组件")
@@ -261,9 +261,9 @@ public class IndicatorServiceImpl implements IndicatorService {
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
 
         int index = bindCmp.getSubChainReqData();
-        IndicatorVO indicatorVO = indicatorContext.getIndicator(index);
-        indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorVO.getType()).compute(false, indicatorVO, accessRequest.getFields()));
-        log.info("false指标(code:{}, name:{}, value:{})", indicatorVO.getCode(), indicatorVO.getName(), indicatorVO.getValue());
+        IndicatorContext.IndicatorCtx indicatorCtx = indicatorContext.getIndicator(index);
+        indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorCtx.getType()).compute(false, indicatorCtx, accessRequest.getFields()));
+        log.info("false指标(code:{}, name:{}, value:{})", indicatorCtx.getCode(), indicatorCtx.getName(), indicatorCtx.getValue());
 
     }
 

@@ -77,7 +77,7 @@ public class PolicyServiceImpl implements PolicyService {
         String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetCode());
         Chain chain = chainMapper.getByChainName(psChain);
         chain.setElData(LFUtil.elAdd(chain.getElData(),
-                LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getId())));
+                LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getCode())));
         chainMapper.updateByChainName(psChain, chain);
 
         return policy.getId();
@@ -156,13 +156,12 @@ public class PolicyServiceImpl implements PolicyService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略普通组件")
     public void policy(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        Policy policy = policyMapper.selectByCode(bindCmp.getTag());
-        PolicyVO policyVO = PolicyConvert.INSTANCE.convert(policy);
-        policyContext.addPolicy(policyVO.getId(), policyVO);
+        PolicyContext.PolicyCtx policy = PolicyConvert.INSTANCE.convert2Ctx(policyMapper.selectByCode(bindCmp.getTag()));
+        policyContext.addPolicy(policy.getCode(), policy);
 
         log.info("当前策略(code:{}, name:{}, code:{})", policy.getCode(), policy.getName(), policy.getCode());
 
-        if (PolicyMode.ORDER.equals(policyVO.getMode())) {
+        if (PolicyMode.ORDER.equals(policy.getMode())) {
             bindCmp.invoke2Resp(LFUtil.P_F, policy.getCode());
         } else {
             bindCmp.invoke2Resp(LFUtil.P_FP, policy.getCode());
@@ -173,9 +172,9 @@ public class PolicyServiceImpl implements PolicyService {
     public int policyFor(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
         String policyCode = bindCmp.getSubChainReqData();
-        List<RuleVO> ruleVOList = RuleConvert.INSTANCE.convert(ruleMapper.selectByPolicyCode(policyCode));
-        policyContext.addRuleList(policyCode, ruleVOList);
-        return ruleVOList.size();
+        List<PolicyContext.RuleCtx> ruleList = RuleConvert.INSTANCE.convert2Ctx(ruleMapper.selectByPolicyCode(policyCode));
+        policyContext.addRuleList(policyCode, ruleList);
+        return ruleList.size();
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.POLICY_BREAK_NODE, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "策略break组件")

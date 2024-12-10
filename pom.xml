@@ -15,7 +15,6 @@
         <module>coolGuard-system</module>
         <module>coolGuard-access</module>
         <module>coolGuard-dependencies</module>
-        <module>coolGuard-data</module>
         <module>coolGuard-monitor</module>
         <module>coolGuard-liteflow</module>
     </modules>

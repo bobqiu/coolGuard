@@ -88,6 +88,18 @@ public class Rule extends BasePO {
     private Cond cond;
 
     /**
+     * true执行
+     */
+    @TableField(value = "rule_true", typeHandler = JacksonTypeHandler.class)
+    private RuleBingo ruleTrue;
+
+    /**
+     * false执行
+     */
+    @TableField(value = "rule_false", typeHandler = JacksonTypeHandler.class)
+    private RuleBingo ruleFalse;
+
+    /**
      * 描述
      */
     @TableField("description")

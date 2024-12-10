@@ -4,8 +4,8 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.WinType;
+import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
-import cn.wnhyang.coolGuard.vo.IndicatorVO;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RScoredSortedSet;
@@ -27,7 +27,7 @@ public abstract class AbstractIndicator {
     /**
      * 指标
      */
-    protected IndicatorVO indicator;
+    protected IndicatorContext.IndicatorCtx indicator;
 
     /**
      * 指标类型
@@ -123,7 +123,7 @@ public abstract class AbstractIndicator {
      * @param indicator   指标
      * @param eventDetail 事件详情
      */
-    public Object compute(boolean addEvent, IndicatorVO indicator, Map<String, Object> eventDetail) {
+    public Object compute(boolean addEvent, IndicatorContext.IndicatorCtx indicator, Map<String, Object> eventDetail) {
         if (indicator == null) {
             return 0.0d;
         } else {

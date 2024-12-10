@@ -27,7 +27,7 @@ public class ServletUtils {
      */
     @SuppressWarnings("deprecation") // 必须使用 APPLICATION_JSON_UTF8_VALUE，否则会乱码
     public static void writeJSON(HttpServletResponse response, Object object) {
-        String content = JsonUtils.toJsonString(object);
+        String content = JsonUtil.toJsonString(object);
         JakartaServletUtil.write(response, content, MediaType.APPLICATION_JSON_UTF8_VALUE);
     }
 

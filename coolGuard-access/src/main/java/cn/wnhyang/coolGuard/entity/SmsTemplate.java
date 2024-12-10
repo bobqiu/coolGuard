@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 消息模版表
@@ -20,7 +22,7 @@ import java.io.Serial;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_sms_template")
+@TableName(value = "de_sms_template", autoResultMap = true)
 public class SmsTemplate extends BasePO {
 
     @Serial
@@ -53,8 +55,8 @@ public class SmsTemplate extends BasePO {
     /**
      * 消息参数
      */
-    @TableField("params")
-    private String params;
+    @TableField(value = "params", typeHandler = JacksonTypeHandler.class)
+    private List<String> params;
 
     /**
      * 描述

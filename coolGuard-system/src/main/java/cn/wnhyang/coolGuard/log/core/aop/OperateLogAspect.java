@@ -10,7 +10,7 @@ import cn.wnhyang.coolGuard.log.core.enums.OperateType;
 import cn.wnhyang.coolGuard.log.core.service.LogService;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.satoken.core.util.LoginUtil;
-import cn.wnhyang.coolGuard.util.JsonUtils;
+import cn.wnhyang.coolGuard.util.JsonUtil;
 import cn.wnhyang.coolGuard.util.ServletUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -301,7 +301,7 @@ public class OperateLogAspect {
             args.put(argName, !isIgnoreArgs(argValue) ? argValue : "[ignore]");
         }
         log.info("javaMethodArgs:{}", args);
-        return JsonUtils.toJsonString(args);
+        return JsonUtil.toJsonString(args);
     }
 
     private static String obtainResultData(Object result) {
@@ -310,7 +310,7 @@ public class OperateLogAspect {
             result = ((CommonResult<?>) result).getData();
         }
         log.info("resultData:{}", result);
-        return JsonUtils.toJsonString(result);
+        return JsonUtil.toJsonString(result);
     }
 
     private static boolean isIgnoreArgs(Object object) {

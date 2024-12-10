@@ -7,6 +7,7 @@ import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.context.AccessRequest;
 import cn.wnhyang.coolGuard.context.AccessResponse;
 import cn.wnhyang.coolGuard.context.PolicyContext;
+import cn.wnhyang.coolGuard.convert.DisposalConvert;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.convert.PolicySetConvert;
 import cn.wnhyang.coolGuard.entity.Chain;
@@ -67,6 +68,8 @@ public class PolicySetServiceImpl implements PolicySetService {
     private final PolicyService policyService;
 
     private final PolicySetVersionMapper policySetVersionMapper;
+
+    private final DisposalMapper disposalMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -230,11 +233,12 @@ public class PolicySetServiceImpl implements PolicySetService {
         if (policySet != null && policySet.getPublish()) {
             log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", policySet.getAppName(), policySet.getCode(), policySet.getName());
             PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-            PolicySetVO policySetVO = PolicySetConvert.INSTANCE.convert(policySet);
+            policyContext.init(DisposalConvert.INSTANCE.convert2Ctx(disposalMapper.selectList()));
+            PolicyContext.PolicySetCtx policySetCtx = PolicySetConvert.INSTANCE.convert2Ctx(policySet);
             PolicySetVersion policySetVersion = policySetVersionMapper.selectLatest(policySet.getCode());
-            policySetVO.setVersion(policySetVersion.getVersion());
-            policySetVO.setChain(policySetVersion.getChain());
-            policyContext.setPolicySetVO(policySetVO);
+            policySetCtx.setVersion(policySetVersion.getVersion());
+            policySetCtx.setChain(policySetVersion.getChain());
+            policyContext.setPolicySet(policySetCtx);
 
             bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode()), null);
 

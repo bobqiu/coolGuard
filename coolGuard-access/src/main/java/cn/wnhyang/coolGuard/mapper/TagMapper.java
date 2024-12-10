@@ -19,4 +19,8 @@ public interface TagMapper extends BaseMapperX<Tag> {
     default PageResult<Tag> selectPage(TagPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<Tag>());
     }
+
+    default Tag selectByCode(String code) {
+        return selectOne(new LambdaQueryWrapperX<Tag>().eq(Tag::getCode, code));
+    }
 }

@@ -13,11 +13,11 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RuleTrue {
+public class RuleBingo {
 
-    private AddTag addTag;
+    private List<AddTag> addTags;
 
-    private AddList addList;
+    private List<AddList> addLists;
 
     private SendSms sendSms;
 

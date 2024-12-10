@@ -43,7 +43,7 @@ public class ChainController {
             new Node(POLICY_COMMON_NODE, "入参组件"),
             new Node(POLICY_FOR_NODE, "入参组件"),
             new Node(POLICY_BREAK_NODE, "入参组件"),
-            new Node(CONDITION_COMMON_NODE, "入参组件"),
+            new Node(COND, "入参组件"),
             new Node(RULE_COMMON_NODE, "入参组件"),
             new Node(RULE_TRUE, "入参组件"),
             new Node(RULE_FALSE, "入参组件")

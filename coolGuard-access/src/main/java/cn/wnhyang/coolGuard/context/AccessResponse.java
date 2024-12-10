@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.context;
 
-import cn.wnhyang.coolGuard.vo.PolicySetResult;
+import cn.wnhyang.coolGuard.vo.result.PolicySetResult;
 import lombok.Data;
 
 import java.io.Serial;
