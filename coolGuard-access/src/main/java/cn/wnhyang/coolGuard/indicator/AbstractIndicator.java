@@ -6,7 +6,6 @@ import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.WinType;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RedissonClient;
@@ -25,19 +24,16 @@ import java.util.Map;
 public abstract class AbstractIndicator {
 
     /**
-     * 指标类型
-     */
-    @Getter
-    protected final IndicatorType INDICATOR_TYPE;
-
-    /**
      * redisson客户端
      */
     protected final RedissonClient redissonClient;
 
-    protected AbstractIndicator(IndicatorType indicatorType, RedissonClient redissonClient) {
-        this.INDICATOR_TYPE = indicatorType;
+    public AbstractIndicator(RedissonClient redissonClient) {
         this.redissonClient = redissonClient;
+    }
+
+    public String getTypeName() {
+        return getType().getName();
     }
 
     /**
@@ -45,9 +41,7 @@ public abstract class AbstractIndicator {
      *
      * @return 指标类型
      */
-    public String getType() {
-        return INDICATOR_TYPE.getType();
-    }
+    public abstract IndicatorType getType();
 
     /**
      * 过滤

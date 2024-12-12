@@ -17,7 +17,12 @@ import java.util.Map;
 public class CountIndicator extends AbstractIndicator {
 
     public CountIndicator(RedissonClient redissonClient) {
-        super(IndicatorType.COUNT, redissonClient);
+        super(redissonClient);
+    }
+
+    @Override
+    public IndicatorType getType() {
+        return IndicatorType.COUNT;
     }
 
     @Override

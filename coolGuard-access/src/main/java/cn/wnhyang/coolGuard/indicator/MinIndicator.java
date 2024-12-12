@@ -16,8 +16,13 @@ import java.util.Map;
 @Component
 public class MinIndicator extends AbstractIndicator {
 
-    protected MinIndicator(RedissonClient redissonClient) {
-        super(IndicatorType.MIN, redissonClient);
+    public MinIndicator(RedissonClient redissonClient) {
+        super(redissonClient);
+    }
+
+    @Override
+    public IndicatorType getType() {
+        return IndicatorType.MIN;
     }
 
     @Override

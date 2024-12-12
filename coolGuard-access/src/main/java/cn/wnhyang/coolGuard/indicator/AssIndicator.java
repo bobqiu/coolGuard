@@ -15,8 +15,13 @@ import java.util.Map;
 @Component
 public class AssIndicator extends AbstractIndicator {
 
-    protected AssIndicator(RedissonClient redissonClient) {
-        super(IndicatorType.ASS, redissonClient);
+    public AssIndicator(RedissonClient redissonClient) {
+        super(redissonClient);
+    }
+
+    @Override
+    public IndicatorType getType() {
+        return IndicatorType.ASS;
     }
 
     @Override

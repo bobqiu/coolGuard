@@ -16,8 +16,13 @@ import java.util.Map;
 @Component
 public class AvgIndicator extends AbstractIndicator {
 
-    protected AvgIndicator(RedissonClient redissonClient) {
-        super(IndicatorType.AVG, redissonClient);
+    public AvgIndicator(RedissonClient redissonClient) {
+        super(redissonClient);
+    }
+
+    @Override
+    public IndicatorType getType() {
+        return IndicatorType.AVG;
     }
 
     @Override

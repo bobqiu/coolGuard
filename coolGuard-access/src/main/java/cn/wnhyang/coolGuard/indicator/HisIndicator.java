@@ -17,8 +17,13 @@ import java.util.Map;
 @Component
 public class HisIndicator extends AbstractIndicator {
 
-    protected HisIndicator(RedissonClient redissonClient) {
-        super(IndicatorType.HIS, redissonClient);
+    public HisIndicator(RedissonClient redissonClient) {
+        super(redissonClient);
+    }
+
+    @Override
+    public IndicatorType getType() {
+        return IndicatorType.HIS;
     }
 
     @Override

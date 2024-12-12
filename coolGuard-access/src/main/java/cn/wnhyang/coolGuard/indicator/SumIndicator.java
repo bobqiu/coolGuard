@@ -16,8 +16,13 @@ import java.util.Map;
 @Component
 public class SumIndicator extends AbstractIndicator {
 
-    protected SumIndicator(RedissonClient redissonClient) {
-        super(IndicatorType.SUM, redissonClient);
+    public SumIndicator(RedissonClient redissonClient) {
+        super(redissonClient);
+    }
+
+    @Override
+    public IndicatorType getType() {
+        return IndicatorType.SUM;
     }
 
     @Override

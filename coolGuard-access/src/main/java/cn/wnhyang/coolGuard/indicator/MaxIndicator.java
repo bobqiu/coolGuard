@@ -16,8 +16,13 @@ import java.util.Map;
 @Component
 public class MaxIndicator extends AbstractIndicator {
 
-    protected MaxIndicator(RedissonClient redissonClient) {
-        super(IndicatorType.MAX, redissonClient);
+    public MaxIndicator(RedissonClient redissonClient) {
+        super(redissonClient);
+    }
+
+    @Override
+    public IndicatorType getType() {
+        return IndicatorType.MAX;
     }
 
     @Override
