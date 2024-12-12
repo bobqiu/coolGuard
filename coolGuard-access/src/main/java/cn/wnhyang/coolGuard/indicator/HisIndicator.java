@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.indicator;
 
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.constant.IndicatorReturnFlag;
+import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RedissonClient;
@@ -21,7 +22,7 @@ public class HisIndicator extends AbstractIndicator {
     }
 
     @Override
-    public Object getResult(long currentTime, RScoredSortedSet<String> set) {
+    public Object getResult0(IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set) {
         if (!set.isEmpty()) {
             if (IndicatorReturnFlag.EARLIEST.equals(indicator.getReturnFlag())) {
                 return set.first().split("-")[1];
@@ -33,7 +34,7 @@ public class HisIndicator extends AbstractIndicator {
     }
 
     @Override
-    public void addEvent(long currentTime, RScoredSortedSet<String> set, Map<String, Object> eventDetail) {
+    public void addEvent(IndicatorContext.IndicatorCtx indicator, long currentTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
         set.add(currentTime, eventDetail.get(FieldName.seqId) + "-" + eventDetail.get(indicator.getCalcField()));
 
     }

@@ -4,7 +4,7 @@ import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.context.AccessRequest;
 import cn.wnhyang.coolGuard.convert.SmsTemplateConvert;
-import cn.wnhyang.coolGuard.entity.RuleBingo;
+import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.entity.SmsTemplate;
 import cn.wnhyang.coolGuard.mapper.SmsTemplateMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
@@ -81,7 +81,7 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.SEND_SMS, nodeType = NodeTypeEnum.COMMON, nodeName = "加入名单组件")
     public void sendSms(NodeComponent bindCmp) {
         // TODO 完善
-        RuleBingo.SendSms sendSms = bindCmp.getCmpData(RuleBingo.SendSms.class);
+        Action.SendSms sendSms = bindCmp.getCmpData(Action.SendSms.class);
         SmsTemplate smsTemplate = smsTemplateMapper.selectByCode(sendSms.getSmsTemplateCode());
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
         Map<String, Object> map = new HashMap<>();

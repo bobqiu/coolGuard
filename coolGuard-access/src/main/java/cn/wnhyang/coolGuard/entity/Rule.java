@@ -91,13 +91,13 @@ public class Rule extends BasePO {
      * true执行
      */
     @TableField(value = "rule_true", typeHandler = JacksonTypeHandler.class)
-    private RuleBingo ruleTrue;
+    private Action ruleTrue;
 
     /**
      * false执行
      */
     @TableField(value = "rule_false", typeHandler = JacksonTypeHandler.class)
-    private RuleBingo ruleFalse;
+    private Action ruleFalse;
 
     /**
      * 描述

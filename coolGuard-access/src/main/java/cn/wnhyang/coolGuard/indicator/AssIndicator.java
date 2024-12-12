@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.indicator;
 
+import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RedissonClient;
@@ -19,15 +20,13 @@ public class AssIndicator extends AbstractIndicator {
     }
 
     @Override
-    public Object getResult(long currentTime, RScoredSortedSet<String> set) {
+    public Object getResult0(IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set) {
 
         return set.size();
     }
 
     @Override
-    public void addEvent(long currentTime, RScoredSortedSet<String> set, Map<String, Object> eventDetail) {
-
+    public void addEvent(IndicatorContext.IndicatorCtx indicator, long currentTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
         set.add(currentTime, (String) eventDetail.get(indicator.getCalcField()));
-
     }
 }

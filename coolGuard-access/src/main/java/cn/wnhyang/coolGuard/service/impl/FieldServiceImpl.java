@@ -14,7 +14,7 @@ import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.context.AccessRequest;
 import cn.wnhyang.coolGuard.convert.FieldConvert;
 import cn.wnhyang.coolGuard.entity.Field;
-import cn.wnhyang.coolGuard.entity.RuleBingo;
+import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.enums.FieldType;
 import cn.wnhyang.coolGuard.exception.ServiceException;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
@@ -285,7 +285,7 @@ public class FieldServiceImpl implements FieldService {
     public void setField(NodeComponent bindCmp) {
         // TODO 完善
         log.info("设置字段");
-        List<RuleBingo.SetField> setFields = bindCmp.getCmpDataList(RuleBingo.SetField.class);
+        List<Action.SetField> setFields = bindCmp.getCmpDataList(Action.SetField.class);
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
         setFields.forEach(setField -> {
             String value = setField.getValue();

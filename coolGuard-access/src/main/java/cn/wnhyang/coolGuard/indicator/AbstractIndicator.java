@@ -25,11 +25,6 @@ import java.util.Map;
 public abstract class AbstractIndicator {
 
     /**
-     * 指标
-     */
-    protected IndicatorContext.IndicatorCtx indicator;
-
-    /**
      * 指标类型
      */
     @Getter
@@ -59,7 +54,7 @@ public abstract class AbstractIndicator {
      *
      * @return true/false
      */
-    private boolean filter(Map<String, Object> eventDetail) {
+    private boolean filter(IndicatorContext.IndicatorCtx indicator, Map<String, Object> eventDetail) {
         // 1、主属性不能为空，并且主属性取值也不能为空
         if (StrUtil.isNotBlank(indicator.getMasterField()) && ObjectUtil.isNotNull(eventDetail.get(indicator.getMasterField()))) {
             if (StrUtil.isNotBlank(indicator.getSlaveFields())) {
@@ -79,7 +74,7 @@ public abstract class AbstractIndicator {
      * 设置redis key
      * 如：masterField分别为a、b，其在事件中的取值可能一样，那么指标key也就一样，可以优化为a：xxx，b：xxx
      */
-    private String setRedisKey(Map<String, Object> eventDetail) {
+    private String getRedisKey(IndicatorContext.IndicatorCtx indicator, Map<String, Object> eventDetail) {
         String redisKey = RedisKey.ZB + indicator.getCode() + ":" + eventDetail.get(indicator.getMasterField());
         if (StrUtil.isNotBlank(indicator.getSlaveFields())) {
             redisKey += "-" + eventDetail.get(indicator.getSlaveFields());
@@ -90,31 +85,28 @@ public abstract class AbstractIndicator {
     /**
      * 获取计算指标结果
      *
-     * @param currentTime 当前时间戳
-     * @param set         redis set
+     * @param set redis set
      * @return 计算指标结果
      */
-    public abstract Object getResult(long currentTime, RScoredSortedSet<String> set);
+    public abstract Object getResult0(IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set);
 
     /**
      * 获取计算指标结果
      *
      * @return 计算指标结果
      */
-    public Object getResult(String redisKey) {
+    public Object getResult(IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set) {
         // 1、获取当前时间戳
         long currentTime = System.currentTimeMillis();
-        // 2、获取redis中数据
-        RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(redisKey);
-        // 3、清理过期数据
-        cleanExpiredDate(currentTime, set);
-        // 4、设置过期时间
-        if (WinType.LAST.equals(this.indicator.getWinType())) {
-            set.expire(Duration.ofSeconds(this.indicator.getTimeSlice() * this.indicator.getWinCount()));
-        } else if (WinType.CUR.equals(this.indicator.getWinType())) {
-            set.expire(Duration.ofSeconds(this.indicator.getTimeSlice()));
+        // 2、清理过期数据
+        cleanExpiredDate(indicator, currentTime, set);
+        // 3、设置过期时间
+        if (WinType.LAST.equals(indicator.getWinType())) {
+            set.expire(Duration.ofSeconds(indicator.getTimeSlice() * indicator.getWinCount()));
+        } else if (WinType.CUR.equals(indicator.getWinType())) {
+            set.expire(Duration.ofSeconds(indicator.getTimeSlice()));
         }
-        return getResult(currentTime, set);
+        return getResult0(indicator, set);
     }
 
     /**
@@ -126,32 +118,28 @@ public abstract class AbstractIndicator {
     public Object compute(boolean addEvent, IndicatorContext.IndicatorCtx indicator, Map<String, Object> eventDetail) {
         if (indicator == null) {
             return 0.0d;
-        } else {
-            this.indicator = indicator;
         }
-        String redisKey = setRedisKey(eventDetail);
+        String redisKey = getRedisKey(indicator, eventDetail);
+        log.info("redisKey:{}", redisKey);
+        RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(redisKey);
         // 1、状态检查和过滤
-        if (addEvent && filter(eventDetail)) {
+        if (addEvent && filter(indicator, eventDetail)) {
             // 2、获取当前时间戳
             long currentTime = System.currentTimeMillis();
-            // 3、获取redis中数据
-            log.info("redisKey:{}", redisKey);
-            RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(redisKey);
-            // 4、添加事件
-            addEvent(currentTime, set, eventDetail);
+            // 3、添加事件
+            addEvent(indicator, currentTime, eventDetail, set);
 
         }
-        return getResult(redisKey);
+        return getResult(indicator, set);
     }
 
     /**
      * 添加事件
      *
      * @param currentTime 当前时间戳
-     * @param set         redis set
      * @param eventDetail 事件详情
      */
-    public abstract void addEvent(long currentTime, RScoredSortedSet<String> set, Map<String, Object> eventDetail);
+    public abstract void addEvent(IndicatorContext.IndicatorCtx indicator, long currentTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set);
 
     /**
      * 清理过期数据
@@ -159,11 +147,11 @@ public abstract class AbstractIndicator {
      * @param currentTime 当前时间戳
      * @param set         redis set
      */
-    public void cleanExpiredDate(long currentTime, RScoredSortedSet<String> set) {
+    public void cleanExpiredDate(IndicatorContext.IndicatorCtx indicator, long currentTime, RScoredSortedSet<String> set) {
         if (WinType.LAST.equals(indicator.getWinType())) {
             set.removeRangeByScore(-1, true, currentTime - Duration.ofSeconds(indicator.getTimeSlice()).toMillis(), false);
         } else if (WinType.CUR.equals(indicator.getWinType())) {
-            set.removeRangeByScore(-1, true, calculateEpochMilli(LocalDateTime.now()), false);
+            set.removeRangeByScore(-1, true, calculateEpochMilli(indicator, LocalDateTime.now()), false);
         }
     }
 
@@ -173,7 +161,7 @@ public abstract class AbstractIndicator {
      * @param now 当前时间
      * @return 时间戳
      */
-    private long calculateEpochMilli(LocalDateTime now) {
+    private long calculateEpochMilli(IndicatorContext.IndicatorCtx indicator, LocalDateTime now) {
         ZoneId zoneId = ZoneId.systemDefault();
         // 这个default分支仅处理WindowSize枚举中未包含的情况
         return switch (indicator.getWinSize()) {

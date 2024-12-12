@@ -56,12 +56,12 @@ public class RuleServiceImpl implements RuleService {
 
     private final RuleVersionMapper ruleVersionMapper;
 
-    public static String buildRuleBingoEl(RuleBingo ruleBingo) {
+    public static String buildRuleBingoEl(Action action) {
         return LFUtil.buildWhen(LFUtil.RULE_TRUE,
-                LFUtil.buildElWithData(LFUtil.ADD_TAG, JsonUtil.toJsonString(ruleBingo.getAddTags())),
-                LFUtil.buildElWithData(LFUtil.ADD_LIST_DATA, JsonUtil.toJsonString(ruleBingo.getAddLists())),
-                LFUtil.buildElWithData(LFUtil.SEND_SMS, JsonUtil.toJsonString(ruleBingo.getSendSms())),
-                LFUtil.buildElWithData(LFUtil.SET_FIELD, JsonUtil.toJsonString(ruleBingo.getSetFields())));
+                LFUtil.buildElWithData(LFUtil.ADD_TAG, JsonUtil.toJsonString(action.getAddTags())),
+                LFUtil.buildElWithData(LFUtil.ADD_LIST_DATA, JsonUtil.toJsonString(action.getAddLists())),
+                LFUtil.buildElWithData(LFUtil.SEND_SMS, JsonUtil.toJsonString(action.getSendSms())),
+                LFUtil.buildElWithData(LFUtil.SET_FIELD, JsonUtil.toJsonString(action.getSetFields())));
     }
 
     @Override

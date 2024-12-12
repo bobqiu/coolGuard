@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.vo.base;
 
 import cn.wnhyang.coolGuard.entity.Cond;
-import cn.wnhyang.coolGuard.entity.RuleBingo;
+import cn.wnhyang.coolGuard.entity.Action;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -68,11 +68,11 @@ public class RuleBaseVO implements Serializable {
     /**
      * true执行
      */
-    private RuleBingo ruleTrue;
+    private Action ruleTrue;
 
     /**
      * false执行
      */
-    private RuleBingo ruleFalse;
+    private Action ruleFalse;
 
 }

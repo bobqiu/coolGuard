@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.wnhyang.coolGuard.context.EventContext;
 import cn.wnhyang.coolGuard.convert.TagConvert;
-import cn.wnhyang.coolGuard.entity.RuleBingo;
+import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.entity.Tag;
 import cn.wnhyang.coolGuard.mapper.TagMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
@@ -72,9 +72,9 @@ public class TagServiceImpl implements TagService {
     public void addTag(NodeComponent bindCmp) {
         // TODO 完善
         log.info("addTag");
-        List<RuleBingo.AddTag> addTags = bindCmp.getCmpDataList(RuleBingo.AddTag.class);
+        List<Action.AddTag> addTags = bindCmp.getCmpDataList(Action.AddTag.class);
         EventContext eventContext = bindCmp.getContextBean(EventContext.class);
-        for (RuleBingo.AddTag addTag : addTags) {
+        for (Action.AddTag addTag : addTags) {
             eventContext.addTag(tagMapper.selectByCode(addTag.getCode()));
         }
     }

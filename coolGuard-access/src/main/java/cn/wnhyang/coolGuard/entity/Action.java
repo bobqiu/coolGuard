@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RuleBingo {
+public class Action {
 
     private List<AddTag> addTags;
 

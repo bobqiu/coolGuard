@@ -6,7 +6,7 @@ import cn.wnhyang.coolGuard.context.AccessRequest;
 import cn.wnhyang.coolGuard.convert.ListDataConvert;
 import cn.wnhyang.coolGuard.entity.ListData;
 import cn.wnhyang.coolGuard.entity.ListSet;
-import cn.wnhyang.coolGuard.entity.RuleBingo;
+import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.mapper.ListDataMapper;
 import cn.wnhyang.coolGuard.mapper.ListSetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
@@ -130,9 +130,9 @@ public class ListDataServiceImpl implements ListDataService {
     public void addListData(NodeComponent bindCmp) {
         // TODO 完善
         log.info("addListData");
-        List<RuleBingo.AddList> addLists = bindCmp.getCmpDataList(RuleBingo.AddList.class);
+        List<Action.AddList> addLists = bindCmp.getCmpDataList(Action.AddList.class);
         AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
-        for (RuleBingo.AddList addList : addLists) {
+        for (Action.AddList addList : addLists) {
             ListData listData = new ListData();
             listData.setListSetCode(addList.getListSetCode());
             listData.setValue(accessRequest.getStringData(addList.getFieldName()));

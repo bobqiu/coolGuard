@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.context;
 import cn.hutool.core.collection.CollUtil;
 import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.entity.Cond;
-import cn.wnhyang.coolGuard.entity.RuleBingo;
+import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.vo.result.PolicyResult;
 import cn.wnhyang.coolGuard.vo.result.PolicySetResult;
 import cn.wnhyang.coolGuard.vo.result.RuleResult;
@@ -232,12 +232,12 @@ public class PolicyContext {
         /**
          * true执行
          */
-        private RuleBingo ruleTrue;
+        private Action ruleTrue;
 
         /**
          * false执行
          */
-        private RuleBingo ruleFalse;
+        private Action ruleFalse;
     }
 
     @Data
