@@ -31,11 +31,6 @@ public class LFUtil {
     public static final String ACCESS_CHAIN = "A_C#{}";
 
     /**
-     * 动态字段测试
-     */
-    public static final String DYNAMIC_TEST_CHAIN = "D_TC";
-
-    /**
      * indicatorId
      */
     public static final String INDICATOR_CHAIN = "I_C#{}";
@@ -64,26 +59,6 @@ public class LFUtil {
      * empty普通组件
      */
     public static final String EMPTY_COMMON_NODE = "e_cn";
-
-    /**
-     * access输入普通组件
-     */
-    public static final String ACCESS_IN_COMMON_NODE = "a_icn";
-
-    /**
-     * access输出普通组件
-     */
-    public static final String ACCESS_OUT_COMMON_NODE = "a_ocn";
-
-    /**
-     * 普通字段组件
-     */
-    public static final String NORMAL_FIELD_COMMON_NODE = "nf_cn";
-
-    /**
-     * 动态字段组件
-     */
-    public static final String DYNAMIC_FIELD_COMMON_NODE = "df_cn";
 
     /**
      * 设置字段组件

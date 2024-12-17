@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
-import cn.wnhyang.coolGuard.context.AccessRequest;
+import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.convert.ListDataConvert;
 import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.entity.ListData;
@@ -131,11 +131,11 @@ public class ListDataServiceImpl implements ListDataService {
         // TODO 完善
         log.info("addListData");
         List<Action.AddList> addLists = bindCmp.getCmpDataList(Action.AddList.class);
-        AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
+        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         for (Action.AddList addList : addLists) {
             ListData listData = new ListData();
             listData.setListSetCode(addList.getListSetCode());
-            listData.setValue(accessRequest.getStringData(addList.getFieldName()));
+            listData.setValue(fieldContext.getStringData(addList.getFieldName()));
             listData.setSource("规则生成");
             listDataMapper.insert(listData);
         }

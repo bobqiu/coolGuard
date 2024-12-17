@@ -17,7 +17,7 @@ import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.AccessService;
-import cn.wnhyang.coolGuard.service.DisposalService;
+import cn.wnhyang.coolGuard.service.FieldService;
 import cn.wnhyang.coolGuard.util.JsonUtil;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.AccessVO;
@@ -27,7 +27,6 @@ import cn.wnhyang.coolGuard.vo.create.AccessCreateVO;
 import cn.wnhyang.coolGuard.vo.page.AccessPageVO;
 import cn.wnhyang.coolGuard.vo.update.AccessUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
-import com.yomahub.liteflow.annotation.LiteflowFact;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.FlowExecutor;
 import com.yomahub.liteflow.core.NodeComponent;
@@ -62,8 +61,6 @@ public class AccessServiceImpl implements AccessService {
 
     private final AccessMapper accessMapper;
 
-    private final DisposalService disposalService;
-
     private final FlowExecutor flowExecutor;
 
     private final CommonProducer commonProducer;
@@ -72,29 +69,43 @@ public class AccessServiceImpl implements AccessService {
 
     private final ChainMapper chainMapper;
 
+    private final FieldService fieldService;
+
     @Override
     public AccessResponse syncRisk(String name, Map<String, String> params) {
+        log.info("服务名：{}, 入参：{}", name, params);
 
         AccessResponse accessResponse = new AccessResponse();
 
         // 根据接入名称获取接入
         Access access = getAccessByName(name);
+        log.info("access: {}", access);
 
         // 设置接入
-        List<InputFieldVO> inputFields = getAccessInputFieldList(access);
-        List<OutputFieldVO> outputFields = getAccessOutputFieldList(access);
+        List<InputFieldVO> inputFieldList = getAccessInputFieldList(access);
+        List<OutputFieldVO> outputFieldList = getAccessOutputFieldList(access);
 
-        AccessRequest accessRequest = new AccessRequest(access, params, inputFields, outputFields);
+        FieldContext fieldContext = fieldService.fieldParse(inputFieldList, params);
         PolicyContext policyContext = new PolicyContext();
         EventContext eventContext = new EventContext();
         IndicatorContext indicatorContext = new IndicatorContext();
 
-        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()), null, accessRequest, indicatorContext, policyContext, eventContext, accessResponse);
+        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()), null, fieldContext, indicatorContext, policyContext, eventContext, accessResponse);
         // TODO chain el 打印
+
+        // 设置出参
+        accessResponse.setOutputData(FieldName.seqId, fieldContext.getStringData(FieldName.seqId));
+        // TODO 增加接口耗时和流程耗时
+        if (CollUtil.isNotEmpty(outputFieldList)) {
+            for (OutputFieldVO outputField : outputFieldList) {
+                accessResponse.setOutputData(outputField.getParamName(),
+                        fieldContext.getStringData(outputField.getName()));
+            }
+        }
 
         // 将上下文拼在一块，将此任务丢到线程中执行
         Map<String, Object> esData = new HashMap<>();
-        esData.put("fields", accessRequest.getFields());
+        esData.put("fields", fieldContext);
         esData.put("zbs", indicatorContext.convert());
         esData.put("result", accessResponse.getPolicySetResult());
         try {
@@ -209,28 +220,6 @@ public class AccessServiceImpl implements AccessService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.EMPTY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "空组件")
     public void empty(NodeComponent bindCmp) {
         log.info("空组件");
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ACCESS_IN_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "入参组件")
-    public void accessIn(NodeComponent bindCmp, @LiteflowFact("params") Map<String, String> params) {
-        log.info("入参：{}", params);
-
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ACCESS_OUT_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "出参组件")
-    public void accessOut(NodeComponent bindCmp) {
-        AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
-        AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);
-        // 设置出参
-        accessResponse.setOutputData(FieldName.seqId, accessRequest.getStringData(FieldName.seqId));
-        // TODO 增加接口耗时和流程耗时
-        List<OutputFieldVO> outputFields = accessRequest.getOutputFields();
-        if (CollUtil.isNotEmpty(outputFields)) {
-            for (OutputFieldVO outputField : outputFields) {
-                accessResponse.setOutputData(outputField.getParamName(),
-                        accessRequest.getStringData(outputField.getName()));
-            }
-        }
     }
 
 }

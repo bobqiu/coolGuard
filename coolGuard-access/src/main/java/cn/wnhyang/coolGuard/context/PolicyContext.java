@@ -12,33 +12,32 @@ import lombok.Data;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author wnhyang
  * @date 2024/4/3
  **/
-@Data
 public class PolicyContext {
 
     private final Map<String, DisposalCtx> disposalMap = new ConcurrentHashMap<>();
 
     private PolicySetCtx policySet;
 
-    private final Map<String, PolicyCtx> policyMap = new ConcurrentHashMap<>();
-
-    private final Map<String, List<RuleCtx>> ruleListMap = new ConcurrentHashMap<>();
-
-    private final Map<String, List<RuleCtx>> hitRuleListMap = new ConcurrentHashMap<>();
-
-    public void init(List<DisposalCtx> disposalCtxList) {
+    public void init(List<DisposalCtx> disposalCtxList, PolicySetCtx policySet) {
         for (DisposalCtx disposalCtx : disposalCtxList) {
             disposalMap.put(disposalCtx.getCode(), disposalCtx);
         }
+        this.policySet = policySet;
     }
+
+    private final Map<String, PolicyCtx> policyMap = new ConcurrentHashMap<>();
 
     public void addPolicy(String policyCode, PolicyCtx policy) {
         policyMap.put(policyCode, policy);
     }
+
+    private final Map<String, List<RuleCtx>> ruleListMap = new ConcurrentHashMap<>();
 
     public void addRuleList(String policyCode, List<RuleCtx> ruleList) {
         ruleListMap.put(policyCode, ruleList);
@@ -48,11 +47,47 @@ public class PolicyContext {
         return ruleListMap.get(policyCode).get(index);
     }
 
+    private final Map<String, List<RuleCtx>> hitRuleListMap = new ConcurrentHashMap<>();
+
     public void addHitRuleVO(String policyCode, RuleCtx rule) {
         if (!hitRuleListMap.containsKey(policyCode)) {
             hitRuleListMap.put(policyCode, CollUtil.newArrayList());
         }
         hitRuleListMap.get(policyCode).add(rule);
+    }
+
+    public boolean isHit(String policyCode) {
+        return CollUtil.isNotEmpty(hitRuleListMap.get(policyCode));
+    }
+
+    private final Map<String, List<RuleCtx>> hitMockRuleListMap = new ConcurrentHashMap<>();
+
+    public void addHitMockRuleVO(String policyCode, RuleCtx rule) {
+        if (!hitMockRuleListMap.containsKey(policyCode)) {
+            hitMockRuleListMap.put(policyCode, CollUtil.newArrayList());
+        }
+        hitMockRuleListMap.get(policyCode).add(rule);
+    }
+
+    private final ConcurrentHashMap<String, AtomicInteger> counters = new ConcurrentHashMap<>();
+
+    /**
+     * 增加指定 key 的计数值。
+     * 如果 key 不存在，则初始化为 1；如果存在，则将当前值加 1。
+     */
+    public void increment(String key) {
+        // 使用 computeIfAbsent 方法来确保只在第一次遇到该 key 时创建新的 AtomicInteger
+        counters.computeIfAbsent(key, k -> new AtomicInteger(0)).incrementAndGet();
+    }
+
+    /**
+     * 获取指定 key 的当前计数值。
+     * 如果 key 不存在，则返回 0。
+     */
+    public int get(String key) {
+        // 获取指定 key 的 AtomicInteger，并调用 get() 方法获取其值
+        AtomicInteger counter = counters.get(key);
+        return (counter != null) ? counter.get() : 0;
     }
 
     public PolicySetResult convert() {

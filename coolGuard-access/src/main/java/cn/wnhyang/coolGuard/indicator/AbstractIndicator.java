@@ -32,8 +32,8 @@ public abstract class AbstractIndicator {
         this.redissonClient = redissonClient;
     }
 
-    public String getTypeName() {
-        return getType().getName();
+    public String getTypeCode() {
+        return getType().getType();
     }
 
     /**

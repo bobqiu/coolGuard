@@ -7,7 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.SceneType;
-import cn.wnhyang.coolGuard.context.AccessRequest;
+import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.convert.IndicatorVersionConvert;
@@ -76,7 +76,7 @@ public class IndicatorServiceImpl implements IndicatorService {
     }
 
     private void addIndicator(List<AbstractIndicator> indicatorList) {
-        indicatorList.forEach(indicator -> INDICATOR_MAP.put(indicator.getTypeName(), indicator));
+        indicatorList.forEach(indicator -> INDICATOR_MAP.put(indicator.getTypeCode(), indicator));
     }
 
     @Override
@@ -228,10 +228,10 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_FOR, nodeId = LFUtil.INDICATOR_FOR_NODE, nodeType = NodeTypeEnum.FOR, nodeName = "指标for组件")
     public int indicatorFor(NodeComponent bindCmp) {
-        AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
+        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
-        String appName = accessRequest.getStringData(FieldName.appName);
-        String policySetCode = accessRequest.getStringData(FieldName.policySetCode);
+        String appName = fieldContext.getStringData(FieldName.appName);
+        String policySetCode = fieldContext.getStringData(FieldName.policySetCode);
         List<IndicatorVersion> indicatorVersionList = indicatorVersionMapper.selectLatestListByScenes(appName, policySetCode);
         indicatorContext.setIndicatorList(ListUtil.toCopyOnWriteArrayList(IndicatorVersionConvert.INSTANCE.convert2Ctx(indicatorVersionList)));
         return indicatorVersionList.size();
@@ -246,23 +246,24 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标true组件")
     public void indicatorTrue(NodeComponent bindCmp) {
-        AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
+        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
 
         int index = bindCmp.getSubChainReqData();
         IndicatorContext.IndicatorCtx indicatorCtx = indicatorContext.getIndicator(index);
-        indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorCtx.getType()).compute(true, indicatorCtx, accessRequest.getFields()));
+        AbstractIndicator abstractIndicator = INDICATOR_MAP.get(indicatorCtx.getType());
+        indicatorContext.setIndicatorValue(index, abstractIndicator.compute(true, indicatorCtx, fieldContext));
         log.info("true:指标(code:{}, name:{}, value:{})", indicatorCtx.getCode(), indicatorCtx.getName(), indicatorCtx.getValue());
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标false组件")
     public void indicatorFalse(NodeComponent bindCmp) {
-        AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
+        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
 
         int index = bindCmp.getSubChainReqData();
         IndicatorContext.IndicatorCtx indicatorCtx = indicatorContext.getIndicator(index);
-        indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorCtx.getType()).compute(false, indicatorCtx, accessRequest.getFields()));
+        indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorCtx.getType()).compute(false, indicatorCtx, fieldContext));
         log.info("false指标(code:{}, name:{}, value:{})", indicatorCtx.getCode(), indicatorCtx.getName(), indicatorCtx.getValue());
 
     }

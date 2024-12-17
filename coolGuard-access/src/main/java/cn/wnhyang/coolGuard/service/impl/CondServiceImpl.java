@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.wnhyang.coolGuard.constant.ExpectType;
-import cn.wnhyang.coolGuard.context.AccessRequest;
+import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.entity.Cond;
 import cn.wnhyang.coolGuard.enums.CondType;
@@ -43,7 +43,7 @@ public class CondServiceImpl implements CondService {
         Cond cond = bindCmp.getCmpData(Cond.class);
 
         // 获取上下文
-        AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
+        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
 
         boolean b = false;
 
@@ -59,7 +59,7 @@ public class CondServiceImpl implements CondService {
 
                     String expectValue = cond.getExpectValue();
                     if (ExpectType.CONTEXT.equals(cond.getExpectType())) {
-                        expectValue = accessRequest.getStringData(expectValue);
+                        expectValue = fieldContext.getStringData(expectValue);
                     }
 
                     if (fieldType == null || byType == null) {
@@ -68,35 +68,35 @@ public class CondServiceImpl implements CondService {
 
                     switch (fieldType) {
                         case STRING:
-                            String stringData = accessRequest.getStringData(fieldName);
+                            String stringData = fieldContext.getStringData(fieldName);
                             log.debug("字段值:{}, 操作:{}, 期望值:{}", stringData, byType, expectValue);
                             b = FunUtil.INSTANCE.stringLogicOp.apply(stringData, byType, expectValue);
                             break;
                         case NUMBER:
-                            Integer numberData = accessRequest.getNumberData(fieldName);
+                            Integer numberData = fieldContext.getNumberData(fieldName);
                             Integer expectInteger = Integer.parseInt(expectValue);
                             log.debug("字段值:{}, 操作:{}, 期望值:{}", numberData, byType, expectInteger);
                             b = FunUtil.INSTANCE.integerLogicOp.apply(numberData, byType, expectInteger);
                             break;
                         case FLOAT:
-                            Double floatData = accessRequest.getFloatData(fieldName);
+                            Double floatData = fieldContext.getFloatData(fieldName);
                             Double expectDouble = Double.parseDouble(expectValue);
                             log.debug("字段值:{}, 操作:{}, 期望值:{}", floatData, byType, expectDouble);
                             b = FunUtil.INSTANCE.doubleLogicOp.apply(floatData, byType, expectDouble);
                             break;
                         case DATE:
-                            LocalDateTime dateData = accessRequest.getDateData(fieldName);
+                            LocalDateTime dateData = fieldContext.getDateData(fieldName);
                             LocalDateTime expectDateTime = LocalDateTimeUtil.parse(expectValue, DatePattern.NORM_DATETIME_FORMATTER);
                             log.debug("字段值:{}, 操作:{}, 期望值:{}", dateData, byType, expectDateTime);
                             b = FunUtil.INSTANCE.dateLogicOp.apply(dateData, byType, expectDateTime);
                             break;
                         case ENUM:
-                            String enumData = accessRequest.getEnumData(fieldName);
+                            String enumData = fieldContext.getEnumData(fieldName);
                             log.debug("字段值:{}, 操作:{}, 期望值:{}", enumData, byType, expectValue);
                             b = FunUtil.INSTANCE.enumLogicOp.apply(enumData, byType, expectValue);
                             break;
                         case BOOLEAN:
-                            Boolean booleanData = accessRequest.getBooleanData(fieldName);
+                            Boolean booleanData = fieldContext.getBooleanData(fieldName);
                             log.debug("字段值:{}", booleanData);
                             b = FunUtil.INSTANCE.booleanLogicOp.apply(booleanData, byType, Boolean.parseBoolean(expectValue));
                             break;
@@ -111,7 +111,7 @@ public class CondServiceImpl implements CondService {
 
                     String expectValue = cond.getExpectValue();
                     if (ExpectType.CONTEXT.equals(cond.getExpectType())) {
-                        expectValue = accessRequest.getStringData(expectValue);
+                        expectValue = fieldContext.getStringData(expectValue);
                     }
 
                     if (fieldType == null || byType == null) {
@@ -159,14 +159,14 @@ public class CondServiceImpl implements CondService {
 
                     String fieldName = cond.getValue();
 
-                    String stringData = accessRequest.getStringData(fieldName);
+                    String stringData = fieldContext.getStringData(fieldName);
                     b = FunUtil.INSTANCE.regularLogicOp.apply(stringData, byType, cond.getExpectValue());
                 }
                 case LIST -> {
                     log.info("名单条件");
                     String fieldName = cond.getValue();
 
-                    String stringData = accessRequest.getStringData(fieldName);
+                    String stringData = fieldContext.getStringData(fieldName);
                     // 查名单集做匹配
                     b = listDataService.hasListData(cond.getExpectValue(), stringData);
                 }

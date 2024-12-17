@@ -1,13 +1,16 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.entity.Field;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.create.FieldCreateVO;
 import cn.wnhyang.coolGuard.vo.create.TestDynamicFieldScript;
 import cn.wnhyang.coolGuard.vo.page.FieldPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldUpdateVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 字段表 服务类
@@ -69,4 +72,14 @@ public interface FieldService {
      * @return 字段列表
      */
     List<Field> listField();
+
+    /**
+     * 解析普通字段
+     *
+     * @param inputFieldList 输入字段列表
+     * @param params         参数
+     */
+    FieldContext fieldParse(List<InputFieldVO> inputFieldList, Map<String, String> params);
+
+
 }

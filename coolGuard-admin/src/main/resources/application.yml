@@ -28,7 +28,8 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:9081
+        instance:
+          service-base-url: http://localhost:8081
 
 # 监控
 management:

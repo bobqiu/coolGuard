@@ -4,8 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.constant.RedisKey;
-import cn.wnhyang.coolGuard.context.AccessRequest;
 import cn.wnhyang.coolGuard.context.AccessResponse;
+import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.DisposalConvert;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
@@ -225,21 +225,19 @@ public class PolicySetServiceImpl implements PolicySetService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_SET_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略集普通组件")
     public void policySet(NodeComponent bindCmp) {
         // TODO 策略集下策略默认并行，运行时判断有无配置Chain，有则运行，没有则for并行
-        AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
-        String appName = accessRequest.getStringData(FieldName.appName);
-        String policySetCode = accessRequest.getStringData(FieldName.policySetCode);
+        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
+        String appName = fieldContext.getStringData(FieldName.appName);
+        String policySetCode = fieldContext.getStringData(FieldName.policySetCode);
 
         PolicySet policySet = policySetMapper.selectByAppNameAndCode(appName, policySetCode);
         if (policySet != null && policySet.getPublish()) {
             log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", policySet.getAppName(), policySet.getCode(), policySet.getName());
             PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-            policyContext.init(DisposalConvert.INSTANCE.convert2Ctx(disposalMapper.selectList()));
             PolicyContext.PolicySetCtx policySetCtx = PolicySetConvert.INSTANCE.convert2Ctx(policySet);
             PolicySetVersion policySetVersion = policySetVersionMapper.selectLatest(policySet.getCode());
             policySetCtx.setVersion(policySetVersion.getVersion());
             policySetCtx.setChain(policySetVersion.getChain());
-            policyContext.setPolicySet(policySetCtx);
-
+            policyContext.init(DisposalConvert.INSTANCE.convert2Ctx(disposalMapper.selectList()), policySetCtx);
             bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode()), null);
 
             AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);

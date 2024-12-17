@@ -31,10 +31,6 @@ public class ChainController {
 
     private static final List<Node> NODE_LIST = List.of(
             new Node(EMPTY_COMMON_NODE, "空节点"),
-            new Node(ACCESS_IN_COMMON_NODE, "入参组件"),
-            new Node(ACCESS_OUT_COMMON_NODE, "入参组件"),
-            new Node(NORMAL_FIELD_COMMON_NODE, "入参组件"),
-            new Node(DYNAMIC_FIELD_COMMON_NODE, "入参组件"),
             new Node(INDICATOR_FOR_NODE, "入参组件"),
             new Node(INDICATOR_COMMON_NODE, "入参组件"),
             new Node(INDICATOR_TRUE_COMMON_NODE, "入参组件"),

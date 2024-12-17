@@ -190,10 +190,11 @@ public class RuleServiceImpl implements RuleService {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
         PolicyContext.RuleCtx rule = bindCmp.getSubChainReqData();
         log.info("命中规则(name:{}, code:{})", rule.getName(), rule.getCode());
-        // TODO 根据策略模式的不同走不同流程
-
-
-        policyContext.addHitRuleVO(rule.getPolicyCode(), rule);
+        if (RuleStatus.MOCK.equals(rule.getStatus())) {
+            policyContext.addHitMockRuleVO(rule.getPolicyCode(), rule);
+        } else {
+            policyContext.addHitRuleVO(rule.getPolicyCode(), rule);
+        }
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_FALSE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则false组件")

@@ -180,7 +180,8 @@ public class PolicyServiceImpl implements PolicyService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.POLICY_BREAK_NODE, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "策略break组件")
     public boolean policyBreak(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        return CollUtil.isNotEmpty(policyContext.getHitRuleListMap());
+        String policyCode = bindCmp.getSubChainReqData();
+        return policyContext.isHit(policyCode);
     }
 
 }

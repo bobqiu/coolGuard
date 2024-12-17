@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.context.AccessRequest;
+import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.convert.SmsTemplateConvert;
 import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.entity.SmsTemplate;
@@ -83,10 +83,10 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         // TODO 完善
         Action.SendSms sendSms = bindCmp.getCmpData(Action.SendSms.class);
         SmsTemplate smsTemplate = smsTemplateMapper.selectByCode(sendSms.getSmsTemplateCode());
-        AccessRequest accessRequest = bindCmp.getContextBean(AccessRequest.class);
+        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         Map<String, Object> map = new HashMap<>();
         for (String param : smsTemplate.getParams()) {
-            map.put(param, accessRequest.getStringData(param));
+            map.put(param, fieldContext.getStringData(param));
         }
         String smsContent = StrUtil.format(smsTemplate.getContent(), map);
         log.info("smsContent: {}", smsContent);
