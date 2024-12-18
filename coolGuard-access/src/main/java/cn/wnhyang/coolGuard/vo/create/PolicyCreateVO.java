@@ -1,11 +1,13 @@
 package cn.wnhyang.coolGuard.vo.create;
 
+import cn.wnhyang.coolGuard.entity.Th;
 import cn.wnhyang.coolGuard.vo.base.PolicyBaseVO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 策略表
@@ -37,5 +39,10 @@ public class PolicyCreateVO extends PolicyBaseVO {
      */
     @NotBlank(message = "策略模式不能为空")
     private String mode;
+
+    /**
+     * 策略阈值
+     */
+    private List<Th> thList;
 
 }

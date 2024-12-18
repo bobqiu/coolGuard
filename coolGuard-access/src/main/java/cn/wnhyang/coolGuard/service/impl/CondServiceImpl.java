@@ -41,6 +41,9 @@ public class CondServiceImpl implements CondService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.COND, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "条件组件")
     public boolean cond(NodeComponent bindCmp) {
         Cond cond = bindCmp.getCmpData(Cond.class);
+        if (cond == null) {
+            return true;
+        }
 
         // 获取上下文
         FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);

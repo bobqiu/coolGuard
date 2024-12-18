@@ -4,7 +4,10 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.constant.KafkaConstant;
-import cn.wnhyang.coolGuard.context.*;
+import cn.wnhyang.coolGuard.context.EventContext;
+import cn.wnhyang.coolGuard.context.FieldContext;
+import cn.wnhyang.coolGuard.context.IndicatorContext;
+import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.AccessConvert;
 import cn.wnhyang.coolGuard.convert.FieldConvert;
 import cn.wnhyang.coolGuard.entity.Access;
@@ -35,6 +38,7 @@ import com.yomahub.liteflow.enums.NodeTypeEnum;
 import com.yomahub.liteflow.flow.LiteflowResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +46,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_NAME_EXIST;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_NOT_EXIST;
@@ -59,6 +65,8 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
 @RequiredArgsConstructor
 public class AccessServiceImpl implements AccessService {
 
+    private final AsyncTaskExecutor asyncExecutor;
+
     private final AccessMapper accessMapper;
 
     private final FlowExecutor flowExecutor;
@@ -72,10 +80,10 @@ public class AccessServiceImpl implements AccessService {
     private final FieldService fieldService;
 
     @Override
-    public AccessResponse syncRisk(String name, Map<String, String> params) {
+    public Map<String, Object> syncRisk(String name, Map<String, String> params) {
         log.info("服务名：{}, 入参：{}", name, params);
 
-        AccessResponse accessResponse = new AccessResponse();
+        Map<String, Object> result = new HashMap<>();
 
         // 根据接入名称获取接入
         Access access = getAccessByName(name);
@@ -90,38 +98,49 @@ public class AccessServiceImpl implements AccessService {
         EventContext eventContext = new EventContext();
         IndicatorContext indicatorContext = new IndicatorContext();
 
-        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()), null, fieldContext, indicatorContext, policyContext, eventContext, accessResponse);
+        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()), null, fieldContext, indicatorContext, policyContext, eventContext);
         // TODO chain el 打印
 
+        result.put("policySetResult", eventContext.getPolicySetResult());
         // 设置出参
-        accessResponse.setOutputData(FieldName.seqId, fieldContext.getStringData(FieldName.seqId));
+        Map<String, Object> outFields = new HashMap<>();
+        outFields.put(FieldName.seqId, fieldContext.getStringData(FieldName.seqId));
         // TODO 增加接口耗时和流程耗时
         if (CollUtil.isNotEmpty(outputFieldList)) {
             for (OutputFieldVO outputField : outputFieldList) {
-                accessResponse.setOutputData(outputField.getParamName(),
-                        fieldContext.getStringData(outputField.getName()));
+                outFields.put(outputField.getParamName(), fieldContext.getStringData(outputField.getName()));
             }
         }
+        result.put("outFields", outFields);
 
         // 将上下文拼在一块，将此任务丢到线程中执行
         Map<String, Object> esData = new HashMap<>();
         esData.put("fields", fieldContext);
         esData.put("zbs", indicatorContext.convert());
-        esData.put("result", accessResponse.getPolicySetResult());
+        esData.put("result", eventContext.getPolicySetResult());
         try {
             commonProducer.send(KafkaConstant.EVENT_ES_DATA, JsonUtil.toJsonString(esData));
         } catch (Exception e) {
             log.error("esData error", e);
         }
-        return accessResponse;
+        return result;
     }
 
     @Override
-    public AccessResponse asyncRisk(String name, Map<String, String> params) {
-        log.info("name {}", name);
+    public Map<String, Object> asyncRisk(String name, Map<String, String> params) {
 
-        AccessResponse accessResponse = new AccessResponse();
-        return accessResponse;
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", "000000");
+
+        // TODO 异步决策不需要跑策略
+        try {
+            return asyncExecutor.submit(() ->
+                    syncRisk(name, params)).get(100, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            return map;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

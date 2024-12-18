@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.context.AccessResponse;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.AccessService;
@@ -37,7 +36,7 @@ public class AccessController {
      * @return map
      */
     @PostMapping("/{name}/sync")
-    public CommonResult<AccessResponse> syncRisk(@PathVariable("name") String name, @RequestBody Map<String, String> params) {
+    public CommonResult<Map<String, Object>> syncRisk(@PathVariable("name") String name, @RequestBody Map<String, String> params) {
         return success(accessService.syncRisk(name, params));
     }
 
@@ -49,7 +48,7 @@ public class AccessController {
      * @return map
      */
     @PostMapping("/{name}/async")
-    public CommonResult<AccessResponse> asyncRisk(@PathVariable("name") String name, @RequestBody Map<String, String> params) {
+    public CommonResult<Map<String, Object>> asyncRisk(@PathVariable("name") String name, @RequestBody Map<String, String> params) {
         return success(accessService.asyncRisk(name, params));
     }
 

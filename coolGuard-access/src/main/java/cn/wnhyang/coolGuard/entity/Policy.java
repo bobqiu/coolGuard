@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 策略表
@@ -20,7 +22,7 @@ import java.io.Serial;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_policy")
+@TableName(value = "de_policy", autoResultMap = true)
 public class Policy extends BasePO {
 
     @Serial
@@ -55,6 +57,12 @@ public class Policy extends BasePO {
      */
     @TableField("mode")
     private String mode;
+
+    /**
+     * 策略阈值
+     */
+    @TableField(value = "th_list", typeHandler = JacksonTypeHandler.class)
+    private List<Th> thList;
 
     /**
      * 描述

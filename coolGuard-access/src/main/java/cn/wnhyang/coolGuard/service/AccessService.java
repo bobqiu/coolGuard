@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.service;
 
-import cn.wnhyang.coolGuard.context.AccessResponse;
 import cn.wnhyang.coolGuard.entity.Access;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.AccessVO;
@@ -28,7 +27,7 @@ public interface AccessService {
      * @param params 参数
      * @return map
      */
-    AccessResponse syncRisk(String name, Map<String, String> params);
+    Map<String, Object> syncRisk(String name, Map<String, String> params);
 
     /**
      * 异步调用
@@ -37,7 +36,7 @@ public interface AccessService {
      * @param params 参数
      * @return map
      */
-    AccessResponse asyncRisk(String name, Map<String, String> params);
+    Map<String, Object> asyncRisk(String name, Map<String, String> params);
 
     /**
      * 新建

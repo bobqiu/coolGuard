@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.context;
 
 import cn.wnhyang.coolGuard.entity.Tag;
+import cn.wnhyang.coolGuard.vo.result.PolicySetResult;
 import lombok.Data;
 
 import java.util.LinkedHashSet;
@@ -24,5 +25,7 @@ public class EventContext {
     public static class TagCtx {
 
     }
+
+    private PolicySetResult policySetResult;
 
 }

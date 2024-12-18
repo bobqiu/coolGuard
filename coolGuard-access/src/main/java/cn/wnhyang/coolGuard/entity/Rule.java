@@ -58,10 +58,10 @@ public class Rule extends BasePO {
     private String disposalCode;
 
     /**
-     * 分数
+     * 表达式
      */
-    @TableField("score")
-    private Integer score;
+    @TableField("express")
+    private String express;
 
     /**
      * 状态

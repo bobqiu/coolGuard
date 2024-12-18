@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.util;
 
 import com.ql.util.express.ExpressRunner;
+import com.ql.util.express.IExpressContext;
 
 /**
  * @author wnhyang
@@ -8,5 +9,13 @@ import com.ql.util.express.ExpressRunner;
  **/
 public class QLExpressUtil {
 
-    public static final ExpressRunner EXPRESS_RUNNER = new ExpressRunner();
+    private static final ExpressRunner EXPRESS_RUNNER;
+
+    static {
+        EXPRESS_RUNNER = new ExpressRunner();
+    }
+
+    public static Object execute(String express, IExpressContext<String, Object> context) throws Exception {
+        return EXPRESS_RUNNER.execute(express, context, null, true, false);
+    }
 }

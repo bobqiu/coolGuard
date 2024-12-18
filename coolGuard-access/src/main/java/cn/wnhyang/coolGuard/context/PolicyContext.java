@@ -1,18 +1,21 @@
 package cn.wnhyang.coolGuard.context;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.wnhyang.coolGuard.constant.PolicyMode;
 import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.entity.Cond;
+import cn.wnhyang.coolGuard.entity.Th;
 import cn.wnhyang.coolGuard.vo.result.PolicyResult;
 import cn.wnhyang.coolGuard.vo.result.PolicySetResult;
 import cn.wnhyang.coolGuard.vo.result.RuleResult;
 import lombok.Data;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author wnhyang
@@ -35,6 +38,10 @@ public class PolicyContext {
 
     public void addPolicy(String policyCode, PolicyCtx policy) {
         policyMap.put(policyCode, policy);
+    }
+
+    public PolicyCtx getPolicy(String policyCode) {
+        return policyMap.get(policyCode);
     }
 
     private final Map<String, List<RuleCtx>> ruleListMap = new ConcurrentHashMap<>();
@@ -69,27 +76,6 @@ public class PolicyContext {
         hitMockRuleListMap.get(policyCode).add(rule);
     }
 
-    private final ConcurrentHashMap<String, AtomicInteger> counters = new ConcurrentHashMap<>();
-
-    /**
-     * 增加指定 key 的计数值。
-     * 如果 key 不存在，则初始化为 1；如果存在，则将当前值加 1。
-     */
-    public void increment(String key) {
-        // 使用 computeIfAbsent 方法来确保只在第一次遇到该 key 时创建新的 AtomicInteger
-        counters.computeIfAbsent(key, k -> new AtomicInteger(0)).incrementAndGet();
-    }
-
-    /**
-     * 获取指定 key 的当前计数值。
-     * 如果 key 不存在，则返回 0。
-     */
-    public int get(String key) {
-        // 获取指定 key 的 AtomicInteger，并调用 get() 方法获取其值
-        AtomicInteger counter = counters.get(key);
-        return (counter != null) ? counter.get() : 0;
-    }
-
     public PolicySetResult convert() {
         PolicySetResult policySetResult = new PolicySetResult(policySet.getName(), policySet.getCode(), policySet.getChain(), policySet.getVersion());
 
@@ -97,20 +83,34 @@ public class PolicyContext {
             PolicyCtx policy = entry.getValue();
             PolicyResult policyResult = new PolicyResult(policy.getName(), policy.getCode(), policy.getMode());
 
-            String disposalCode = "pass";
-            int maxScore = 0;
+            // 最坏
+            String maxDisposalCode = "pass";
+            int maxGrade = Integer.MIN_VALUE;
+            // 投票
+            Map<String, Integer> votes = new HashMap<>();
+            // 权重
+            double weight = 0.0;
             List<RuleCtx> ruleList = hitRuleListMap.get(policy.getCode());
             if (CollUtil.isNotEmpty(ruleList)) {
                 for (RuleCtx rule : ruleList) {
-                    RuleResult ruleResult = new RuleResult(rule.getName(), rule.getCode(), rule.getScore());
+                    if (PolicyMode.VOTE.equals(policy.getMode())) {
+                        // 投票
+                        votes.put(rule.getDisposalCode(), votes.getOrDefault(rule.getDisposalCode(), 0) + 1);
+                    } else if (PolicyMode.WEIGHT.equals(policy.getMode())) {
+                        // 权重
+                        weight += rule.getExpressValue();
+                    }
 
+                    RuleResult ruleResult = new RuleResult(rule.getName(), rule.getCode(), rule.getExpress());
+
+                    // 最坏和顺序
                     DisposalCtx disposal = disposalMap.get(rule.getDisposalCode());
                     if (null != disposal) {
                         ruleResult.setDisposalName(disposal.getName());
                         ruleResult.setDisposalCode(disposal.getCode());
-                        if (disposal.getGrade() > maxScore) {
-                            maxScore = disposal.getGrade();
-                            disposalCode = rule.getDisposalCode();
+                        if (disposal.getGrade() > maxGrade) {
+                            maxGrade = disposal.getGrade();
+                            maxDisposalCode = disposal.getCode();
                         }
                     }
                     // 模拟/正式规则区分开
@@ -121,9 +121,32 @@ public class PolicyContext {
                     }
                 }
             }
-            // TODO 根据策略模式确定处置结果
-            policyResult.setDisposalName(disposalMap.get(disposalCode).getName());
-            policyResult.setDisposalCode(disposalMap.get(disposalCode).getCode());
+            if (PolicyMode.VOTE.equals(policy.getMode())) {
+                String maxVoteDisposalCode = "pass";
+                int maxVoteCount = Integer.MIN_VALUE;
+                for (Map.Entry<String, Integer> entry1 : votes.entrySet()) {
+                    if (entry1.getValue() > maxVoteCount) {
+                        maxVoteCount = entry1.getValue();
+                        maxVoteDisposalCode = entry1.getKey();
+                    }
+                }
+                policyResult.setDisposalName(disposalMap.get(maxVoteDisposalCode).getName());
+                policyResult.setDisposalCode(maxVoteDisposalCode);
+            } else if (PolicyMode.WEIGHT.equals(policy.getMode())) {
+                List<Th> thList = policy.getThList();
+                // 排序
+                thList.sort(Comparator.comparing(Th::getScore));
+                for (Th th : thList) {
+                    if (weight <= th.getScore()) {
+                        policyResult.setDisposalName(disposalMap.get(th.getCode()).getName());
+                        policyResult.setDisposalCode(th.getCode());
+                        break;
+                    }
+                }
+            } else {
+                policyResult.setDisposalName(disposalMap.get(maxDisposalCode).getName());
+                policyResult.setDisposalCode(maxDisposalCode);
+            }
             policySetResult.addPolicyResult(policyResult);
         }
         // TODO
@@ -196,14 +219,19 @@ public class PolicyContext {
         private String code;
 
         /**
+         * 策略名
+         */
+        private String name;
+
+        /**
          * 策略模式
          */
         private String mode;
 
         /**
-         * 策略名
+         * 策略阈值
          */
-        private String name;
+        private List<Th> thList;
 
         /**
          * 描述
@@ -240,9 +268,14 @@ public class PolicyContext {
         private String disposalCode;
 
         /**
-         * 分数
+         * 表达式
          */
-        private Integer score;
+        private String express;
+
+        /**
+         * 表达式值
+         */
+        private Double expressValue;
 
         /**
          * 状态

@@ -46,8 +46,6 @@ public class FieldCreateVO {
     /**
      * 描述
      */
-    @NotBlank(message = "字段描述不能为空")
-    @Size(min = 1, max = 100, message = "字段描述长度必须在1-100之间")
     private String description;
 
     /**

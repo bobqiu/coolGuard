@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.vo;
 
+import cn.wnhyang.coolGuard.entity.Th;
 import cn.wnhyang.coolGuard.vo.base.PolicyBaseVO;
 import lombok.Data;
 
@@ -37,6 +38,11 @@ public class PolicyVO extends PolicyBaseVO {
      * 策略模式
      */
     private String mode;
+
+    /**
+     * 策略阈值
+     */
+    private List<Th> thList;
 
     /**
      * 规则列表

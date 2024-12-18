@@ -41,9 +41,9 @@ public class RuleBaseVO implements Serializable {
     private String disposalCode;
 
     /**
-     * 分数
+     * 表达式
      */
-    private Integer score;
+    private String express;
 
     /**
      * 状态

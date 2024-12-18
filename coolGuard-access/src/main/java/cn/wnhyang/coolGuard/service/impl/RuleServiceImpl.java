@@ -1,8 +1,10 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.PolicyMode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.RuleStatus;
+import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
 import cn.wnhyang.coolGuard.entity.*;
@@ -14,6 +16,7 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleService;
 import cn.wnhyang.coolGuard.util.JsonUtil;
 import cn.wnhyang.coolGuard.util.LFUtil;
+import cn.wnhyang.coolGuard.util.QLExpressUtil;
 import cn.wnhyang.coolGuard.vo.RuleVO;
 import cn.wnhyang.coolGuard.vo.create.RuleCreateVO;
 import cn.wnhyang.coolGuard.vo.page.RulePageVO;
@@ -193,6 +196,15 @@ public class RuleServiceImpl implements RuleService {
         if (RuleStatus.MOCK.equals(rule.getStatus())) {
             policyContext.addHitMockRuleVO(rule.getPolicyCode(), rule);
         } else {
+            // 权重
+            if (PolicyMode.WEIGHT.equals(policyContext.getPolicy(rule.getPolicyCode()).getMode())) {
+                try {
+                    Double value = (Double) QLExpressUtil.execute(rule.getExpress(), bindCmp.getContextBean(FieldContext.class));
+                    rule.setExpressValue(value);
+                } catch (Exception e) {
+                    log.error("规则表达式执行异常", e);
+                }
+            }
             policyContext.addHitRuleVO(rule.getPolicyCode(), rule);
         }
     }

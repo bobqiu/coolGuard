@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.constant.RedisKey;
-import cn.wnhyang.coolGuard.context.AccessResponse;
+import cn.wnhyang.coolGuard.context.EventContext;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.DisposalConvert;
@@ -240,8 +240,8 @@ public class PolicySetServiceImpl implements PolicySetService {
             policyContext.init(DisposalConvert.INSTANCE.convert2Ctx(disposalMapper.selectList()), policySetCtx);
             bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode()), null);
 
-            AccessResponse accessResponse = bindCmp.getContextBean(AccessResponse.class);
-            accessResponse.setPolicySetResult(policyContext.convert());
+            EventContext eventContext = bindCmp.getContextBean(EventContext.class);
+            eventContext.setPolicySetResult(policyContext.convert());
             log.info("策略集(name:{})执行完毕", policySet.getName());
         } else {
             log.info("未匹配应用名:{}, 策略集编码:{}", appName, policySetCode);

@@ -146,7 +146,7 @@ public class FieldServiceImpl implements FieldService {
         }
 
         try {
-            Object execute = QLExpressUtil.EXPRESS_RUNNER.execute(testDynamicFieldScript.getScript(), fieldContext, null, true, false);
+            Object execute = QLExpressUtil.execute(testDynamicFieldScript.getScript(), fieldContext);
             return String.valueOf(execute);
         } catch (Exception e) {
             // TODO 定义异常
@@ -241,7 +241,7 @@ public class FieldServiceImpl implements FieldService {
     private void dynamicFieldParse(List<InputFieldVO> inputFieldList, FieldContext fieldContext) {
         inputFieldList.stream().filter(InputFieldVO::getDynamic).forEach(inputField -> {
             try {
-                Object result = QLExpressUtil.EXPRESS_RUNNER.execute(inputField.getScript(), fieldContext, null, true, false);
+                Object result = QLExpressUtil.execute(inputField.getScript(), fieldContext);
                 fieldContext.setDataByType(inputField.getName(), String.valueOf(result), FieldType.getByType(inputField.getType()));
 
             } catch (Exception e) {

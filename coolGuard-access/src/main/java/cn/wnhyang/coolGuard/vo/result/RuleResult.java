@@ -26,10 +26,10 @@ public class RuleResult implements Serializable {
      */
     private final String code;
 
-    public RuleResult(String name, String code, Integer score) {
+    public RuleResult(String name, String code, String express) {
         this.name = name;
         this.code = code;
-        this.score = score;
+        this.express = express;
     }
 
     /**
@@ -45,9 +45,9 @@ public class RuleResult implements Serializable {
     private String disposalCode;
 
     /**
-     * 分数
+     *
      */
     @Setter
-    private Integer score;
+    private String express;
 
 }
