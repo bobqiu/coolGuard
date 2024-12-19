@@ -44,13 +44,19 @@ public interface ErrorCodes {
 
     ErrorCode RULE_CODE_EXIST = new ErrorCode(1005001001, "规则code已存在");
 
+    ErrorCode RULE_RULE_ID_EXIST = new ErrorCode(1005001002, "规则id已存在");
+
+    ErrorCode RULE_IS_RUNNING = new ErrorCode(1005001003, "规则还在运行");
+
     ErrorCode POLICY_NOT_EXIST = new ErrorCode(1006001000, "策略不存在");
 
     ErrorCode POLICY_CODE_EXIST = new ErrorCode(1006001001, "策略code已存在");
 
-    ErrorCode POLICY_REFERENCE_DELETE = new ErrorCode(1006001002, "策略有引用不可删除");
+    ErrorCode POLICY_REFERENCE_BY_POLICY_SET_DELETE = new ErrorCode(1006001002, "策略被策略集引用不可删除");
 
-    ErrorCode POLICY_REFERENCE_UPDATE = new ErrorCode(1006001003, "策略下有运行规则，不可关闭当前策略");
+    ErrorCode POLICY_REFERENCE_RULE_DELETE = new ErrorCode(1006001003, "策略有引用不可删除");
+
+    ErrorCode POLICY_REFERENCE_UPDATE = new ErrorCode(1006001004, "策略下有运行规则，不可关闭当前策略");
 
     ErrorCode POLICY_SET_NOT_EXIST = new ErrorCode(1007001000, "策略集不存在");
 
@@ -61,6 +67,8 @@ public interface ErrorCodes {
     ErrorCode POLICY_SET_REFERENCE_UPDATE = new ErrorCode(1007001003, "策略集下有运行策略，不可关闭当前策略集");
 
     ErrorCode POLICY_SET_CHAIN_NOT_CHANGE = new ErrorCode(1007001004, "策略集链路没有修改");
+
+    ErrorCode POLICY_SET_IS_RUNNING = new ErrorCode(1007001005, "策略集还在运行");
 
     ErrorCode INDICATOR_NOT_EXIST = new ErrorCode(1008001000, "指标不存在");
 

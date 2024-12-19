@@ -147,8 +147,8 @@ public class LFUtil {
      * @param tag    标签
      * @return 带标签的组件
      */
-    public static String getNodeWithTag(String nodeId, Object tag) {
-        return StrUtil.format(NODE_WITH_TAG, nodeId, tag.toString());
+    public static String getNodeWithTag(String nodeId, String tag) {
+        return StrUtil.format(NODE_WITH_TAG, nodeId, tag);
     }
 
     public static String buildElWithData(String nodeId, String data) {
@@ -157,28 +157,6 @@ public class LFUtil {
 
     public static String buildWhen(String... el) {
         return "when(" + StrUtil.join(",", el) + ");";
-    }
-
-    /**
-     * 针对THEN和WHEN编排
-     *
-     * @param oEl 原el
-     * @param el  el
-     * @return 新el
-     */
-    public static String elAdd(String oEl, String el) {
-        StringBuilder sb = new StringBuilder(oEl);
-        sb.insert(sb.lastIndexOf(")"), "," + el);
-        return sb.toString();
-    }
-
-    /**
-     * @param oEl 原el
-     * @param el  要移除的el
-     * @return 去除el后的el
-     */
-    public static String removeEl(String oEl, String el) {
-        return oEl.replace("," + el, "");
     }
 
     private static String[] splitExpressions(String expression) {
@@ -200,11 +178,6 @@ public class LFUtil {
         parts.add(expression.substring(startIndex));
 
         return parts.toArray(new String[0]);
-    }
-
-    public static String buildCondEl(String condStr) {
-        Cond cond = JsonUtil.parseObject(condStr, Cond.class);
-        return buildCondEl(cond);
     }
 
     @SneakyThrows

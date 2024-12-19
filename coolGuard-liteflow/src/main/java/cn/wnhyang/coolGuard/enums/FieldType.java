@@ -38,6 +38,7 @@ public enum FieldType {
     DATE("日期", "D"),
 
     /**
+     * TODO 要不要保留枚举类型？
      * 枚举型，支持【等于、不等于、为空、不为空】
      */
     ENUM("枚举", "E"),

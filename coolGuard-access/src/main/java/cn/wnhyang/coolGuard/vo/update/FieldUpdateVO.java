@@ -1,15 +1,20 @@
 package cn.wnhyang.coolGuard.vo.update;
 
-import cn.wnhyang.coolGuard.vo.create.FieldCreateVO;
+import cn.wnhyang.coolGuard.vo.base.FieldBaseVO;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+import java.io.Serial;
 
 /**
  * @author wnhyang
  * @date 2024/3/14
  **/
 @Data
-public class FieldUpdateVO extends FieldCreateVO {
+public class FieldUpdateVO extends FieldBaseVO {
+
+    @Serial
+    private static final long serialVersionUID = -954983526640093521L;
 
     /**
      * 主键

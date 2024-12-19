@@ -42,8 +42,8 @@ public class MaxIndicator extends AbstractIndicator {
     }
 
     @Override
-    public void addEvent(IndicatorContext.IndicatorCtx indicator, long currentTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
-        set.add(currentTime, eventDetail.get(FieldName.seqId) + "-" + eventDetail.get(indicator.getCalcField()));
+    public void addEvent(IndicatorContext.IndicatorCtx indicator, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
+        set.add(eventTime, eventDetail.get(FieldName.seqId) + "-" + eventDetail.get(indicator.getCalcField()));
 
     }
 }

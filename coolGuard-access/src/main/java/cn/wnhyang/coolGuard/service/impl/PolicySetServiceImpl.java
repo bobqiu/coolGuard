@@ -113,13 +113,18 @@ public class PolicySetServiceImpl implements PolicySetService {
         if (policySet == null) {
             throw exception(POLICY_SET_NOT_EXIST);
         }
-        // 1、确认是否还有运行的策略
+        // 1、确认策略集是否还在运行
+        PolicySetVersion policySetVersion = policySetVersionMapper.selectLatest(policySet.getCode());
+        if (policySetVersion != null) {
+            throw exception(POLICY_SET_IS_RUNNING);
+        }
+        // 2、确认是否还有运行的策略
         List<Policy> policyList = policyMapper.selectListBySetCode(policySet.getCode());
         if (CollUtil.isNotEmpty(policyList)) {
             throw exception(POLICY_SET_REFERENCE_DELETE);
         }
-        // 2、没有运行的策略就可以删除策略集了
-        // 3、删除策略集下的所有规则
+        // 3、没有运行的策略就可以删除策略集了
+        // 4、删除策略集下的所有规则
         policyList = policyMapper.selectListBySetCode(policySet.getCode());
         policyService.deletePolicy(CollectionUtils.convertSet(policyList, Policy::getId));
         // 4、删除chain

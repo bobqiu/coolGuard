@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.PolicyMode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
@@ -9,7 +10,6 @@ import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
 import cn.wnhyang.coolGuard.entity.*;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
-import cn.wnhyang.coolGuard.mapper.PolicyMapper;
 import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.mapper.RuleVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
@@ -35,8 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.RULE_CODE_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.RULE_NOT_EXIST;
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -52,8 +51,6 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
 public class RuleServiceImpl implements RuleService {
 
     private final RuleMapper ruleMapper;
-
-    private final PolicyMapper policyMapper;
 
     private final ChainMapper chainMapper;
 
@@ -71,10 +68,11 @@ public class RuleServiceImpl implements RuleService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.RULE, allEntries = true)
     public Long createRule(RuleCreateVO createVO) {
-        if (ruleMapper.selectByCode(createVO.getCode()) != null) {
-            throw exception(RULE_CODE_EXIST);
+        if (ruleMapper.selectByRuleId(createVO.getRuleId()) != null) {
+            throw exception(RULE_RULE_ID_EXIST);
         }
         Rule rule = RuleConvert.INSTANCE.convert(createVO);
+        rule.setCode(IdUtil.fastSimpleUUID());
         ruleMapper.insert(rule);
 
         String condEl = LFUtil.buildCondEl(createVO.getCond());
@@ -96,9 +94,9 @@ public class RuleServiceImpl implements RuleService {
         if (rule == null) {
             throw exception(RULE_NOT_EXIST);
         }
-        Rule byCode = ruleMapper.selectByCode(updateVO.getCode());
-        if (byCode != null && !byCode.getId().equals(updateVO.getId())) {
-            throw exception(RULE_CODE_EXIST);
+        Rule byRuleId = ruleMapper.selectByRuleId(updateVO.getRuleId());
+        if (byRuleId != null && !byRuleId.getId().equals(updateVO.getId())) {
+            throw exception(RULE_RULE_ID_EXIST);
         }
         Rule convert = RuleConvert.INSTANCE.convert(updateVO);
         ruleMapper.updateById(convert);
@@ -126,6 +124,11 @@ public class RuleServiceImpl implements RuleService {
         Rule rule = ruleMapper.selectById(id);
         if (rule == null) {
             throw exception(RULE_NOT_EXIST);
+        }
+        // 1、确认策略集是否还在运行
+        RuleVersion ruleVersion = ruleVersionMapper.selectLatest(rule.getCode());
+        if (ruleVersion != null) {
+            throw exception(RULE_IS_RUNNING);
         }
         ruleMapper.deleteById(id);
         chainMapper.deleteByChainName(StrUtil.format(LFUtil.RULE_CHAIN, rule.getCode()));

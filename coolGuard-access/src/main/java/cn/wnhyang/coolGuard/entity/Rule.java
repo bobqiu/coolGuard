@@ -46,6 +46,12 @@ public class Rule extends BasePO {
     private String code;
 
     /**
+     * 规则id
+     */
+    @TableField("rule_id")
+    private String ruleId;
+
+    /**
      * 规则名
      */
     @TableField("name")

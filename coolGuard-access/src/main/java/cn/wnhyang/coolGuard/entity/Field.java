@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 字段表
@@ -69,7 +70,7 @@ public class Field extends BasePO {
      * 字段信息
      */
     @TableField(value = "info", typeHandler = JacksonTypeHandler.class)
-    private NameValue info;
+    private List<NameValue> info;
 
     /**
      * 描述

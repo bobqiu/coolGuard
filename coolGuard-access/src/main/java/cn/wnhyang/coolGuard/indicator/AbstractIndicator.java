@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.indicator;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.WinType;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
@@ -89,12 +90,10 @@ public abstract class AbstractIndicator {
      *
      * @return 计算指标结果
      */
-    public Object getResult(IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set) {
-        // 1、获取当前时间戳
-        long currentTime = System.currentTimeMillis();
-        // 2、清理过期数据
-        cleanExpiredDate(indicator, currentTime, set);
-        // 3、设置过期时间
+    public Object getResult(long eventTime, IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set) {
+        // 1、清理过期数据
+        cleanExpiredDate(indicator, eventTime, set);
+        // 2、设置过期时间
         if (WinType.LAST.equals(indicator.getWinType())) {
             set.expire(Duration.ofSeconds(indicator.getTimeSlice() * indicator.getWinCount()));
         } else if (WinType.CUR.equals(indicator.getWinType())) {
@@ -116,34 +115,33 @@ public abstract class AbstractIndicator {
         String redisKey = getRedisKey(indicator, eventDetail);
         log.info("redisKey:{}", redisKey);
         RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(redisKey);
+        Long eventTime = (Long) eventDetail.get(FieldName.eventTimeStamp);
         // 1、状态检查和过滤
         if (addEvent && filter(indicator, eventDetail)) {
-            // 2、获取当前时间戳
-            long currentTime = System.currentTimeMillis();
-            // 3、添加事件
-            addEvent(indicator, currentTime, eventDetail, set);
+            // 2、添加事件
+            addEvent(indicator, eventTime, eventDetail, set);
 
         }
-        return getResult(indicator, set);
+        return getResult(eventTime, indicator, set);
     }
 
     /**
      * 添加事件
      *
-     * @param currentTime 当前时间戳
+     * @param eventTime   当前时间戳
      * @param eventDetail 事件详情
      */
-    public abstract void addEvent(IndicatorContext.IndicatorCtx indicator, long currentTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set);
+    public abstract void addEvent(IndicatorContext.IndicatorCtx indicator, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set);
 
     /**
      * 清理过期数据
      *
-     * @param currentTime 当前时间戳
-     * @param set         redis set
+     * @param eventTime 当前时间戳
+     * @param set       redis set
      */
-    public void cleanExpiredDate(IndicatorContext.IndicatorCtx indicator, long currentTime, RScoredSortedSet<String> set) {
+    public void cleanExpiredDate(IndicatorContext.IndicatorCtx indicator, long eventTime, RScoredSortedSet<String> set) {
         if (WinType.LAST.equals(indicator.getWinType())) {
-            set.removeRangeByScore(-1, true, currentTime - Duration.ofSeconds(indicator.getTimeSlice()).toMillis(), false);
+            set.removeRangeByScore(-1, true, eventTime - Duration.ofSeconds(indicator.getTimeSlice()).toMillis(), false);
         } else if (WinType.CUR.equals(indicator.getWinType())) {
             set.removeRangeByScore(-1, true, calculateEpochMilli(indicator, LocalDateTime.now()), false);
         }

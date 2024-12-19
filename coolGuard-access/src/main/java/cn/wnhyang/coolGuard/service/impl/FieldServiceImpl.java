@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.IdcardUtil;
 import cn.wnhyang.coolGuard.analysis.ad.Pca;
@@ -31,7 +32,6 @@ import cn.wnhyang.coolGuard.vo.page.FieldPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.core.FlowExecutor;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
@@ -41,6 +41,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -60,8 +61,6 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
 public class FieldServiceImpl implements FieldService {
 
     private final FieldMapper fieldMapper;
-
-    private final FlowExecutor flowExecutor;
 
     private final PhoneNoAnalysis phoneNoAnalysis;
 
@@ -88,9 +87,6 @@ public class FieldServiceImpl implements FieldService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.FIELD, allEntries = true)
     public void updateField(FieldUpdateVO updateVO) {
-        if (!updateVO.getName().startsWith(updateVO.getDynamic() ? "D" : "N" + "_" + updateVO.getType() + "_")) {
-            throw exception(FIELD_NAME_ERROR);
-        }
         Field field = fieldMapper.selectById(updateVO.getId());
         if (field == null) {
             throw exception(FIELD_NOT_EXIST);
@@ -98,10 +94,6 @@ public class FieldServiceImpl implements FieldService {
         // 标准，不允许删除
         if (field.getStandard()) {
             throw exception(FIELD_STANDARD);
-        }
-        Field byName = fieldMapper.selectByName(updateVO.getName());
-        if (byName != null && !byName.getId().equals(field.getId())) {
-            throw exception(FIELD_NAME_EXIST);
         }
         Field convert = FieldConvert.INSTANCE.convert(updateVO);
         fieldMapper.updateById(convert);
@@ -194,6 +186,10 @@ public class FieldServiceImpl implements FieldService {
                 throw new RuntimeException(e);
             }
         });
+
+        LocalDateTime eventTime = fieldContext.getDateData(FieldName.eventTime);
+        // 内置扩展字段
+        fieldContext.setDataByType(FieldName.eventTimeStamp, String.valueOf(LocalDateTimeUtil.toEpochMilli(eventTime)), FieldType.STRING);
 
 
         // 身份证解析

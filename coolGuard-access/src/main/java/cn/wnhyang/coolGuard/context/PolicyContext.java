@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.context;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.wnhyang.coolGuard.constant.DisposalConstant;
 import cn.wnhyang.coolGuard.constant.PolicyMode;
 import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.entity.Action;
@@ -23,10 +24,22 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 public class PolicyContext {
 
+    /**
+     * 处置方式集合
+     */
     private final Map<String, DisposalCtx> disposalMap = new ConcurrentHashMap<>();
 
+    /**
+     * 策略集
+     */
     private PolicySetCtx policySet;
 
+    /**
+     * 初始化
+     *
+     * @param disposalCtxList 处置方式集合
+     * @param policySet       策略集
+     */
     public void init(List<DisposalCtx> disposalCtxList, PolicySetCtx policySet) {
         for (DisposalCtx disposalCtx : disposalCtxList) {
             disposalMap.put(disposalCtx.getCode(), disposalCtx);
@@ -34,28 +47,68 @@ public class PolicyContext {
         this.policySet = policySet;
     }
 
+    /**
+     * 策略集合
+     */
     private final Map<String, PolicyCtx> policyMap = new ConcurrentHashMap<>();
 
+    /**
+     * 添加策略
+     *
+     * @param policyCode 策略code
+     * @param policy     策略
+     */
     public void addPolicy(String policyCode, PolicyCtx policy) {
         policyMap.put(policyCode, policy);
     }
 
+    /**
+     * 获取策略
+     *
+     * @param policyCode 策略code
+     * @return 策略
+     */
     public PolicyCtx getPolicy(String policyCode) {
         return policyMap.get(policyCode);
     }
 
+    /**
+     * 规则集合
+     */
     private final Map<String, List<RuleCtx>> ruleListMap = new ConcurrentHashMap<>();
 
+    /**
+     * 添加规则集合
+     *
+     * @param policyCode 策略code
+     * @param ruleList   规则列表
+     */
     public void addRuleList(String policyCode, List<RuleCtx> ruleList) {
         ruleListMap.put(policyCode, ruleList);
     }
 
+    /**
+     * 获取规则
+     *
+     * @param policyCode 策略code
+     * @param index      规则索引
+     * @return 规则
+     */
     public RuleCtx getRule(String policyCode, int index) {
         return ruleListMap.get(policyCode).get(index);
     }
 
+    /**
+     * 命中规则集合
+     */
     private final Map<String, List<RuleCtx>> hitRuleListMap = new ConcurrentHashMap<>();
 
+    /**
+     * 添加命中规则
+     *
+     * @param policyCode 策略code
+     * @param rule       规则
+     */
     public void addHitRuleVO(String policyCode, RuleCtx rule) {
         if (!hitRuleListMap.containsKey(policyCode)) {
             hitRuleListMap.put(policyCode, CollUtil.newArrayList());
@@ -63,12 +116,34 @@ public class PolicyContext {
         hitRuleListMap.get(policyCode).add(rule);
     }
 
-    public boolean isHit(String policyCode) {
-        return CollUtil.isNotEmpty(hitRuleListMap.get(policyCode));
+    /**
+     * 是否命中风险规则
+     *
+     * @param policyCode 策略code
+     * @return true/false
+     */
+    public boolean isHitRisk(String policyCode) {
+        if (CollUtil.isNotEmpty(hitRuleListMap.get(policyCode))) {
+            for (RuleCtx ruleCtx : hitRuleListMap.get(policyCode)) {
+                if (!DisposalConstant.PASS_CODE.equals(ruleCtx.getDisposalCode())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
+    /**
+     * 命中模拟规则集合
+     */
     private final Map<String, List<RuleCtx>> hitMockRuleListMap = new ConcurrentHashMap<>();
 
+    /**
+     * 添加命中模拟规则
+     *
+     * @param policyCode 策略code
+     * @param rule       规则
+     */
     public void addHitMockRuleVO(String policyCode, RuleCtx rule) {
         if (!hitMockRuleListMap.containsKey(policyCode)) {
             hitMockRuleListMap.put(policyCode, CollUtil.newArrayList());
@@ -76,6 +151,11 @@ public class PolicyContext {
         hitMockRuleListMap.get(policyCode).add(rule);
     }
 
+    /**
+     * 转策略集结果
+     *
+     * @return 策略集结果
+     */
     public PolicySetResult convert() {
         PolicySetResult policySetResult = new PolicySetResult(policySet.getName(), policySet.getCode(), policySet.getChain(), policySet.getVersion());
 
@@ -84,7 +164,7 @@ public class PolicyContext {
             PolicyResult policyResult = new PolicyResult(policy.getName(), policy.getCode(), policy.getMode());
 
             // 最坏
-            String maxDisposalCode = "pass";
+            String maxDisposalCode = DisposalConstant.PASS_CODE;
             int maxGrade = Integer.MIN_VALUE;
             // 投票
             Map<String, Integer> votes = new HashMap<>();
@@ -122,7 +202,7 @@ public class PolicyContext {
                 }
             }
             if (PolicyMode.VOTE.equals(policy.getMode())) {
-                String maxVoteDisposalCode = "pass";
+                String maxVoteDisposalCode = DisposalConstant.PASS_CODE;
                 int maxVoteCount = Integer.MIN_VALUE;
                 for (Map.Entry<String, Integer> entry1 : votes.entrySet()) {
                     if (entry1.getValue() > maxVoteCount) {
@@ -149,9 +229,9 @@ public class PolicyContext {
             }
             policySetResult.addPolicyResult(policyResult);
         }
-        // TODO
-        policySetResult.setDisposalName("通过");
-        policySetResult.setDisposalCode("pass");
+        // TODO 入度大于1？考虑投票、加权平均等方法：不考虑
+        policySetResult.setDisposalName(DisposalConstant.PASS_NAME);
+        policySetResult.setDisposalCode(DisposalConstant.PASS_CODE);
 
         return policySetResult;
     }

@@ -60,4 +60,8 @@ public interface RuleMapper extends BaseMapperX<Rule> {
                 .eqIfPresent(Rule::getPolicyCode, policyCode)
                 .eqIfPresent(Rule::getStatus, status));
     }
+
+    default Rule selectByRuleId(String ruleId) {
+        return selectOne(Rule::getRuleId, ruleId);
+    }
 }

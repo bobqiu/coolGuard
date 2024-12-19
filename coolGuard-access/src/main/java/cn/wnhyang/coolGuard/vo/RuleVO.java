@@ -26,4 +26,9 @@ public class RuleVO extends RuleBaseVO {
      * 策略编码
      */
     private String policyCode;
+
+    /**
+     * 规则编码
+     */
+    private String code;
 }

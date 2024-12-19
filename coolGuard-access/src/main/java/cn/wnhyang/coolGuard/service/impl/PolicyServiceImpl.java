@@ -7,12 +7,10 @@ import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
-import cn.wnhyang.coolGuard.entity.Chain;
 import cn.wnhyang.coolGuard.entity.Policy;
 import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.PolicyMapper;
-import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicyService;
@@ -55,8 +53,6 @@ public class PolicyServiceImpl implements PolicyService {
 
     private final PolicyMapper policyMapper;
 
-    private final PolicySetMapper policySetMapper;
-
     private final ChainMapper chainMapper;
 
     private final RuleMapper ruleMapper;
@@ -72,14 +68,6 @@ public class PolicyServiceImpl implements PolicyService {
         }
         Policy policy = PolicyConvert.INSTANCE.convert(createVO);
         policyMapper.insert(policy);
-
-        // TODO 判断有没有策略流，没有并行加入
-        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetCode());
-        Chain chain = chainMapper.getByChainName(psChain);
-        chain.setElData(LFUtil.elAdd(chain.getElData(),
-                LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getCode())));
-        chainMapper.updateByChainName(psChain, chain);
-
         return policy.getId();
     }
 
@@ -103,21 +91,19 @@ public class PolicyServiceImpl implements PolicyService {
         if (policy == null) {
             throw exception(POLICY_NOT_EXIST);
         }
-        // 1、确认是否还有运行的规则
+        // 1、确认是否被策略集编排引用
+        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetCode());
+        if (chainMapper.selectByChainNameAndEl(psChain, LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getCode()))) {
+            throw exception(POLICY_REFERENCE_BY_POLICY_SET_DELETE);
+        }
+        // 2、确认是否还有运行的规则
         List<Rule> ruleList = ruleMapper.selectRunningListByPolicyCode(policy.getCode());
         if (CollUtil.isNotEmpty(ruleList)) {
-            throw exception(POLICY_REFERENCE_DELETE);
+            throw exception(POLICY_REFERENCE_RULE_DELETE);
         }
-        // 2、没有运行的规则就可以删除策略了
         // 3、删除策略下的所有规则
         ruleList = ruleMapper.selectByPolicyCode(policy.getCode());
         ruleService.deleteRule(CollectionUtils.convertSet(ruleList, Rule::getId));
-        // 4、删除chain
-        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetCode());
-        Chain chain = chainMapper.getByChainName(psChain);
-        chain.setElData(LFUtil.removeEl(chain.getElData(),
-                LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, id)));
-        chainMapper.updateByChainName(psChain, chain);
         policyMapper.deleteById(id);
     }
 
@@ -181,7 +167,7 @@ public class PolicyServiceImpl implements PolicyService {
     public boolean policyBreak(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
         String policyCode = bindCmp.getSubChainReqData();
-        return policyContext.isHit(policyCode);
+        return policyContext.isHitRisk(policyCode);
     }
 
 }

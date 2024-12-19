@@ -1,9 +1,12 @@
 package cn.wnhyang.coolGuard.vo;
 
+import cn.wnhyang.coolGuard.entity.NameValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * @author wnhyang
@@ -25,7 +28,6 @@ public class InputFieldVO {
      */
     private Boolean required;
 
-
     /**
      * 主键
      */
@@ -44,7 +46,7 @@ public class InputFieldVO {
     private String name;
 
     /**
-     * 字段分组名
+     * 字段分组
      */
     private String groupName;
 
@@ -57,6 +59,11 @@ public class InputFieldVO {
      * 字段类型
      */
     private String type;
+
+    /**
+     * 字段信息
+     */
+    private List<NameValue> info;
 
     /**
      * 描述

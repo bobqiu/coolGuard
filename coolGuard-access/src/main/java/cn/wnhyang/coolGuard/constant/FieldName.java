@@ -13,6 +13,9 @@ public interface FieldName {
 
     String seqId = "N_S_seqId";
 
+    String eventTime = "N_D_eventTime";
+    String eventTimeStamp = "N_D_eventTimeStamp";
+
     String payerIDNumber = "N_S_payerIDNumber";
 
     /**
