@@ -13,7 +13,7 @@
         <module>coolGuard-common</module>
         <module>coolGuard-admin</module>
         <module>coolGuard-system</module>
-        <module>coolGuard-access</module>
+        <module>coolGuard-decision</module>
         <module>coolGuard-dependencies</module>
         <module>coolGuard-monitor</module>
         <module>coolGuard-liteflow</module>

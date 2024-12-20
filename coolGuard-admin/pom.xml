@@ -21,7 +21,7 @@
 
         <dependency>
             <groupId>cn.wnhyang</groupId>
-            <artifactId>coolGuard-access</artifactId>
+            <artifactId>coolGuard-decision</artifactId>
         </dependency>
 
 
