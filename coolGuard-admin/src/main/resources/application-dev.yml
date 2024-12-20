@@ -7,12 +7,12 @@ spring:
         master:
           url: jdbc:mysql://localhost:3306/coolGuard?allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
           username: wnhyang
-          password: f$g3*Wr@Dv&
+          password: wnhyang
           driver-class-name: com.mysql.cj.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
         slave:
           url: jdbc:mysql://localhost:3306/coolGuard?allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
           username: wnhyang
-          password: f$g3*Wr@Dv&
+          password: wnhyang
           driver-class-name: com.mysql.cj.jdbc.Driver # 3.2.0开始支持SPI可省略此配置
   data:
     redis:
@@ -21,7 +21,7 @@ spring:
       # cluster:
       #   nodes: 127.0.0.1:6379
       database: 0
-      password: re*g%j$R#Dk
+      password: wnhyang
       lettuce:
         pool:
           max-active: 64 #最大连接数，0表示无限制
@@ -44,7 +44,7 @@ liteflow:
     url: jdbc:mysql://localhost:3306/coolGuard?allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
     driverClassName: com.mysql.cj.jdbc.Driver
     username: wnhyang
-    password: f$g3*Wr@Dv&
+    password: wnhyang
     applicationName: ${spring.application.name}
     #是否开启SQL日志
     sqlLogEnabled: true
