@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: ${mysql_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysqllogs:/var/log/mysql
+      - mysqldata:/var/lib/mysql
+    networks:
+      - custom_network
+
+  redis:
+    image: redis:6
+    container_name: redis
+    environment:
+      TZ: Asia/Shanghai
+      REDIS_PASSWORD: ${redis_password}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+      - redislogs:/var/log/redis
+    networks:
+      - custom_network
+
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: kafka
+    environment:
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_METADATA_LOG_REPLICATION_FACTOR: "1"
+      TZ: Asia/Shanghai
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafkadata:/var/lib/kafka/data
+      - kafkalogs:/var/log/kafka
+    command: >
+      bash -c "
+      kafka-storage.sh format -t $$(kafka-storage.sh random-uuid) -c /etc/kafka/server.properties &&
+      kafka-server-start.sh /etc/kafka/server.properties
+      "
+    networks:
+      - custom_network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    container_name: elasticsearch
+    environment:
+      discovery.type: single-node
+      ELASTIC_PASSWORD: ${elasticsearch_password}
+      xpack.security.enabled: "true"
+      xpack.security.http.ssl.enabled: "false"
+      xpack.security.transport.ssl.enabled: "false"
+      TZ: Asia/Shanghai
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+      - eslogs:/var/log/elasticsearch
+    networks:
+      - custom_network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.14.0
+    container_name: kibana
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      ELASTICSEARCH_USERNAME: elastic
+      ELASTICSEARCH_PASSWORD: ${elasticsearch_password}
+      SERVER_HOST: "0.0.0.0"
+      XPACK_SECURITY_ENABLED: "true"
+      XPACK_SECURITY_HTTP_SSL_ENABLED: "false"
+      TZ: Asia/Shanghai
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    volumes:
+      - kibanadata:/usr/share/kibana/config
+      - kibanalog:/var/log/kibana
+    networks:
+      - custom_network
+
+volumes:
+  mysqllogs:
+  mysqldata:
+  redisdata:
+  redislogs:
+  kafkadata:
+  kafkalogs:
+  esdata:
+  eslogs:
+  kibanadata:
+  kibanalog:
+
+networks:
+  custom_network:
+    driver: bridge

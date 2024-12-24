@@ -16,6 +16,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
@@ -98,4 +100,8 @@ public class FieldGroupServiceImpl implements FieldGroupService {
         return convert;
     }
 
+    @Override
+    public List<FieldGroupVO> listFieldGroup() {
+        return FieldGroupConvert.INSTANCE.convert(fieldGroupMapper.selectList());
+    }
 }

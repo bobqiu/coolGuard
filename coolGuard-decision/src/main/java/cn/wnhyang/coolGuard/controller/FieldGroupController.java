@@ -11,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
@@ -81,5 +83,15 @@ public class FieldGroupController {
     @GetMapping("/page")
     public CommonResult<PageResult<FieldGroupVO>> pageFieldGroup(@Valid FieldGroupPageVO pageVO) {
         return success(fieldGroupService.pageFieldGroup(pageVO));
+    }
+
+    /**
+     * 查询列表
+     *
+     * @return list
+     */
+    @GetMapping("/list")
+    public CommonResult<List<FieldGroupVO>> listFieldGroup() {
+        return success(fieldGroupService.listFieldGroup());
     }
 }

@@ -8,6 +8,8 @@ import cn.wnhyang.coolGuard.vo.update.FieldGroupUpdateVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * @author wnhyang
  * @date 2024/3/14
@@ -24,4 +26,6 @@ public interface FieldGroupConvert {
     FieldGroupVO convert(FieldGroup po);
 
     PageResult<FieldGroupVO> convert(PageResult<FieldGroup> pageResult);
+
+    List<FieldGroupVO> convert(List<FieldGroup> fieldGroups);
 }

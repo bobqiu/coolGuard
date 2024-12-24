@@ -2,7 +2,6 @@ package cn.wnhyang.coolGuard.pojo;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
 
@@ -47,9 +46,4 @@ public class BasePO implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE, jdbcType = JdbcType.VARCHAR)
     private String updater;
 
-    /**
-     * 是否删除
-     */
-    @TableLogic
-    private Boolean deleted;
 }

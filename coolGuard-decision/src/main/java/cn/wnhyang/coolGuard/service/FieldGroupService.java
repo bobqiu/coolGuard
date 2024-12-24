@@ -6,6 +6,8 @@ import cn.wnhyang.coolGuard.vo.create.FieldGroupCreateVO;
 import cn.wnhyang.coolGuard.vo.page.FieldGroupPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldGroupUpdateVO;
 
+import java.util.List;
+
 /**
  * 字段分组表 服务类
  *
@@ -52,4 +54,10 @@ public interface FieldGroupService {
      */
     PageResult<FieldGroupVO> pageFieldGroup(FieldGroupPageVO pageVO);
 
+    /**
+     * 列表查询
+     *
+     * @return list
+     */
+    List<FieldGroupVO> listFieldGroup();
 }
