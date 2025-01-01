@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.enums;
 
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.entity.NameValue;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -69,9 +69,9 @@ public enum FieldType {
         return null;
     }
 
-    public static List<NameValue> getNvList() {
+    public static List<LabelValue> getLvList() {
         return Arrays.stream(values())
-                .map(fieldType -> new NameValue(fieldType.getName(), fieldType.getType()))
+                .map(fieldType -> new LabelValue(fieldType.getName(), fieldType.getType()))
                 .collect(Collectors.toList());
     }
 

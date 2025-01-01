@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.enums;
 
-import cn.wnhyang.coolGuard.entity.NameValue;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -65,9 +65,9 @@ public enum WinSize {
         return 7776000L;
     }
 
-    public static List<NameValue> getNvList() {
+    public static List<LabelValue> getLvList() {
         return Arrays.stream(values())
-                .map(winSize -> new NameValue(winSize.getName(), winSize.getSize()))
+                .map(winSize -> new LabelValue(winSize.getName(), winSize.getSize()))
                 .collect(Collectors.toList());
     }
 

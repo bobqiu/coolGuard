@@ -183,11 +183,11 @@ public class LFUtil {
     @SneakyThrows
     public static String buildCondEl(Cond cond) {
         if (cond != null) {
-            if (cond.getLogicOp() != null && cond.getChildren() != null && !cond.getChildren().isEmpty()) {
+            if (cond.getRelation() != null && cond.getChildren() != null && !cond.getChildren().isEmpty()) {
                 List<String> expressions = cond.getChildren().stream()
                         .map(LFUtil::buildCondEl)
                         .collect(Collectors.toList());
-                return cond.getLogicOp() + "(" + String.join(", ", expressions) + ")";
+                return cond.getRelation() + "(" + String.join(", ", expressions) + ")";
             } else {
                 return "c_cn.data('" + JsonUtil.toJsonString(cond) + "')";
             }
@@ -202,10 +202,10 @@ public class LFUtil {
     }
 
     private static Cond parseExpressionToCond(String expression) throws Exception {
-        if (expression.startsWith("AND(")) {
-            return parseLogicExpression("AND", expression.substring(4, expression.length() - 1));
-        } else if (expression.startsWith("OR(")) {
-            return parseLogicExpression("OR", expression.substring(3, expression.length() - 1));
+        if (expression.startsWith("and(")) {
+            return parseLogicExpression("and", expression.substring(4, expression.length() - 1));
+        } else if (expression.startsWith("or(")) {
+            return parseLogicExpression("or", expression.substring(3, expression.length() - 1));
         } else if (expression.startsWith("NOT(")) {
             return parseLogicExpression("NOT", expression.substring(4, expression.length() - 1));
         } else {
@@ -224,7 +224,7 @@ public class LFUtil {
 
     private static Cond parseLogicExpression(String operator, String subExpression) throws Exception {
         Cond cond = new Cond();
-        cond.setLogicOp(operator);
+        cond.setRelation(operator);
         cond.setChildren(new ArrayList<>());
         String[] subExpressions = splitExpressions(subExpression);
         for (String subExp : subExpressions) {
@@ -278,10 +278,10 @@ public class LFUtil {
     public static void main(String[] args) throws Exception {
 
         Cond cond = new Cond();
-        cond.setLogicOp("AND");
+        cond.setRelation("and");
         List<Cond> children = new ArrayList<>();
-        children.add(new Cond().setType("normal").setValue("N_S_appName").setLogicType("eq").setExpectType("input").setExpectValue("Phone"));
-        children.add(new Cond().setType("normal").setValue("N_F_transAmount").setLogicType("lt").setExpectType("input").setExpectValue("100"));
+        children.add(new Cond().setType("normal").setLeftValue("N_S_appName").setLogicType("eq").setRightType("input").setRightValue("Phone"));
+        children.add(new Cond().setType("normal").setLeftValue("N_F_transAmount").setLogicType("lt").setRightType("input").setRightValue("100"));
         cond.setChildren(children);
 
         String condEl = buildCondEl(cond);
@@ -289,7 +289,7 @@ public class LFUtil {
 
         System.out.println(parseToCond(condEl));
 
-        String content = "IF(OR(c_cn.data('{\"type\":\"normal\",\"value\":\"N_S_appName\",\"logicType\":\"eq\",\"expectType\":\"input\",\"expectValue\":\"Phone\"}'),c_cn.data('{\"type\":\"normal\",\"value\":\"N_S_payerAccount\",\"logicType\":\"eq\",\"expectType\":\"input\",\"expectValue\":\"123456\"}'),c_cn.data('{\"type\":\"normal\",\"value\":\"N_F_transAmount\",\"logicType\":\"gt\",\"expectType\":\"input\",\"expectValue\":\"15\"}')),r_tcn.tag(\"1\"),r_fcn);";
+        String content = "IF(or(c_cn.data('{\"type\":\"normal\",\"value\":\"N_S_appName\",\"logicType\":\"eq\",\"expectType\":\"input\",\"expectValue\":\"Phone\"}'),c_cn.data('{\"type\":\"normal\",\"value\":\"N_S_payerAccount\",\"logicType\":\"eq\",\"expectType\":\"input\",\"expectValue\":\"123456\"}'),c_cn.data('{\"type\":\"normal\",\"value\":\"N_F_transAmount\",\"logicType\":\"gt\",\"expectType\":\"input\",\"expectValue\":\"15\"}')),r_tcn.tag(\"1\"),r_fcn);";
 
         List<String> ifEl = parseIfEl(content);
         for (String parseParam : ifEl) {

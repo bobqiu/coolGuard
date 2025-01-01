@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.vo;
 
-import cn.wnhyang.coolGuard.entity.NameValue;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -63,7 +63,7 @@ public class InputFieldVO {
     /**
      * 字段信息
      */
-    private List<NameValue> info;
+    private List<LabelValue> info;
 
     /**
      * 描述

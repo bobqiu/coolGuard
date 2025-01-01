@@ -8,6 +8,7 @@ import cn.wnhyang.coolGuard.vo.update.PolicySetChainUpdateVO;
 import cn.wnhyang.coolGuard.vo.update.PolicySetUpdateVO;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 策略集表 服务类
@@ -76,4 +77,10 @@ public interface PolicySetService {
      */
     void submit(Long id);
 
+    /**
+     * 列表
+     *
+     * @return list
+     */
+    List<PolicySetVO> listPolicySet();
 }

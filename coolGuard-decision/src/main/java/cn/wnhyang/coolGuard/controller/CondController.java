@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.entity.NameValue;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.enums.FieldType;
 import cn.wnhyang.coolGuard.enums.LogicType;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
@@ -36,8 +36,8 @@ public class CondController {
      * @return 字段类型列表
      */
     @GetMapping("/fieldType")
-    public CommonResult<List<NameValue>> fieldType() {
-        return success(FieldType.getNvList());
+    public CommonResult<List<LabelValue>> fieldType() {
+        return success(FieldType.getLvList());
     }
 
     /**
@@ -47,7 +47,7 @@ public class CondController {
      * @return 运算符列表
      */
     @GetMapping("/logicOpByFieldType")
-    public CommonResult<List<NameValue>> logicOpByFieldType(String fieldType) {
-        return success(LogicType.getNvList(fieldType));
+    public CommonResult<List<LabelValue>> logicOpByFieldType(String fieldType) {
+        return success(LogicType.getLvList(fieldType));
     }
 }

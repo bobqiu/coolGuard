@@ -31,4 +31,6 @@ public interface DisposalConvert {
     PageResult<DisposalVO> convert(PageResult<Disposal> pageResult);
 
     List<PolicyContext.DisposalCtx> convert2Ctx(List<Disposal> disposalList);
+
+    List<DisposalVO> convert(List<Disposal> disposalList);
 }

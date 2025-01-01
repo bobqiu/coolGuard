@@ -57,11 +57,11 @@ public class CondServiceImpl implements CondService {
                 // 普通条件，适用指标、规则
                 case NORMAL -> {
                     // 获取条件字段
-                    String fieldName = cond.getValue();
+                    String fieldName = cond.getLeftValue();
                     FieldType fieldType = FieldType.getByFieldName(fieldName);
 
-                    String expectValue = cond.getExpectValue();
-                    if (ExpectType.CONTEXT.equals(cond.getExpectType())) {
+                    String expectValue = cond.getRightValue();
+                    if (ExpectType.CONTEXT.equals(cond.getRightType())) {
                         expectValue = fieldContext.getStringData(expectValue);
                     }
 
@@ -107,13 +107,13 @@ public class CondServiceImpl implements CondService {
                 }
                 case ZB -> {
                     log.info("指标条件");
-                    String indicatorCode = cond.getValue();
+                    String indicatorCode = cond.getLeftValue();
                     IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
                     String iType = indicatorContext.getIndicatorReturnType(indicatorCode);
                     FieldType fieldType = FieldType.getByType(iType);
 
-                    String expectValue = cond.getExpectValue();
-                    if (ExpectType.CONTEXT.equals(cond.getExpectType())) {
+                    String expectValue = cond.getRightValue();
+                    if (ExpectType.CONTEXT.equals(cond.getRightType())) {
                         expectValue = fieldContext.getStringData(expectValue);
                     }
 
@@ -160,18 +160,18 @@ public class CondServiceImpl implements CondService {
                 case REGULAR -> {
                     log.info("正则条件");
 
-                    String fieldName = cond.getValue();
+                    String fieldName = cond.getLeftValue();
 
                     String stringData = fieldContext.getStringData(fieldName);
-                    b = FunUtil.INSTANCE.regularLogicOp.apply(stringData, byType, cond.getExpectValue());
+                    b = FunUtil.INSTANCE.regularLogicOp.apply(stringData, byType, cond.getRightValue());
                 }
                 case LIST -> {
                     log.info("名单条件");
-                    String fieldName = cond.getValue();
+                    String fieldName = cond.getLeftValue();
 
                     String stringData = fieldContext.getStringData(fieldName);
                     // 查名单集做匹配
-                    b = listDataService.hasListData(cond.getExpectValue(), stringData);
+                    b = listDataService.hasListData(cond.getRightValue(), stringData);
                 }
                 case SCRIPT -> {
                     // TODO 脚本条件

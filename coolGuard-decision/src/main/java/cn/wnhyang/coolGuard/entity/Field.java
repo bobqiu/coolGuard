@@ -70,7 +70,7 @@ public class Field extends BasePO {
      * 字段信息
      */
     @TableField(value = "info", typeHandler = JacksonTypeHandler.class)
-    private List<NameValue> info;
+    private List<LabelValue> info;
 
     /**
      * 描述

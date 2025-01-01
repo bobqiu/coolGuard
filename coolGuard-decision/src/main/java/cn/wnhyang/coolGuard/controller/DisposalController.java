@@ -12,6 +12,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
@@ -82,5 +84,15 @@ public class DisposalController {
     @GetMapping("/page")
     public CommonResult<PageResult<DisposalVO>> pageDisposal(@Valid DisposalPageVO pageVO) {
         return success(DisposalConvert.INSTANCE.convert(disposalService.pageDisposal(pageVO)));
+    }
+
+    /**
+     * 获取列表
+     *
+     * @return list
+     */
+    @GetMapping("/list")
+    public CommonResult<List<DisposalVO>> listDisposal() {
+        return success(DisposalConvert.INSTANCE.convert(disposalService.listDisposal()));
     }
 }

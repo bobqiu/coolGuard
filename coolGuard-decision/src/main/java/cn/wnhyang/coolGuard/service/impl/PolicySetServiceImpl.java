@@ -227,6 +227,11 @@ public class PolicySetServiceImpl implements PolicySetService {
         chainMapper.updateById(chain);
     }
 
+    @Override
+    public List<PolicySetVO> listPolicySet() {
+        return PolicySetConvert.INSTANCE.convert(policySetMapper.selectList());
+    }
+
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_SET_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略集普通组件")
     public void policySet(NodeComponent bindCmp) {
         // TODO 策略集下策略默认并行，运行时判断有无配置Chain，有则运行，没有则for并行

@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NameValue {
+public class LabelValue {
 
-    private String name;
+    private String label;
 
     private String value;
 }

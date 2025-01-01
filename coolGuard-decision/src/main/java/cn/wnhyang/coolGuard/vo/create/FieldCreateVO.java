@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.vo.create;
 
 import cn.wnhyang.coolGuard.vo.base.FieldBaseVO;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -18,11 +19,12 @@ public class FieldCreateVO extends FieldBaseVO {
     private static final long serialVersionUID = 8827248788810403664L;
 
     /**
-     * 字段名
+     * 字段标识
      */
-    @NotBlank(message = "字段名不能为空")
-    @Size(min = 1, max = 30, message = "字段名长度必须在1-30之间")
-    private String name;
+    @NotBlank(message = "字段标识不能为空")
+    @Size(min = 1, max = 30, message = "字段标识长度必须在1-30之间")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "字段标识只能包含字母和数字")
+    private String code;
 
     /**
      * 字段类型

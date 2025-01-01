@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.enums;
 
-import cn.wnhyang.coolGuard.entity.NameValue;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -62,7 +62,7 @@ public enum LogicType {
         return null;
     }
 
-    public static List<NameValue> getNvList(String fieldType) {
+    public static List<LabelValue> getLvList(String fieldType) {
         return switch (fieldType) {
             // 字符，支持【等于、不等于、包含、不包含、前缀、非前缀、后缀、非后缀、为空、不为空】
             case "S" -> List.of(
@@ -98,7 +98,7 @@ public enum LogicType {
         };
     }
 
-    public static NameValue getNv(LogicType logicType) {
-        return new NameValue(logicType.getName(), logicType.getType());
+    public static LabelValue getNv(LogicType logicType) {
+        return new LabelValue(logicType.getName(), logicType.getType());
     }
 }

@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.enums;
 
-import cn.wnhyang.coolGuard.entity.NameValue;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -55,9 +55,9 @@ public enum IndicatorType {
     private final String type;
 
 
-    public static List<NameValue> getNvList() {
+    public static List<LabelValue> getLvList() {
         return Arrays.stream(values())
-                .map(indicatorType -> new NameValue(indicatorType.getName(), indicatorType.getType()))
+                .map(indicatorType -> new LabelValue(indicatorType.getName(), indicatorType.getType()))
                 .collect(Collectors.toList());
     }
 

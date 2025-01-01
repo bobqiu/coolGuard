@@ -12,6 +12,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
@@ -106,5 +108,15 @@ public class PolicySetController {
     @GetMapping("/page")
     public CommonResult<PageResult<PolicySetVO>> pagePolicySet(@Valid PolicySetPageVO pageVO) {
         return success(policySetService.pagePolicySet(pageVO));
+    }
+
+    /**
+     * 列表查询
+     *
+     * @return list
+     */
+    @GetMapping("/list")
+    public CommonResult<List<PolicySetVO>> listPolicySet() {
+        return success(policySetService.listPolicySet());
     }
 }

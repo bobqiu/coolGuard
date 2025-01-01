@@ -19,7 +19,7 @@ public class Cond implements Serializable {
     /**
      * AND｜OR｜NOT
      */
-    private String logicOp;
+    private String relation;
 
     private List<Cond> children;
 
@@ -31,7 +31,7 @@ public class Cond implements Serializable {
     /**
      * 操作对象
      */
-    private String value;
+    private String leftValue;
 
     /**
      * 操作类型
@@ -41,11 +41,11 @@ public class Cond implements Serializable {
     /**
      * 期望类型
      */
-    private String expectType;
+    private String rightType;
 
     /**
      * 期望值
      */
-    private String expectValue;
+    private String rightValue;
 
 }

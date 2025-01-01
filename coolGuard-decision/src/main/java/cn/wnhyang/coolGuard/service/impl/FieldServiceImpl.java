@@ -72,10 +72,9 @@ public class FieldServiceImpl implements FieldService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.FIELD, allEntries = true)
     public Long createField(FieldCreateVO createVO) {
-        if (!createVO.getName().startsWith(createVO.getDynamic() ? "D" : "N" + "_" + createVO.getType() + "_")) {
-            throw exception(FIELD_NAME_ERROR);
-        }
-        if (fieldMapper.selectByName(createVO.getName()) != null) {
+        String prefix = createVO.getDynamic() ? "D_" : "N_";
+        String fieldName = prefix + createVO.getType() + "_" + createVO.getCode();
+        if (fieldMapper.selectByName(fieldName) != null) {
             throw exception(FIELD_NAME_EXIST);
         }
         Field field = FieldConvert.INSTANCE.convert(createVO);

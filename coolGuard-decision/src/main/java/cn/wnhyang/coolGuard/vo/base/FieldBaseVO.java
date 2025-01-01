@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.vo.base;
 
-import cn.wnhyang.coolGuard.entity.NameValue;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -35,7 +35,7 @@ public class FieldBaseVO implements Serializable {
     /**
      * 字段信息
      */
-    private List<NameValue> info;
+    private List<LabelValue> info;
 
     /**
      * 描述

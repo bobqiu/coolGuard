@@ -2,6 +2,8 @@ package cn.wnhyang.coolGuard.vo.create;
 
 import cn.wnhyang.coolGuard.vo.base.DisposalBaseVO;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serial;
@@ -22,6 +24,8 @@ public class DisposalCreateVO extends DisposalBaseVO {
      * 处置编码
      */
     @NotBlank(message = "处置编码不能为空")
+    @Size(min = 1, max = 30, message = "处置编码长度必须在1-30之间")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "处置编码只能包含字母和数字")
     private String code;
 
     /**
