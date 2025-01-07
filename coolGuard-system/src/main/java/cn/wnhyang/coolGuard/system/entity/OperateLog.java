@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.entity;
 
-import cn.wnhyang.coolGuard.pojo.BasePO;
+import cn.wnhyang.coolGuard.pojo.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -23,7 +23,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("sys_operate_log")
-public class OperateLogPO extends BasePO {
+public class OperateLog extends BaseDO {
 
     /**
      * {@link #javaMethodArgs} 的最大长度

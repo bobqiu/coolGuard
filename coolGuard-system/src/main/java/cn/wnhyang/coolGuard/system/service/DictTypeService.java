@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.system.service;
 
 
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.DictTypePO;
+import cn.wnhyang.coolGuard.system.entity.DictTypeDO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeCreateVO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypePageVO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeUpdateVO;
@@ -45,7 +45,7 @@ public interface DictTypeService {
      * @param reqVO 分页请求
      * @return 分页结果
      */
-    PageResult<DictTypePO> getDictTypePage(DictTypePageVO reqVO);
+    PageResult<DictTypeDO> getDictTypePage(DictTypePageVO reqVO);
 
     /**
      * 字典类型
@@ -53,12 +53,12 @@ public interface DictTypeService {
      * @param id 字典类型id
      * @return 字典类型
      */
-    DictTypePO getDictType(Long id);
+    DictTypeDO getDictType(Long id);
 
     /**
      * 获取简单字典类型
      *
      * @return 字典类型列表
      */
-    List<DictTypePO> getDictTypeList();
+    List<DictTypeDO> getDictTypeList();
 }

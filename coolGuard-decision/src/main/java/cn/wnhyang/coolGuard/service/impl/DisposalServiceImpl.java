@@ -4,11 +4,13 @@ import cn.hutool.core.collection.CollUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.convert.DisposalConvert;
 import cn.wnhyang.coolGuard.entity.Disposal;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.mapper.DisposalMapper;
 import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.DisposalService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.vo.create.DisposalCreateVO;
 import cn.wnhyang.coolGuard.vo.page.DisposalPageVO;
 import cn.wnhyang.coolGuard.vo.update.DisposalUpdateVO;
@@ -98,6 +100,11 @@ public class DisposalServiceImpl implements DisposalService {
     @Cacheable(cacheNames = RedisKey.DISPOSAL + "::list", unless = "#result == null")
     public List<Disposal> listDisposal() {
         return disposalMapper.selectList();
+    }
+
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(disposalMapper.selectList(), Disposal::getLabelValue);
     }
 
 }

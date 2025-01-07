@@ -4,12 +4,9 @@ package cn.wnhyang.coolGuard.system.service;
 import cn.hutool.core.collection.CollUtil;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.dto.UserCreateDTO;
-import cn.wnhyang.coolGuard.system.entity.UserPO;
+import cn.wnhyang.coolGuard.system.entity.User;
 import cn.wnhyang.coolGuard.system.login.LoginUser;
-import cn.wnhyang.coolGuard.system.vo.user.UserCreateVO;
-import cn.wnhyang.coolGuard.system.vo.user.UserPageVO;
-import cn.wnhyang.coolGuard.system.vo.user.UserUpdatePasswordVO;
-import cn.wnhyang.coolGuard.system.vo.user.UserUpdateVO;
+import cn.wnhyang.coolGuard.system.vo.user.*;
 import cn.wnhyang.coolGuard.system.vo.userprofile.UserProfileUpdatePasswordVO;
 import cn.wnhyang.coolGuard.system.vo.userprofile.UserProfileUpdateVO;
 import cn.wnhyang.coolGuard.util.CollectionUtils;
@@ -33,7 +30,7 @@ public interface UserService {
      * @param username 用户名
      * @return 用户信息
      */
-    UserPO getUserByUsername(String username);
+    User getUserByUsername(String username);
 
     /**
      * 更新用户登录信息
@@ -82,10 +79,9 @@ public interface UserService {
     /**
      * 更新用户状态
      *
-     * @param id     id
-     * @param status 状态
+     * @param reqVO id+状态
      */
-    void updateUserStatus(Long id, Boolean status);
+    void updateUserStatus(UserUpdateStatusVO reqVO);
 
     /**
      * 根据用户名/手机号/邮箱获取用户信息
@@ -103,7 +99,7 @@ public interface UserService {
      * @param id id
      * @return 用户
      */
-    UserPO getUserById(Long id);
+    User getUserById(Long id);
 
     /**
      * 查询用户信息列表
@@ -111,7 +107,7 @@ public interface UserService {
      * @param reqVO 请求数据
      * @return 用户列表
      */
-    PageResult<UserPO> getUserPage(UserPageVO reqVO);
+    PageResult<User> getUserPage(UserPageVO reqVO);
 
     /**
      * 根据用户昵称查询用户列表
@@ -119,7 +115,7 @@ public interface UserService {
      * @param nickname 用户昵称
      * @return 用户列表
      */
-    List<UserPO> getUserListByNickname(String nickname);
+    List<User> getUserListByNickname(String nickname);
 
     /**
      * 根据用户id查询用户map
@@ -127,11 +123,11 @@ public interface UserService {
      * @param ids 用户id
      * @return 用户map
      */
-    default Map<Long, UserPO> getUserMap(Collection<Long> ids) {
+    default Map<Long, User> getUserMap(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
             return new HashMap<>();
         }
-        return CollectionUtils.convertMap(getUserList(ids), UserPO::getId);
+        return CollectionUtils.convertMap(getUserList(ids), User::getId);
     }
 
     /**
@@ -140,7 +136,7 @@ public interface UserService {
      * @param ids 用户id
      * @return 用户列表
      */
-    List<UserPO> getUserList(Collection<Long> ids);
+    List<User> getUserList(Collection<Long> ids);
 
     /**
      * 更新用户密码

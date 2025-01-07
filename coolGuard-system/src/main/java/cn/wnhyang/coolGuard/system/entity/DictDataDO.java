@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.entity;
 
-import cn.wnhyang.coolGuard.pojo.BasePO;
+import cn.wnhyang.coolGuard.pojo.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 /**
- * 字典类型表
+ * 字典数据表
  *
  * @author wnhyang
  * @since 2023/09/13
@@ -18,33 +18,45 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("sys_dict_type")
-public class DictTypePO extends BasePO {
+@TableName("sys_dict_data")
+public class DictDataDO extends BaseDO {
 
-    private static final long serialVersionUID = 4590391796032232229L;
+    private static final long serialVersionUID = 2306681901836679890L;
     /**
-     * 字典类型主键
+     * 字典数据主键
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 字典名称
+     * 字典排序
      */
-    @TableField("name")
-    private String name;
+    @TableField("sort")
+    private Integer sort;
 
     /**
-     * 字典类型
+     * 字典标签
      */
-    @TableField("type")
-    private String type;
+    @TableField("label")
+    private String label;
 
     /**
-     * 是否标准字典（0否 1是）
+     * 字典键值
      */
-    @TableField("standard")
-    private Boolean standard;
+    @TableField("value")
+    private String value;
+
+    /**
+     * 字典类型id
+     */
+    @TableField("dict_type")
+    private String dictType;
+
+    /**
+     * 字典标签颜色
+     */
+    @TableField("color")
+    private String color;
 
     /**
      * 状态（0正常 1停用）

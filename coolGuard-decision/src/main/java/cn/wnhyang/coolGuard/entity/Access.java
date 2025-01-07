@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.entity;
 
-import cn.wnhyang.coolGuard.pojo.BasePO;
+import cn.wnhyang.coolGuard.pojo.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -23,7 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName(value = "de_access", autoResultMap = true)
-public class Access extends BasePO {
+public class Access extends BaseDO {
 
     @Serial
     private static final long serialVersionUID = 1L;

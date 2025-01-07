@@ -5,7 +5,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.system.convert.MenuConvert;
-import cn.wnhyang.coolGuard.system.entity.MenuPO;
+import cn.wnhyang.coolGuard.system.entity.Menu;
 import cn.wnhyang.coolGuard.system.service.MenuService;
 import cn.wnhyang.coolGuard.system.vo.menu.*;
 import jakarta.validation.Valid;
@@ -80,7 +80,20 @@ public class MenuController {
     @GetMapping("/list")
     @OperateLog(module = "后台-菜单", name = "查询菜单列表")
     @SaCheckPermission("system:menu:list")
-    public CommonResult<List<MenuTreeRespVO>> getMenuList(@Valid MenuListVO reqVO) {
+    public CommonResult<List<MenuRespVO>> getMenuList(@Valid MenuListVO reqVO) {
+        return success(MenuConvert.INSTANCE.convertList(menuService.getMenuList(reqVO)));
+    }
+
+    /**
+     * 查询菜单列表
+     *
+     * @param reqVO 菜单数据
+     * @return 菜单列表
+     */
+    @GetMapping("/listTree")
+    @OperateLog(module = "后台-菜单", name = "查询菜单列表")
+    @SaCheckPermission("system:menu:list")
+    public CommonResult<List<MenuTreeRespVO>> getMenuTreeList(@Valid MenuListVO reqVO) {
         return success(menuService.getMenuTreeList(reqVO));
     }
 
@@ -94,7 +107,7 @@ public class MenuController {
     @OperateLog(module = "后台-菜单", name = "查询菜单")
     @SaCheckPermission("system:menu:query")
     public CommonResult<MenuRespVO> getMenu(@RequestParam("id") Long id) {
-        MenuPO menu = menuService.getMenu(id);
+        Menu menu = menuService.getMenu(id);
         return success(MenuConvert.INSTANCE.convert2RespVO(menu));
     }
 

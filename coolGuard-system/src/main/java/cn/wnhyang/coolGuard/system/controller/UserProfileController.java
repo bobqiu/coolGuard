@@ -5,7 +5,7 @@ import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.satoken.core.util.LoginUtil;
 import cn.wnhyang.coolGuard.system.convert.UserConvert;
-import cn.wnhyang.coolGuard.system.entity.UserPO;
+import cn.wnhyang.coolGuard.system.entity.User;
 import cn.wnhyang.coolGuard.system.service.UserService;
 import cn.wnhyang.coolGuard.system.vo.userprofile.UserProfileUpdatePasswordVO;
 import cn.wnhyang.coolGuard.system.vo.userprofile.UserProfileUpdateVO;
@@ -36,7 +36,7 @@ public class UserProfileController {
     @OperateLog(module = "后台-用户设置", name = "查询登录用户信息")
     @SaCheckLogin
     public CommonResult<UserProfileVO> getUserProfile() {
-        UserPO user = userService.getUserById(LoginUtil.getUserId());
+        User user = userService.getUserById(LoginUtil.getUserId());
 
         return CommonResult.success(UserConvert.INSTANCE.convert04(user));
     }

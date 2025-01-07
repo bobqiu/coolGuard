@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.mapper;
 
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
-import cn.wnhyang.coolGuard.system.entity.RsaPO;
+import cn.wnhyang.coolGuard.system.entity.RsaDO;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -11,6 +11,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2023/10/10
  */
 @Mapper
-public interface RsaMapper extends BaseMapperX<RsaPO> {
+public interface RsaMapper extends BaseMapperX<RsaDO> {
 
 }

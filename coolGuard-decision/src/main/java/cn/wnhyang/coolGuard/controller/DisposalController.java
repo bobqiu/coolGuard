@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.controller;
 
 import cn.wnhyang.coolGuard.convert.DisposalConvert;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.DisposalService;
@@ -94,5 +95,10 @@ public class DisposalController {
     @GetMapping("/list")
     public CommonResult<List<DisposalVO>> listDisposal() {
         return success(DisposalConvert.INSTANCE.convert(disposalService.listDisposal()));
+    }
+
+    @GetMapping("/lvList")
+    public CommonResult<List<LabelValue>> getLabelValueList() {
+        return success(disposalService.getLabelValueList());
     }
 }

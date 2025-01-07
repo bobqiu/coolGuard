@@ -6,7 +6,7 @@ import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.DictDataConvert;
-import cn.wnhyang.coolGuard.system.entity.DictDataPO;
+import cn.wnhyang.coolGuard.system.entity.DictDataDO;
 import cn.wnhyang.coolGuard.system.service.DictDataService;
 import cn.wnhyang.coolGuard.system.vo.dictdata.*;
 import jakarta.validation.Valid;
@@ -80,7 +80,7 @@ public class DictDataController {
     @GetMapping("/simpleList")
     @SaIgnore
     public CommonResult<List<DictDataSimpleVO>> getSimpleDictDataList() {
-        List<DictDataPO> list = dictDataService.getDictDataList();
+        List<DictDataDO> list = dictDataService.getDictDataList();
         return success(DictDataConvert.INSTANCE.convertList(list));
     }
 
@@ -119,7 +119,7 @@ public class DictDataController {
     @GetMapping("/byType")
     @SaIgnore
     public CommonResult<List<DictDataSimpleVO>> getDictDataListByType(@RequestParam("type") String type) {
-        List<DictDataPO> list = dictDataService.getDictDataListByDictType(type);
+        List<DictDataDO> list = dictDataService.getDictDataListByDictType(type);
         return success(DictDataConvert.INSTANCE.convertList(list));
     }
 

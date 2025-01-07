@@ -1,10 +1,13 @@
 package cn.wnhyang.coolGuard.service;
 
 import cn.wnhyang.coolGuard.entity.Application;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.create.ApplicationCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ApplicationPageVO;
 import cn.wnhyang.coolGuard.vo.update.ApplicationUpdateVO;
+
+import java.util.List;
 
 /**
  * 应用表 服务类
@@ -52,4 +55,10 @@ public interface ApplicationService {
      */
     PageResult<Application> pageApplication(ApplicationPageVO pageVO);
 
+    /**
+     * 获取lv列表
+     *
+     * @return lv列表
+     */
+    List<LabelValue> getLabelValueList();
 }

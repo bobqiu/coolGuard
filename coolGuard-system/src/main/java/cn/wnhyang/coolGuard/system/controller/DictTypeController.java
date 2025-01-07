@@ -6,7 +6,7 @@ import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.DictTypeConvert;
-import cn.wnhyang.coolGuard.system.entity.DictTypePO;
+import cn.wnhyang.coolGuard.system.entity.DictTypeDO;
 import cn.wnhyang.coolGuard.system.service.DictTypeService;
 import cn.wnhyang.coolGuard.system.vo.dicttype.*;
 import jakarta.validation.Valid;
@@ -107,7 +107,7 @@ public class DictTypeController {
     @OperateLog(module = "后台-字典", name = "查询简单字典类型")
     @SaCheckLogin
     public CommonResult<List<DictTypeSimpleVO>> getSimpleDictTypeList() {
-        List<DictTypePO> list = dictTypeService.getDictTypeList();
+        List<DictTypeDO> list = dictTypeService.getDictTypeList();
         return success(DictTypeConvert.INSTANCE.convertList(list));
     }
 }

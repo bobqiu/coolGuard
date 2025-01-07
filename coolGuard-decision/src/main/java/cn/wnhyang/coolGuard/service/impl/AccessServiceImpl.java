@@ -99,6 +99,9 @@ public class AccessServiceImpl implements AccessService {
         IndicatorContext indicatorContext = new IndicatorContext();
 
         LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()), null, fieldContext, indicatorContext, policyContext, eventContext);
+        if (!syncRisk.isSuccess()) {
+            throw exception(Integer.valueOf(syncRisk.getCode()), syncRisk.getMessage());
+        }
         // TODO chain el 打印
 
         result.put("policySetResult", eventContext.getPolicySetResult());

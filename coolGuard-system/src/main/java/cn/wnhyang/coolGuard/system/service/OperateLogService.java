@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.system.service;
 
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.dto.OperateLogCreateDTO;
-import cn.wnhyang.coolGuard.system.entity.OperateLogPO;
+import cn.wnhyang.coolGuard.system.entity.OperateLog;
 import cn.wnhyang.coolGuard.system.vo.operatelog.OperateLogPageVO;
 
 /**
@@ -27,5 +27,5 @@ public interface OperateLogService {
      * @param reqVO 分页请求
      * @return 分页操作日志
      */
-    PageResult<OperateLogPO> getOperateLogPage(OperateLogPageVO reqVO);
+    PageResult<OperateLog> getOperateLogPage(OperateLogPageVO reqVO);
 }

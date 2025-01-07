@@ -1,12 +1,11 @@
 package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.OperateLogConvert;
-import cn.wnhyang.coolGuard.system.entity.OperateLogPO;
-import cn.wnhyang.coolGuard.system.entity.UserPO;
+import cn.wnhyang.coolGuard.system.entity.OperateLog;
+import cn.wnhyang.coolGuard.system.entity.User;
 import cn.wnhyang.coolGuard.system.service.OperateLogService;
 import cn.wnhyang.coolGuard.system.service.UserService;
 import cn.wnhyang.coolGuard.system.vo.operatelog.OperateLogPageVO;
@@ -45,14 +44,14 @@ public class OperateLogController {
      * @return 操作日志分页结果
      */
     @GetMapping("/page")
-    @OperateLog(module = "后台-操作日志", name = "分页查询操作日志")
+    @cn.wnhyang.coolGuard.log.core.annotation.OperateLog(module = "后台-操作日志", name = "分页查询操作日志")
     @SaCheckPermission("system:operateLog:query")
     public CommonResult<PageResult<OperateLogVO>> getOperateLogPage(@Valid OperateLogPageVO reqVO) {
-        PageResult<OperateLogPO> pageResult = operateLogService.getOperateLogPage(reqVO);
+        PageResult<OperateLog> pageResult = operateLogService.getOperateLogPage(reqVO);
 
         // 获得拼接需要的数据
-        Collection<Long> userIds = CollectionUtils.convertList(pageResult.getList(), OperateLogPO::getUserId);
-        Map<Long, UserPO> userMap = userService.getUserMap(userIds);
+        Collection<Long> userIds = CollectionUtils.convertList(pageResult.getList(), OperateLog::getUserId);
+        Map<Long, User> userMap = userService.getUserMap(userIds);
         // 拼接数据
         List<OperateLogVO> list = new ArrayList<>(pageResult.getList().size());
         pageResult.getList().forEach(operateLog -> {

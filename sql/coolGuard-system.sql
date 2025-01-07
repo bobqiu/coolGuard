@@ -1,3 +1,21 @@
+create table coolGuard.sys_dict
+(
+    id          bigint auto_increment comment '字典id'
+        primary key,
+    label       varchar(30) default ''                not null comment '字典标签',
+    value       varchar(30) default ''                not null comment '字典值',
+    data        varchar(500)                          not null comment '字典数据',
+    standard    bit         default b'0'              not null comment '标准',
+    description varchar(100)                          null comment '描述',
+    creator     varchar(30) default ''                null comment '创建者',
+    create_time datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater     varchar(30) default ''                null comment '更新者',
+    update_time datetime    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    constraint uk_value
+        unique (value)
+)
+    comment '字典表' charset = utf8mb4;
+
 create table coolGuard.sys_dict_data
 (
     id          bigint auto_increment comment '字典数据id'
@@ -54,28 +72,25 @@ create table coolGuard.sys_login_log
 
 create table coolGuard.sys_menu
 (
-    id                  bigint auto_increment comment '菜单id'
+    id          bigint auto_increment comment '菜单id'
         primary key,
-    name                varchar(30)                            null comment '菜单名称',
-    permission          varchar(30)                            null comment '权限标识',
-    type                tinyint                                not null comment '菜单类型',
-    order_no            int          default 0                 not null comment '显示顺序',
-    parent_id           bigint       default 0                 not null comment '父菜单ID',
-    path                varchar(50)  default ''                null comment '路由地址',
-    icon                varchar(100) default '#'               null comment '菜单图标',
-    component           varchar(100)                           null comment '组件路径',
-    hide_breadcrumb     bit          default b'0'              null comment '隐藏面包屑',
-    current_active_menu varchar(50)                            null comment '当前激活菜单',
-    keepalive           bit          default b'0'              null comment '缓存',
-    title               varchar(50)                            null comment '组件名',
-    redirect            varchar(50)                            null comment '可点击',
-    status              bit          default b'0'              not null comment '菜单状态',
-    is_show             bit          default b'0'              not null comment '是否可见',
-    creator             varchar(30)  default ''                null comment '创建者',
-    create_time         datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater             varchar(30)  default ''                null comment '更新者',
-    update_time         datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    is_ext              bit          default b'0'              null comment '是否外链'
+    parent_id   bigint      default 0                 not null comment '父菜单ID',
+    type        tinyint                               not null comment '菜单类型',
+    name        varchar(30)                           null comment '菜单名称',
+    path        varchar(50) default ''                null comment '路由地址',
+    component   varchar(100)                          null comment '组件路径',
+    redirect    varchar(50)                           null comment '可点击',
+    permission  varchar(50)                           null comment '权限码',
+    order_no    int                                   null comment '用于路由->菜单排序',
+    query_param text                                  null comment '菜单所携带的参数',
+    title       varchar(50)                           null comment '标题名称',
+    meta        varchar(1000)                         null comment '路由配置',
+    creator     varchar(30) default ''                null comment '创建者',
+    create_time datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater     varchar(30) default ''                null comment '更新者',
+    update_time datetime    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    constraint uk_name
+        unique (name)
 )
     comment '菜单权限表' charset = utf8mb4;
 
@@ -107,6 +122,25 @@ create table coolGuard.sys_operate_log
 )
     comment '操作日志记录' charset = utf8mb4;
 
+create table coolGuard.sys_param
+(
+    id          bigint auto_increment comment '参数id'
+        primary key,
+    label       varchar(30) default ''                not null comment '参数标签',
+    value       varchar(30) default ''                not null comment '参数值',
+    type        varchar(10) default 'json'            not null comment '参数类型',
+    data        varchar(500)                          not null comment '参数数据',
+    standard    bit         default b'0'              not null comment '标准',
+    description varchar(100)                          null comment '描述',
+    creator     varchar(30) default ''                null comment '创建者',
+    create_time datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater     varchar(30) default ''                null comment '更新者',
+    update_time datetime    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    constraint uk_value
+        unique (value)
+)
+    comment '参数表' charset = utf8mb4;
+
 create table coolGuard.sys_role
 (
     id          bigint auto_increment comment '角色id'
@@ -119,7 +153,9 @@ create table coolGuard.sys_role
     creator     varchar(30) default ''                null comment '创建者',
     create_time datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
     updater     varchar(30) default ''                null comment '更新者',
-    update_time datetime    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+    update_time datetime    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    constraint uk_value
+        unique (value)
 )
     comment '角色信息表' charset = utf8mb4;
 
@@ -157,6 +193,7 @@ create table coolGuard.sys_user
     username    varchar(30)                            not null comment '用户账号',
     password    varchar(100) default ''                not null comment '密码',
     nickname    varchar(30)                            not null comment '用户昵称',
+    real_name   varchar(30)                            null comment '真实姓名',
     type        tinyint      default 0                 not null comment '用户类型',
     remark      varchar(200)                           null comment '描述',
     email       varchar(50)  default ''                null comment '用户邮箱',
@@ -175,7 +212,7 @@ create table coolGuard.sys_user
     constraint uk_mobile
         unique (mobile),
     constraint uk_username
-        unique (username, update_time)
+        unique (username)
 )
     comment '用户信息表' charset = utf8mb4;
 
@@ -254,157 +291,60 @@ VALUES ('通用状态', 'common_status', 1, 1, '通用状态', '', '2024-03-25 0
        ('登录结果', 'system_login_result', 1, 1, NULL, '', '2024-03-25 08:59:56', '', '2024-08-04 08:58:11'),
        ('操作类型', 'system_operate_type', 1, 1, NULL, '', '2024-03-25 08:59:56', '', '2024-08-04 08:58:11'),
        ('系统标准', 'common_standard', 1, 1, NULL, 'admin', '2024-06-30 14:57:16', 'admin', '2024-08-04 08:58:11');
-INSERT INTO coolGuard.sys_menu (name, permission, `type`, order_no, parent_id, `path`, icon, component, hide_breadcrumb,
-                                current_active_menu, keepalive, title, redirect, status, is_show, creator, create_time,
-                                updater, update_time, is_ext)
-VALUES ('System', NULL, 0, 0, 0, '/system', 'ant-design:audit-outlined', NULL, 0, NULL, 0, '系统管理', '/system/user',
-        1, 0, '', '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       ('User', 'system:user:list', 1, 1, 1, 'user', 'ant-design:user-outlined', 'system/user/index', 0, NULL, 0,
-        '用户管理', NULL, 1, 0, '', '2024-03-25 10:12:09', 'admin', '2024-08-04 09:04:52', 0),
-       ('Role', 'system:role:list', 1, 2, 1, 'role', 'ant-design:crown-outlined', 'system/role/index', 0, NULL, 0,
-        '角色管理', NULL, 1, 0, '', '2024-03-25 10:12:09', 'admin', '2024-08-04 09:04:52', 0),
-       ('Menu', 'system:menu:list', 1, 3, 1, 'menu', 'ant-design:menu-fold-outlined', 'system/menu/index', 0, NULL, 0,
-        '菜单管理', NULL, 1, 0, '', '2024-03-25 10:12:09', 'admin', '2024-08-04 09:04:52', 0),
-       ('Password', NULL, 1, 97, 1, 'password', 'ant-design:unlock-outlined', 'system/password/index', 0, NULL, 0,
-        '修改密码', NULL, 1, 0, '', '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       ('Log', NULL, 0, 99, 1, 'log', 'ant-design:ordered-list-outlined', NULL, 0, NULL, 0, '日志管理',
-        '/system/log/loginlog', 1, 0, '', '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       ('Dict', NULL, 0, 4, 1, 'dict', 'ant-design:medicine-box-outlined', NULL, 0, NULL, 0, '字典管理',
-        '/system/dict/dicttype', 1, 0, '', '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       ('UserDetail', NULL, 1, 0, 1, 'userDetail/:id', 'ant-design:carry-out-twotone', 'system/user/UserDetail', 0,
-        '/system/user', 0, '用户详情', NULL, 1, 1, '', '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:user:create', 2, 0, 100, '', '', '', 0, NULL, 0, '用户新增', NULL, 1, 0, '',
-        '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:user:update', 2, 0, 100, '', '', '', 0, NULL, 0, '用户更新', NULL, 1, 0, '',
-        '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0);
-INSERT INTO coolGuard.sys_menu (name, permission, `type`, order_no, parent_id, `path`, icon, component, hide_breadcrumb,
-                                current_active_menu, keepalive, title, redirect, status, is_show, creator, create_time,
-                                updater, update_time, is_ext)
-VALUES (NULL, 'system:user:delete', 2, 0, 100, '', '', '', 0, NULL, 0, '用户删除', NULL, 1, 0, '',
-        '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:user:query', 2, 0, 100, '', '', '', 0, NULL, 0, '用户查询', NULL, 1, 0, '', '2024-03-25 10:12:09',
-        '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:role:create', 2, 0, 101, '', '', '', 0, NULL, 0, '角色新增', NULL, 1, 0, '',
-        '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:role:update', 2, 0, 101, '', '', '', 0, NULL, 0, '角色更新', NULL, 1, 0, '',
-        '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:role:delete', 2, 0, 101, '', '', '', 0, NULL, 0, '角色删除', NULL, 1, 0, '',
-        '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:role:query', 2, 0, 101, '', '', '', 0, NULL, 0, '角色查询', NULL, 1, 0, '', '2024-03-25 10:12:09',
-        '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:menu:create', 2, 0, 102, '', '', '', 0, NULL, 0, '菜单新增', NULL, 1, 0, '',
-        '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:menu:update', 2, 0, 102, '', '', '', 0, NULL, 0, '菜单更新', NULL, 1, 0, '',
-        '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:menu:delete', 2, 0, 102, '', '', '', 0, NULL, 0, '菜单删除', NULL, 1, 0, '',
-        '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:menu:query', 2, 0, 102, '', '', '', 0, NULL, 0, '菜单查询', NULL, 1, 0, '', '2024-03-25 10:12:09',
-        '', '2024-08-04 09:04:52', 0);
-INSERT INTO coolGuard.sys_menu (name, permission, `type`, order_no, parent_id, `path`, icon, component, hide_breadcrumb,
-                                current_active_menu, keepalive, title, redirect, status, is_show, creator, create_time,
-                                updater, update_time, is_ext)
-VALUES ('Loginlog', NULL, 1, 0, 104, 'loginlog', 'ant-design:login-outlined', 'system/loginLog/index', 0, NULL, 0,
-        '登录日志', NULL, 1, 0, '', '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       ('Operatelog', NULL, 1, 0, 104, 'operatelog', 'ant-design:logout-outlined', 'system/operateLog/index', 0, NULL,
-        0, '操作日志', NULL, 1, 0, '', '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       ('DictType', NULL, 1, 0, 105, 'dicttype', 'ant-design:book-outlined', 'system/dictType/index', 0, NULL, 0,
-        '字典类型', NULL, 1, 0, '', '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       ('DictData', NULL, 1, 0, 105, 'dictdata', 'ant-design:behance-outlined', 'system/dictData/index', 0, NULL, 0,
-        '字典数据', NULL, 1, 0, '', '2024-03-25 10:12:09', '', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:user:import', 2, 0, 100, '', '', '', 0, NULL, 0, '用户导入', NULL, 1, 0, 'admin',
-        '2024-06-30 15:35:33', 'admin', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:user:export', 2, 0, 100, '', '', '', 0, NULL, 0, '用户导出', NULL, 1, 0, 'admin',
-        '2024-06-30 15:36:12', 'admin', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:role:import', 2, 0, 101, '', '', '', 0, NULL, 0, '角色导入', NULL, 1, 0, 'admin',
-        '2024-06-30 15:37:01', 'admin', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:role:export', 2, 0, 101, '', '', '', 0, NULL, 0, '角色导出', NULL, 1, 0, 'admin',
-        '2024-06-30 15:37:33', 'admin', '2024-08-04 09:04:52', 0),
-       (NULL, 'system:menu:export', 2, 0, 102, '', '', '', 0, NULL, 0, '菜单导出', NULL, 1, 0, 'admin',
-        '2024-06-30 15:38:11', 'admin', '2024-08-04 09:04:52', 0);
+INSERT INTO coolGuard.sys_menu (parent_id, `type`, name, `path`, component, redirect, permission, order_no, query_param,
+                                title, meta, creator, create_time, updater, update_time)
+VALUES (0, 0, 'System', '/system', 'BasicLayout', '', NULL, NULL, NULL, '系统管理', '{"title":"page.system.title"}', '',
+        '2024-03-25 10:12:09', NULL, '2025-01-05 22:01:09'),
+       (1, 1, 'User', '/system/user', '/system/user/index', NULL, NULL, NULL, NULL, '用户管理',
+        '{"title":"page.system.user"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:02:40'),
+       (1, 1, 'Role', '/system/role', '/system/role/index', NULL, NULL, NULL, NULL, '角色管理',
+        '{"title":"page.system.role"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:03:30'),
+       (1, 1, 'Menu', '/system/menu', '/system/menu/index', NULL, NULL, NULL, NULL, '菜单管理',
+        '{"title":"page.system.menu"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:03:45'),
+       (1, 0, 'Log', '/system/log', NULL, '/system/loginLog', NULL, NULL, NULL, '日志管理',
+        '{"title":"page.system.log"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:47:21'),
+       (104, 1, 'LoginLog', '/system/loginLog', '/system/loginLog/index', NULL, NULL, NULL, NULL, '登录日志',
+        '{"title":"page.system.loginLog"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:05:48'),
+       (104, 1, 'OperateLog', '/system/operateLog', '/system/operateLog/index', NULL, NULL, NULL, NULL, '操作日志',
+        '{"iframeSrc":"","title":"page.system.operateLog"}', '', '2024-03-25 10:12:09', NULL, '2025-01-07 18:39:54'),
+       (0, 0, 'Access', '/access', 'BasicLayout', NULL, NULL, NULL, NULL, '接入中心', '{"title":"page.access.title"}',
+        NULL, '2025-01-05 22:15:25', NULL, '2025-01-05 22:47:44'),
+       (1058, 1, 'Filed', '/access/field', '/access/field/index', NULL, NULL, NULL, NULL, '字段管理',
+        '{"title":"page.access.field"}', NULL, '2025-01-05 22:20:32', NULL, '2025-01-05 22:24:33'),
+       (0, 0, 'Dashboard', '/', 'BasicLayout', NULL, NULL, NULL, NULL, '概览', '{"title":"page.dashboard.title"}', NULL,
+        '2025-01-07 18:21:42', NULL, '2025-01-07 18:22:23');
+INSERT INTO coolGuard.sys_menu (parent_id, `type`, name, `path`, component, redirect, permission, order_no, query_param,
+                                title, meta, creator, create_time, updater, update_time)
+VALUES (1060, 1, 'Analytics', '/analytics', '/dashboard/analytics/index', NULL, NULL, NULL, NULL, '分析页',
+        '{"title":"page.dashboard.analytics"}', NULL, '2025-01-07 18:23:36', NULL, '2025-01-07 18:23:36'),
+       (1060, 1, 'Workspace', '/workspace', '/dashboard/workspace/index', NULL, NULL, NULL, NULL, '工作台',
+        '{"title":"page.dashboard.workspace"}', NULL, '2025-01-07 18:24:18', NULL, '2025-01-07 18:24:18'),
+       (1, 1, 'Dict', '/system/dict', '/system/dict/index', NULL, NULL, NULL, NULL, '字典管理',
+        '{"title":"page.system.dict"}', NULL, '2025-01-07 18:26:23', NULL, '2025-01-07 18:26:23'),
+       (1, 1, 'Param', '/param', '/system/param/index', NULL, NULL, NULL, NULL, '参数管理',
+        '{"title":"page.system.param"}', NULL, '2025-01-07 18:27:13', NULL, '2025-01-07 18:27:13');
 INSERT INTO coolGuard.sys_role (name, value, sort, status, remark, creator, create_time, updater, update_time)
 VALUES ('超级管理员', 'administrator', 0, 1, NULL, '', '2024-03-25 08:59:56', '', '2024-08-04 09:00:35'),
-       ('操作员', 'operator', 99, 1, NULL, 'admin', '2024-03-26 20:45:35', 'admin', '2024-08-04 09:00:35'),
-       ('管理员', 'admin', 99, 1, NULL, 'admin', '2024-06-30 15:27:44', 'admin', '2024-08-04 09:00:35');
+       ('管理员', 'admin', 99, 1, NULL, 'admin', '2024-06-30 15:27:44', NULL, '2025-01-04 22:41:49');
 INSERT INTO coolGuard.sys_role_menu (role_id, menu_id, creator, create_time, updater, update_time)
-VALUES (2, 104, 'admin', '2024-03-26 20:45:36', 'admin', '2024-03-26 21:35:57'),
-       (2, 1041, 'admin', '2024-03-26 20:45:36', 'admin', '2024-03-26 21:35:57'),
-       (2, 1042, 'admin', '2024-03-26 20:45:36', 'admin', '2024-03-26 21:35:57'),
-       (2, 1041, 'admin', '2024-03-26 21:35:58', 'admin', '2024-06-30 16:25:59'),
-       (2, 1042, 'admin', '2024-03-26 21:35:58', 'admin', '2024-06-30 16:25:59'),
-       (2, 104, 'admin', '2024-03-26 21:35:58', 'admin', '2024-06-30 16:25:59'),
-       (2, 105, 'admin', '2024-03-26 21:35:58', 'admin', '2024-06-30 16:25:59'),
-       (2, 1051, 'admin', '2024-03-26 21:35:58', 'admin', '2024-06-30 16:25:59'),
-       (2, 1052, 'admin', '2024-03-26 21:35:58', 'admin', '2024-06-30 16:25:59'),
-       (3, 1024, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18');
-INSERT INTO coolGuard.sys_role_menu (role_id, menu_id, creator, create_time, updater, update_time)
-VALUES (3, 1, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 100, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 101, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 102, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 104, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 105, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1001, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 106, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1002, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1003, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18');
-INSERT INTO coolGuard.sys_role_menu (role_id, menu_id, creator, create_time, updater, update_time)
-VALUES (3, 1004, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1041, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1042, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1011, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1012, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1013, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1014, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1051, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1052, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1021, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18');
-INSERT INTO coolGuard.sys_role_menu (role_id, menu_id, creator, create_time, updater, update_time)
-VALUES (3, 1022, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (3, 1023, 'admin', '2024-06-30 15:27:44', 'admin', '2024-06-30 16:28:18'),
-       (2, 1041, 'admin', '2024-06-30 16:25:59', 'admin', '2024-06-30 16:25:59'),
-       (2, 1051, 'admin', '2024-06-30 16:26:00', 'admin', '2024-06-30 16:26:00'),
-       (3, 1024, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 104, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 105, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1001, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 106, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1002, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19');
-INSERT INTO coolGuard.sys_role_menu (role_id, menu_id, creator, create_time, updater, update_time)
-VALUES (3, 1003, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1004, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1041, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1042, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1011, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1012, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1013, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1014, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1051, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1052, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19');
-INSERT INTO coolGuard.sys_role_menu (role_id, menu_id, creator, create_time, updater, update_time)
-VALUES (3, 1021, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1022, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19'),
-       (3, 1023, 'admin', '2024-06-30 16:28:19', 'admin', '2024-06-30 16:28:19');
-INSERT INTO coolGuard.sys_user (username, password, nickname, `type`, remark, email, mobile, sex, avatar, status,
-                                login_ip, login_date, creator, create_time, updater, update_time)
-VALUES ('admin', '$2a$10$YxtQzqA1SX6M2rov0DLDveyLa1a7K737k46MxMGUlOqY46nW4Vz02', 'admin', 0, NULL, 'wnhyang@qq.com',
-        '17317430552', 0, '', 1, '0:0:0:0:0:0:0:1', '2024-12-22 21:48:30', '', '2024-03-25 08:59:56', NULL,
-        '2024-12-22 21:48:30'),
-       ('zhangsan', '$2a$10$TtOM8M7KW0MXapaN6a3awOxko9AdPoFAMk7EM6.esMtv46D/8/IDG', '张三', 0, NULL, '3423@qq.com',
-        '13423454567', 2, '', 1, '127.0.0.1', '2024-03-26 21:57:05', 'admin', '2024-03-26 13:40:16', NULL,
-        '2024-08-04 09:18:12'),
-       ('lisi', '$2a$10$q8HB8XHmmDvHaFC4L4LMze3bWVH.JFkpaSf123Vz.iHWc9Ag.z9de', '李四', 0, NULL, '325423@qq.com',
-        '17485984758', 0, '', 1, '127.0.0.1', '2024-03-28 16:23:44', 'admin', '2024-03-26 20:53:32', NULL,
-        '2024-08-04 09:09:59'),
-       ('wnhyang', '$2a$10$uqU5jmFmn6BoFa2vraUXyuiwXfgB23LRK7OrSWhHCOROK4qxyEifi', '无奈何杨', 0, NULL,
+VALUES (3, 1001, NULL, '2025-01-04 22:41:49', NULL, '2025-01-04 22:41:49');
+INSERT INTO coolGuard.sys_user (username, password, nickname, real_name, `type`, remark, email, mobile, sex, avatar,
+                                status, login_ip, login_date, creator, create_time, updater, update_time)
+VALUES ('admin', '$2a$10$YxtQzqA1SX6M2rov0DLDveyLa1a7K737k46MxMGUlOqY46nW4Vz02', 'admin', NULL, 0, NULL,
+        'wnhyang@qq.com', '17317430552', 0, '', 1, '0:0:0:0:0:0:0:1', '2025-01-07 18:41:15', '', '2024-03-25 08:59:56',
+        NULL, '2025-01-07 18:41:15'),
+       ('zhangsan', '$2a$10$TtOM8M7KW0MXapaN6a3awOxko9AdPoFAMk7EM6.esMtv46D/8/IDG', '张三', NULL, 0, NULL,
+        '3423@qq.com', '13423454567', 2, '', 1, '127.0.0.1', '2024-03-26 21:57:05', 'admin', '2024-03-26 13:40:16',
+        NULL, '2025-01-04 22:40:15'),
+       ('wnhyang', '$2a$10$uqU5jmFmn6BoFa2vraUXyuiwXfgB23LRK7OrSWhHCOROK4qxyEifi', '无奈何杨', NULL, 0, NULL,
         'wnhyang@163.com', '17317430553', 1, '', 1, '127.0.0.1', '2024-06-30 15:22:04', 'admin', '2024-06-30 15:11:38',
-        'admin', '2024-08-03 22:31:41');
+        NULL, '2025-01-04 22:37:05'),
+       ('rerhd', '$2a$10$XDwbSYsundS3bCCOAQ/ppuFPJhkiS8WSKX0LFtQ1CDcrPNKnRwsyO', 'hre', NULL, 0, 'dbd', 'ehr@sg.egf',
+        'htrhettrjr', 0, 'njtr', 0, '', NULL, NULL, '2025-01-04 16:34:37', NULL, '2025-01-04 16:34:37');
 INSERT INTO coolGuard.sys_user_role (user_id, role_id, creator, create_time, updater, update_time)
 VALUES (1, 1, '', '2024-03-25 08:59:56', '', '2024-03-25 08:59:56'),
-       (2, 1, 'admin', '2024-03-26 13:40:16', 'admin', '2024-03-26 20:50:28'),
-       (2, 2, 'admin', '2024-03-26 20:50:29', 'admin', '2024-08-04 09:18:11'),
-       (3, 2, 'admin', '2024-03-26 20:53:32', 'admin', '2024-08-04 09:09:59'),
-       (4, 1, 'admin', '2024-06-30 15:11:38', 'admin', '2024-06-30 15:22:37'),
-       (4, 2, 'admin', '2024-06-30 15:22:38', 'admin', '2024-06-30 15:27:55'),
-       (4, 3, 'admin', '2024-06-30 15:27:55', 'admin', '2024-06-30 15:27:55'),
-       (3, 2, NULL, '2024-08-04 09:09:59', NULL, '2024-08-04 09:09:59'),
-       (2, 2, NULL, '2024-08-04 09:18:12', NULL, '2024-08-04 09:18:12');
+       (7, 1, NULL, '2025-01-04 16:34:37', NULL, '2025-01-04 16:34:37'),
+       (7, 3, NULL, '2025-01-04 16:34:37', NULL, '2025-01-04 16:34:37'),
+       (4, 1, NULL, '2025-01-04 22:37:05', NULL, '2025-01-04 22:37:05'),
+       (4, 3, NULL, '2025-01-04 22:37:05', NULL, '2025-01-04 22:37:05'),
+       (2, 1, NULL, '2025-01-04 22:40:15', NULL, '2025-01-04 22:40:15');

@@ -10,10 +10,7 @@ import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.DisposalConvert;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.convert.PolicySetConvert;
-import cn.wnhyang.coolGuard.entity.Chain;
-import cn.wnhyang.coolGuard.entity.Policy;
-import cn.wnhyang.coolGuard.entity.PolicySet;
-import cn.wnhyang.coolGuard.entity.PolicySetVersion;
+import cn.wnhyang.coolGuard.entity.*;
 import cn.wnhyang.coolGuard.mapper.*;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicyService;
@@ -230,6 +227,11 @@ public class PolicySetServiceImpl implements PolicySetService {
     @Override
     public List<PolicySetVO> listPolicySet() {
         return PolicySetConvert.INSTANCE.convert(policySetMapper.selectList());
+    }
+
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(policySetMapper.selectList(), PolicySet::getLabelValue);
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_SET_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略集普通组件")

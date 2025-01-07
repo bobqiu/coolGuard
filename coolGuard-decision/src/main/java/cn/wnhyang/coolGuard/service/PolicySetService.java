@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.PolicySetVO;
 import cn.wnhyang.coolGuard.vo.create.PolicySetCreateVO;
@@ -83,4 +84,11 @@ public interface PolicySetService {
      * @return list
      */
     List<PolicySetVO> listPolicySet();
+
+    /**
+     * 获取标签值列表
+     *
+     * @return list
+     */
+    List<LabelValue> getLabelValueList();
 }

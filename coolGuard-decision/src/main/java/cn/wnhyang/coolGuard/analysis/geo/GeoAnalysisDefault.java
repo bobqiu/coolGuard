@@ -88,8 +88,8 @@ public class GeoAnalysisDefault implements GeoAnalysis {
     public Pca analysis(String lonAndLat) {
         try {
             String[] split = lonAndLat.split(",");
-            double lon = Double.parseDouble(split[0]);
-            double lat = Double.parseDouble(split[1]);
+            double lat = Double.parseDouble(split[0]);
+            double lon = Double.parseDouble(split[1]);
             return analysis(lon, lat);
         } catch (Exception e) {
             log.error("经纬度格式错误");

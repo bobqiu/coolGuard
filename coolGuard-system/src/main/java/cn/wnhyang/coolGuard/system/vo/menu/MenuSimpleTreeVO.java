@@ -23,8 +23,6 @@ public class MenuSimpleTreeVO {
 
     private Integer type;
 
-    private Integer orderNo;
-
     private List<MenuSimpleTreeVO> children;
 
 }

@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.system.service.impl;
 import cn.hutool.crypto.asymmetric.RSA;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.RsaConvert;
-import cn.wnhyang.coolGuard.system.entity.RsaPO;
+import cn.wnhyang.coolGuard.system.entity.RsaDO;
 import cn.wnhyang.coolGuard.system.mapper.RsaMapper;
 import cn.wnhyang.coolGuard.system.service.RsaService;
 import cn.wnhyang.coolGuard.system.vo.rsa.RsaCreateVO;
@@ -39,7 +39,7 @@ public class RsaServiceImpl implements RsaService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createSecretKey(RsaCreateVO reqVO) {
-        RsaPO rsaDO = RsaConvert.INSTANCE.convert(reqVO);
+        RsaDO rsaDO = RsaConvert.INSTANCE.convert(reqVO);
         rsaMapper.insert(rsaDO);
         return rsaDO.getId();
     }
@@ -47,7 +47,7 @@ public class RsaServiceImpl implements RsaService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateRsa(RsaUpdateVO reqVO) {
-        RsaPO rsaDO = RsaConvert.INSTANCE.convert(reqVO);
+        RsaDO rsaDO = RsaConvert.INSTANCE.convert(reqVO);
         rsaMapper.updateById(rsaDO);
     }
 
@@ -58,12 +58,12 @@ public class RsaServiceImpl implements RsaService {
     }
 
     @Override
-    public PageResult<RsaPO> getRsaPage(RsaPageVO reqVO) {
+    public PageResult<RsaDO> getRsaPage(RsaPageVO reqVO) {
         return rsaMapper.selectPage(reqVO, null);
     }
 
     @Override
-    public RsaPO getRsa(Long id) {
+    public RsaDO getRsa(Long id) {
         return rsaMapper.selectById(id);
     }
 }

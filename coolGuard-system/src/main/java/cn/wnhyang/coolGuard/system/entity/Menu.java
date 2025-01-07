@@ -1,11 +1,15 @@
 package cn.wnhyang.coolGuard.system.entity;
 
-import cn.wnhyang.coolGuard.pojo.BasePO;
+import cn.wnhyang.coolGuard.pojo.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
+
+import java.io.Serial;
+import java.util.Map;
 
 /**
  * 菜单权限表
@@ -18,14 +22,15 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("sys_menu")
-public class MenuPO extends BasePO {
+@TableName(value = "sys_menu", autoResultMap = true)
+public class Menu extends BaseDO {
 
     /**
      * 菜单编号 - 根节点
      */
     public static final Long ID_ROOT = 0L;
 
+    @Serial
     private static final long serialVersionUID = 986081501377397378L;
 
     /**
@@ -35,13 +40,25 @@ public class MenuPO extends BasePO {
     private Long id;
 
     /**
+     * 父菜单ID
+     */
+    @TableField("parent_id")
+    private Long parentId;
+
+    /**
+     * 权限标识
+     */
+    @TableField("permission")
+    private String permission;
+
+    /**
      * 菜单类型 目录0 菜单1 按钮2
      */
     @TableField("type")
     private Integer type;
 
     /**
-     * 菜单名称
+     * 菜单名称 作为唯一索引
      */
     @TableField("name")
     private String name;
@@ -64,74 +81,34 @@ public class MenuPO extends BasePO {
     @TableField("redirect")
     private String redirect;
 
-    // meta start----------
+    // ----- routeMeta start -----
 
     /**
-     * 显示顺序
+     * 数据库关键字
+     * order 改为 order_no
+     * 用于路由->菜单排序
      */
     @TableField("order_no")
-    private Integer orderNo;
+    private Integer order;
 
     /**
-     * 组件名
+     * 数据库关键字
+     * query 改为 query_param
+     * 菜单所携带的参数
+     */
+    @TableField(value = "query_param", typeHandler = JacksonTypeHandler.class)
+    private Map<String, Object> query;
+
+    /**
+     * 标题名称
      */
     @TableField("title")
     private String title;
 
-    /**
-     * 菜单图标
-     */
-    @TableField("icon")
-    private String icon;
 
-    /**
-     * 隐藏面包屑显示
-     */
-    @TableField("hide_breadcrumb")
-    private Boolean hideBreadcrumb;
+    // ----- routeMeta end -----
 
-    /**
-     * 当前激活的菜单。用于配置详情页时左侧激活的菜单路径
-     */
-    @TableField("current_active_menu")
-    private String currentActiveMenu;
-
-    /**
-     * 缓存
-     */
-    @TableField("keepalive")
-    private Boolean keepalive;
-
-    // meta end----------
-
-    /**
-     * 权限标识
-     */
-    @TableField("permission")
-    private String permission;
-
-    /**
-     * 父菜单ID
-     */
-    @TableField("parent_id")
-    private Long parentId;
-
-    /**
-     * 是否外链
-     */
-    @TableField("is_ext")
-    private Boolean isExt;
-
-    /**
-     * 是否显示
-     */
-    @TableField("is_show")
-    private Boolean isShow;
-
-    /**
-     * 菜单状态
-     */
-    @TableField("status")
-    private Boolean status;
+    @TableField(value = "meta", typeHandler = JacksonTypeHandler.class)
+    private RouteMeta meta;
 
 }

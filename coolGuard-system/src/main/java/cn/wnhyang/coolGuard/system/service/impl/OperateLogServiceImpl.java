@@ -8,8 +8,8 @@ import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.OperateLogConvert;
 import cn.wnhyang.coolGuard.system.dto.OperateLogCreateDTO;
-import cn.wnhyang.coolGuard.system.entity.OperateLogPO;
-import cn.wnhyang.coolGuard.system.entity.UserPO;
+import cn.wnhyang.coolGuard.system.entity.OperateLog;
+import cn.wnhyang.coolGuard.system.entity.User;
 import cn.wnhyang.coolGuard.system.mapper.OperateLogMapper;
 import cn.wnhyang.coolGuard.system.service.OperateLogService;
 import cn.wnhyang.coolGuard.system.service.UserService;
@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
-import static cn.wnhyang.coolGuard.system.entity.OperateLogPO.JAVA_METHOD_ARGS_MAX_LENGTH;
-import static cn.wnhyang.coolGuard.system.entity.OperateLogPO.RESULT_MAX_LENGTH;
+import static cn.wnhyang.coolGuard.system.entity.OperateLog.JAVA_METHOD_ARGS_MAX_LENGTH;
+import static cn.wnhyang.coolGuard.system.entity.OperateLog.RESULT_MAX_LENGTH;
 import static cn.wnhyang.coolGuard.util.CollectionUtils.convertSet;
 
 
@@ -48,18 +48,18 @@ public class OperateLogServiceImpl implements OperateLogService, LogService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createOperateLog(OperateLogCreateDTO createReqDTO) {
-        OperateLogPO logDO = OperateLogConvert.INSTANCE.convert(createReqDTO);
+        OperateLog logDO = OperateLogConvert.INSTANCE.convert(createReqDTO);
         logDO.setJavaMethodArgs(StrUtil.subPre(logDO.getJavaMethodArgs(), JAVA_METHOD_ARGS_MAX_LENGTH));
         logDO.setResultData(StrUtil.subPre(logDO.getResultData(), RESULT_MAX_LENGTH));
         operateLogMapper.insert(logDO);
     }
 
     @Override
-    public PageResult<OperateLogPO> getOperateLogPage(OperateLogPageVO reqVO) {
+    public PageResult<OperateLog> getOperateLogPage(OperateLogPageVO reqVO) {
         // 处理基于用户昵称的查询
         Collection<Long> userIds = null;
         if (StrUtil.isNotEmpty(reqVO.getUserNickname())) {
-            userIds = convertSet(userService.getUserListByNickname(reqVO.getUserNickname()), UserPO::getId);
+            userIds = convertSet(userService.getUserListByNickname(reqVO.getUserNickname()), User::getId);
             if (CollUtil.isEmpty(userIds)) {
                 return PageResult.empty();
             }

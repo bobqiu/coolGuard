@@ -13,7 +13,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LabelValue {
 
+    private Long id;
+
     private String label;
 
     private String value;
+
+    public LabelValue(String label, String value) {
+        this.label = label;
+        this.value = value;
+    }
 }

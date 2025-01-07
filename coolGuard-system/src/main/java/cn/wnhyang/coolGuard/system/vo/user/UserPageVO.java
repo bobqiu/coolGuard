@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 /**
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class UserPageVO extends PageParam {
 
+    @Serial
     private static final long serialVersionUID = 1382984856072227773L;
 
     private String username;

@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.service;
 
 import cn.wnhyang.coolGuard.entity.Disposal;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.create.DisposalCreateVO;
 import cn.wnhyang.coolGuard.vo.page.DisposalPageVO;
@@ -61,4 +62,10 @@ public interface DisposalService {
      */
     List<Disposal> listDisposal();
 
+    /**
+     * 获取标签值列表
+     *
+     * @return list
+     */
+    List<LabelValue> getLabelValueList();
 }

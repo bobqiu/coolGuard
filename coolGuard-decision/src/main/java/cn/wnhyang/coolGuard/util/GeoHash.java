@@ -103,14 +103,14 @@ public class GeoHash {
     /**
      * 将给定的经度和纬度转换为12位GeoHash字符串。
      *
-     * @param lonAndLat 经纬度字符串，格式为"经度,纬度"
+     * @param lonAndLat 经纬度字符串，格式为"纬度,经度"
      * @return GeoHash字符串
      */
     public static String geoHash(String lonAndLat) {
         try {
             String[] split = lonAndLat.split(",");
-            double lon = Double.parseDouble(split[0]);
-            double lat = Double.parseDouble(split[1]);
+            double lat = Double.parseDouble(split[0]);
+            double lon = Double.parseDouble(split[1]);
             return encode(lat, lon, 12);
         } catch (Exception e) {
             return "#";

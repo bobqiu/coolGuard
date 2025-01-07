@@ -4,7 +4,7 @@ package cn.wnhyang.coolGuard.system.mapper;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.DictDataPO;
+import cn.wnhyang.coolGuard.system.entity.DictDataDO;
 import cn.wnhyang.coolGuard.system.vo.dictdata.DictDataPageVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -18,25 +18,25 @@ import java.util.List;
  * @since 2023/09/13
  */
 @Mapper
-public interface DictDataMapper extends BaseMapperX<DictDataPO> {
+public interface DictDataMapper extends BaseMapperX<DictDataDO> {
 
-    default PageResult<DictDataPO> selectPage(DictDataPageVO reqVO) {
-        return selectPage(reqVO, new LambdaQueryWrapperX<DictDataPO>()
-                .likeIfPresent(DictDataPO::getLabel, reqVO.getLabel())
-                .eqIfPresent(DictDataPO::getDictType, reqVO.getDictType())
-                .eqIfPresent(DictDataPO::getStatus, reqVO.getStatus())
-                .orderByDesc(Arrays.asList(DictDataPO::getDictType, DictDataPO::getSort)));
+    default PageResult<DictDataDO> selectPage(DictDataPageVO reqVO) {
+        return selectPage(reqVO, new LambdaQueryWrapperX<DictDataDO>()
+                .likeIfPresent(DictDataDO::getLabel, reqVO.getLabel())
+                .eqIfPresent(DictDataDO::getDictType, reqVO.getDictType())
+                .eqIfPresent(DictDataDO::getStatus, reqVO.getStatus())
+                .orderByDesc(Arrays.asList(DictDataDO::getDictType, DictDataDO::getSort)));
     }
 
     default long selectCountByDictType(String dictType) {
-        return selectCount(DictDataPO::getDictType, dictType);
+        return selectCount(DictDataDO::getDictType, dictType);
     }
 
-    default DictDataPO selectByDictTypeAndValue(String dictType, String value) {
-        return selectOne(DictDataPO::getDictType, dictType, DictDataPO::getValue, value);
+    default DictDataDO selectByDictTypeAndValue(String dictType, String value) {
+        return selectOne(DictDataDO::getDictType, dictType, DictDataDO::getValue, value);
     }
 
-    default List<DictDataPO> selectListByDictType(String type) {
-        return selectList(DictDataPO::getDictType, type);
+    default List<DictDataDO> selectListByDictType(String type) {
+        return selectList(DictDataDO::getDictType, type);
     }
 }

@@ -146,6 +146,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * TODO 不能直接抛出后端异常给前端
      * 拦截未知的运行时异常
      */
     @ExceptionHandler(RuntimeException.class)

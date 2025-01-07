@@ -355,6 +355,7 @@ create table coolGuard.de_tag
         unique (code)
 )
     comment '标签表';
+
 INSERT INTO coolGuard.de_access (display_name, name, input_config, output_config, description, creator, create_time,
                                  updater, update_time)
 VALUES ('公共接口', 'publicInterface',
@@ -367,6 +368,31 @@ INSERT INTO coolGuard.de_application (display_name, name, secret, description, c
                                       update_time)
 VALUES ('手机', 'phone', 'thtrshtrshtaqq32t4y4hg', 'ewgwregw', NULL, '2024-11-17 13:41:18', NULL,
         '2024-11-17 13:41:18');
+INSERT INTO coolGuard.de_chain (application_name, chain_name, el_data, enable, description, creator, create_time,
+                                updater, update_time)
+VALUES ('coolGuard', 'R_C#f1df5b70574a46a09b95f3662cffaed9',
+        'IF(OR(cond.data(''{"type":"normal","leftValue":"N_S_payerAccount","logicType":"not_null","rightType":"","rightValue":""}''), cond.data(''{"type":"normal","leftValue":"N_F_transAmount","logicType":"gt","rightType":"input","rightValue":"100"}'')),ruleTrue,ruleFalse);',
+        1, '', '', '2024-04-08 15:34:32', '', '2025-01-01 17:35:36'),
+       ('coolGuard', 'R_C#0b30510bf425492381a78aca098be029',
+        'IF(AND(cond.data(''{"type":"normal","leftValue":"N_S_appName","logicType":"eq","rightType":"input","rightValue":"phone"}''),cond.data(''{"type":"normal","leftValue":"N_F_transAmount","logicType":"lt","rightType":"input","rightValue":"100"}'')),ruleTrue,ruleFalse);',
+        1, '', '', '2024-04-08 15:34:32', '', '2025-01-01 17:35:36'),
+       ('coolGuard', 'R_C#6ae5cb587c784326b45c944e80319d50',
+        'IF(cond.data(''{"type":"normal","leftValue":"N_F_transAmount","logicType":"gte","rightType":"input","rightValue":"20.0"}''),ruleTrue,ruleFalse);',
+        1, '', '', '2024-04-09 10:57:57', '', '2025-01-01 17:35:36'),
+       ('coolGuard', 'A_C#publicInterface', 'THEN(I_F,ps_cn);', 1, '', '', '2024-04-09 15:34:47', '',
+        '2024-12-17 18:25:19'),
+       ('coolGuard', 'I_C#b75c84a6b5ec45ed8026ca7c873e789c',
+        'IF(cond.data(''{"type":"normal","value":"N_F_transAmount","logicType":"lt","expectType":"input","expectValue":"1000"}''),i_tcn,i_fcn);',
+        1, '', '', '2024-05-07 11:23:16', '', '2024-12-08 20:49:21'),
+       ('coolGuard', 'PS_C#phone_login',
+        'WHEN(e_cn,p_cn.tag("phone_login_worst"),p_cn.tag("phone_login_order"),p_cn.tag("phone_login_weight"),p_cn.tag("phone_login_vote"));',
+        1, '', '', '2024-07-20 11:06:01', '', '2025-01-01 12:58:28'),
+       ('coolGuard', 'I_F', 'FOR(i_fn).parallel(true).DO(i_cn);', 1, '', '', '2024-08-20 14:20:43', '',
+        '2024-08-20 14:24:51'),
+       ('coolGuard', 'P_FP', 'FOR(p_fn).parallel(true).DO(r_cn);', 1, '', '', '2024-08-20 17:31:38', '',
+        '2024-08-20 19:06:39'),
+       ('coolGuard', 'P_F', 'FOR(p_fn).DO(r_cn).BREAK(p_bn);', 1, '', '', '2024-08-20 17:31:38', '',
+        '2024-08-22 08:33:39');
 INSERT INTO coolGuard.de_disposal (code, name, grade, color, standard, description, creator, create_time, updater,
                                    update_time)
 VALUES ('pass', '通过', 1, NULL, 0, '', '', '2024-04-08 17:03:25', '', '2024-11-16 09:42:40'),
@@ -466,7 +492,9 @@ VALUES ('IP所属国家名称', 'N_S_ipCountry', 'CUST', 1, 'S', NULL, 'IP归属
 INSERT INTO coolGuard.de_field (display_name, name, group_name, standard, `type`, info, description, default_value,
                                 `dynamic`, script, creator, create_time, updater, update_time)
 VALUES ('事件时间', 'N_D_eventTime', 'TR', 1, 'D', NULL, '', 'now', 0, NULL, NULL, '2024-12-19 14:13:50', NULL,
-        '2024-12-19 14:23:46');
+        '2024-12-19 14:23:46'),
+       ('gr', 'N_D_grg', 'ACC', 0, 'D', NULL, 'gr', 'gre', 0, NULL, NULL, '2025-01-04 16:33:03', NULL,
+        '2025-01-04 16:33:03');
 INSERT INTO coolGuard.de_field_group (display_name, name, standard, description, creator, create_time, updater,
                                       update_time)
 VALUES ('客户信息', 'CUST', 1, '', '', '2024-04-18 09:23:25', '', '2024-11-16 09:45:25'),
@@ -474,3 +502,44 @@ VALUES ('客户信息', 'CUST', 1, '', '', '2024-04-18 09:23:25', '', '2024-11-1
        ('交易信息', 'TR', 1, '', '', '2024-04-18 09:23:25', '', '2024-11-16 09:45:25'),
        ('商户信息', 'MER', 1, '', '', '2024-04-18 09:23:25', '', '2024-11-16 09:45:25'),
        ('设备信息', 'DEV', 1, '', '', '2024-04-18 09:23:25', '', '2024-11-16 09:45:25');
+INSERT INTO coolGuard.de_policy (policy_set_code, code, name, mode, th_list, description, creator, create_time, updater,
+                                 update_time)
+VALUES ('phone_login', 'phone_login_worst', '手机登录最坏', 'worst', NULL, '', '', '2024-04-07 19:19:28', '',
+        '2025-01-01 12:57:28'),
+       ('phone_login', 'phone_login_order', '手机登录顺序', 'order', NULL, '', '', '2024-04-07 19:55:02', '',
+        '2025-01-01 12:57:28'),
+       ('phone_login', 'phone_login_weight', '手机登录权重', 'weight',
+        '[{"score":10.0,"code":"pass"},{"score":45.0,"code":"review"},{"score":65.0,"code":"video"},{"score":100.0,"code":"reject"}]',
+        '', NULL, '2024-12-18 16:11:48', NULL, '2025-01-01 12:57:28'),
+       ('phone_login', 'phone_login_vote', '手机登录投票', 'vote', NULL, '', NULL, '2024-12-18 16:20:09', NULL,
+        '2025-01-01 12:57:28');
+INSERT INTO coolGuard.de_policy_set (app_name, code, name, publish, `chain`, description, creator, create_time, updater,
+                                     update_time)
+VALUES ('phone', 'phone_login', '手机登录策略', 1,
+        'WHEN(e_cn,p_cn.tag("phoneLoginWorst"),p_cn.tag("phoneLoginOrder"),p_cn.tag("phoneLoginWeight"));', '', '',
+        '2024-04-07 19:18:09', '', '2024-12-18 16:13:24');
+INSERT INTO coolGuard.de_policy_set_version (code, latest, `chain`, version, creator, create_time, updater, update_time)
+VALUES ('phone_login', 1, 'WHEN(e_cn,p_cn.tag("phone_login_worst"),p_cn.tag("phone_login_order"));', 0, NULL,
+        '2024-12-01 13:32:57', NULL, '2024-12-01 13:32:57');
+INSERT INTO coolGuard.de_rule (policy_code, code, rule_id, name, disposal_code, express, status, sort, publish, cond,
+                               rule_true, rule_false, description, creator, create_time, updater, update_time)
+VALUES ('phone_login_order', 'f1df5b70574a46a09b95f3662cffaed9', '', '付款方账号不为空或者金额大于等于100', 'pass', '',
+        'on', 0, 0,
+        '{"relation":"or","children":[{"relation":null,"children":null,"type":"normal","value":"N_S_payerAccount","logicType":"not_null","expectType":"","expectValue":""},{"logicOp":null,"children":null,"type":"normal","leftValue":"N_F_transAmount","logicType":"gt","rightType":"input","rightValue":"100"}],"type":null,"leftValue":null,"logicType":null,"rightType":null,"rightValue":null}',
+        NULL, NULL, 'hethethethe', '', '2024-04-07 22:13:58', NULL, '2025-01-01 17:43:01'),
+       ('phone_login_order', '0b30510bf425492381a78aca098be029', '', '测试规则02', 'pass', '', 'on', 2, 0,
+        '{"relation":"and","children":[{"relation":null,"children":null,"type":"normal","leftValue":"N_S_appName","logicType":"eq","rightType":"input","rightValue":"phone"},{"relation":null,"children":null,"type":"normal","leftValue":"N_F_transAmount","logicType":"lt","rightType":"input","rightValue":"100"}],"type":null,"leftValue":null,"logicType":null,"rightType":null,"rightValue":null}',
+        NULL, NULL, '', '', '2024-04-07 22:14:32', '', '2025-01-01 17:43:01'),
+       ('phone_login_worst', '6ae5cb587c784326b45c944e80319d50', '', '测试规则03', 'pass', '', 'on', 99, 0,
+        '{"relation":null,"children":null,"type":"normal","leftValue":"N_F_transAmount","logicType":"gte","rightType":"input","rightValue":"20.0"}',
+        NULL, NULL, '', '', '2024-04-09 10:56:48', '', '2025-01-01 17:40:46');
+INSERT INTO coolGuard.de_rule_version (code, rule, latest, version, creator, create_time, updater, update_time)
+VALUES ('f1df5b70574a46a09b95f3662cffaed9',
+        '{"createTime":"2024-04-07 22:13:58","updateTime":"2024-11-16 13:56:19","creator":"","deleted":false,"id":"1","policyCode":"phone_login_order","code":"f1df5b70574a46a09b95f3662cffaed9","name":"付款方账号不为空或者金额大于等于100","disposalCode":"pass","score":0,"status":"on","sort":0,"cond":{"logicOp":"OR","children":[{"type":"normal","value":"N_S_payerAccount","logicType":"not_null","expectType":"","expectValue":""},{"type":"normal","value":"N_F_transAmount","logicType":"gt","expectType":"input","expectValue":"100"}]},"description":"hethethethe"}',
+        1, 0, NULL, '2024-12-01 14:06:07', NULL, '2024-12-01 14:06:07'),
+       ('0b30510bf425492381a78aca098be029',
+        '{"createTime":"2024-04-07 22:14:32","updateTime":"2024-11-16 13:56:19","creator":"","updater":"","deleted":false,"id":"2","policyCode":"phone_login_order","code":"0b30510bf425492381a78aca098be029","name":"测试规则02","disposalCode":"pass","score":0,"status":"on","sort":2,"cond":{"logicOp":"AND","children":[{"type":"normal","value":"N_S_appName","logicType":"eq","expectType":"input","expectValue":"phone"},{"type":"normal","value":"N_F_transAmount","logicType":"lt","expectType":"input","expectValue":"100"}]},"description":""}',
+        1, 0, NULL, '2024-12-01 14:06:07', NULL, '2024-12-01 14:06:07'),
+       ('6ae5cb587c784326b45c944e80319d50',
+        '{"createTime":"2024-04-09 10:56:48","updateTime":"2024-11-16 13:56:19","creator":"","updater":"","deleted":false,"id":"3","policyCode":"phone_login_worst","code":"6ae5cb587c784326b45c944e80319d50","name":"测试规则03","disposalCode":"pass","score":0,"status":"on","sort":99,"cond":{"type":"normal","value":"N_F_transAmount","logicType":"gte","expectType":"input","expectValue":"20.0"},"description":""}',
+        1, 0, NULL, '2024-12-01 14:06:07', NULL, '2024-12-01 14:06:07');

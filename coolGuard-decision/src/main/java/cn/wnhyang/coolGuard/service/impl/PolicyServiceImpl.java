@@ -7,6 +7,7 @@ import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.Policy;
 import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
@@ -137,6 +138,11 @@ public class PolicyServiceImpl implements PolicyService {
     public List<PolicyVO> listByPolicySetCode(String setCode) {
         List<Policy> policyList = policyMapper.selectListBySetCode(setCode);
         return PolicyConvert.INSTANCE.convert(policyList);
+    }
+
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(policyMapper.selectList(), Policy::getLabelValue);
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略普通组件")

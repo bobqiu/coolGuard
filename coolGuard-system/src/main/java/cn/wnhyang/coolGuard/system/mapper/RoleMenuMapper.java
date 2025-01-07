@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.system.mapper;
 
 
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
-import cn.wnhyang.coolGuard.system.entity.RoleMenuPO;
+import cn.wnhyang.coolGuard.system.entity.RoleMenu;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -16,27 +16,27 @@ import java.util.List;
  * @since 2023/05/14
  */
 @Mapper
-public interface RoleMenuMapper extends BaseMapperX<RoleMenuPO> {
+public interface RoleMenuMapper extends BaseMapperX<RoleMenu> {
 
-    default List<RoleMenuPO> selectListByRoleId(Collection<Long> roleIds) {
-        return selectList(RoleMenuPO::getRoleId, roleIds);
+    default List<RoleMenu> selectListByRoleId(Collection<Long> roleIds) {
+        return selectList(RoleMenu::getRoleId, roleIds);
     }
 
     default void deleteByRoleId(Long roleId) {
-        delete(new LambdaQueryWrapper<RoleMenuPO>().eq(RoleMenuPO::getRoleId, roleId));
+        delete(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, roleId));
     }
 
     default Long selectCountByMenuId(Long menuId) {
-        return selectCount(RoleMenuPO::getMenuId, menuId);
+        return selectCount(RoleMenu::getMenuId, menuId);
     }
 
-    default List<RoleMenuPO> selectListByRoleId(Long roleId) {
-        return selectList(RoleMenuPO::getRoleId, roleId);
+    default List<RoleMenu> selectListByRoleId(Long roleId) {
+        return selectList(RoleMenu::getRoleId, roleId);
     }
 
     default void deleteListByRoleIdAndMenuIds(Long roleId, Collection<Long> menuIds) {
-        delete(new LambdaQueryWrapper<RoleMenuPO>()
-                .eq(RoleMenuPO::getRoleId, roleId)
-                .in(RoleMenuPO::getMenuId, menuIds));
+        delete(new LambdaQueryWrapper<RoleMenu>()
+                .eq(RoleMenu::getRoleId, roleId)
+                .in(RoleMenu::getMenuId, menuIds));
     }
 }

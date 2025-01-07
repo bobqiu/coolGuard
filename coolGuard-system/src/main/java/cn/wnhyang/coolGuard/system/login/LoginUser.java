@@ -1,8 +1,8 @@
 package cn.wnhyang.coolGuard.system.login;
 
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.satoken.Login;
-import cn.wnhyang.coolGuard.system.dto.RoleSimpleVO;
 import cn.wnhyang.coolGuard.util.CollectionUtils;
 import lombok.Data;
 
@@ -87,7 +87,7 @@ public class LoginUser implements Login, Serializable {
     /**
      * 角色集合
      */
-    private List<RoleSimpleVO> roles;
+    private List<LabelValue> roles;
 
     /**
      * 菜单权限
@@ -111,12 +111,12 @@ public class LoginUser implements Login, Serializable {
 
     @Override
     public Set<Long> getRoleIds() {
-        return CollectionUtils.convertSet(roles, RoleSimpleVO::getId);
+        return CollectionUtils.convertSet(roles, LabelValue::getId);
     }
 
     @Override
     public Set<String> getRoleValues() {
-        return CollectionUtils.convertSet(roles, RoleSimpleVO::getValue);
+        return CollectionUtils.convertSet(roles, LabelValue::getValue);
     }
 
     @Override

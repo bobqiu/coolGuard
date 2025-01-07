@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.controller;
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.FieldGroupService;
@@ -93,5 +94,10 @@ public class FieldGroupController {
     @GetMapping("/list")
     public CommonResult<List<FieldGroupVO>> listFieldGroup() {
         return success(fieldGroupService.listFieldGroup());
+    }
+
+    @GetMapping("/lvList")
+    public CommonResult<List<LabelValue>> getLabelValueList() {
+        return success(fieldGroupService.getLabelValueList());
     }
 }

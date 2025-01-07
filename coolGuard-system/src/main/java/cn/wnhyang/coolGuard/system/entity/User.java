@@ -1,12 +1,13 @@
 package cn.wnhyang.coolGuard.system.entity;
 
-import cn.wnhyang.coolGuard.pojo.BasePO;
+import cn.wnhyang.coolGuard.pojo.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 /**
@@ -21,8 +22,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("sys_user")
-public class UserPO extends BasePO {
+public class User extends BaseDO {
 
+    @Serial
     private static final long serialVersionUID = -8660240418764574220L;
 
     /**
@@ -48,6 +50,12 @@ public class UserPO extends BasePO {
      */
     @TableField("nickname")
     private String nickname;
+
+    /**
+     * 真实姓名
+     */
+    @TableField("real_name")
+    private String realName;
 
     /**
      * 用户类型

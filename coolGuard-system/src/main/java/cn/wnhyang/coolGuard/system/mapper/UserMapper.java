@@ -4,7 +4,7 @@ package cn.wnhyang.coolGuard.system.mapper;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.UserPO;
+import cn.wnhyang.coolGuard.system.entity.User;
 import cn.wnhyang.coolGuard.system.vo.user.UserPageVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -17,30 +17,30 @@ import java.util.List;
  * @since 2023/05/14
  */
 @Mapper
-public interface UserMapper extends BaseMapperX<UserPO> {
+public interface UserMapper extends BaseMapperX<User> {
 
-    default UserPO selectByUsername(String username) {
-        return selectOne(UserPO::getUsername, username);
+    default User selectByUsername(String username) {
+        return selectOne(User::getUsername, username);
     }
 
-    default PageResult<UserPO> selectPage(UserPageVO reqVO) {
-        return selectPage(reqVO, new LambdaQueryWrapperX<UserPO>()
-                .likeIfPresent(UserPO::getUsername, reqVO.getUsername())
-                .likeIfPresent(UserPO::getMobile, reqVO.getMobile())
-                .eqIfPresent(UserPO::getStatus, reqVO.getStatus())
-                .betweenIfPresent(UserPO::getCreateTime, reqVO.getStartTime(), reqVO.getEndTime())
-                .orderByDesc(UserPO::getId));
+    default PageResult<User> selectPage(UserPageVO reqVO) {
+        return selectPage(reqVO, new LambdaQueryWrapperX<User>()
+                .likeIfPresent(User::getUsername, reqVO.getUsername())
+                .likeIfPresent(User::getMobile, reqVO.getMobile())
+                .eqIfPresent(User::getStatus, reqVO.getStatus())
+                .betweenIfPresent(User::getCreateTime, reqVO.getStartTime(), reqVO.getEndTime())
+                .orderByDesc(User::getId));
     }
 
-    default UserPO selectByMobile(String mobile) {
-        return selectOne(UserPO::getMobile, mobile);
+    default User selectByMobile(String mobile) {
+        return selectOne(User::getMobile, mobile);
     }
 
-    default UserPO selectByEmail(String email) {
-        return selectOne(UserPO::getEmail, email);
+    default User selectByEmail(String email) {
+        return selectOne(User::getEmail, email);
     }
 
-    default List<UserPO> selectListByNickname(String nickname) {
-        return selectList(new LambdaQueryWrapperX<UserPO>().like(UserPO::getNickname, nickname));
+    default List<User> selectListByNickname(String nickname) {
+        return selectList(new LambdaQueryWrapperX<User>().like(User::getNickname, nickname));
     }
 }

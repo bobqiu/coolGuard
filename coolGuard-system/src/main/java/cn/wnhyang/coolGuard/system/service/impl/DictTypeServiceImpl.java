@@ -3,8 +3,8 @@ package cn.wnhyang.coolGuard.system.service.impl;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.DictTypeConvert;
-import cn.wnhyang.coolGuard.system.entity.DictDataPO;
-import cn.wnhyang.coolGuard.system.entity.DictTypePO;
+import cn.wnhyang.coolGuard.system.entity.DictDataDO;
+import cn.wnhyang.coolGuard.system.entity.DictTypeDO;
 import cn.wnhyang.coolGuard.system.mapper.DictDataMapper;
 import cn.wnhyang.coolGuard.system.mapper.DictTypeMapper;
 import cn.wnhyang.coolGuard.system.service.DictTypeService;
@@ -42,7 +42,7 @@ public class DictTypeServiceImpl implements DictTypeService {
         validateDictTypeForCreateOrUpdate(null, reqVO.getName(), reqVO.getType());
 
         // 插入字典类型
-        DictTypePO dictType = DictTypeConvert.INSTANCE.convert(reqVO);
+        DictTypeDO dictType = DictTypeConvert.INSTANCE.convert(reqVO);
         dictTypeMapper.insert(dictType);
         return dictType.getId();
     }
@@ -53,14 +53,14 @@ public class DictTypeServiceImpl implements DictTypeService {
         // 校验正确性
         validateDictTypeForCreateOrUpdate(reqVO.getId(), reqVO.getName(), null);
 
-        DictTypePO oldDictType = dictTypeMapper.selectById(reqVO.getId());
+        DictTypeDO oldDictType = dictTypeMapper.selectById(reqVO.getId());
         // 更新字典类型
-        DictTypePO dictType = DictTypeConvert.INSTANCE.convert(reqVO);
+        DictTypeDO dictType = DictTypeConvert.INSTANCE.convert(reqVO);
         dictTypeMapper.updateById(dictType);
         // 字典类型更新时同时更新关联的字段数据
         if (StrUtil.isNotBlank(dictType.getType())) {
-            List<DictDataPO> dictDataList = dictDataMapper.selectListByDictType(oldDictType.getType());
-            for (DictDataPO dictData : dictDataList) {
+            List<DictDataDO> dictDataList = dictDataMapper.selectListByDictType(oldDictType.getType());
+            for (DictDataDO dictData : dictDataList) {
                 dictData.setDictType(dictType.getType());
             }
             dictDataMapper.updateBatch(dictDataList);
@@ -72,7 +72,7 @@ public class DictTypeServiceImpl implements DictTypeService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteDictType(Long id) {
         // 校验是否存在
-        DictTypePO dictType = validateDictTypeExists(id);
+        DictTypeDO dictType = validateDictTypeExists(id);
         // 校验是否有字典数据
         if (dictDataMapper.selectCountByDictType(dictType.getType()) > 0) {
             throw exception(DICT_TYPE_HAS_CHILDREN);
@@ -82,17 +82,17 @@ public class DictTypeServiceImpl implements DictTypeService {
     }
 
     @Override
-    public PageResult<DictTypePO> getDictTypePage(DictTypePageVO reqVO) {
+    public PageResult<DictTypeDO> getDictTypePage(DictTypePageVO reqVO) {
         return dictTypeMapper.selectPage(reqVO);
     }
 
     @Override
-    public DictTypePO getDictType(Long id) {
+    public DictTypeDO getDictType(Long id) {
         return dictTypeMapper.selectById(id);
     }
 
     @Override
-    public List<DictTypePO> getDictTypeList() {
+    public List<DictTypeDO> getDictTypeList() {
         return dictTypeMapper.selectList();
     }
 
@@ -106,7 +106,7 @@ public class DictTypeServiceImpl implements DictTypeService {
     }
 
     void validateDictTypeNameUnique(Long id, String name) {
-        DictTypePO dictType = dictTypeMapper.selectByName(name);
+        DictTypeDO dictType = dictTypeMapper.selectByName(name);
         if (dictType == null) {
             return;
         }
@@ -123,7 +123,7 @@ public class DictTypeServiceImpl implements DictTypeService {
         if (StrUtil.isEmpty(type)) {
             return;
         }
-        DictTypePO dictType = dictTypeMapper.selectByType(type);
+        DictTypeDO dictType = dictTypeMapper.selectByType(type);
         if (dictType == null) {
             return;
         }
@@ -136,11 +136,11 @@ public class DictTypeServiceImpl implements DictTypeService {
         }
     }
 
-    DictTypePO validateDictTypeExists(Long id) {
+    DictTypeDO validateDictTypeExists(Long id) {
         if (id == null) {
             return null;
         }
-        DictTypePO dictType = dictTypeMapper.selectById(id);
+        DictTypeDO dictType = dictTypeMapper.selectById(id);
         if (dictType == null) {
             throw exception(DICT_TYPE_NOT_EXISTS);
         }

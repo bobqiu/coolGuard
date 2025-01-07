@@ -21,10 +21,6 @@ public class RoleCreateVO {
     @Size(max = 100, message = "角色标志长度不能超过100个字符")
     private String value;
 
-    private Integer sort;
-
-    private Boolean status;
-
     private String remark;
 
     /**

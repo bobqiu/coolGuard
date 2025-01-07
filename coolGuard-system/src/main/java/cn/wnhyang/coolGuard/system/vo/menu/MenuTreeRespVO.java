@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -16,11 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class MenuTreeRespVO extends MenuCreateVO {
-
-    private Long id;
-
-    private LocalDateTime createTime;
+public class MenuTreeRespVO extends MenuRespVO {
 
     private List<MenuTreeRespVO> children;
 }

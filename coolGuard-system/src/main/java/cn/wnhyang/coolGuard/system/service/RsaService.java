@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.system.service;
 
 
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.RsaPO;
+import cn.wnhyang.coolGuard.system.entity.RsaDO;
 import cn.wnhyang.coolGuard.system.vo.rsa.RsaCreateVO;
 import cn.wnhyang.coolGuard.system.vo.rsa.RsaPageVO;
 import cn.wnhyang.coolGuard.system.vo.rsa.RsaPairVO;
@@ -52,7 +52,7 @@ public interface RsaService {
      * @param reqVO 分页
      * @return 密钥集合
      */
-    PageResult<RsaPO> getRsaPage(RsaPageVO reqVO);
+    PageResult<RsaDO> getRsaPage(RsaPageVO reqVO);
 
     /**
      * 详细密钥
@@ -60,5 +60,5 @@ public interface RsaService {
      * @param id 密钥id
      * @return 密钥
      */
-    RsaPO getRsa(Long id);
+    RsaDO getRsa(Long id);
 }

@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.FieldGroupVO;
 import cn.wnhyang.coolGuard.vo.create.FieldGroupCreateVO;
@@ -60,4 +61,11 @@ public interface FieldGroupService {
      * @return list
      */
     List<FieldGroupVO> listFieldGroup();
+
+    /**
+     * 获取labelValue列表
+     *
+     * @return list
+     */
+    List<LabelValue> getLabelValueList();
 }

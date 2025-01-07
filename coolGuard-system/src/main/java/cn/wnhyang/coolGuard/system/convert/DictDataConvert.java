@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.system.convert;
 
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.dto.DictDataDTO;
-import cn.wnhyang.coolGuard.system.entity.DictDataPO;
+import cn.wnhyang.coolGuard.system.entity.DictDataDO;
 import cn.wnhyang.coolGuard.system.vo.dictdata.DictDataCreateVO;
 import cn.wnhyang.coolGuard.system.vo.dictdata.DictDataRespVO;
 import cn.wnhyang.coolGuard.system.vo.dictdata.DictDataSimpleVO;
@@ -22,15 +22,15 @@ public interface DictDataConvert {
 
     DictDataConvert INSTANCE = Mappers.getMapper(DictDataConvert.class);
 
-    DictDataPO convert(DictDataCreateVO reqVO);
+    DictDataDO convert(DictDataCreateVO reqVO);
 
-    DictDataRespVO convert(DictDataPO bean);
+    DictDataRespVO convert(DictDataDO bean);
 
-    DictDataPO convert(DictDataUpdateVO reqVO);
+    DictDataDO convert(DictDataUpdateVO reqVO);
 
-    List<DictDataSimpleVO> convertList(List<DictDataPO> list);
+    List<DictDataSimpleVO> convertList(List<DictDataDO> list);
 
-    PageResult<DictDataRespVO> convertPage(PageResult<DictDataPO> page);
+    PageResult<DictDataRespVO> convertPage(PageResult<DictDataDO> page);
 
-    DictDataDTO convert02(DictDataPO dictData);
+    DictDataDTO convert02(DictDataDO dictData);
 }

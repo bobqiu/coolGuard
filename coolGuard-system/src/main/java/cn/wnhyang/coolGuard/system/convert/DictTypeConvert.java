@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.system.convert;
 
 
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.DictTypePO;
+import cn.wnhyang.coolGuard.system.entity.DictTypeDO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeCreateVO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeRespVO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeSimpleVO;
@@ -21,13 +21,13 @@ public interface DictTypeConvert {
 
     DictTypeConvert INSTANCE = Mappers.getMapper(DictTypeConvert.class);
 
-    DictTypePO convert(DictTypeCreateVO reqVO);
+    DictTypeDO convert(DictTypeCreateVO reqVO);
 
-    DictTypePO convert(DictTypeUpdateVO reqVO);
+    DictTypeDO convert(DictTypeUpdateVO reqVO);
 
-    PageResult<DictTypeRespVO> convertPage(PageResult<DictTypePO> dictTypePage);
+    PageResult<DictTypeRespVO> convertPage(PageResult<DictTypeDO> dictTypePage);
 
-    DictTypeRespVO convert(DictTypePO dictType);
+    DictTypeRespVO convert(DictTypeDO dictType);
 
-    List<DictTypeSimpleVO> convertList(List<DictTypePO> list);
+    List<DictTypeSimpleVO> convertList(List<DictTypeDO> list);
 }

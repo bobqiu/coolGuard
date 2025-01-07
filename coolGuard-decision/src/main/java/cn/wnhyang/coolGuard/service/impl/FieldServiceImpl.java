@@ -78,6 +78,7 @@ public class FieldServiceImpl implements FieldService {
             throw exception(FIELD_NAME_EXIST);
         }
         Field field = FieldConvert.INSTANCE.convert(createVO);
+        field.setName(fieldName);
         fieldMapper.insert(field);
         return field.getId();
     }

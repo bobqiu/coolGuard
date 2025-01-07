@@ -1,9 +1,8 @@
 package cn.wnhyang.coolGuard.system.service;
 
 
-import cn.wnhyang.coolGuard.system.entity.MenuPO;
+import cn.wnhyang.coolGuard.system.entity.Menu;
 import cn.wnhyang.coolGuard.system.vo.menu.*;
-import cn.wnhyang.coolGuard.system.vo.user.UserInfoVO;
 
 import java.util.List;
 import java.util.Set;
@@ -44,7 +43,7 @@ public interface MenuService {
      * @param reqVO 菜单
      * @return 菜单列表
      */
-    List<MenuPO> getMenuList(MenuListVO reqVO);
+    List<Menu> getMenuList(MenuListVO reqVO);
 
     /**
      * 查询菜单
@@ -52,7 +51,7 @@ public interface MenuService {
      * @param id 菜单id
      * @return 菜单
      */
-    MenuPO getMenu(Long id);
+    Menu getMenu(Long id);
 
     /**
      * 根据菜单ids查询菜单
@@ -60,14 +59,14 @@ public interface MenuService {
      * @param ids 菜单ids
      * @return 菜单
      */
-    List<MenuPO> getMenuList(Set<Long> ids);
+    List<Menu> getMenuList(Set<Long> ids);
 
     /**
      * 获取所有菜单列表
      *
      * @return 菜单列表
      */
-    List<MenuPO> getMenuList();
+    List<Menu> getMenuList();
 
     /**
      * 获取树形菜单列表
@@ -80,10 +79,10 @@ public interface MenuService {
     /**
      * 获取登录用户的菜单列表
      *
-     * @param removeButton
+     * @param removeButton 是否移除按钮
      * @return 菜单列表
      */
-    List<UserInfoVO.MenuVO> getLoginUserMenuTreeList(boolean removeButton);
+    List<MenuTreeRespVO> getLoginUserMenuWithRouteMetaTreeList(boolean removeButton);
 
     /**
      * 获取简单树形菜单不带根节点

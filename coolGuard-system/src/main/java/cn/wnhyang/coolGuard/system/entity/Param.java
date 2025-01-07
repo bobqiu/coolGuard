@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.entity;
 
-import cn.wnhyang.coolGuard.pojo.BasePO;
+import cn.wnhyang.coolGuard.pojo.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -8,54 +8,60 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 /**
- * 角色信息表
+ * 参数表
  *
  * @author wnhyang
- * @since 2023/05/14
+ * @since 2025/01/07
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("sys_role")
-public class RolePO extends BasePO {
+@TableName("sys_param")
+public class Param extends BaseDO {
 
-    private static final long serialVersionUID = 6734459350185846076L;
+    private static final long serialVersionUID = 1L;
 
     /**
-     * 角色ID
+     * 参数id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 角色名称
+     * 参数标签
      */
-    @TableField("name")
-    private String name;
+    @TableField("label")
+    private String label;
 
     /**
-     * 角色权限字符串
+     * 参数值
      */
     @TableField("value")
     private String value;
 
     /**
-     * 显示顺序
+     * 参数类型
      */
-    @TableField("sort")
-    private Integer sort;
+    @TableField("type")
+    private String type;
 
     /**
-     * 角色状态（0正常 1停用）
+     * 参数数据
      */
-    @TableField("status")
-    private Boolean status;
+    @TableField("data")
+    private String data;
 
     /**
-     * 备注
+     * 标准
      */
-    @TableField("remark")
-    private String remark;
+    @TableField("standard")
+    private Boolean standard;
+
+    /**
+     * 描述
+     */
+    @TableField("description")
+    private String description;
 }

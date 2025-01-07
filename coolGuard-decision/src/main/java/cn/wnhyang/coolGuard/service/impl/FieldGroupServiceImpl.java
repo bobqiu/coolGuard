@@ -3,10 +3,12 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.convert.FieldGroupConvert;
 import cn.wnhyang.coolGuard.entity.FieldGroup;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.mapper.FieldGroupMapper;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.FieldGroupService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.vo.FieldGroupVO;
 import cn.wnhyang.coolGuard.vo.create.FieldGroupCreateVO;
 import cn.wnhyang.coolGuard.vo.page.FieldGroupPageVO;
@@ -103,5 +105,10 @@ public class FieldGroupServiceImpl implements FieldGroupService {
     @Override
     public List<FieldGroupVO> listFieldGroup() {
         return FieldGroupConvert.INSTANCE.convert(fieldGroupMapper.selectList());
+    }
+
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(fieldGroupMapper.selectList(), FieldGroup::getLabelValue);
     }
 }

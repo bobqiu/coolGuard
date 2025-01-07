@@ -14,6 +14,7 @@ import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.mapper.RuleVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.util.JsonUtil;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.util.QLExpressUtil;
@@ -165,6 +166,11 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public void submit(Long id) {
 
+    }
+
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(ruleMapper.selectList(), Rule::getLabelValue);
     }
 
     private Cond getCond(String code) {

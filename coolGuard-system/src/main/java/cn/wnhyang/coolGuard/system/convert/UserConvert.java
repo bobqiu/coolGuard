@@ -4,11 +4,10 @@ package cn.wnhyang.coolGuard.system.convert;
 import cn.hutool.core.collection.CollUtil;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.dto.UserCreateDTO;
-import cn.wnhyang.coolGuard.system.entity.RolePO;
-import cn.wnhyang.coolGuard.system.entity.UserPO;
+import cn.wnhyang.coolGuard.system.entity.Role;
+import cn.wnhyang.coolGuard.system.entity.User;
 import cn.wnhyang.coolGuard.system.login.LoginUser;
 import cn.wnhyang.coolGuard.system.vo.user.UserCreateVO;
-import cn.wnhyang.coolGuard.system.vo.user.UserInfoVO;
 import cn.wnhyang.coolGuard.system.vo.user.UserRespVO;
 import cn.wnhyang.coolGuard.system.vo.user.UserUpdateVO;
 import cn.wnhyang.coolGuard.system.vo.userprofile.UserProfileUpdateVO;
@@ -28,13 +27,13 @@ import java.util.stream.Collectors;
 public interface UserConvert {
     UserConvert INSTANCE = Mappers.getMapper(UserConvert.class);
 
-    UserRespVO convert02(UserPO userDO);
+    UserRespVO convert02(User userDO);
 
-    default UserRespVO convert(UserPO userDO, List<RolePO> roleDOList) {
+    default UserRespVO convert(User userDO, List<Role> roleDOList) {
         UserRespVO userRespVO = convert02(userDO);
         if (CollUtil.isNotEmpty(roleDOList)) {
             Set<String> roleNames = roleDOList.stream()
-                    .map(RolePO::getName)
+                    .map(Role::getName)
                     .collect(Collectors.toSet());
 
             userRespVO.setRoles(roleNames);
@@ -42,19 +41,17 @@ public interface UserConvert {
         return userRespVO;
     }
 
-    LoginUser convert(UserPO userDO);
+    LoginUser convert(User userDO);
 
-    UserPO convert(UserCreateDTO reqDTO);
+    User convert(UserCreateDTO reqDTO);
 
-    UserPO convert(UserCreateVO reqVO);
+    User convert(UserCreateVO reqVO);
 
-    UserPO convert(UserUpdateVO reqVO);
+    User convert(UserUpdateVO reqVO);
 
-    PageResult<UserRespVO> convert(PageResult<UserPO> pageResult);
+    PageResult<UserRespVO> convert(PageResult<User> pageResult);
 
-    UserInfoVO.UserVO convert03(UserPO user);
+    UserProfileVO convert04(User user);
 
-    UserProfileVO convert04(UserPO user);
-
-    UserPO convert(UserProfileUpdateVO reqVO);
+    User convert(UserProfileUpdateVO reqVO);
 }

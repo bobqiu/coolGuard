@@ -6,12 +6,14 @@ import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.convert.ApplicationConvert;
 import cn.wnhyang.coolGuard.entity.Application;
 import cn.wnhyang.coolGuard.entity.Indicator;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.PolicySet;
 import cn.wnhyang.coolGuard.mapper.ApplicationMapper;
 import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
 import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ApplicationService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.vo.create.ApplicationCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ApplicationPageVO;
 import cn.wnhyang.coolGuard.vo.update.ApplicationUpdateVO;
@@ -89,6 +91,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public PageResult<Application> pageApplication(ApplicationPageVO pageVO) {
         return applicationMapper.selectPage(pageVO);
+    }
+
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(applicationMapper.selectList(), Application::getLabelValue);
     }
 
 }

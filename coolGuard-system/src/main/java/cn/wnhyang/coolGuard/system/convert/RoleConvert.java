@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.system.convert;
 
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.dto.RoleSimpleVO;
-import cn.wnhyang.coolGuard.system.entity.RolePO;
+import cn.wnhyang.coolGuard.system.entity.Role;
 import cn.wnhyang.coolGuard.system.vo.role.RoleCreateVO;
 import cn.wnhyang.coolGuard.system.vo.role.RoleRespVO;
 import cn.wnhyang.coolGuard.system.vo.role.RoleUpdateVO;
@@ -20,13 +20,13 @@ import java.util.List;
 public interface RoleConvert {
     RoleConvert INSTANCE = Mappers.getMapper(RoleConvert.class);
 
-    RolePO convert(RoleCreateVO reqVO);
+    Role convert(RoleCreateVO reqVO);
 
-    RolePO convert(RoleUpdateVO reqVO);
+    Role convert(RoleUpdateVO reqVO);
 
-    RoleRespVO convert(RolePO role);
+    RoleRespVO convert(Role role);
 
-    PageResult<RoleRespVO> convert(PageResult<RolePO> pageResult);
+    PageResult<RoleRespVO> convert(PageResult<Role> pageResult);
 
-    List<RoleSimpleVO> convert02(List<RolePO> roleList);
+    List<RoleSimpleVO> convert02(List<Role> roleList);
 }

@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.controller;
 
 import cn.wnhyang.coolGuard.convert.ApplicationConvert;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ApplicationService;
@@ -11,6 +12,8 @@ import cn.wnhyang.coolGuard.vo.update.ApplicationUpdateVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
@@ -82,5 +85,15 @@ public class ApplicationController {
     @GetMapping("/page")
     public CommonResult<PageResult<ApplicationVO>> pageApplication(@Valid ApplicationPageVO pageVO) {
         return success(ApplicationConvert.INSTANCE.convert(applicationService.pageApplication(pageVO)));
+    }
+
+    /**
+     * 获取应用lv列表
+     *
+     * @return lv列表
+     */
+    @GetMapping("/lvList")
+    public CommonResult<List<LabelValue>> getLabelValueList() {
+        return success(applicationService.getLabelValueList());
     }
 }

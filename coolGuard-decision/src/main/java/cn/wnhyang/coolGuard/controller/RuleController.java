@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.controller;
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleService;
@@ -106,5 +107,15 @@ public class RuleController {
     @GetMapping("/list/{policyCode}")
     public CommonResult<List<RuleVO>> listByPolicyCode(@PathVariable("policyCode") String policyCode) {
         return success(ruleService.listByPolicyCode(policyCode));
+    }
+
+    /**
+     * 获取下拉列表
+     *
+     * @return list
+     */
+    @GetMapping("/lvList")
+    public CommonResult<List<LabelValue>> getLabelValueList() {
+        return success(ruleService.getLabelValueList());
     }
 }

@@ -12,7 +12,20 @@ public interface GeoAnalysis {
 
     }
 
+    /**
+     * 解析经纬度
+     *
+     * @param lon 纬度
+     * @param lat 经度
+     * @return Pca
+     */
     Pca analysis(double lon, double lat);
 
+    /**
+     * 解析经纬度
+     *
+     * @param lonAndLat 格式 纬度,经度
+     * @return Pca
+     */
     Pca analysis(String lonAndLat);
 }
