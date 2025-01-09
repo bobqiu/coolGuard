@@ -12,6 +12,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class RoleUpdateVO extends RoleCreateVO {
 
+    /**
+     * 角色编号
+     */
     @NotNull(message = "角色编号不能为空")
     private Long id;
 }

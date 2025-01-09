@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.vo.operatelog;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -14,53 +14,108 @@ import java.util.Map;
 @Data
 public class OperateLogVO {
 
+    /**
+     * id
+     */
     private Long id;
 
+    /**
+     * 用户昵称
+     */
     private String userNickname;
 
-    @NotNull(message = "用户编号不能为空")
+    /**
+     * 用户编号
+     */
     private Long userId;
 
-    @NotEmpty(message = "操作模块不能为空")
+    /**
+     * 操作模块
+     */
+    @NotBlank(message = "操作模块不能为空")
     private String module;
 
-    @NotEmpty(message = "操作名")
+    /**
+     * 操作名
+     */
+    @NotBlank(message = "操作名")
     private String name;
 
+    /**
+     * 操作类型
+     */
     @NotNull(message = "操作分类不能为空")
     private Integer type;
 
+    /**
+     * 操作内容
+     */
     private String content;
 
+    /**
+     * 扩展信息
+     */
     private Map<String, Object> exts;
 
-    @NotEmpty(message = "请求方法名不能为空")
+    /**
+     * 请求方法名
+     */
+    @NotBlank(message = "请求方法名不能为空")
     private String requestMethod;
 
-    @NotEmpty(message = "请求地址不能为空")
+    /**
+     * 请求地址
+     */
+    @NotBlank(message = "请求地址不能为空")
     private String requestUrl;
 
-    @NotEmpty(message = "用户 IP 不能为空")
+    /**
+     * 用户 IP
+     */
+    @NotBlank(message = "用户 IP 不能为空")
     private String userIp;
 
-    @NotEmpty(message = "浏览器 UserAgent 不能为空")
+    /**
+     * 浏览器
+     */
+    @NotBlank(message = "浏览器 UserAgent 不能为空")
     private String userAgent;
 
-    @NotEmpty(message = "Java 方法名不能为空")
+    /**
+     * Java 方法名
+     */
+    @NotBlank(message = "Java 方法名不能为空")
     private String javaMethod;
 
+    /**
+     * Java 方法的参数
+     */
     private String javaMethodArgs;
 
-    @NotNull(message = "开始时间不能为空")
+    /**
+     * 开始时间
+     */
     private LocalDateTime startTime;
 
+    /**
+     * 执行时长
+     */
     @NotNull(message = "执行时长不能为空")
     private Integer duration;
 
+    /**
+     * 结果码
+     */
     @NotNull(message = "结果码不能为空")
     private Integer resultCode;
 
+    /**
+     * 结果信息
+     */
     private String resultMsg;
 
+    /**
+     * 结果数据
+     */
     private String resultData;
 }

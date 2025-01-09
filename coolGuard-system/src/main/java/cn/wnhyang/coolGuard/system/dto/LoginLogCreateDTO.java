@@ -1,7 +1,6 @@
 package cn.wnhyang.coolGuard.system.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -32,7 +31,7 @@ public class LoginLogCreateDTO implements Serializable {
     @NotNull(message = "登录结果不能为空")
     private Integer result;
 
-    @NotEmpty(message = "用户 IP 不能为空")
+    @NotBlank(message = "用户 IP 不能为空")
     private String userIp;
 
     private String userAgent;

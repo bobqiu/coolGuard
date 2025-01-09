@@ -18,11 +18,23 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class UserProfileVO extends UserCreateVO {
 
+    /**
+     * 用户id
+     */
     private Long id;
 
+    /**
+     * 登录ip
+     */
     private String loginIp;
 
+    /**
+     * 登录时间
+     */
     private LocalDateTime loginDate;
 
+    /**
+     * 结束时间
+     */
     private LocalDateTime createTime;
 }

@@ -2,7 +2,6 @@ package cn.wnhyang.coolGuard.system.service;
 
 import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.enums.DeviceType;
@@ -51,26 +50,22 @@ public class AuthService {
         String account = reqVO.getUsername();
         LoginUser user;
         LoginType loginType;
-        if (StrUtil.isNotEmpty(account)) {
-            if (ReUtil.isMatch(RegexUtil.MOBILE, account)) {
-                user = userService.getLoginUser(account, account, "");
-                loginType = LoginType.LOGIN_MOBILE;
-            } else if (ReUtil.isMatch(RegexUtil.EMAIL, account)) {
-                user = userService.getLoginUser(account, "", account);
-                loginType = LoginType.LOGIN_EMAIL;
-            } else {
-                user = userService.getLoginUser(account, "", "");
-                loginType = LoginType.LOGIN_USERNAME;
-            }
+        if (ReUtil.isMatch(RegexUtil.MOBILE, account)) {
+            user = userService.getLoginUser(account, account, "");
+            loginType = LoginType.LOGIN_MOBILE;
+        } else if (ReUtil.isMatch(RegexUtil.EMAIL, account)) {
+            user = userService.getLoginUser(account, "", account);
+            loginType = LoginType.LOGIN_EMAIL;
         } else {
-            throw exception(AUTH_LOGIN_BAD_CREDENTIALS);
+            user = userService.getLoginUser(account, "", "");
+            loginType = LoginType.LOGIN_USERNAME;
         }
         if (!BCrypt.checkpw(reqVO.getPassword(), user.getPassword())) {
             createLoginLog(user.getId(), account, loginType, LoginResult.BAD_CREDENTIALS);
             throw exception(AUTH_LOGIN_BAD_CREDENTIALS);
         }
         // 校验是否禁用
-        if (ObjectUtil.notEqual(user.getStatus(), Boolean.TRUE)) {
+        if (!user.getStatus()) {
             createLoginLog(user.getId(), account, loginType, LoginResult.USER_DISABLED);
             throw exception(AUTH_LOGIN_USER_DISABLED);
         }
@@ -103,7 +98,7 @@ public class AuthService {
             throw exception(AUTH_LOGIN_BAD_EMAIL_CODE);
         }
         // 校验是否禁用
-        if (ObjectUtil.notEqual(user.getStatus(), Boolean.TRUE)) {
+        if (!user.getStatus()) {
             createLoginLog(user.getId(), email, loginType, LoginResult.USER_DISABLED);
             throw exception(AUTH_LOGIN_USER_DISABLED);
         }

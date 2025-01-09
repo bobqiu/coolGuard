@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.log.core.dto;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -20,10 +20,10 @@ public class LogCreateReqDTO implements Serializable {
     @NotNull(message = "用户编号不能为空")
     private Long userId;
 
-    @NotEmpty(message = "操作模块不能为空")
+    @NotBlank(message = "操作模块不能为空")
     private String module;
 
-    @NotEmpty(message = "操作名")
+    @NotBlank(message = "操作名")
     private String name;
 
     @NotNull(message = "操作分类不能为空")
@@ -33,19 +33,19 @@ public class LogCreateReqDTO implements Serializable {
 
     private Map<String, Object> exts;
 
-    @NotEmpty(message = "请求方法名不能为空")
+    @NotBlank(message = "请求方法名不能为空")
     private String requestMethod;
 
-    @NotEmpty(message = "请求地址不能为空")
+    @NotBlank(message = "请求地址不能为空")
     private String requestUrl;
 
-    @NotEmpty(message = "用户 IP 不能为空")
+    @NotBlank(message = "用户 IP 不能为空")
     private String userIp;
 
-    @NotEmpty(message = "浏览器 UserAgent 不能为空")
+    @NotBlank(message = "浏览器 UserAgent 不能为空")
     private String userAgent;
 
-    @NotEmpty(message = "Java 方法名不能为空")
+    @NotBlank(message = "Java 方法名不能为空")
     private String javaMethod;
 
     private String javaMethodArgs;

@@ -13,13 +13,28 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginRespVO {
 
+    /**
+     * 用户id
+     */
     private Long userId;
 
+    /**
+     * 用户名
+     */
     private String username;
 
+    /**
+     * 真实姓名
+     */
     private String realName;
 
+    /**
+     * 描述
+     */
     private String desc;
 
+    /**
+     * 访问令牌
+     */
     private String accessToken;
 }

@@ -9,7 +9,13 @@ import lombok.Data;
 @Data
 public class MenuListVO {
 
+    /**
+     * 标题
+     */
     private String title;
 
+    /**
+     * 状态
+     */
     private Boolean status;
 }

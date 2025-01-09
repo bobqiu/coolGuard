@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.system.vo.dict;
 
 import cn.wnhyang.coolGuard.system.entity.DictData;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serial;
@@ -35,13 +36,8 @@ public class DictCreateVO implements Serializable {
     /**
      * 字典数据
      */
-    @NotBlank(message = "字典数据不能为空")
+    @Size(min = 1, message = "字典数据不能为空")
     private List<DictData> data;
-
-    /**
-     * 标准
-     */
-    private Boolean standard;
 
     /**
      * 描述

@@ -81,7 +81,9 @@ public interface ErrorCodes {
 
     ErrorCode DICT_NOT_EXISTS = new ErrorCode(1002007001, "当前字典不存在");
     ErrorCode DICT_LABEL_EXISTS = new ErrorCode(1002007002, "当前字典标签存在");
-    ErrorCode DICT_VALUE_EXISTS = new ErrorCode(1002007002, "当前字典值存在");
+    ErrorCode DICT_VALUE_EXISTS = new ErrorCode(1002007003, "当前字典值存在");
+    ErrorCode DICT_STANDARD_NOT_ALLOW_DELETE = new ErrorCode(1002007004, "标准字段不允许删除");
+
 
     // ========== 通知公告 1002008000 ==========
     ErrorCode NOTICE_NOT_FOUND = new ErrorCode(1002008001, "当前通知公告不存在");
@@ -89,7 +91,8 @@ public interface ErrorCodes {
     ErrorCode PARAM_NOT_EXISTS = new ErrorCode(1002009001, "当前参数不存在");
     ErrorCode PARAM_LABEL_EXISTS = new ErrorCode(1002009002, "当前参数标签存在");
     ErrorCode PARAM_VALUE_EXISTS = new ErrorCode(1002009003, "当前参数值存在");
-    ErrorCode PARAM_TYPE_NOT_EXISTS = new ErrorCode(1002009004, "当前参数类型不存在");
+    ErrorCode PARAM_STANDARD_CANNOT_DELETE = new ErrorCode(1002009004, "标准字段不允许删除");
+    ErrorCode PARAM_TYPE_NOT_EXISTS = new ErrorCode(1002009005, "当前参数类型不存在");
 
     // ========== 短信渠道 1002011000 ==========
     ErrorCode SMS_CHANNEL_NOT_EXISTS = new ErrorCode(1002011000, "短信渠道不存在");

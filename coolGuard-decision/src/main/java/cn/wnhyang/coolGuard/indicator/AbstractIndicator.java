@@ -110,14 +110,17 @@ public abstract class AbstractIndicator {
      */
     public Object compute(boolean addEvent, IndicatorContext.IndicatorCtx indicator, Map<String, Object> eventDetail) {
         if (indicator == null) {
-            return 0.0d;
+            return null;
+        }
+        if (!filter(indicator, eventDetail)) {
+            return null;
         }
         String redisKey = getRedisKey(indicator, eventDetail);
         log.info("redisKey:{}", redisKey);
         RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(redisKey);
         Long eventTime = (Long) eventDetail.get(FieldName.eventTimeStamp);
         // 1、状态检查和过滤
-        if (addEvent && filter(indicator, eventDetail)) {
+        if (addEvent) {
             // 2、添加事件
             addEvent(indicator, eventTime, eventDetail, set);
 

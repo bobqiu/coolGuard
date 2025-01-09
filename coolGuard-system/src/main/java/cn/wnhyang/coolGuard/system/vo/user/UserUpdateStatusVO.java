@@ -20,5 +20,6 @@ public class UserUpdateStatusVO {
     /**
      * 帐号状态（0正常 1停用）
      */
+    @NotNull(message = "帐号状态不能为空")
     private Boolean status;
 }

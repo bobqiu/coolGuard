@@ -60,9 +60,9 @@ public class LoginUtil {
         // 例如: 后台用户30分钟过期 app用户1天过期
         UserType userType = UserType.valueOf(loginUser.getType());
         if (userType == UserType.PC) {
-            model.setTimeout(1800).setActiveTimeout(600);
+            model.setTimeout(259200).setActiveTimeout(1800);
         } else if (userType == UserType.APP) {
-            model.setTimeout(86400).setActiveTimeout(1800);
+            model.setTimeout(604800).setActiveTimeout(604800);
         }
         StpUtil.login(loginUser.getId(), model);
         StpUtil.getTokenSession().set(LOGIN_USER_KEY, loginUser);

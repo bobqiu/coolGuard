@@ -17,7 +17,13 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class RoleRespVO extends RoleCreateVO {
 
+    /**
+     * 角色编号
+     */
     private Long id;
 
+    /**
+     * 创建时间
+     */
     private LocalDateTime createTime;
 }

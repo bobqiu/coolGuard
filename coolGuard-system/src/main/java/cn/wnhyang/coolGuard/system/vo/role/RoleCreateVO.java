@@ -13,14 +13,23 @@ import java.util.Set;
 @Data
 public class RoleCreateVO {
 
+    /**
+     * 角色名称
+     */
     @NotBlank(message = "角色名称不能为空")
     @Size(max = 30, message = "角色名称长度不能超过30个字符")
     private String name;
 
-    @NotBlank(message = "角色标志不能为空")
-    @Size(max = 100, message = "角色标志长度不能超过100个字符")
+    /**
+     * 角色标识
+     */
+    @NotBlank(message = "角色标识不能为空")
+    @Size(max = 100, message = "角色标识长度不能超过100个字符")
     private String value;
 
+    /**
+     * 角色描述
+     */
     private String remark;
 
     /**

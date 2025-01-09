@@ -24,15 +24,30 @@ public class UserPageVO extends PageParam {
     @Serial
     private static final long serialVersionUID = 1382984856072227773L;
 
+    /**
+     * 用户名
+     */
     private String username;
 
+    /**
+     * 手机号
+     */
     private String mobile;
 
+    /**
+     * 状态
+     */
     private Boolean status;
 
+    /**
+     * 开始时间
+     */
     @DateTimeFormat(pattern = DatePattern.NORM_DATETIME_PATTERN)
     private LocalDateTime startTime;
 
+    /**
+     * 结束时间
+     */
     @DateTimeFormat(pattern = DatePattern.NORM_DATETIME_PATTERN)
     private LocalDateTime endTime;
 }

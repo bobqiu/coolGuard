@@ -50,6 +50,13 @@ public class ParamServiceImpl implements ParamService {
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
         validateParamExists(id);
+        Param param = paramMapper.selectById(id);
+        if (param == null) {
+            throw exception(PARAM_NOT_EXISTS);
+        }
+        if (param.getStandard()) {
+            throw exception(PARAM_STANDARD_CANNOT_DELETE);
+        }
         paramMapper.deleteById(id);
     }
 

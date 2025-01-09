@@ -27,7 +27,6 @@ public class SumIndicator extends AbstractIndicator {
 
     @Override
     public Object getResult0(IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set) {
-
         double sum = 0.0;
         for (String item : set) {
             String[] split = item.split("-");

@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.system.vo.core.auth;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,5 +19,6 @@ public class MobileLoginVO {
     /**
      * 手机号码
      */
+    @NotBlank(message = "手机号码不能为空")
     private String mobile;
 }

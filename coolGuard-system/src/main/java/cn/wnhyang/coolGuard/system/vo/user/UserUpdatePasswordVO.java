@@ -1,9 +1,9 @@
 package cn.wnhyang.coolGuard.system.vo.user;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 /**
  * @author wnhyang
@@ -21,7 +21,7 @@ public class UserUpdatePasswordVO {
     /**
      * 密码
      */
-    @NotEmpty(message = "密码不能为空")
-    @Length(min = 4, max = 16, message = "密码长度为 4-16 位")
+    @NotBlank(message = "密码不能为空")
+    @Size(min = 4, max = 16, message = "密码长度为 4-16 位")
     private String password;
 }

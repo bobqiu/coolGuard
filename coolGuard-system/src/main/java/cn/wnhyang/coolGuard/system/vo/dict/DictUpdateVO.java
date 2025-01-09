@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.system.vo.dict;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serial;
@@ -19,5 +20,6 @@ public class DictUpdateVO extends DictCreateVO {
     /**
      * 字典id
      */
+    @NotNull(message = "字典id不能为空")
     private Long id;
 }

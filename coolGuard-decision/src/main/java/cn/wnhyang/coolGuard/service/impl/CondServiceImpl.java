@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
-import cn.wnhyang.coolGuard.constant.ExpectType;
+import cn.wnhyang.coolGuard.constant.ValueType;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.entity.Cond;
@@ -38,6 +38,11 @@ public class CondServiceImpl implements CondService {
 
     private final ListDataService listDataService;
 
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.COND_TRUE, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "true组件")
+    public boolean condTrue(NodeComponent bindCmp) {
+        return true;
+    }
+
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.COND, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "条件组件")
     public boolean cond(NodeComponent bindCmp) {
         Cond cond = bindCmp.getCmpData(Cond.class);
@@ -50,9 +55,9 @@ public class CondServiceImpl implements CondService {
 
         boolean b = false;
 
-        LogicType byType = LogicType.getByType(cond.getLogicType());
         try {
             CondType condType = CondType.getByType(cond.getType());
+            LogicType byType = LogicType.getByType(cond.getLogicType());
             switch (condType) {
                 // 普通条件，适用指标、规则
                 case NORMAL -> {
@@ -61,7 +66,7 @@ public class CondServiceImpl implements CondService {
                     FieldType fieldType = FieldType.getByFieldName(fieldName);
 
                     String expectValue = cond.getRightValue();
-                    if (ExpectType.CONTEXT.equals(cond.getRightType())) {
+                    if (ValueType.CONTEXT.equals(cond.getRightType())) {
                         expectValue = fieldContext.getStringData(expectValue);
                     }
 
@@ -113,7 +118,7 @@ public class CondServiceImpl implements CondService {
                     FieldType fieldType = FieldType.getByType(iType);
 
                     String expectValue = cond.getRightValue();
-                    if (ExpectType.CONTEXT.equals(cond.getRightType())) {
+                    if (ValueType.CONTEXT.equals(cond.getRightType())) {
                         expectValue = fieldContext.getStringData(expectValue);
                     }
 

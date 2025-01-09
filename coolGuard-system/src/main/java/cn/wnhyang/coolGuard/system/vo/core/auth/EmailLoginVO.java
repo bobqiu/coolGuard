@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.vo.core.auth;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +27,7 @@ public class EmailLoginVO {
     /**
      * 验证码
      */
-    @NotEmpty
+    @NotBlank(message = "验证码不能为空")
     @Size(min = 6, max = 6, message = "验证码长度为 6 位")
     private String code;
 }

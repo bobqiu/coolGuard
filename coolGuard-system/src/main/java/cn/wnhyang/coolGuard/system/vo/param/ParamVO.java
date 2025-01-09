@@ -2,6 +2,8 @@ package cn.wnhyang.coolGuard.system.vo.param;
 
 import lombok.Data;
 
+import java.io.Serial;
+
 /**
  * 参数表
  *
@@ -11,10 +13,16 @@ import lombok.Data;
 @Data
 public class ParamVO extends ParamCreateVO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
      * 参数id
      */
     private Long id;
+
+    /**
+     * 标准
+     */
+    private Boolean standard;
 }

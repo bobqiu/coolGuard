@@ -20,4 +20,9 @@ public class DictVO extends DictCreateVO {
      * 字典id
      */
     private Long id;
+
+    /**
+     * 标准
+     */
+    private Boolean standard;
 }

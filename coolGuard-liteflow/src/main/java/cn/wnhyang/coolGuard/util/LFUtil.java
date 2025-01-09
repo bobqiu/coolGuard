@@ -1,7 +1,10 @@
 package cn.wnhyang.coolGuard.util;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.entity.Cond;
+import cn.wnhyang.coolGuard.enums.CondType;
+import cn.wnhyang.coolGuard.enums.LogicType;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
@@ -106,6 +109,11 @@ public class LFUtil {
     public static final String POLICY_BREAK_NODE = "p_bn";
 
     /**
+     * true普通组件
+     */
+    public static final String COND_TRUE = "condTrue";
+
+    /**
      * 条件普通组件
      */
     public static final String COND = "cond";
@@ -159,7 +167,7 @@ public class LFUtil {
         return "when(" + StrUtil.join(",", el) + ");";
     }
 
-    private static String[] splitExpressions(String expression) {
+    private static List<String> splitExpressions(String expression) {
         List<String> parts = new ArrayList<>();
         int level = 0;
         int startIndex = 0;
@@ -177,22 +185,22 @@ public class LFUtil {
         }
         parts.add(expression.substring(startIndex));
 
-        return parts.toArray(new String[0]);
+        return parts;
     }
 
     @SneakyThrows
     public static String buildCondEl(Cond cond) {
-        if (cond != null) {
-            if (cond.getRelation() != null && cond.getChildren() != null && !cond.getChildren().isEmpty()) {
-                List<String> expressions = cond.getChildren().stream()
-                        .map(LFUtil::buildCondEl)
-                        .collect(Collectors.toList());
-                return cond.getRelation() + "(" + String.join(", ", expressions) + ")";
-            } else {
-                return "c_cn.data('" + JsonUtil.toJsonString(cond) + "')";
-            }
+        if (cond == null) {
+            return COND_TRUE;
         }
-        return "";
+        if (cond.getRelation() != null && CollUtil.isNotEmpty(cond.getChildren())) {
+            List<String> expressions = cond.getChildren().stream()
+                    .map(LFUtil::buildCondEl)
+                    .collect(Collectors.toList());
+            return cond.getRelation() + "(" + String.join(", ", expressions) + ")";
+        } else {
+            return "c_cn.data('" + JsonUtil.toJsonString(cond) + "')";
+        }
     }
 
     @SneakyThrows
@@ -202,10 +210,10 @@ public class LFUtil {
     }
 
     private static Cond parseExpressionToCond(String expression) throws Exception {
-        if (expression.startsWith("and(")) {
-            return parseLogicExpression("and", expression.substring(4, expression.length() - 1));
-        } else if (expression.startsWith("or(")) {
-            return parseLogicExpression("or", expression.substring(3, expression.length() - 1));
+        if (expression.startsWith("AND(")) {
+            return parseLogicExpression("AND", expression.substring(4, expression.length() - 1));
+        } else if (expression.startsWith("OR(")) {
+            return parseLogicExpression("OR", expression.substring(3, expression.length() - 1));
         } else if (expression.startsWith("NOT(")) {
             return parseLogicExpression("NOT", expression.substring(4, expression.length() - 1));
         } else {
@@ -226,7 +234,7 @@ public class LFUtil {
         Cond cond = new Cond();
         cond.setRelation(operator);
         cond.setChildren(new ArrayList<>());
-        String[] subExpressions = splitExpressions(subExpression);
+        List<String> subExpressions = splitExpressions(subExpression);
         for (String subExp : subExpressions) {
             cond.getChildren().add(parseExpressionToCond(subExp.trim()));
         }
@@ -278,10 +286,14 @@ public class LFUtil {
     public static void main(String[] args) throws Exception {
 
         Cond cond = new Cond();
-        cond.setRelation("and");
+        cond.setRelation("AND");
         List<Cond> children = new ArrayList<>();
-        children.add(new Cond().setType("normal").setLeftValue("N_S_appName").setLogicType("eq").setRightType("input").setRightValue("Phone"));
-        children.add(new Cond().setType("normal").setLeftValue("N_F_transAmount").setLogicType("lt").setRightType("input").setRightValue("100"));
+        children.add(new Cond().setType(CondType.NORMAL.getType())
+                .setLeftValue("N_S_appName").setLogicType(LogicType.EQ.getType())
+                .setRightType("input").setRightValue("Phone"));
+        children.add(new Cond().setType(CondType.NORMAL.getType())
+                .setLeftValue("N_F_transAmount").setLogicType(LogicType.LT.getType())
+                .setRightType("input").setRightValue("100"));
         cond.setChildren(children);
 
         String condEl = buildCondEl(cond);
@@ -289,7 +301,15 @@ public class LFUtil {
 
         System.out.println(parseToCond(condEl));
 
-        String content = "IF(or(c_cn.data('{\"type\":\"normal\",\"value\":\"N_S_appName\",\"logicType\":\"eq\",\"expectType\":\"input\",\"expectValue\":\"Phone\"}'),c_cn.data('{\"type\":\"normal\",\"value\":\"N_S_payerAccount\",\"logicType\":\"eq\",\"expectType\":\"input\",\"expectValue\":\"123456\"}'),c_cn.data('{\"type\":\"normal\",\"value\":\"N_F_transAmount\",\"logicType\":\"gt\",\"expectType\":\"input\",\"expectValue\":\"15\"}')),r_tcn.tag(\"1\"),r_fcn);";
+        String content = "IF(" +
+                "AND(" +
+                "c_cn.data(" + "'" +
+                "{\"type\":\"normal\",\"leftValue\":\"N_S_appName\",\"logicType\":\"eq\",\"rightType\":\"input\",\"rightValue\":\"Phone\"}')," +
+                "c_cn.data('" +
+                "{\"type\":\"normal\",\"leftValue\":\"N_S_payerAccount\",\"logicType\":\"eq\",\"rightType\":\"input\",\"rightValue\":\"123456\"}')," +
+                "c_cn.data('" +
+                "{\"type\":\"normal\",\"leftValue\":\"N_F_transAmount\",\"logicType\":\"gt\",\"rightType\":\"input\",\"rightValue\":\"15\"}'))," +
+                "r_tcn.tag(\"1\"),r_fcn);";
 
         List<String> ifEl = parseIfEl(content);
         for (String parseParam : ifEl) {
@@ -299,7 +319,5 @@ public class LFUtil {
         Cond parseToCond = parseToCond(ifEl.get(0));
         System.out.println(parseToCond);
 
-
-        System.out.println(buildWhen("3244", "323r", "ergre", "regreg"));
     }
 }

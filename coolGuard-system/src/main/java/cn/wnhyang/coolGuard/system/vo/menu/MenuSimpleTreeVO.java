@@ -15,14 +15,29 @@ import java.util.List;
 @AllArgsConstructor
 public class MenuSimpleTreeVO {
 
+    /**
+     * 菜单编号
+     */
     private Long id;
 
+    /**
+     * 菜单名称
+     */
     private String title;
 
+    /**
+     * 父菜单编号
+     */
     private Long parentId;
 
+    /**
+     * 菜单类型
+     */
     private Integer type;
 
+    /**
+     * 子菜单
+     */
     private List<MenuSimpleTreeVO> children;
 
 }

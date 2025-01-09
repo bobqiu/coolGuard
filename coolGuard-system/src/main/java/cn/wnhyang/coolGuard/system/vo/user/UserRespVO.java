@@ -22,15 +22,33 @@ import java.util.Set;
 @ExcelIgnoreUnannotated
 public class UserRespVO extends UserCreateVO {
 
+    /**
+     * 用户id
+     */
     private Long id;
 
+    /**
+     * 角色标识列表
+     */
     private Set<String> roles;
 
+    /**
+     * 角色列表
+     */
     private List<LabelValue> roleList;
 
+    /**
+     * 登录ip
+     */
     private String loginIp;
 
+    /**
+     * 登录时间
+     */
     private LocalDateTime loginDate;
 
+    /**
+     * 创建时间
+     */
     private LocalDateTime createTime;
 }

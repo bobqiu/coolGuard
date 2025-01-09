@@ -11,7 +11,11 @@ import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.convert.IndicatorVersionConvert;
-import cn.wnhyang.coolGuard.entity.*;
+import cn.wnhyang.coolGuard.entity.Chain;
+import cn.wnhyang.coolGuard.entity.Indicator;
+import cn.wnhyang.coolGuard.entity.IndicatorVersion;
+import cn.wnhyang.coolGuard.entity.PolicySet;
+import cn.wnhyang.coolGuard.enums.IndicatorType;
 import cn.wnhyang.coolGuard.enums.WinSize;
 import cn.wnhyang.coolGuard.indicator.AbstractIndicator;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
@@ -20,7 +24,6 @@ import cn.wnhyang.coolGuard.mapper.IndicatorVersionMapper;
 import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
-import cn.wnhyang.coolGuard.util.IndicatorUtil;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.BatchVersionSubmitResultVO;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
@@ -88,7 +91,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         }
         Indicator indicator = IndicatorConvert.INSTANCE.convert(createVO);
         indicator.setCode(IdUtil.fastSimpleUUID());
-        indicator.setReturnType(IndicatorUtil.getReturnType(indicator.getType(), indicator.getCalcField()));
+        indicator.setReturnType(IndicatorType.getReturnType(indicator.getType(), indicator.getCalcField()));
         indicator.setTimeSlice(WinSize.getWinSizeValue(indicator.getWinSize()));
         indicatorMapper.insert(indicator);
         return indicator.getId();
@@ -142,13 +145,6 @@ public class IndicatorServiceImpl implements IndicatorService {
         PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPage(pageVO);
         return IndicatorConvert.INSTANCE.convert(indicatorPageResult);
     }
-
-    private Cond getCond(String code) {
-        Chain chain = chainMapper.getByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, code));
-        List<String> ifEl = LFUtil.parseIfEl(chain.getElData());
-        return LFUtil.parseToCond(ifEl.get(0));
-    }
-
 
     @Override
     public PageResult<Indicator> pageIndicatorByPolicySet(IndicatorByPolicySetPageVO pageVO) {
@@ -264,7 +260,7 @@ public class IndicatorServiceImpl implements IndicatorService {
         int index = bindCmp.getSubChainReqData();
         IndicatorContext.IndicatorCtx indicatorCtx = indicatorContext.getIndicator(index);
         indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorCtx.getType()).compute(false, indicatorCtx, fieldContext));
-        log.info("false指标(code:{}, name:{}, value:{})", indicatorCtx.getCode(), indicatorCtx.getName(), indicatorCtx.getValue());
+        log.info("false:指标(code:{}, name:{}, value:{})", indicatorCtx.getCode(), indicatorCtx.getName(), indicatorCtx.getValue());
 
     }
 

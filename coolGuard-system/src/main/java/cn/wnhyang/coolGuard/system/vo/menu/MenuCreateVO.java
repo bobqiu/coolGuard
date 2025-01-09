@@ -14,23 +14,48 @@ import java.util.Map;
 @Data
 public class MenuCreateVO {
 
+    /**
+     * 菜单类型
+     */
     @NotNull(message = "菜单类型不能为空")
     private Integer type;
 
+    /**
+     * 菜单名称
+     */
     @NotBlank(message = "菜单名称不能为空")
     private String name;
 
+    /**
+     * 菜单路径
+     */
+    @NotBlank(message = "菜单路径不能为空")
     private String path;
 
+    /**
+     * 菜单组件，根组件默认为BasicLayout
+     */
     private String component;
 
+    /**
+     * 菜单重定向地址
+     */
     private String redirect;
 
+    /**
+     * 菜单权限
+     */
     private String permission;
 
+    /**
+     * 父菜单 ID
+     */
     @NotNull(message = "父菜单 ID 不能为空")
     private Long parentId;
 
+    /**
+     * 路由元信息
+     */
     private RouteMeta meta;
 
     /**

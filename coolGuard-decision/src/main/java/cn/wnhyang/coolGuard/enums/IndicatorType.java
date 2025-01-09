@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -61,4 +62,11 @@ public enum IndicatorType {
                 .collect(Collectors.toList());
     }
 
+    public static String getReturnType(String type, String calcField) {
+        return switch (type) {
+            case "count", "ass" -> "N";
+            case "his" -> Objects.requireNonNull(FieldType.getByFieldName(calcField)).getType();
+            default -> "F";
+        };
+    }
 }

@@ -9,9 +9,9 @@ import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
 import cn.wnhyang.coolGuard.analysis.ip.IpAnalysis;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoAnalysis;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoInfo;
-import cn.wnhyang.coolGuard.constant.ExpectType;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.constant.RedisKey;
+import cn.wnhyang.coolGuard.constant.ValueType;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.convert.FieldConvert;
 import cn.wnhyang.coolGuard.entity.Action;
@@ -254,7 +254,7 @@ public class FieldServiceImpl implements FieldService {
         FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         setFields.forEach(setField -> {
             String value = setField.getValue();
-            if (ExpectType.CONTEXT.equals(setField.getType())) {
+            if (ValueType.CONTEXT.equals(setField.getType())) {
                 value = fieldContext.getStringData(value);
             }
             fieldContext.setDataByType(setField.getFieldName(), value, FieldType.STRING);

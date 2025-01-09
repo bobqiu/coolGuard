@@ -4,7 +4,7 @@ package cn.wnhyang.coolGuard.constant;
  * @author wnhyang
  * @date 2024/5/8
  **/
-public interface ExpectType {
+public interface ValueType {
 
     /**
      * 常量

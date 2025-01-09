@@ -12,8 +12,14 @@ import java.util.Set;
 @Data
 public class UserRoleVO {
 
+    /**
+     * 用户编号
+     */
     @NotNull(message = "用户编号不能为空")
     private Long userId;
 
+    /**
+     * 角色编号数组
+     */
     private Set<Long> roleIds;
 }

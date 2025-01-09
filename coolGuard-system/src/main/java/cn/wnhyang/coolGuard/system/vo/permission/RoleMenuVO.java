@@ -12,8 +12,14 @@ import java.util.Set;
 @Data
 public class RoleMenuVO {
 
+    /**
+     * 角色编号
+     */
     @NotNull(message = "角色编号不能为空")
     private Long roleId;
 
+    /**
+     * 菜单编号
+     */
     private Set<Long> menuIds;
 }

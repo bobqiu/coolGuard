@@ -173,12 +173,6 @@ public class RuleServiceImpl implements RuleService {
         return CollectionUtils.convertList(ruleMapper.selectList(), Rule::getLabelValue);
     }
 
-    private Cond getCond(String code) {
-        Chain chain = chainMapper.getByChainName(StrUtil.format(LFUtil.RULE_CHAIN, code));
-        List<String> ifEl = LFUtil.parseIfEl(chain.getElData());
-        return LFUtil.parseToCond(ifEl.get(0));
-    }
-
     @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.RULE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
     public boolean ruleAccess(NodeComponent bindCmp) {
         String policyCode = bindCmp.getSubChainReqData();

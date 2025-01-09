@@ -28,7 +28,7 @@ public class CountIndicator extends AbstractIndicator {
     @Override
     public Object getResult0(IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set) {
 
-        return (double) set.size();
+        return set.size();
     }
 
     @Override

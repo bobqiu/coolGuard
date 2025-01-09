@@ -17,6 +17,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class MenuTreeRespVO extends MenuRespVO {
 
+    /**
+     * 子节点
+     */
     private List<MenuTreeRespVO> children;
 }
 

@@ -54,7 +54,13 @@ public class DictServiceImpl implements DictService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
-        validateDictExists(id);
+        Dict dict = dictMapper.selectById(id);
+        if (dict == null) {
+            throw exception(DICT_NOT_EXISTS);
+        }
+        if (dict.getStandard()) {
+            throw exception(DICT_STANDARD_NOT_ALLOW_DELETE);
+        }
         dictMapper.deleteById(id);
     }
 

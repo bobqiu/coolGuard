@@ -12,6 +12,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class MenuUpdateVO extends MenuCreateVO {
 
+    /**
+     * 菜单编号
+     */
     @NotNull(message = "菜单编号不能为空")
     private Long id;
 }
