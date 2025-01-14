@@ -52,8 +52,8 @@ public class PolicySetVersionController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<PolicySetVersionVO> get(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<PolicySetVersionVO> get(@RequestParam("id") Long id) {
         return success(PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.get(id)));
     }
 
@@ -63,8 +63,8 @@ public class PolicySetVersionController {
      * @param code code
      * @return vo
      */
-    @GetMapping("/code/{code}")
-    public CommonResult<PolicySetVersionVO> getByCode(@PathVariable("code") String code) {
+    @GetMapping("/code")
+    public CommonResult<PolicySetVersionVO> getByCode(@RequestParam("code") String code) {
         return success(PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.getByCode(code)));
     }
 

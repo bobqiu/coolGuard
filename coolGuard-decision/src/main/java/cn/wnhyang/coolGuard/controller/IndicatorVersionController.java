@@ -51,8 +51,8 @@ public class IndicatorVersionController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<IndicatorVersionVO> get(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<IndicatorVersionVO> get(@RequestParam("id") Long id) {
         return success(indicatorVersionService.get(id));
     }
 
@@ -62,8 +62,8 @@ public class IndicatorVersionController {
      * @param code code
      * @return vo
      */
-    @GetMapping("/code/{code}")
-    public CommonResult<IndicatorVersionVO> getByCode(@PathVariable("code") String code) {
+    @GetMapping("/code")
+    public CommonResult<IndicatorVersionVO> getByCode(@RequestParam("code") String code) {
         return success(indicatorVersionService.getByCode(code));
     }
 

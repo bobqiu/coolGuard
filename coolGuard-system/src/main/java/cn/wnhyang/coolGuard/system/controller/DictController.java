@@ -78,8 +78,8 @@ public class DictController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<DictVO> get(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<DictVO> get(@RequestParam("id") Long id) {
         return success(DictConvert.INSTANCE.convert(dictService.get(id)));
     }
 

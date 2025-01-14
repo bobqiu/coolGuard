@@ -6,7 +6,7 @@ import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.satoken.Login;
 import cn.wnhyang.coolGuard.satoken.core.util.LoginUtil;
-import cn.wnhyang.coolGuard.system.entity.User;
+import cn.wnhyang.coolGuard.system.entity.UserDO;
 import cn.wnhyang.coolGuard.system.service.UserService;
 import cn.wnhyang.coolGuard.system.vo.core.user.UserInfoRespVO;
 import lombok.RequiredArgsConstructor;
@@ -49,13 +49,13 @@ public class UserInfoController {
         }
         Long id = loginUser.getId();
 
-        User user = userService.getUserById(id);
+        UserDO userDO = userService.getUserById(id);
         return CommonResult.success(new UserInfoRespVO()
                 .setUserId(id)
-                .setUsername(user.getUsername())
-                .setAvatar(user.getAvatar())
-                .setRealName(user.getNickname())
-                .setDesc(user.getRemark())
+                .setUsername(userDO.getUsername())
+                .setAvatar(userDO.getAvatar())
+                .setRealName(userDO.getNickname())
+                .setDesc(userDO.getRemark())
                 .setToken(StpUtil.getTokenValue())
                 .setRoles(loginUser.getRoleValues()));
     }

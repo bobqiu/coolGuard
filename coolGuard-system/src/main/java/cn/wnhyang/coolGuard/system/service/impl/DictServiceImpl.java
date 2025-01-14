@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.system.service.impl;
 import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.DictConvert;
-import cn.wnhyang.coolGuard.system.entity.Dict;
+import cn.wnhyang.coolGuard.system.entity.DictDO;
 import cn.wnhyang.coolGuard.system.entity.DictData;
 import cn.wnhyang.coolGuard.system.mapper.DictMapper;
 import cn.wnhyang.coolGuard.system.service.DictService;
@@ -38,52 +38,52 @@ public class DictServiceImpl implements DictService {
     @Transactional(rollbackFor = Exception.class)
     public Long create(DictCreateVO createVO) {
         validateDictForCreateOrUpdate(null, createVO.getLabel(), createVO.getValue());
-        Dict dict = DictConvert.INSTANCE.convert(createVO);
-        dictMapper.insert(dict);
-        return dict.getId();
+        DictDO dictDO = DictConvert.INSTANCE.convert(createVO);
+        dictMapper.insert(dictDO);
+        return dictDO.getId();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(DictUpdateVO updateVO) {
         validateDictForCreateOrUpdate(updateVO.getId(), updateVO.getLabel(), updateVO.getValue());
-        Dict dict = DictConvert.INSTANCE.convert(updateVO);
-        dictMapper.updateById(dict);
+        DictDO dictDO = DictConvert.INSTANCE.convert(updateVO);
+        dictMapper.updateById(dictDO);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
-        Dict dict = dictMapper.selectById(id);
-        if (dict == null) {
+        DictDO dictDO = dictMapper.selectById(id);
+        if (dictDO == null) {
             throw exception(DICT_NOT_EXISTS);
         }
-        if (dict.getStandard()) {
+        if (dictDO.getStandard()) {
             throw exception(DICT_STANDARD_NOT_ALLOW_DELETE);
         }
         dictMapper.deleteById(id);
     }
 
     @Override
-    public Dict get(Long id) {
+    public DictDO get(Long id) {
         return dictMapper.selectById(id);
     }
 
     @Override
-    public PageResult<Dict> page(DictPageVO pageVO) {
+    public PageResult<DictDO> page(DictPageVO pageVO) {
         return dictMapper.selectPage(pageVO);
     }
 
     @Override
     public List<LabelValue> getLabelValueList() {
-        return CollectionUtils.convertList(dictMapper.selectList(), Dict::getLabelValue);
+        return CollectionUtils.convertList(dictMapper.selectList(), DictDO::getLabelValue);
     }
 
     @Override
     public List<DictData> getDataList(String value) {
-        Dict dict = dictMapper.selectByValue(value);
-        if (dict != null) {
-            return dict.getData();
+        DictDO dictDO = dictMapper.selectByValue(value);
+        if (dictDO != null) {
+            return dictDO.getData();
         }
         return List.of();
     }
@@ -101,36 +101,36 @@ public class DictServiceImpl implements DictService {
         if (id == null) {
             return;
         }
-        Dict dict = dictMapper.selectById(id);
-        if (dict == null) {
+        DictDO dictDO = dictMapper.selectById(id);
+        if (dictDO == null) {
             throw exception(DICT_NOT_EXISTS);
         }
     }
 
     private void validateLabelUnique(Long id, String label) {
-        Dict dict = dictMapper.selectByLabel(label);
-        if (dict == null) {
+        DictDO dictDO = dictMapper.selectByLabel(label);
+        if (dictDO == null) {
             return;
         }
         // 如果 id 为空，说明不用比较是否为相同 id 的用户
         if (id == null) {
             throw exception(DICT_LABEL_EXISTS);
         }
-        if (!dict.getId().equals(id)) {
+        if (!dictDO.getId().equals(id)) {
             throw exception(DICT_LABEL_EXISTS);
         }
     }
 
     private void validateValueUnique(Long id, String value) {
-        Dict dict = dictMapper.selectByValue(value);
-        if (dict == null) {
+        DictDO dictDO = dictMapper.selectByValue(value);
+        if (dictDO == null) {
             return;
         }
         // 如果 id 为空，说明不用比较是否为相同 id 的用户
         if (id == null) {
             throw exception(DICT_VALUE_EXISTS);
         }
-        if (!dict.getId().equals(id)) {
+        if (!dictDO.getId().equals(id)) {
             throw exception(DICT_VALUE_EXISTS);
         }
     }

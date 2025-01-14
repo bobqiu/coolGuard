@@ -99,6 +99,7 @@ create table coolGuard.sys_operate_log
     id               bigint auto_increment comment '操作日志id'
         primary key,
     user_id          bigint                                  not null comment '用户编号',
+    user_nickname    varchar(30)                             null comment '用户昵称',
     module           varchar(50)                             not null comment '模块标题',
     name             varchar(50)                             not null comment '操作名',
     type             int           default 0                 not null comment '操作分类',
@@ -111,6 +112,7 @@ create table coolGuard.sys_operate_log
     java_method      varchar(512)  default ''                not null comment 'Java 方法名',
     java_method_args varchar(8000) default ''                null comment 'Java 方法的参数',
     start_time       datetime                                not null comment '操作时间',
+    end_time         datetime                                null comment '结束时间',
     duration         int                                     not null comment '执行时长',
     result_code      int           default 0                 not null comment '结果码',
     result_msg       varchar(512)  default ''                null comment '结果提示',
@@ -230,6 +232,7 @@ create table coolGuard.sys_user_role
     comment '用户和角色关联表' charset = utf8mb4;
 
 
+
 INSERT INTO coolGuard.sys_dict_data (sort, label, value, dict_type, color, status, remark, creator, create_time,
                                      updater, update_time)
 VALUES (99, '开启', 'true', 'common_status', 'green', 1, '通用状态-开启', '', '2024-03-25 08:59:56', NULL,
@@ -295,18 +298,18 @@ INSERT INTO coolGuard.sys_menu (parent_id, `type`, name, `path`, component, redi
                                 title, meta, creator, create_time, updater, update_time)
 VALUES (0, 0, 'System', '/system', 'BasicLayout', '', NULL, NULL, NULL, '系统管理', '{"title":"page.system.title"}', '',
         '2024-03-25 10:12:09', NULL, '2025-01-05 22:01:09'),
-       (1, 1, 'User', '/system/user', '/system/user/index', NULL, NULL, NULL, NULL, '用户管理',
-        '{"title":"page.system.user"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:02:40'),
-       (1, 1, 'Role', '/system/role', '/system/role/index', NULL, NULL, NULL, NULL, '角色管理',
-        '{"title":"page.system.role"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:03:30'),
-       (1, 1, 'Menu', '/system/menu', '/system/menu/index', NULL, NULL, NULL, NULL, '菜单管理',
-        '{"title":"page.system.menu"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:03:45'),
-       (1, 0, 'Log', '/system/log', NULL, '/system/loginLog', NULL, NULL, NULL, '日志管理',
+       (1, 1, 'User', '/system/userDO', '/system/userDO/index', NULL, NULL, NULL, NULL, '用户管理',
+        '{"title":"page.system.userDO"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:02:40'),
+       (1, 1, 'Role', '/system/roleDO', '/system/roleDO/index', NULL, NULL, NULL, NULL, '角色管理',
+        '{"title":"page.system.roleDO"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:03:30'),
+       (1, 1, 'Menu', '/system/menuDO', '/system/menuDO/index', NULL, NULL, NULL, NULL, '菜单管理',
+        '{"title":"page.system.menuDO"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:03:45'),
+       (1, 0, 'Log', '/system/log', NULL, '/system/loginLogDO', NULL, NULL, NULL, '日志管理',
         '{"title":"page.system.log"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:47:21'),
-       (104, 1, 'LoginLog', '/system/loginLog', '/system/loginLog/index', NULL, NULL, NULL, NULL, '登录日志',
-        '{"title":"page.system.loginLog"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:05:48'),
-       (104, 1, 'OperateLog', '/system/operateLog', '/system/operateLog/index', NULL, NULL, NULL, NULL, '操作日志',
-        '{"iframeSrc":"","title":"page.system.operateLog"}', '', '2024-03-25 10:12:09', NULL, '2025-01-07 18:39:54'),
+       (104, 1, 'LoginLog', '/system/loginLogDO', '/system/loginLogDO/index', NULL, NULL, NULL, NULL, '登录日志',
+        '{"title":"page.system.loginLogDO"}', '', '2024-03-25 10:12:09', NULL, '2025-01-05 22:05:48'),
+       (104, 1, 'OperateLog', '/system/operateLogDO', '/system/operateLogDO/index', NULL, NULL, NULL, NULL, '操作日志',
+        '{"iframeSrc":"","title":"page.system.operateLogDO"}', '', '2024-03-25 10:12:09', NULL, '2025-01-07 18:39:54'),
        (0, 0, 'Access', '/access', 'BasicLayout', NULL, NULL, NULL, NULL, '接入中心', '{"title":"page.access.title"}',
         NULL, '2025-01-05 22:15:25', NULL, '2025-01-05 22:47:44'),
        (1058, 1, 'Filed', '/access/field', '/access/field/index', NULL, NULL, NULL, NULL, '字段管理',
@@ -319,10 +322,10 @@ VALUES (1060, 1, 'Analytics', '/analytics', '/dashboard/analytics/index', NULL, 
         '{"title":"page.dashboard.analytics"}', NULL, '2025-01-07 18:23:36', NULL, '2025-01-07 18:23:36'),
        (1060, 1, 'Workspace', '/workspace', '/dashboard/workspace/index', NULL, NULL, NULL, NULL, '工作台',
         '{"title":"page.dashboard.workspace"}', NULL, '2025-01-07 18:24:18', NULL, '2025-01-07 18:24:18'),
-       (1, 1, 'Dict', '/system/dict', '/system/dict/index', NULL, NULL, NULL, NULL, '字典管理',
-        '{"title":"page.system.dict"}', NULL, '2025-01-07 18:26:23', NULL, '2025-01-07 18:26:23'),
-       (1, 1, 'Param', '/param', '/system/param/index', NULL, NULL, NULL, NULL, '参数管理',
-        '{"title":"page.system.param"}', NULL, '2025-01-07 18:27:13', NULL, '2025-01-07 18:27:13');
+       (1, 1, 'Dict', '/system/dictDO', '/system/dictDO/index', NULL, NULL, NULL, NULL, '字典管理',
+        '{"title":"page.system.dictDO"}', NULL, '2025-01-07 18:26:23', NULL, '2025-01-07 18:26:23'),
+       (1, 1, 'Param', '/paramDO', '/system/paramDO/index', NULL, NULL, NULL, NULL, '参数管理',
+        '{"title":"page.system.paramDO"}', NULL, '2025-01-07 18:27:13', NULL, '2025-01-07 18:27:13');
 INSERT INTO coolGuard.sys_role (name, value, sort, status, remark, creator, create_time, updater, update_time)
 VALUES ('超级管理员', 'administrator', 0, 1, NULL, '', '2024-03-25 08:59:56', '', '2024-08-04 09:00:35'),
        ('管理员', 'admin', 99, 1, NULL, 'admin', '2024-06-30 15:27:44', NULL, '2025-01-04 22:41:49');

@@ -51,8 +51,8 @@ public class RuleVersionController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<RuleVersionVO> get(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<RuleVersionVO> get(@RequestParam("id") Long id) {
         return success(RuleVersionConvert.INSTANCE.convert(ruleVersionService.get(id)));
     }
 
@@ -62,8 +62,8 @@ public class RuleVersionController {
      * @param code code
      * @return vo
      */
-    @GetMapping("/code/{code}")
-    public CommonResult<RuleVersionVO> getByCode(@PathVariable("code") String code) {
+    @GetMapping("/code")
+    public CommonResult<RuleVersionVO> getByCode(@RequestParam("code") String code) {
         return success(RuleVersionConvert.INSTANCE.convert(ruleVersionService.getByCode(code)));
     }
 

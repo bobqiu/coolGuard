@@ -5,8 +5,8 @@ import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.UserConvert;
-import cn.wnhyang.coolGuard.system.entity.Role;
-import cn.wnhyang.coolGuard.system.entity.User;
+import cn.wnhyang.coolGuard.system.entity.RoleDO;
+import cn.wnhyang.coolGuard.system.entity.UserDO;
 import cn.wnhyang.coolGuard.system.service.PermissionService;
 import cn.wnhyang.coolGuard.system.service.RoleService;
 import cn.wnhyang.coolGuard.system.service.UserService;
@@ -54,7 +54,7 @@ public class UserController {
     @PostMapping
     @OperateLog(module = "后台-用户", name = "创建用户")
     @SaCheckPermission("system:user:create")
-    public CommonResult<Long> createUser(@Valid @RequestBody UserCreateVO reqVO) {
+    public CommonResult<Long> createUser(@RequestBody @Valid UserCreateVO reqVO) {
         Long id = userService.createUser(reqVO);
         return success(id);
     }
@@ -68,7 +68,7 @@ public class UserController {
     @PutMapping
     @OperateLog(module = "后台-用户", name = "修改用户信息")
     @SaCheckPermission("system:user:update")
-    public CommonResult<Boolean> updateUser(@Valid @RequestBody UserUpdateVO reqVO) {
+    public CommonResult<Boolean> updateUser(@RequestBody @Valid UserUpdateVO reqVO) {
         userService.updateUser(reqVO);
         return success(true);
     }
@@ -96,7 +96,7 @@ public class UserController {
     @PutMapping("/updatePassword")
     @OperateLog(module = "后台-用户", name = "更新用户密码")
     @SaCheckPermission("system:user:updatePassword")
-    public CommonResult<Boolean> updateUserPassword(@Valid @RequestBody UserUpdatePasswordVO reqVO) {
+    public CommonResult<Boolean> updateUserPassword(@RequestBody @Valid UserUpdatePasswordVO reqVO) {
         userService.updateUserPassword(reqVO);
         return success(true);
     }
@@ -110,7 +110,7 @@ public class UserController {
     @PutMapping("/updateStatus")
     @OperateLog(module = "后台-用户", name = "更新用户状态")
     @SaCheckPermission("system:user:update")
-    public CommonResult<Boolean> updateUserStatus(@Valid @RequestBody UserUpdateStatusVO reqVO) {
+    public CommonResult<Boolean> updateUserStatus(@RequestBody @Valid UserUpdateStatusVO reqVO) {
         userService.updateUserStatus(reqVO);
         return success(true);
     }
@@ -125,11 +125,11 @@ public class UserController {
     @OperateLog(module = "后台-用户", name = "查询用户")
     @SaCheckPermission("system:user:query")
     public CommonResult<UserRespVO> getUser(@RequestParam("id") Long id) {
-        User user = userService.getUserById(id);
-        Set<Long> roleIds = permissionService.getRoleIdListByUserId(user.getId());
+        UserDO userDO = userService.getUserById(id);
+        Set<Long> roleIds = permissionService.getRoleIdListByUserId(userDO.getId());
 
-        List<Role> roleList = roleService.getRoleList(roleIds);
-        UserRespVO respVO = UserConvert.INSTANCE.convert(user, roleList);
+        List<RoleDO> roleDOList = roleService.getRoleList(roleIds);
+        UserRespVO respVO = UserConvert.INSTANCE.convert(userDO, roleDOList);
         respVO.setRoleIds(roleIds);
 
         return success(respVO);
@@ -151,14 +151,14 @@ public class UserController {
     }
 
     private List<UserRespVO> getUserPageList(UserPageVO reqVO) {
-        PageResult<User> pageResult = userService.getUserPage(reqVO);
+        PageResult<UserDO> pageResult = userService.getUserPage(reqVO);
 
         return pageResult.getList().stream().map(user -> {
             Set<Long> roleIds = permissionService.getRoleIdListByUserId(user.getId());
-            List<Role> roleList = roleService.getRoleList(roleIds);
-            UserRespVO respVO = UserConvert.INSTANCE.convert(user, roleList);
+            List<RoleDO> roleDOList = roleService.getRoleList(roleIds);
+            UserRespVO respVO = UserConvert.INSTANCE.convert(user, roleDOList);
             respVO.setRoleIds(roleIds);
-            respVO.setRoleList(CollectionUtils.convertList(roleList, Role::getLabelValue));
+            respVO.setRoleList(CollectionUtils.convertList(roleDOList, RoleDO::getLabelValue));
             return respVO;
         }).collect(Collectors.toList());
     }
@@ -188,7 +188,7 @@ public class UserController {
      */
     @PostMapping("/import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
-        List<User> read = ExcelUtil.read(file, User.class);
+        List<UserDO> read = ExcelUtil.read(file, UserDO.class);
         // do something
         log.info("导入用户信息：{}", read);
         return success(true);

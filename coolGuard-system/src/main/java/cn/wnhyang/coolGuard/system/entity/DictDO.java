@@ -7,55 +7,69 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
- * 角色信息表
+ * 字典表
  *
  * @author wnhyang
- * @since 2023/05/14
+ * @since 2025/01/03
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("sys_role")
-public class Role extends BaseDO implements LabelValueAble {
+@TableName(value = "sys_dict", autoResultMap = true)
+public class DictDO extends BaseDO implements LabelValueAble {
 
     @Serial
-    private static final long serialVersionUID = 6734459350185846076L;
+    private static final long serialVersionUID = 1L;
 
     /**
-     * 角色ID
+     * 字典id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 角色名称
+     * 字典标签
      */
-    @TableField("name")
-    private String name;
+    @TableField("label")
+    private String label;
 
     /**
-     * 角色权限字符串
+     * 字典值
      */
     @TableField("value")
     private String value;
 
     /**
-     * 备注
+     * 字典数据
      */
-    @TableField("remark")
-    private String remark;
+    @TableField(value = "data", typeHandler = JacksonTypeHandler.class)
+    private List<DictData> data;
+
+    /**
+     * 标准
+     */
+    @TableField("standard")
+    private Boolean standard;
+
+    /**
+     * 描述
+     */
+    @TableField("description")
+    private String description;
 
     @Override
     @JsonIgnore
     public LabelValue getLabelValue() {
-        return new LabelValue(id, name, value);
+        return new LabelValue(id, label, value);
     }
 }

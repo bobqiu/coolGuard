@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("sys_operate_log")
-public class OperateLog extends BaseDO {
+public class OperateLogDO extends BaseDO {
 
     /**
      * {@link #javaMethodArgs} 的最大长度
@@ -35,8 +36,8 @@ public class OperateLog extends BaseDO {
      */
     public static final Integer RESULT_MAX_LENGTH = 4000;
 
+    @Serial
     private static final long serialVersionUID = 1797386582905133955L;
-
 
     /**
      * 日志主键
@@ -49,6 +50,12 @@ public class OperateLog extends BaseDO {
      */
     @TableField("user_id")
     private Long userId;
+
+    /**
+     * 用户昵称
+     */
+    @TableField("user_nickname")
+    private String userNickname;
 
     /**
      * 模块标题
@@ -121,6 +128,12 @@ public class OperateLog extends BaseDO {
      */
     @TableField("start_time")
     private LocalDateTime startTime;
+
+    /**
+     * 结束时间
+     */
+    @TableField("end_time")
+    private LocalDateTime endTime;
 
     /**
      * 执行时长

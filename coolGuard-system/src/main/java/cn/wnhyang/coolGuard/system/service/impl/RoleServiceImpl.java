@@ -5,8 +5,8 @@ import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.enums.UserConstants;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.RoleConvert;
-import cn.wnhyang.coolGuard.system.entity.Role;
-import cn.wnhyang.coolGuard.system.entity.RoleMenu;
+import cn.wnhyang.coolGuard.system.entity.RoleDO;
+import cn.wnhyang.coolGuard.system.entity.RoleMenuDO;
 import cn.wnhyang.coolGuard.system.mapper.RoleMapper;
 import cn.wnhyang.coolGuard.system.mapper.RoleMenuMapper;
 import cn.wnhyang.coolGuard.system.mapper.UserRoleMapper;
@@ -47,7 +47,7 @@ public class RoleServiceImpl implements RoleService {
     private final UserRoleMapper userRoleMapper;
 
     @Override
-    public List<Role> getRoleList(Collection<Long> ids) {
+    public List<RoleDO> getRoleList(Collection<Long> ids) {
         if (CollectionUtil.isEmpty(ids)) {
             return Collections.emptyList();
         }
@@ -58,13 +58,13 @@ public class RoleServiceImpl implements RoleService {
     @Transactional(rollbackFor = Exception.class)
     public Long createRole(RoleCreateVO reqVO) {
         validateRoleForCreateOrUpdate(null, reqVO.getName(), reqVO.getValue());
-        Role role = RoleConvert.INSTANCE.convert(reqVO);
-        roleMapper.insert(role);
+        RoleDO roleDO = RoleConvert.INSTANCE.convert(reqVO);
+        roleMapper.insert(roleDO);
         if (CollectionUtil.isNotEmpty(reqVO.getMenuIds())) {
             roleMenuMapper.insertBatch(CollectionUtils.convertList(reqVO.getMenuIds(),
-                    menuId -> new RoleMenu().setRoleId(role.getId()).setMenuId(menuId)));
+                    menuId -> new RoleMenuDO().setRoleId(roleDO.getId()).setMenuId(menuId)));
         }
-        return role.getId();
+        return roleDO.getId();
     }
 
     @Override
@@ -77,13 +77,13 @@ public class RoleServiceImpl implements RoleService {
         validateRoleForCreateOrUpdate(reqVO.getId(), reqVO.getName(), reqVO.getValue());
 
         // 更新到数据库
-        Role role = RoleConvert.INSTANCE.convert(reqVO);
-        roleMenuMapper.deleteByRoleId(role.getId());
+        RoleDO roleDO = RoleConvert.INSTANCE.convert(reqVO);
+        roleMenuMapper.deleteByRoleId(roleDO.getId());
         if (CollectionUtil.isNotEmpty(reqVO.getMenuIds())) {
             roleMenuMapper.insertBatch(CollectionUtils.convertList(reqVO.getMenuIds(),
-                    menuId -> new RoleMenu().setRoleId(role.getId()).setMenuId(menuId)));
+                    menuId -> new RoleMenuDO().setRoleId(roleDO.getId()).setMenuId(menuId)));
         }
-        roleMapper.updateById(role);
+        roleMapper.updateById(roleDO);
     }
 
     @Override
@@ -101,23 +101,23 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role getRole(Long id) {
+    public RoleDO getRole(Long id) {
         return roleMapper.selectById(id);
     }
 
     @Override
-    public PageResult<Role> getRolePage(RolePageVO reqVO) {
+    public PageResult<RoleDO> getRolePage(RolePageVO reqVO) {
         return roleMapper.selectPage(reqVO);
     }
 
     @Override
-    public List<Role> getRoleList(Boolean status) {
+    public List<RoleDO> getRoleList(Boolean status) {
         return roleMapper.selectList();
     }
 
     @Override
     public List<LabelValue> getLabelValueList() {
-        return CollectionUtils.convertList(roleMapper.selectList(), Role::getLabelValue);
+        return CollectionUtils.convertList(roleMapper.selectList(), RoleDO::getLabelValue);
     }
 
     private void validateRoleForDelete(Long id) {
@@ -129,7 +129,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     private void validateRoleForUpdate(Long id) {
-        Role roleDO = roleMapper.selectById(id);
+        RoleDO roleDO = roleMapper.selectById(id);
         if (roleDO == null) {
             throw exception(ROLE_NOT_EXISTS);
         }
@@ -145,8 +145,8 @@ public class RoleServiceImpl implements RoleService {
             throw exception(ROLE_ADMIN_CODE_ERROR, value);
         }
         // 1. 该 name 名字被其它角色所使用
-        Role role = roleMapper.selectByName(name);
-        if (role != null && !role.getId().equals(id)) {
+        RoleDO roleDO = roleMapper.selectByName(name);
+        if (roleDO != null && !roleDO.getId().equals(id)) {
             throw exception(ROLE_NAME_DUPLICATE, name);
         }
         // 2. 是否存在相同编码的角色
@@ -154,8 +154,8 @@ public class RoleServiceImpl implements RoleService {
             return;
         }
         // 该 value 编码被其它角色所使用
-        role = roleMapper.selectByValue(value);
-        if (role != null && !role.getId().equals(id)) {
+        roleDO = roleMapper.selectByValue(value);
+        if (roleDO != null && !roleDO.getId().equals(id)) {
             throw exception(ROLE_CODE_DUPLICATE, value);
         }
     }

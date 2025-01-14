@@ -77,8 +77,8 @@ public class SmsTemplateController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<SmsTemplateVO> get(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<SmsTemplateVO> get(@RequestParam("id") Long id) {
         return success(SmsTemplateConvert.INSTANCE.convert(smsTemplateService.get(id)));
     }
 

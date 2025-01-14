@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -15,10 +16,13 @@ import java.util.Map;
 @Data
 public class LogCreateReqDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 541323985520059827L;
 
     @NotNull(message = "用户编号不能为空")
     private Long userId;
+
+    private String userNickname;
 
     @NotBlank(message = "操作模块不能为空")
     private String module;
@@ -52,6 +56,9 @@ public class LogCreateReqDTO implements Serializable {
 
     @NotNull(message = "开始时间不能为空")
     private LocalDateTime startTime;
+
+    @NotNull(message = "结束时间不能为空")
+    private LocalDateTime endTime;
 
     @NotNull(message = "执行时长不能为空")
     private Integer duration;

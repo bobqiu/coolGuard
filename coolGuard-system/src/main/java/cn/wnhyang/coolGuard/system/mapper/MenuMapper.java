@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.system.mapper;
 
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
-import cn.wnhyang.coolGuard.system.entity.Menu;
+import cn.wnhyang.coolGuard.system.entity.MenuDO;
 import cn.wnhyang.coolGuard.system.vo.menu.MenuListVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,18 +15,18 @@ import java.util.List;
  * @since 2023/05/14
  */
 @Mapper
-public interface MenuMapper extends BaseMapperX<Menu> {
+public interface MenuMapper extends BaseMapperX<MenuDO> {
 
-    default Menu selectByParentIdAndName(Long parentId, String name) {
-        return selectOne(Menu::getParentId, parentId, Menu::getName, name);
+    default MenuDO selectByParentIdAndName(Long parentId, String name) {
+        return selectOne(MenuDO::getParentId, parentId, MenuDO::getName, name);
     }
 
     default Long selectCountByParentId(Long parentId) {
-        return selectCount(Menu::getParentId, parentId);
+        return selectCount(MenuDO::getParentId, parentId);
     }
 
-    default List<Menu> selectList(MenuListVO reqVO) {
-        return selectList(new LambdaQueryWrapperX<Menu>()
-                .likeIfPresent(Menu::getTitle, reqVO.getTitle()));
+    default List<MenuDO> selectList(MenuListVO reqVO) {
+        return selectList(new LambdaQueryWrapperX<MenuDO>()
+                .likeIfPresent(MenuDO::getTitle, reqVO.getTitle()));
     }
 }

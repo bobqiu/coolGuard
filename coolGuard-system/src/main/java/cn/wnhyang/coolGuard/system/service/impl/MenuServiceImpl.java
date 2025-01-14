@@ -4,8 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.wnhyang.coolGuard.satoken.Login;
 import cn.wnhyang.coolGuard.satoken.core.util.LoginUtil;
 import cn.wnhyang.coolGuard.system.convert.MenuConvert;
-import cn.wnhyang.coolGuard.system.entity.Menu;
-import cn.wnhyang.coolGuard.system.entity.RoleMenu;
+import cn.wnhyang.coolGuard.system.entity.MenuDO;
+import cn.wnhyang.coolGuard.system.entity.RoleMenuDO;
 import cn.wnhyang.coolGuard.system.enums.permission.MenuType;
 import cn.wnhyang.coolGuard.system.mapper.MenuMapper;
 import cn.wnhyang.coolGuard.system.mapper.RoleMenuMapper;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import static cn.wnhyang.coolGuard.exception.GlobalErrorCode.UNAUTHORIZED;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
-import static cn.wnhyang.coolGuard.system.entity.Menu.ID_ROOT;
+import static cn.wnhyang.coolGuard.system.entity.MenuDO.ID_ROOT;
 import static cn.wnhyang.coolGuard.system.enums.ErrorCodes.*;
 import static cn.wnhyang.coolGuard.util.CollectionUtils.convertSet;
 
@@ -50,11 +50,11 @@ public class MenuServiceImpl implements MenuService {
         validateMenu(reqVO.getParentId(), reqVO.getName(), null);
 
         // 插入数据库
-        Menu menu = MenuConvert.INSTANCE.convert(reqVO);
-        initMenuProperty(menu);
-        menuMapper.insert(menu);
+        MenuDO menuDO = MenuConvert.INSTANCE.convert(reqVO);
+        initMenuProperty(menuDO);
+        menuMapper.insert(menuDO);
         // 返回
-        return menu.getId();
+        return menuDO.getId();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class MenuServiceImpl implements MenuService {
         validateMenu(reqVO.getParentId(), reqVO.getName(), reqVO.getId());
 
         // 更新到数据库
-        Menu updateObject = MenuConvert.INSTANCE.convert(reqVO);
+        MenuDO updateObject = MenuConvert.INSTANCE.convert(reqVO);
         initMenuProperty(updateObject);
         menuMapper.updateById(updateObject);
     }
@@ -94,17 +94,17 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<Menu> getMenuList(MenuListVO reqVO) {
+    public List<MenuDO> getMenuList(MenuListVO reqVO) {
         return menuMapper.selectList(reqVO);
     }
 
     @Override
-    public Menu getMenu(Long id) {
+    public MenuDO getMenu(Long id) {
         return menuMapper.selectById(id);
     }
 
     @Override
-    public List<Menu> getMenuList(Set<Long> ids) {
+    public List<MenuDO> getMenuList(Set<Long> ids) {
         if (CollectionUtil.isEmpty(ids)) {
             return Collections.emptyList();
         }
@@ -112,7 +112,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<Menu> getMenuList() {
+    public List<MenuDO> getMenuList() {
         return menuMapper.selectList();
     }
 
@@ -120,16 +120,16 @@ public class MenuServiceImpl implements MenuService {
     public List<MenuTreeRespVO> getMenuTreeList(MenuListVO reqVO) {
 
         // 1、查询所有菜单
-        List<Menu> all = menuMapper.selectList();
+        List<MenuDO> all = menuMapper.selectList();
 
         // 2、查询满足条件的菜单
-        List<Menu> menus = menuMapper.selectList(reqVO);
-        Set<Long> menuIds = menus.stream().map(Menu::getId).collect(Collectors.toSet());
+        List<MenuDO> menuDOS = menuMapper.selectList(reqVO);
+        Set<Long> menuIds = menuDOS.stream().map(MenuDO::getId).collect(Collectors.toSet());
 
-        Set<Menu> menuSet = findMenusWithParentsOrChildrenByIds(all, menuIds, true, true);
+        Set<MenuDO> menuDOSet = findMenusWithParentsOrChildrenByIds(all, menuIds, true, true);
 
         // 3、形成树形结合
-        return buildMenuTree(new ArrayList<>(menuSet), false);
+        return buildMenuTree(new ArrayList<>(menuDOSet), false);
     }
 
     @Override
@@ -141,24 +141,24 @@ public class MenuServiceImpl implements MenuService {
         }
         Long id = loginUser.getId();
 
-        List<Menu> all = menuMapper.selectList();
+        List<MenuDO> all = menuMapper.selectList();
         if (LoginUtil.isAdministrator(id)) {
             return buildMenuTree(all, removeButton);
         }
-        Set<Long> menuIds = convertSet(roleMenuMapper.selectListByRoleId(loginUser.getRoleIds()), RoleMenu::getMenuId);
-        Set<Menu> menuSet = findMenusWithParentsOrChildrenByIds(all, menuIds, true, false);
+        Set<Long> menuIds = convertSet(roleMenuMapper.selectListByRoleId(loginUser.getRoleIds()), RoleMenuDO::getMenuId);
+        Set<MenuDO> menuDOSet = findMenusWithParentsOrChildrenByIds(all, menuIds, true, false);
 
-        return buildMenuTree(new ArrayList<>(menuSet), removeButton);
+        return buildMenuTree(new ArrayList<>(menuDOSet), removeButton);
     }
 
-    public List<MenuTreeRespVO> buildMenuTree(List<Menu> menuList, boolean removeButton) {
+    public List<MenuTreeRespVO> buildMenuTree(List<MenuDO> menuDOList, boolean removeButton) {
 
         if (removeButton) {
             // 移除按钮
-            menuList.removeIf(menu -> menu.getType().equals(MenuType.BUTTON.getType()));
+            menuDOList.removeIf(menu -> menu.getType().equals(MenuType.BUTTON.getType()));
         }
 
-        List<MenuTreeRespVO> convert = MenuConvert.INSTANCE.convert2TreeRespList(menuList);
+        List<MenuTreeRespVO> convert = MenuConvert.INSTANCE.convert2TreeRespList(menuDOList);
 
         Map<Long, MenuTreeRespVO> menuTreeMap = new HashMap<>();
         for (MenuTreeRespVO menu : convert) {
@@ -183,14 +183,14 @@ public class MenuServiceImpl implements MenuService {
         return menuTreeMap.values().stream().filter(menu -> ID_ROOT.equals(menu.getParentId())).collect(Collectors.toList());
     }
 
-    public List<MenuSimpleTreeVO> buildMenuSimpleTree(List<Menu> menuList, boolean removeButton) {
+    public List<MenuSimpleTreeVO> buildMenuSimpleTree(List<MenuDO> menuDOList, boolean removeButton) {
 
         if (removeButton) {
             // 移除按钮
-            menuList.removeIf(menu -> menu.getType().equals(MenuType.BUTTON.getType()));
+            menuDOList.removeIf(menu -> menu.getType().equals(MenuType.BUTTON.getType()));
         }
 
-        List<MenuSimpleTreeVO> convert = MenuConvert.INSTANCE.convert02(menuList);
+        List<MenuSimpleTreeVO> convert = MenuConvert.INSTANCE.convert02(menuDOList);
 
         Map<Long, MenuSimpleTreeVO> menuTreeMap = new HashMap<>();
         for (MenuSimpleTreeVO menu : convert) {
@@ -224,14 +224,14 @@ public class MenuServiceImpl implements MenuService {
      * @param withChildren 是否包含子菜单
      * @return 结果
      */
-    private Set<Menu> findMenusWithParentsOrChildrenByIds(List<Menu> all, Set<Long> menuIds, boolean withParent, boolean withChildren) {
-        Map<Long, Menu> menuMap = new HashMap<>();
-        for (Menu menu : all) {
-            menuMap.put(menu.getId(), menu);
+    private Set<MenuDO> findMenusWithParentsOrChildrenByIds(List<MenuDO> all, Set<Long> menuIds, boolean withParent, boolean withChildren) {
+        Map<Long, MenuDO> menuMap = new HashMap<>();
+        for (MenuDO menuDO : all) {
+            menuMap.put(menuDO.getId(), menuDO);
         }
 
         // 使用LinkedHashSet保持插入顺序
-        Set<Menu> result = new LinkedHashSet<>();
+        Set<MenuDO> result = new LinkedHashSet<>();
         // 存储已处理过的菜单ID
         Set<Long> processedIds = new HashSet<>();
         for (Long menuId : menuIds) {
@@ -254,19 +254,19 @@ public class MenuServiceImpl implements MenuService {
      * @param menuId       需要的菜单id
      * @param processedIds 存储已处理过的菜单id
      */
-    private void collectMenuParents(Set<Menu> resultSet, Map<Long, Menu> menuMap, Long menuId, Set<Long> processedIds) {
+    private void collectMenuParents(Set<MenuDO> resultSet, Map<Long, MenuDO> menuMap, Long menuId, Set<Long> processedIds) {
         if (processedIds.contains(menuId)) {
             return; // 如果已经处理过此菜单，则不再处理
         }
 
         processedIds.add(menuId);
-        Menu menu = menuMap.get(menuId);
-        if (menu != null) {
-            resultSet.add(menu);
+        MenuDO menuDO = menuMap.get(menuId);
+        if (menuDO != null) {
+            resultSet.add(menuDO);
 
             // 如果当前菜单不是根节点（即parentId不为0），继续查找其父菜单
-            if (!Objects.equals(menu.getParentId(), ID_ROOT) && !processedIds.contains(menu.getParentId())) {
-                collectMenuParents(resultSet, menuMap, menu.getParentId(), processedIds);
+            if (!Objects.equals(menuDO.getParentId(), ID_ROOT) && !processedIds.contains(menuDO.getParentId())) {
+                collectMenuParents(resultSet, menuMap, menuDO.getParentId(), processedIds);
             }
         }
     }
@@ -278,14 +278,14 @@ public class MenuServiceImpl implements MenuService {
      * @param menuMap   menuMap
      * @param menuId    需要的菜单id
      */
-    private void collectMenuChildren(Set<Menu> resultSet, Map<Long, Menu> menuMap, Long menuId) {
-        Menu menu = menuMap.get(menuId);
-        if (menu != null) {
-            resultSet.add(menu);
+    private void collectMenuChildren(Set<MenuDO> resultSet, Map<Long, MenuDO> menuMap, Long menuId) {
+        MenuDO menuDO = menuMap.get(menuId);
+        if (menuDO != null) {
+            resultSet.add(menuDO);
 
             // 添加当前菜单的所有子菜单
-            for (Menu child : menuMap.values()) {
-                if (child.getParentId().equals(menu.getId())) {
+            for (MenuDO child : menuMap.values()) {
+                if (child.getParentId().equals(menuDO.getId())) {
                     collectMenuChildren(resultSet, menuMap, child.getId());
                 }
             }
@@ -303,7 +303,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     private List<MenuSimpleTreeVO> getMenuSimpleTreeList(boolean withRoot) {
-        List<Menu> all = menuMapper.selectList();
+        List<MenuDO> all = menuMapper.selectList();
 
         List<MenuSimpleTreeVO> menuSimpleTreeList = buildMenuSimpleTree(all, false);
 
@@ -335,14 +335,14 @@ public class MenuServiceImpl implements MenuService {
         if (parentId.equals(childId)) {
             throw exception(MENU_PARENT_ERROR);
         }
-        Menu menu = menuMapper.selectById(parentId);
+        MenuDO menuDO = menuMapper.selectById(parentId);
         // 父菜单不存在
-        if (menu == null) {
+        if (menuDO == null) {
             throw exception(MENU_PARENT_NOT_EXISTS);
         }
         // 父菜单必须是目录或者菜单类型
-        if (!MenuType.DIR.getType().equals(menu.getType())
-                && !MenuType.MENU.getType().equals(menu.getType())) {
+        if (!MenuType.DIR.getType().equals(menuDO.getType())
+                && !MenuType.MENU.getType().equals(menuDO.getType())) {
             throw exception(MENU_PARENT_NOT_DIR_OR_MENU);
         }
     }
@@ -357,15 +357,15 @@ public class MenuServiceImpl implements MenuService {
      * @param id       菜单编号
      */
     void validateMenu(Long parentId, String name, Long id) {
-        Menu menu = menuMapper.selectByParentIdAndName(parentId, name);
-        if (menu == null) {
+        MenuDO menuDO = menuMapper.selectByParentIdAndName(parentId, name);
+        if (menuDO == null) {
             return;
         }
         // 如果 id 为空，说明不用比较是否为相同 id 的菜单
         if (id == null) {
             throw exception(MENU_NAME_DUPLICATE);
         }
-        if (!menu.getId().equals(id)) {
+        if (!menuDO.getId().equals(id)) {
             throw exception(MENU_NAME_DUPLICATE);
         }
     }
@@ -375,13 +375,13 @@ public class MenuServiceImpl implements MenuService {
      * <p>
      * 例如说，只有目录或者菜单类型的菜单，才设置 icon
      *
-     * @param menu 菜单
+     * @param menuDO 菜单
      */
-    private void initMenuProperty(Menu menu) {
+    private void initMenuProperty(MenuDO menuDO) {
         // 菜单为按钮类型时，无需 component、icon、path 属性，进行置空
-        if (MenuType.BUTTON.getType().equals(menu.getType())) {
-            menu.setComponent("");
-            menu.setPath("");
+        if (MenuType.BUTTON.getType().equals(menuDO.getType())) {
+            menuDO.setComponent("");
+            menuDO.setPath("");
         }
     }
 }

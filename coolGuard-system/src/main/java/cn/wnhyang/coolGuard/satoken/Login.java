@@ -16,6 +16,13 @@ public interface Login {
     Long getId();
 
     /**
+     * 获取用户昵称
+     *
+     * @return 用户昵称
+     */
+    String getNickname();
+
+    /**
      * 获取用户账号
      *
      * @return 用户账号

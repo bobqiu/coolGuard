@@ -20,6 +20,8 @@ public class OperateLogCreateDTO implements Serializable {
     @NotNull(message = "用户编号不能为空")
     private Long userId;
 
+    private String userNickname;
+
     @NotBlank(message = "操作模块不能为空")
     private String module;
 
@@ -52,6 +54,9 @@ public class OperateLogCreateDTO implements Serializable {
 
     @NotNull(message = "开始时间不能为空")
     private LocalDateTime startTime;
+
+    @NotNull(message = "结束时间不能为空")
+    private LocalDateTime endTime;
 
     @NotNull(message = "执行时长不能为空")
     private Integer duration;

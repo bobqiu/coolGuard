@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.system.mapper;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.Param;
+import cn.wnhyang.coolGuard.system.entity.ParamDO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamPageVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -14,17 +14,17 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2025/01/07
  */
 @Mapper
-public interface ParamMapper extends BaseMapperX<Param> {
+public interface ParamMapper extends BaseMapperX<ParamDO> {
 
-    default PageResult<Param> selectPage(ParamPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<Param>());
+    default PageResult<ParamDO> selectPage(ParamPageVO pageVO) {
+        return selectPage(pageVO, new LambdaQueryWrapperX<ParamDO>());
     }
 
-    default Param selectByLabel(String label) {
-        return selectOne(new LambdaQueryWrapperX<Param>().eq(Param::getLabel, label));
+    default ParamDO selectByLabel(String label) {
+        return selectOne(new LambdaQueryWrapperX<ParamDO>().eq(ParamDO::getLabel, label));
     }
 
-    default Param selectByValue(String value) {
-        return selectOne(new LambdaQueryWrapperX<Param>().eq(Param::getValue, value));
+    default ParamDO selectByValue(String value) {
+        return selectOne(new LambdaQueryWrapperX<ParamDO>().eq(ParamDO::getValue, value));
     }
 }

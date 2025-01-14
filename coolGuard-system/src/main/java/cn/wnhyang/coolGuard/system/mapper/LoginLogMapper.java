@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.system.mapper;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.LoginLog;
+import cn.wnhyang.coolGuard.system.entity.LoginLogDO;
 import cn.wnhyang.coolGuard.system.vo.loginlog.LoginLogPageVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -14,17 +14,17 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2023/07/25
  */
 @Mapper
-public interface LoginLogMapper extends BaseMapperX<LoginLog> {
+public interface LoginLogMapper extends BaseMapperX<LoginLogDO> {
 
-    default PageResult<LoginLog> selectPage(LoginLogPageVO reqVO) {
-        LambdaQueryWrapperX<LoginLog> query = new LambdaQueryWrapperX<LoginLog>()
-                .eqIfPresent(LoginLog::getLoginType, reqVO.getLoginType())
-                .likeIfPresent(LoginLog::getUserIp, reqVO.getUserIp())
-                .likeIfPresent(LoginLog::getAccount, reqVO.getAccount())
-                .betweenIfPresent(LoginLog::getCreateTime, reqVO.getStartTime(), reqVO.getEndTime())
-                .eqIfPresent(LoginLog::getResult, reqVO.getResult());
+    default PageResult<LoginLogDO> selectPage(LoginLogPageVO reqVO) {
+        LambdaQueryWrapperX<LoginLogDO> query = new LambdaQueryWrapperX<LoginLogDO>()
+                .eqIfPresent(LoginLogDO::getLoginType, reqVO.getLoginType())
+                .likeIfPresent(LoginLogDO::getUserIp, reqVO.getUserIp())
+                .likeIfPresent(LoginLogDO::getAccount, reqVO.getAccount())
+                .betweenIfPresent(LoginLogDO::getCreateTime, reqVO.getStartTime(), reqVO.getEndTime())
+                .eqIfPresent(LoginLogDO::getResult, reqVO.getResult());
         // 降序
-        query.orderByDesc(LoginLog::getId);
+        query.orderByDesc(LoginLogDO::getId);
         return selectPage(reqVO, query);
     }
 }

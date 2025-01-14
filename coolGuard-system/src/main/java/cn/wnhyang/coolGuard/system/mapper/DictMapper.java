@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.system.mapper;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.Dict;
+import cn.wnhyang.coolGuard.system.entity.DictDO;
 import cn.wnhyang.coolGuard.system.vo.dict.DictPageVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -14,20 +14,20 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2025/01/03
  */
 @Mapper
-public interface DictMapper extends BaseMapperX<Dict> {
+public interface DictMapper extends BaseMapperX<DictDO> {
 
-    default PageResult<Dict> selectPage(DictPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<Dict>()
-                .likeIfPresent(Dict::getLabel, pageVO.getLabel())
-                .likeIfPresent(Dict::getValue, pageVO.getValue())
+    default PageResult<DictDO> selectPage(DictPageVO pageVO) {
+        return selectPage(pageVO, new LambdaQueryWrapperX<DictDO>()
+                .likeIfPresent(DictDO::getLabel, pageVO.getLabel())
+                .likeIfPresent(DictDO::getValue, pageVO.getValue())
         );
     }
 
-    default Dict selectByLabel(String label) {
-        return selectOne(new LambdaQueryWrapperX<Dict>().eq(Dict::getLabel, label));
+    default DictDO selectByLabel(String label) {
+        return selectOne(new LambdaQueryWrapperX<DictDO>().eq(DictDO::getLabel, label));
     }
 
-    default Dict selectByValue(String value) {
-        return selectOne(new LambdaQueryWrapperX<Dict>().eq(Dict::getValue, value));
+    default DictDO selectByValue(String value) {
+        return selectOne(new LambdaQueryWrapperX<DictDO>().eq(DictDO::getValue, value));
     }
 }

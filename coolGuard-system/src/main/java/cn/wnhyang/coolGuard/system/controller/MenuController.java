@@ -5,7 +5,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.system.convert.MenuConvert;
-import cn.wnhyang.coolGuard.system.entity.Menu;
+import cn.wnhyang.coolGuard.system.entity.MenuDO;
 import cn.wnhyang.coolGuard.system.service.MenuService;
 import cn.wnhyang.coolGuard.system.vo.menu.*;
 import jakarta.validation.Valid;
@@ -39,7 +39,7 @@ public class MenuController {
     @PostMapping
     @OperateLog(module = "后台-菜单", name = "创建菜单")
     @SaCheckPermission("system:menu:create")
-    public CommonResult<Long> createMenu(@Valid @RequestBody MenuCreateVO reqVO) {
+    public CommonResult<Long> createMenu(@RequestBody @Valid MenuCreateVO reqVO) {
         return success(menuService.createMenu(reqVO));
     }
 
@@ -52,7 +52,7 @@ public class MenuController {
     @PutMapping
     @OperateLog(module = "后台-菜单", name = "更新菜单")
     @SaCheckPermission("system:menu:update")
-    public CommonResult<Boolean> updateMenu(@Valid @RequestBody MenuUpdateVO reqVO) {
+    public CommonResult<Boolean> updateMenu(@RequestBody @Valid MenuUpdateVO reqVO) {
         menuService.updateMenu(reqVO);
         return success(true);
     }
@@ -104,11 +104,10 @@ public class MenuController {
      * @return 菜单
      */
     @GetMapping
-    @OperateLog(module = "后台-菜单", name = "查询菜单")
     @SaCheckPermission("system:menu:query")
     public CommonResult<MenuRespVO> getMenu(@RequestParam("id") Long id) {
-        Menu menu = menuService.getMenu(id);
-        return success(MenuConvert.INSTANCE.convert2RespVO(menu));
+        MenuDO menuDO = menuService.getMenu(id);
+        return success(MenuConvert.INSTANCE.convert2RespVO(menuDO));
     }
 
     /**
@@ -117,7 +116,6 @@ public class MenuController {
      * @return 菜单列表
      */
     @GetMapping("/simpleList")
-    @OperateLog(module = "后台-菜单", name = "查询简单菜单")
     @SaCheckLogin
     public CommonResult<List<MenuSimpleTreeVO>> getSimpleMenuList() {
         return success(menuService.getMenuSimpleTreeList());
@@ -129,7 +127,6 @@ public class MenuController {
      * @return 菜单列表
      */
     @GetMapping("/simpleListA")
-    @OperateLog(module = "后台-菜单", name = "查询简单菜单")
     @SaCheckLogin
     public CommonResult<List<MenuSimpleTreeVO>> getSimpleMenuListA() {
         return success(menuService.getMenuSimpleTreeListA());

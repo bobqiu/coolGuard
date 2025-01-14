@@ -93,8 +93,8 @@ public class AccessController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<AccessVO> getAccess(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<AccessVO> getAccess(@RequestParam("id") Long id) {
         return success(accessService.getAccess(id));
     }
 

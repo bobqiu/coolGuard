@@ -88,8 +88,8 @@ public class ChainController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<ChainVO> getChain(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<ChainVO> getChain(@RequestParam("id") Long id) {
         return success(ChainConvert.INSTANCE.convert(chainService.getChain(id)));
     }
 

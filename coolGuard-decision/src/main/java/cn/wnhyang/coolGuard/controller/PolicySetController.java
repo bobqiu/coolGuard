@@ -95,8 +95,8 @@ public class PolicySetController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<PolicySetVO> getPolicySet(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<PolicySetVO> getPolicySet(@RequestParam("id") Long id) {
         return success(policySetService.getPolicySet(id));
     }
 

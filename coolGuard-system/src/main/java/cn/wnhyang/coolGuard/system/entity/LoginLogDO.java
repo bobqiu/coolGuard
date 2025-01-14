@@ -19,7 +19,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("sys_login_log")
-public class LoginLog extends BaseDO {
+public class LoginLogDO extends BaseDO {
 
     private static final long serialVersionUID = 8801638334750361566L;
 

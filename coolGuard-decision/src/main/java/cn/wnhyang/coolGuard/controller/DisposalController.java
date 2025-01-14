@@ -71,8 +71,8 @@ public class DisposalController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<DisposalVO> getDisposal(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<DisposalVO> getDisposal(@RequestParam("id") Long id) {
         return success(DisposalConvert.INSTANCE.convert(disposalService.getDisposal(id)));
     }
 

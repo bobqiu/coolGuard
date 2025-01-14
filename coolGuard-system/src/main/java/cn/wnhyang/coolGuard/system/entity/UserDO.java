@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("sys_user")
-public class User extends BaseDO {
+public class UserDO extends BaseDO {
 
     @Serial
     private static final long serialVersionUID = -8660240418764574220L;

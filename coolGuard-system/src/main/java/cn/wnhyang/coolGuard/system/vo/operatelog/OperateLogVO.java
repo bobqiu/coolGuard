@@ -98,6 +98,11 @@ public class OperateLogVO {
     private LocalDateTime startTime;
 
     /**
+     * 结束时间
+     */
+    private LocalDateTime endTime;
+
+    /**
      * 执行时长
      */
     @NotNull(message = "执行时长不能为空")

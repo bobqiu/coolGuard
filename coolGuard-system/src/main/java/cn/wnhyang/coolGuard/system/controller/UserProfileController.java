@@ -5,7 +5,7 @@ import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.satoken.core.util.LoginUtil;
 import cn.wnhyang.coolGuard.system.convert.UserConvert;
-import cn.wnhyang.coolGuard.system.entity.User;
+import cn.wnhyang.coolGuard.system.entity.UserDO;
 import cn.wnhyang.coolGuard.system.service.UserService;
 import cn.wnhyang.coolGuard.system.vo.userprofile.UserProfileUpdatePasswordVO;
 import cn.wnhyang.coolGuard.system.vo.userprofile.UserProfileUpdateVO;
@@ -36,9 +36,9 @@ public class UserProfileController {
     @OperateLog(module = "后台-用户设置", name = "查询登录用户信息")
     @SaCheckLogin
     public CommonResult<UserProfileVO> getUserProfile() {
-        User user = userService.getUserById(LoginUtil.getUserId());
+        UserDO userDO = userService.getUserById(LoginUtil.getUserId());
 
-        return CommonResult.success(UserConvert.INSTANCE.convert04(user));
+        return CommonResult.success(UserConvert.INSTANCE.convert04(userDO));
     }
 
     /**
@@ -47,7 +47,7 @@ public class UserProfileController {
     @PostMapping
     @OperateLog(module = "后台-用户设置", name = "修改用户信息")
     @SaCheckLogin
-    public CommonResult<Boolean> updateUserProfile(@Valid @RequestBody UserProfileUpdateVO reqVO) {
+    public CommonResult<Boolean> updateUserProfile(@RequestBody @Valid UserProfileUpdateVO reqVO) {
         userService.updateUserProfile(LoginUtil.getUserId(), reqVO);
         return CommonResult.success(true);
     }
@@ -61,7 +61,7 @@ public class UserProfileController {
     @PutMapping("/updatePassword")
     @OperateLog(module = "后台-用户设置", name = "修改用户密码")
     @SaCheckLogin
-    public CommonResult<Boolean> updateUserPassword(@Valid @RequestBody UserProfileUpdatePasswordVO reqVO) {
+    public CommonResult<Boolean> updateUserPassword(@RequestBody @Valid UserProfileUpdatePasswordVO reqVO) {
         userService.updateUserPassword(LoginUtil.getUserId(), reqVO);
         return CommonResult.success(true);
     }

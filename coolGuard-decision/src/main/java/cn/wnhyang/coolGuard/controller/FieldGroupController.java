@@ -70,8 +70,8 @@ public class FieldGroupController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<FieldGroupVO> getFieldGroup(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<FieldGroupVO> getFieldGroup(@RequestParam("id") Long id) {
         return success(fieldGroupService.getFieldGroup(id));
     }
 

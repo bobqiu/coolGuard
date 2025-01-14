@@ -34,7 +34,7 @@ public class PermissionController {
     @PostMapping("/roleMenu")
     @OperateLog(module = "后台-权限", name = "给角色赋予菜单")
     @SaCheckPermission("system:permission:roleMenu")
-    public CommonResult<Boolean> roleMenu(@Valid @RequestBody RoleMenuVO reqVO) {
+    public CommonResult<Boolean> roleMenu(@RequestBody @Valid RoleMenuVO reqVO) {
         permissionService.roleMenu(reqVO.getRoleId(), reqVO.getMenuIds());
         return CommonResult.success(true);
     }
@@ -61,7 +61,7 @@ public class PermissionController {
     @PostMapping("/userRole")
     @OperateLog(module = "后台-权限", name = "给角色赋予菜单")
     @SaCheckPermission("system:permission:userRole")
-    public CommonResult<Boolean> roleMenu(@Valid @RequestBody UserRoleVO reqVO) {
+    public CommonResult<Boolean> roleMenu(@RequestBody @Valid UserRoleVO reqVO) {
         permissionService.userRole(reqVO.getUserId(), reqVO.getRoleIds());
         return CommonResult.success(true);
     }

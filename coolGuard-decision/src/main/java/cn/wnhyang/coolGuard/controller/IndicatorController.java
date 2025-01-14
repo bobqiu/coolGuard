@@ -99,8 +99,8 @@ public class IndicatorController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<IndicatorVO> getIndicator(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<IndicatorVO> getIndicator(@RequestParam("id") Long id) {
         return success(indicatorService.getIndicator(id));
     }
 

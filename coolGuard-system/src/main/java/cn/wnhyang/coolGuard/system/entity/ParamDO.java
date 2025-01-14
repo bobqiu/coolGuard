@@ -19,7 +19,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("sys_param")
-public class Param extends BaseDO {
+public class ParamDO extends BaseDO {
 
     private static final long serialVersionUID = 1L;
 

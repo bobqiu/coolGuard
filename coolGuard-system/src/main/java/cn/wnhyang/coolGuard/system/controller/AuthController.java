@@ -88,7 +88,7 @@ public class AuthController {
      * @return 加密数据
      */
     @GetMapping("/register")
-    public CommonResult<Boolean> register(RegisterVO reqVO) {
+    public CommonResult<Boolean> register(@RequestParam RegisterVO reqVO) {
         authService.register(reqVO);
         return success(true);
     }

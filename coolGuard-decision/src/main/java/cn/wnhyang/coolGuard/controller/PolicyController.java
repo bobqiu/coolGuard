@@ -70,8 +70,8 @@ public class PolicyController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<PolicyVO> getPolicy(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<PolicyVO> getPolicy(@RequestParam("id") Long id) {
         return success(policyService.getPolicy(id));
     }
 
@@ -92,8 +92,8 @@ public class PolicyController {
      * @param setCode 策略集编码
      * @return list
      */
-    @GetMapping("/list/{setCode}")
-    public CommonResult<List<PolicyVO>> listByPolicySetCode(@PathVariable("setCode") String setCode) {
+    @GetMapping("/list")
+    public CommonResult<List<PolicyVO>> listByPolicySetCode(@RequestParam("setCode") String setCode) {
         return success(policyService.listByPolicySetCode(setCode));
     }
 

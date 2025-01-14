@@ -2,8 +2,9 @@ package cn.wnhyang.coolGuard.system.convert;
 
 
 import cn.wnhyang.coolGuard.log.core.dto.LogCreateReqDTO;
+import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.dto.OperateLogCreateDTO;
-import cn.wnhyang.coolGuard.system.entity.OperateLog;
+import cn.wnhyang.coolGuard.system.entity.OperateLogDO;
 import cn.wnhyang.coolGuard.system.vo.operatelog.OperateLogVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -17,9 +18,11 @@ public interface OperateLogConvert {
 
     OperateLogConvert INSTANCE = Mappers.getMapper(OperateLogConvert.class);
 
-    OperateLog convert(OperateLogCreateDTO reqDTO);
+    OperateLogDO convert(OperateLogCreateDTO reqDTO);
 
-    OperateLogVO convert(OperateLog operateLog);
+    OperateLogVO convert(OperateLogDO operateLogDO);
 
     OperateLogCreateDTO convert(LogCreateReqDTO reqDTO);
+
+    PageResult<OperateLogVO> convert(PageResult<OperateLogDO> pageResult);
 }

@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.mapper;
 
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
-import cn.wnhyang.coolGuard.system.entity.UserRole;
+import cn.wnhyang.coolGuard.system.entity.UserRoleDO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,27 +16,27 @@ import java.util.List;
  * @since 2023/05/14
  */
 @Mapper
-public interface UserRoleMapper extends BaseMapperX<UserRole> {
+public interface UserRoleMapper extends BaseMapperX<UserRoleDO> {
 
-    default List<UserRole> selectListByUserId(Collection<Long> userIds) {
-        return selectList(UserRole::getUserId, userIds);
+    default List<UserRoleDO> selectListByUserId(Collection<Long> userIds) {
+        return selectList(UserRoleDO::getUserId, userIds);
     }
 
     default void deleteByUserId(Long userId) {
-        delete(Wrappers.lambdaUpdate(UserRole.class).eq(UserRole::getUserId, userId));
+        delete(Wrappers.lambdaUpdate(UserRoleDO.class).eq(UserRoleDO::getUserId, userId));
     }
 
-    default List<UserRole> selectListByUserId(Long userId) {
-        return selectList(UserRole::getUserId, userId);
+    default List<UserRoleDO> selectListByUserId(Long userId) {
+        return selectList(UserRoleDO::getUserId, userId);
     }
 
     default void deleteListByUserIdAndRoleIdIds(Long userId, Collection<Long> roleIds) {
-        delete(new LambdaQueryWrapper<UserRole>()
-                .eq(UserRole::getUserId, userId)
-                .in(UserRole::getRoleId, roleIds));
+        delete(new LambdaQueryWrapper<UserRoleDO>()
+                .eq(UserRoleDO::getUserId, userId)
+                .in(UserRoleDO::getRoleId, roleIds));
     }
 
     default Long selectCountByRoleId(Long roleId) {
-        return selectCount(UserRole::getRoleId, roleId);
+        return selectCount(UserRoleDO::getRoleId, roleId);
     }
 }

@@ -23,7 +23,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName(value = "sys_menu", autoResultMap = true)
-public class Menu extends BaseDO {
+public class MenuDO extends BaseDO {
 
     /**
      * 菜单编号 - 根节点

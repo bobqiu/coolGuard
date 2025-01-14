@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.convert;
 
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.Param;
+import cn.wnhyang.coolGuard.system.entity.ParamDO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamCreateVO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamUpdateVO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamVO;
@@ -19,12 +19,12 @@ public interface ParamConvert {
 
     ParamConvert INSTANCE = Mappers.getMapper(ParamConvert.class);
 
-    Param convert(ParamCreateVO createVO);
+    ParamDO convert(ParamCreateVO createVO);
 
-    Param convert(ParamUpdateVO updateVO);
+    ParamDO convert(ParamUpdateVO updateVO);
 
-    ParamVO convert(Param po);
+    ParamVO convert(ParamDO po);
 
-    PageResult<ParamVO> convert(PageResult<Param> pageResult);
+    PageResult<ParamVO> convert(PageResult<ParamDO> pageResult);
 
 }

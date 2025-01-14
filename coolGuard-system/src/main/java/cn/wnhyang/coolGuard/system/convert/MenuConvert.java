@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.convert;
 
 
-import cn.wnhyang.coolGuard.system.entity.Menu;
+import cn.wnhyang.coolGuard.system.entity.MenuDO;
 import cn.wnhyang.coolGuard.system.vo.menu.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -18,16 +18,16 @@ public interface MenuConvert {
 
     MenuConvert INSTANCE = Mappers.getMapper(MenuConvert.class);
 
-    Menu convert(MenuCreateVO reqVO);
+    MenuDO convert(MenuCreateVO reqVO);
 
-    Menu convert(MenuUpdateVO reqVO);
+    MenuDO convert(MenuUpdateVO reqVO);
 
-    MenuRespVO convert2RespVO(Menu menu);
+    MenuRespVO convert2RespVO(MenuDO menuDO);
 
-    List<MenuRespVO> convertList(List<Menu> list);
+    List<MenuRespVO> convertList(List<MenuDO> list);
 
-    List<MenuSimpleTreeVO> convert02(List<Menu> list);
+    List<MenuSimpleTreeVO> convert02(List<MenuDO> list);
 
-    List<MenuTreeRespVO> convert2TreeRespList(List<Menu> menus);
+    List<MenuTreeRespVO> convert2TreeRespList(List<MenuDO> menuDOS);
 
 }

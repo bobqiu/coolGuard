@@ -77,8 +77,8 @@ public class TagController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<TagVO> get(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<TagVO> get(@RequestParam("id") Long id) {
         return success(TagConvert.INSTANCE.convert(tagService.get(id)));
     }
 

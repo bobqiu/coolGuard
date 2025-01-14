@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.system.service;
 
 import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.Role;
+import cn.wnhyang.coolGuard.system.entity.RoleDO;
 import cn.wnhyang.coolGuard.system.vo.role.RoleCreateVO;
 import cn.wnhyang.coolGuard.system.vo.role.RolePageVO;
 import cn.wnhyang.coolGuard.system.vo.role.RoleUpdateVO;
@@ -29,7 +29,7 @@ public interface RoleService {
      * @param ids 角色编号数组
      * @return 角色列表
      */
-    List<Role> getRoleList(Collection<Long> ids);
+    List<RoleDO> getRoleList(Collection<Long> ids);
 
     /**
      * 获取角色编码
@@ -38,7 +38,7 @@ public interface RoleService {
      * @return 角色编码
      */
     default Set<String> getRoleValueList(Set<Long> ids) {
-        return convertSet(getRoleList(ids), Role::getValue);
+        return convertSet(getRoleList(ids), RoleDO::getValue);
     }
 
     /**
@@ -69,7 +69,7 @@ public interface RoleService {
      * @param id id
      * @return 角色
      */
-    Role getRole(Long id);
+    RoleDO getRole(Long id);
 
     /**
      * 查询角色列表
@@ -77,7 +77,7 @@ public interface RoleService {
      * @param reqVO 请求
      * @return 角色列表
      */
-    PageResult<Role> getRolePage(RolePageVO reqVO);
+    PageResult<RoleDO> getRolePage(RolePageVO reqVO);
 
     /**
      * 获取角色列表
@@ -85,7 +85,7 @@ public interface RoleService {
      * @param status 状态
      * @return 角色列表
      */
-    List<Role> getRoleList(Boolean status);
+    List<RoleDO> getRoleList(Boolean status);
 
     /**
      * 获取角色名称列表

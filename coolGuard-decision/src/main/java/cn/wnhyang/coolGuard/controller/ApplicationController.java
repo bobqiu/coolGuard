@@ -71,8 +71,8 @@ public class ApplicationController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<ApplicationVO> getApplication(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<ApplicationVO> getApplication(@RequestParam("id") Long id) {
         return success(ApplicationConvert.INSTANCE.convert(applicationService.getApplication(id)));
     }
 

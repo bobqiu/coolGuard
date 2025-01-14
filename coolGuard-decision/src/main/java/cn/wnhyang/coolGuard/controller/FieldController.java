@@ -73,8 +73,8 @@ public class FieldController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<FieldVO> getField(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<FieldVO> getField(@RequestParam("id") Long id) {
         return success(FieldConvert.INSTANCE.convert(fieldService.getField(id)));
     }
 

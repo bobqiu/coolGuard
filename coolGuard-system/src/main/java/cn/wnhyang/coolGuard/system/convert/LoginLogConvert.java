@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.system.convert;
 
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.dto.LoginLogCreateDTO;
-import cn.wnhyang.coolGuard.system.entity.LoginLog;
+import cn.wnhyang.coolGuard.system.entity.LoginLogDO;
 import cn.wnhyang.coolGuard.system.vo.loginlog.LoginLogVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -17,7 +17,7 @@ public interface LoginLogConvert {
 
     LoginLogConvert INSTANCE = Mappers.getMapper(LoginLogConvert.class);
 
-    LoginLog convert(LoginLogCreateDTO reqDTO);
+    LoginLogDO convert(LoginLogCreateDTO reqDTO);
 
-    PageResult<LoginLogVO> convertPage(PageResult<LoginLog> page);
+    PageResult<LoginLogVO> convertPage(PageResult<LoginLogDO> page);
 }

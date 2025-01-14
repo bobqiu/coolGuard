@@ -76,8 +76,8 @@ public class ListSetController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<ListSetVO> get(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<ListSetVO> get(@RequestParam("id") Long id) {
         return success(ListSetConvert.INSTANCE.convert(listSetService.get(id)));
     }
 

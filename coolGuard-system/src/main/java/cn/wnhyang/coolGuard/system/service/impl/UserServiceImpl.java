@@ -11,9 +11,9 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.satoken.core.util.LoginUtil;
 import cn.wnhyang.coolGuard.system.convert.UserConvert;
 import cn.wnhyang.coolGuard.system.dto.UserCreateDTO;
-import cn.wnhyang.coolGuard.system.entity.Role;
-import cn.wnhyang.coolGuard.system.entity.User;
-import cn.wnhyang.coolGuard.system.entity.UserRole;
+import cn.wnhyang.coolGuard.system.entity.RoleDO;
+import cn.wnhyang.coolGuard.system.entity.UserDO;
+import cn.wnhyang.coolGuard.system.entity.UserRoleDO;
 import cn.wnhyang.coolGuard.system.login.LoginUser;
 import cn.wnhyang.coolGuard.system.mapper.RoleMapper;
 import cn.wnhyang.coolGuard.system.mapper.UserMapper;
@@ -54,14 +54,14 @@ public class UserServiceImpl implements UserService {
     private final RoleMapper roleMapper;
 
     @Override
-    public User getUserByUsername(String username) {
+    public UserDO getUserByUsername(String username) {
         return userMapper.selectByUsername(username);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateUserLogin(Long userId, String loginIp) {
-        userMapper.updateById(new User().setId(userId).setLoginIp(loginIp).setLoginDate(LocalDateTime.now()));
+        userMapper.updateById(new UserDO().setId(userId).setLoginIp(loginIp).setLoginDate(LocalDateTime.now()));
     }
 
     @Override
@@ -75,27 +75,27 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public Long createUser(UserCreateVO reqVO) {
         validateUserForCreateOrUpdate(null, reqVO.getUsername(), reqVO.getMobile(), reqVO.getEmail());
-        User user = UserConvert.INSTANCE.convert(reqVO);
+        UserDO userDO = UserConvert.INSTANCE.convert(reqVO);
         // TODO，新建用户，初始密码默认或者通过邮箱发送
-        user.setPassword(BCrypt.hashpw(UserConstants.DEFAULT_PASSWORD));
-        userMapper.insert(user);
+        userDO.setPassword(BCrypt.hashpw(UserConstants.DEFAULT_PASSWORD));
+        userMapper.insert(userDO);
         if (CollectionUtil.isNotEmpty(reqVO.getRoleIds())) {
             userRoleMapper.insertBatch(CollectionUtils.convertList(reqVO.getRoleIds(),
-                    roleId -> new UserRole().setUserId(user.getId()).setRoleId(roleId)));
+                    roleId -> new UserRoleDO().setUserId(userDO.getId()).setRoleId(roleId)));
         }
-        return user.getId();
+        return userDO.getId();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateUser(UserUpdateVO reqVO) {
         validateUserForCreateOrUpdate(reqVO.getId(), reqVO.getUsername(), reqVO.getMobile(), reqVO.getEmail());
-        User convert = UserConvert.INSTANCE.convert(reqVO);
+        UserDO convert = UserConvert.INSTANCE.convert(reqVO);
         userRoleMapper.deleteByUserId(convert.getId());
         // TODO 不能分配超级管理员角色
         if (CollectionUtil.isNotEmpty(reqVO.getRoleIds())) {
             userRoleMapper.insertBatch(CollectionUtils.convertList(reqVO.getRoleIds(),
-                    roleId -> new UserRole().setUserId(convert.getId()).setRoleId(roleId)));
+                    roleId -> new UserRoleDO().setUserId(convert.getId()).setRoleId(roleId)));
         }
         userMapper.updateById(convert);
     }
@@ -112,50 +112,50 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void updateUserPassword(UserUpdatePasswordVO reqVO) {
         validateUserExists(reqVO.getId());
-        userMapper.updateById(new User().setId(reqVO.getId()).setPassword(BCrypt.hashpw(reqVO.getPassword())));
+        userMapper.updateById(new UserDO().setId(reqVO.getId()).setPassword(BCrypt.hashpw(reqVO.getPassword())));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateUserStatus(UserUpdateStatusVO reqVO) {
         validateUserExists(reqVO.getId());
-        userMapper.updateById(new User().setId(reqVO.getId()).setStatus(reqVO.getStatus()));
+        userMapper.updateById(new UserDO().setId(reqVO.getId()).setStatus(reqVO.getStatus()));
     }
 
     @Override
     public LoginUser getLoginUser(String username, String mobile, String email) {
-        LambdaQueryWrapperX<User> wrapperX = new LambdaQueryWrapperX<>();
-        wrapperX.eqIfPresent(User::getUsername, username);
+        LambdaQueryWrapperX<UserDO> wrapperX = new LambdaQueryWrapperX<>();
+        wrapperX.eqIfPresent(UserDO::getUsername, username);
         if (StrUtil.isNotEmpty(mobile)) {
-            wrapperX.or().eq(User::getMobile, mobile);
+            wrapperX.or().eq(UserDO::getMobile, mobile);
         }
         if (StrUtil.isNotEmpty(email)) {
-            wrapperX.or().eq(User::getEmail, email);
+            wrapperX.or().eq(UserDO::getEmail, email);
         }
-        User user = userMapper.selectOne(wrapperX);
-        if (user == null) {
+        UserDO userDO = userMapper.selectOne(wrapperX);
+        if (userDO == null) {
             throw exception(USER_BAD_CREDENTIALS);
         }
-        return buildLoginUser(user);
+        return buildLoginUser(userDO);
     }
 
     @Override
-    public User getUserById(Long id) {
+    public UserDO getUserById(Long id) {
         return userMapper.selectById(id);
     }
 
     @Override
-    public PageResult<User> getUserPage(UserPageVO reqVO) {
+    public PageResult<UserDO> getUserPage(UserPageVO reqVO) {
         return userMapper.selectPage(reqVO);
     }
 
     @Override
-    public List<User> getUserListByNickname(String nickname) {
+    public List<UserDO> getUserListByNickname(String nickname) {
         return userMapper.selectListByNickname(nickname);
     }
 
     @Override
-    public List<User> getUserList(Collection<Long> ids) {
+    public List<UserDO> getUserList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
             return Collections.emptyList();
         }
@@ -167,7 +167,7 @@ public class UserServiceImpl implements UserService {
         validateUserExists(id);
         validateOldPassword(id, reqVO.getOldPassword());
         // 执行更新
-        userMapper.updateById(new User().setId(id).setPassword(BCrypt.hashpw(reqVO.getNewPassword())));
+        userMapper.updateById(new UserDO().setId(id).setPassword(BCrypt.hashpw(reqVO.getNewPassword())));
     }
 
     @Override
@@ -186,20 +186,20 @@ public class UserServiceImpl implements UserService {
      * @param oldPassword 旧密码
      */
     void validateOldPassword(Long id, String oldPassword) {
-        User user = userMapper.selectById(id);
-        if (user == null) {
+        UserDO userDO = userMapper.selectById(id);
+        if (userDO == null) {
             throw exception(USER_NOT_EXISTS);
         }
-        if (!BCrypt.checkpw(oldPassword, user.getPassword())) {
+        if (!BCrypt.checkpw(oldPassword, userDO.getPassword())) {
             throw exception(USER_PASSWORD_FAILED);
         }
     }
 
-    private LoginUser buildLoginUser(User user) {
-        LoginUser loginUser = UserConvert.INSTANCE.convert(user);
+    private LoginUser buildLoginUser(UserDO userDO) {
+        LoginUser loginUser = UserConvert.INSTANCE.convert(userDO);
         Set<Long> roleIds = permissionService.getRoleIdListByUserId(loginUser.getId());
-        List<Role> roleList = roleMapper.selectByIds(roleIds);
-        List<LabelValue> roles = CollectionUtils.convertList(roleList, Role::getLabelValue);
+        List<RoleDO> roleDOList = roleMapper.selectByIds(roleIds);
+        List<LabelValue> roles = CollectionUtils.convertList(roleDOList, RoleDO::getLabelValue);
         loginUser.setRoles(roles);
         Set<String> perms = new HashSet<>();
         if (LoginUtil.isAdministrator(loginUser.getId())) {
@@ -227,8 +227,8 @@ public class UserServiceImpl implements UserService {
         if (id == null) {
             return;
         }
-        User user = userMapper.selectById(id);
-        if (user == null) {
+        UserDO userDO = userMapper.selectById(id);
+        if (userDO == null) {
             throw exception(USER_NOT_EXISTS);
         }
     }
@@ -237,15 +237,15 @@ public class UserServiceImpl implements UserService {
         if (StrUtil.isBlank(username)) {
             return;
         }
-        User user = userMapper.selectByUsername(username);
-        if (user == null) {
+        UserDO userDO = userMapper.selectByUsername(username);
+        if (userDO == null) {
             return;
         }
         // 如果 id 为空，说明不用比较是否为相同 id 的用户
         if (id == null) {
             throw exception(USER_USERNAME_EXISTS);
         }
-        if (!user.getId().equals(id)) {
+        if (!userDO.getId().equals(id)) {
             throw exception(USER_USERNAME_EXISTS);
         }
     }
@@ -254,15 +254,15 @@ public class UserServiceImpl implements UserService {
         if (StrUtil.isBlank(mobile)) {
             return;
         }
-        User user = userMapper.selectByMobile(mobile);
-        if (user == null) {
+        UserDO userDO = userMapper.selectByMobile(mobile);
+        if (userDO == null) {
             return;
         }
         // 如果 id 为空，说明不用比较是否为相同 id 的用户
         if (id == null) {
             throw exception(USER_MOBILE_EXISTS);
         }
-        if (!user.getId().equals(id)) {
+        if (!userDO.getId().equals(id)) {
             throw exception(USER_MOBILE_EXISTS);
         }
     }
@@ -271,15 +271,15 @@ public class UserServiceImpl implements UserService {
         if (StrUtil.isBlank(email)) {
             return;
         }
-        User user = userMapper.selectByEmail(email);
-        if (user == null) {
+        UserDO userDO = userMapper.selectByEmail(email);
+        if (userDO == null) {
             return;
         }
         // 如果 id 为空，说明不用比较是否为相同 id 的用户
         if (id == null) {
             throw exception(USER_EMAIL_EXISTS);
         }
-        if (!user.getId().equals(id)) {
+        if (!userDO.getId().equals(id)) {
             throw exception(USER_EMAIL_EXISTS);
         }
     }

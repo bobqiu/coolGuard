@@ -1,11 +1,10 @@
 package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.LoginLogConvert;
-import cn.wnhyang.coolGuard.system.entity.LoginLog;
+import cn.wnhyang.coolGuard.system.entity.LoginLogDO;
 import cn.wnhyang.coolGuard.system.service.LoginLogService;
 import cn.wnhyang.coolGuard.system.vo.loginlog.LoginLogPageVO;
 import cn.wnhyang.coolGuard.system.vo.loginlog.LoginLogVO;
@@ -35,10 +34,9 @@ public class LoginLogController {
      * @return 分页登录日志
      */
     @GetMapping("/page")
-    @OperateLog(module = "后台-登录日志", name = "分页查询登录日志")
     @SaCheckPermission("system:loginLog:query")
     public CommonResult<PageResult<LoginLogVO>> getLoginLogPage(@Valid LoginLogPageVO reqVO) {
-        PageResult<LoginLog> page = loginLogService.getLoginLogPage(reqVO);
+        PageResult<LoginLogDO> page = loginLogService.getLoginLogPage(reqVO);
         return CommonResult.success(LoginLogConvert.INSTANCE.convertPage(page));
     }
 }

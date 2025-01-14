@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.system.service.impl;
 
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.ParamConvert;
-import cn.wnhyang.coolGuard.system.entity.Param;
+import cn.wnhyang.coolGuard.system.entity.ParamDO;
 import cn.wnhyang.coolGuard.system.mapper.ParamMapper;
 import cn.wnhyang.coolGuard.system.service.ParamService;
 import cn.wnhyang.coolGuard.system.vo.param.ParamCreateVO;
@@ -33,40 +33,40 @@ public class ParamServiceImpl implements ParamService {
     @Transactional(rollbackFor = Exception.class)
     public Long create(ParamCreateVO createVO) {
         validateDictForCreateOrUpdate(null, createVO.getLabel(), createVO.getValue());
-        Param param = ParamConvert.INSTANCE.convert(createVO);
-        paramMapper.insert(param);
-        return param.getId();
+        ParamDO paramDO = ParamConvert.INSTANCE.convert(createVO);
+        paramMapper.insert(paramDO);
+        return paramDO.getId();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(ParamUpdateVO updateVO) {
         validateDictForCreateOrUpdate(updateVO.getId(), updateVO.getLabel(), updateVO.getValue());
-        Param param = ParamConvert.INSTANCE.convert(updateVO);
-        paramMapper.updateById(param);
+        ParamDO paramDO = ParamConvert.INSTANCE.convert(updateVO);
+        paramMapper.updateById(paramDO);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
         validateParamExists(id);
-        Param param = paramMapper.selectById(id);
-        if (param == null) {
+        ParamDO paramDO = paramMapper.selectById(id);
+        if (paramDO == null) {
             throw exception(PARAM_NOT_EXISTS);
         }
-        if (param.getStandard()) {
+        if (paramDO.getStandard()) {
             throw exception(PARAM_STANDARD_CANNOT_DELETE);
         }
         paramMapper.deleteById(id);
     }
 
     @Override
-    public Param get(Long id) {
+    public ParamDO get(Long id) {
         return paramMapper.selectById(id);
     }
 
     @Override
-    public PageResult<Param> page(ParamPageVO pageVO) {
+    public PageResult<ParamDO> page(ParamPageVO pageVO) {
         return paramMapper.selectPage(pageVO);
     }
 
@@ -83,36 +83,36 @@ public class ParamServiceImpl implements ParamService {
         if (id == null) {
             return;
         }
-        Param param = paramMapper.selectById(id);
-        if (param == null) {
+        ParamDO paramDO = paramMapper.selectById(id);
+        if (paramDO == null) {
             throw exception(PARAM_NOT_EXISTS);
         }
     }
 
     private void validateLabelUnique(Long id, String label) {
-        Param param = paramMapper.selectByLabel(label);
-        if (param == null) {
+        ParamDO paramDO = paramMapper.selectByLabel(label);
+        if (paramDO == null) {
             return;
         }
         // 如果 id 为空，说明不用比较是否为相同 id 的用户
         if (id == null) {
             throw exception(PARAM_LABEL_EXISTS);
         }
-        if (!param.getId().equals(id)) {
+        if (!paramDO.getId().equals(id)) {
             throw exception(PARAM_LABEL_EXISTS);
         }
     }
 
     private void validateValueUnique(Long id, String value) {
-        Param param = paramMapper.selectByValue(value);
-        if (param == null) {
+        ParamDO paramDO = paramMapper.selectByValue(value);
+        if (paramDO == null) {
             return;
         }
         // 如果 id 为空，说明不用比较是否为相同 id 的用户
         if (id == null) {
             throw exception(PARAM_VALUE_EXISTS);
         }
-        if (!param.getId().equals(id)) {
+        if (!paramDO.getId().equals(id)) {
             throw exception(PARAM_VALUE_EXISTS);
         }
     }

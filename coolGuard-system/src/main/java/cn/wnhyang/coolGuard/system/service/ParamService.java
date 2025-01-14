@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.service;
 
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.Param;
+import cn.wnhyang.coolGuard.system.entity.ParamDO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamCreateVO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamPageVO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamUpdateVO;
@@ -42,7 +42,7 @@ public interface ParamService {
      * @param id id
      * @return po
      */
-    Param get(Long id);
+    ParamDO get(Long id);
 
     /**
      * 分页查询
@@ -50,6 +50,6 @@ public interface ParamService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<Param> page(ParamPageVO pageVO);
+    PageResult<ParamDO> page(ParamPageVO pageVO);
 
 }

@@ -82,8 +82,8 @@ public class RuleController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<RuleVO> getRule(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<RuleVO> getRule(@RequestParam("id") Long id) {
         return success(ruleService.getRule(id));
     }
 
@@ -104,8 +104,8 @@ public class RuleController {
      * @param policyCode 策略编码
      * @return list
      */
-    @GetMapping("/list/{policyCode}")
-    public CommonResult<List<RuleVO>> listByPolicyCode(@PathVariable("policyCode") String policyCode) {
+    @GetMapping("/list")
+    public CommonResult<List<RuleVO>> listByPolicyCode(@RequestParam("policyCode") String policyCode) {
         return success(ruleService.listByPolicyCode(policyCode));
     }
 

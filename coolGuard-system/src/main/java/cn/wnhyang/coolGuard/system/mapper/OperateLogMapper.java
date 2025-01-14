@@ -3,11 +3,9 @@ package cn.wnhyang.coolGuard.system.mapper;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.system.entity.OperateLog;
+import cn.wnhyang.coolGuard.system.entity.OperateLogDO;
 import cn.wnhyang.coolGuard.system.vo.operatelog.OperateLogPageVO;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.Collection;
 
 /**
  * 操作日志记录
@@ -16,17 +14,17 @@ import java.util.Collection;
  * @since 2023/06/05
  */
 @Mapper
-public interface OperateLogMapper extends BaseMapperX<OperateLog> {
+public interface OperateLogMapper extends BaseMapperX<OperateLogDO> {
 
-    default PageResult<OperateLog> selectPage(OperateLogPageVO reqVO, Collection<Long> userIds) {
-        LambdaQueryWrapperX<OperateLog> query = new LambdaQueryWrapperX<OperateLog>()
-                .likeIfPresent(OperateLog::getModule, reqVO.getModule())
-                .inIfPresent(OperateLog::getUserId, userIds)
-                .eqIfPresent(OperateLog::getType, reqVO.getType())
-                .betweenIfPresent(OperateLog::getStartTime, reqVO.getStartTime(), reqVO.getEndTime())
-                .eqIfPresent(OperateLog::getResultCode, reqVO.getResultCode());
+    default PageResult<OperateLogDO> selectPage(OperateLogPageVO reqVO) {
+        LambdaQueryWrapperX<OperateLogDO> query = new LambdaQueryWrapperX<OperateLogDO>()
+                .likeIfPresent(OperateLogDO::getModule, reqVO.getModule())
+                .likeIfPresent(OperateLogDO::getUserNickname, reqVO.getUserNickname())
+                .eqIfPresent(OperateLogDO::getType, reqVO.getType())
+                .betweenIfPresent(OperateLogDO::getStartTime, reqVO.getStartTime(), reqVO.getEndTime())
+                .eqIfPresent(OperateLogDO::getResultCode, reqVO.getResultCode());
         // 降序
-        query.orderByDesc(OperateLog::getId);
+        query.orderByDesc(OperateLogDO::getId);
         return selectPage(reqVO, query);
     }
 }

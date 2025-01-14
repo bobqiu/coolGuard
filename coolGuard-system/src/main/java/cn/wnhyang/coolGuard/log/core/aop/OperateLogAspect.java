@@ -98,6 +98,7 @@ public class OperateLogAspect {
             try {
                 Long userId = LoginUtil.getUserId();
                 operateLogObj.setUserId(userId);
+                operateLogObj.setUserNickname(LoginUtil.getLoginUser().getNickname());
             } catch (Exception e) {
                 operateLogObj.setUserId(0L);
             }
@@ -206,13 +207,14 @@ public class OperateLogAspect {
     private static void fillResultFields(LogCreateReqDTO operateLogObj,
                                          OperateLog operateLog,
                                          LocalDateTime startTime, Object result, Throwable exception) {
-        operateLogObj.setDuration((int) (LocalDateTimeUtil.between(startTime, LocalDateTime.now()).toMillis()));
+        LocalDateTime endTime = LocalDateTime.now();
+        operateLogObj.setEndTime(endTime);
+        operateLogObj.setDuration((int) (LocalDateTimeUtil.between(startTime, endTime).toMillis()));
         log.info("startTime:{}, duration:{}, resultCode:{}, resultMsg:{}",
                 startTime, operateLogObj.getDuration(), operateLogObj.getResultCode(), operateLogObj.getResultMsg());
 
         // （正常）处理 resultCode 和 resultMsg 字段
-        if (result instanceof CommonResult) {
-            CommonResult<?> commonResult = (CommonResult<?>) result;
+        if (result instanceof CommonResult<?> commonResult) {
             operateLogObj.setResultCode(commonResult.getCode());
             operateLogObj.setResultMsg(commonResult.getMsg());
         } else {
@@ -266,18 +268,13 @@ public class OperateLogAspect {
         if (requestMethod == null) {
             return null;
         }
-        switch (requestMethod) {
-            case GET:
-                return OperateType.GET;
-            case POST:
-                return OperateType.CREATE;
-            case PUT:
-                return OperateType.UPDATE;
-            case DELETE:
-                return OperateType.DELETE;
-            default:
-                return OperateType.OTHER;
-        }
+        return switch (requestMethod) {
+            case GET -> OperateType.GET;
+            case POST -> OperateType.CREATE;
+            case PUT -> OperateType.UPDATE;
+            case DELETE -> OperateType.DELETE;
+            default -> OperateType.OTHER;
+        };
     }
 
     private static RequestMethod[] obtainRequestMethod(ProceedingJoinPoint joinPoint) {

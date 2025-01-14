@@ -77,8 +77,8 @@ public class ParamController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<ParamVO> get(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<ParamVO> get(@RequestParam("id") Long id) {
         return success(ParamConvert.INSTANCE.convert(paramService.get(id)));
     }
 

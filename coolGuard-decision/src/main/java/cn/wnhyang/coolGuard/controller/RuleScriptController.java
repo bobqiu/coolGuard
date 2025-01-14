@@ -68,8 +68,8 @@ public class RuleScriptController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<RuleScriptVO> getRuleScript(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<RuleScriptVO> getRuleScript(@RequestParam("id") Long id) {
         return success(RuleScriptConvert.INSTANCE.convert(ruleScriptService.getRuleScript(id)));
     }
 

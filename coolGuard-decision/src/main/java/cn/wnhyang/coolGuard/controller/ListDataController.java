@@ -77,8 +77,8 @@ public class ListDataController {
      * @param id id
      * @return vo
      */
-    @GetMapping("/{id}")
-    public CommonResult<ListDataVO> get(@PathVariable("id") Long id) {
+    @GetMapping
+    public CommonResult<ListDataVO> get(@RequestParam("id") Long id) {
         return success(ListDataConvert.INSTANCE.convert(listDataService.get(id)));
     }
 

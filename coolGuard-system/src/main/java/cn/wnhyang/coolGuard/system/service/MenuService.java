@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.service;
 
 
-import cn.wnhyang.coolGuard.system.entity.Menu;
+import cn.wnhyang.coolGuard.system.entity.MenuDO;
 import cn.wnhyang.coolGuard.system.vo.menu.*;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public interface MenuService {
      * @param reqVO 菜单
      * @return 菜单列表
      */
-    List<Menu> getMenuList(MenuListVO reqVO);
+    List<MenuDO> getMenuList(MenuListVO reqVO);
 
     /**
      * 查询菜单
@@ -51,7 +51,7 @@ public interface MenuService {
      * @param id 菜单id
      * @return 菜单
      */
-    Menu getMenu(Long id);
+    MenuDO getMenu(Long id);
 
     /**
      * 根据菜单ids查询菜单
@@ -59,14 +59,14 @@ public interface MenuService {
      * @param ids 菜单ids
      * @return 菜单
      */
-    List<Menu> getMenuList(Set<Long> ids);
+    List<MenuDO> getMenuList(Set<Long> ids);
 
     /**
      * 获取所有菜单列表
      *
      * @return 菜单列表
      */
-    List<Menu> getMenuList();
+    List<MenuDO> getMenuList();
 
     /**
      * 获取树形菜单列表

@@ -11,7 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ParamType {
 
-    BOOLEAN("boolean"), STRING("string"), JSON("json");
+    BOOLEAN("Boolean"), STRING("String"), JSON("Json");
 
     private final String type;
 
