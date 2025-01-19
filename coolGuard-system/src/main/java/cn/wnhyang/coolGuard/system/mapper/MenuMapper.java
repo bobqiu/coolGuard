@@ -17,6 +17,11 @@ import java.util.List;
 @Mapper
 public interface MenuMapper extends BaseMapperX<MenuDO> {
 
+    default List<MenuDO> selectListOrder() {
+        return selectList(new LambdaQueryWrapperX<MenuDO>()
+                .orderByAsc(MenuDO::getOrder));
+    }
+
     default MenuDO selectByParentIdAndName(Long parentId, String name) {
         return selectOne(MenuDO::getParentId, parentId, MenuDO::getName, name);
     }
@@ -25,8 +30,9 @@ public interface MenuMapper extends BaseMapperX<MenuDO> {
         return selectCount(MenuDO::getParentId, parentId);
     }
 
-    default List<MenuDO> selectList(MenuListVO reqVO) {
+    default List<MenuDO> selectListOrder(MenuListVO reqVO) {
         return selectList(new LambdaQueryWrapperX<MenuDO>()
-                .likeIfPresent(MenuDO::getTitle, reqVO.getTitle()));
+                .likeIfPresent(MenuDO::getTitle, reqVO.getTitle())
+                .orderByAsc(MenuDO::getOrder));
     }
 }

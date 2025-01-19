@@ -28,7 +28,7 @@ public class FieldVO extends FieldBaseVO {
     /**
      * 字段名
      */
-    private String name;
+    private String code;
 
     /**
      * 字段类型

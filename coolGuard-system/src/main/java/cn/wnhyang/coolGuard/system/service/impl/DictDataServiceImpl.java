@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
@@ -35,18 +34,11 @@ public class DictDataServiceImpl implements DictDataService {
 
     private final DictTypeMapper dictTypeMapper;
 
-    /**
-     * 排序 dictType > sort
-     */
-    private static final Comparator<DictDataDO> COMPARATOR_TYPE_AND_SORT = Comparator
-            .comparing(DictDataDO::getDictType)
-            .thenComparingInt(DictDataDO::getSort);
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createDictData(DictDataCreateVO reqVO) {
         // 校验正确性
-        validateDictDataForCreateOrUpdate(null, reqVO.getValue(), reqVO.getDictType());
+        validateDictDataForCreateOrUpdate(null, reqVO.getCode(), reqVO.getTypeCode());
 
         // 插入字典类型
         DictDataDO dictData = DictDataConvert.INSTANCE.convert(reqVO);
@@ -58,7 +50,7 @@ public class DictDataServiceImpl implements DictDataService {
     @Transactional(rollbackFor = Exception.class)
     public void updateDictData(DictDataUpdateVO reqVO) {
         // 校验正确性
-        validateDictDataForCreateOrUpdate(reqVO.getId(), reqVO.getValue(), reqVO.getDictType());
+        validateDictDataForCreateOrUpdate(reqVO.getId(), reqVO.getCode(), reqVO.getTypeCode());
 
         // 更新字典类型
         DictDataDO dictData = DictDataConvert.INSTANCE.convert(reqVO);
@@ -77,9 +69,7 @@ public class DictDataServiceImpl implements DictDataService {
 
     @Override
     public List<DictDataDO> getDictDataList() {
-        List<DictDataDO> list = dictDataMapper.selectList();
-        list.sort(COMPARATOR_TYPE_AND_SORT);
-        return list;
+        return dictDataMapper.selectList();
     }
 
     @Override
@@ -93,26 +83,26 @@ public class DictDataServiceImpl implements DictDataService {
     }
 
     @Override
-    public DictDataDO getDictData(String dictType, String value) {
-        return dictDataMapper.selectByDictTypeAndValue(dictType, value);
+    public DictDataDO getDictData(String dictType, String code) {
+        return dictDataMapper.selectByTypeCodeAndCode(dictType, code);
     }
 
     @Override
     public List<DictDataDO> getDictDataListByDictType(String type) {
-        return dictDataMapper.selectListByDictType(type);
+        return dictDataMapper.selectListByDictTypeCode(type);
     }
 
-    private void validateDictDataForCreateOrUpdate(Long id, String value, String dictType) {
+    private void validateDictDataForCreateOrUpdate(Long id, String code, String dictType) {
         // 校验自己存在
         validateDictDataExists(id);
         // 校验字典类型有效
         validateDictTypeExists(dictType);
         // 校验字典数据的值的唯一性
-        validateDictDataValueUnique(id, dictType, value);
+        validateDictDataValueUnique(id, dictType, code);
     }
 
-    public void validateDictDataValueUnique(Long id, String dictType, String value) {
-        DictDataDO dictData = dictDataMapper.selectByDictTypeAndValue(dictType, value);
+    public void validateDictDataValueUnique(Long id, String dictType, String code) {
+        DictDataDO dictData = dictDataMapper.selectByTypeCodeAndCode(dictType, code);
         if (dictData == null) {
             return;
         }
@@ -135,13 +125,10 @@ public class DictDataServiceImpl implements DictDataService {
         }
     }
 
-    public void validateDictTypeExists(String type) {
-        DictTypeDO dictType = dictTypeMapper.selectByType(type);
+    public void validateDictTypeExists(String typeCode) {
+        DictTypeDO dictType = dictTypeMapper.selectByCode(typeCode);
         if (dictType == null) {
             throw exception(DICT_TYPE_NOT_EXISTS);
-        }
-        if (!Boolean.TRUE.equals(dictType.getStatus())) {
-            throw exception(DICT_TYPE_NOT_ENABLE);
         }
     }
 }

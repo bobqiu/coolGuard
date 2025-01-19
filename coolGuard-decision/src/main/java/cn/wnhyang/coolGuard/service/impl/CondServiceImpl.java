@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 规则条件表 服务实现类
@@ -38,16 +39,30 @@ public class CondServiceImpl implements CondService {
 
     private final ListDataService listDataService;
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.COND_TRUE, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "true组件")
-    public boolean condTrue(NodeComponent bindCmp) {
-        return true;
-    }
-
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.COND, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "条件组件")
     public boolean cond(NodeComponent bindCmp) {
         Cond cond = bindCmp.getCmpData(Cond.class);
         if (cond == null) {
             return true;
+        }
+        // 如果有子节点，则递归计算子节点的结果
+        if (cond.getChildren() != null && !cond.getChildren().isEmpty()) {
+            List<Cond> children = cond.getChildren();
+            return switch (cond.getRelation().toUpperCase()) {
+                case "AND" -> children.stream().allMatch((item) -> condLeaf(bindCmp, item));
+                case "OR" -> children.stream().anyMatch((item) -> condLeaf(bindCmp, item));
+                default -> throw new IllegalArgumentException("Unsupported relation: " + cond.getRelation());
+            };
+        }
+
+        // 处理叶子节点
+        return condLeaf(bindCmp, cond);
+    }
+
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.COND_LEAF, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "条件叶子组件")
+    public boolean condLeaf(NodeComponent bindCmp, Cond cond) {
+        if (cond == null) {
+            return false;
         }
 
         // 获取上下文

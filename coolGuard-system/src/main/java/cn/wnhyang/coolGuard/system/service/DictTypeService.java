@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.system.service;
 
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.entity.DictTypeDO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeCreateVO;
@@ -56,9 +57,9 @@ public interface DictTypeService {
     DictTypeDO getDictType(Long id);
 
     /**
-     * 获取简单字典类型
+     * 获取字典类型列表
      *
      * @return 字典类型列表
      */
-    List<DictTypeDO> getDictTypeList();
+    List<LabelValue> getLabelValueList();
 }

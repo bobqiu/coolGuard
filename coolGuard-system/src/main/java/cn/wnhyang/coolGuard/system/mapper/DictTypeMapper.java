@@ -17,20 +17,18 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface DictTypeMapper extends BaseMapperX<DictTypeDO> {
 
-    default DictTypeDO selectByType(String type) {
-        return selectOne(DictTypeDO::getType, type);
+    default PageResult<DictTypeDO> selectPage(DictTypePageVO reqVO) {
+        return selectPage(reqVO, new LambdaQueryWrapperX<DictTypeDO>()
+                .likeIfPresent(DictTypeDO::getName, reqVO.getName())
+                .likeIfPresent(DictTypeDO::getCode, reqVO.getCode())
+                .orderByDesc(DictTypeDO::getId));
     }
 
     default DictTypeDO selectByName(String name) {
         return selectOne(DictTypeDO::getName, name);
     }
 
-    default PageResult<DictTypeDO> selectPage(DictTypePageVO reqVO) {
-        return selectPage(reqVO, new LambdaQueryWrapperX<DictTypeDO>()
-                .likeIfPresent(DictTypeDO::getName, reqVO.getName())
-                .likeIfPresent(DictTypeDO::getType, reqVO.getType())
-                .eqIfPresent(DictTypeDO::getStatus, reqVO.getStatus())
-                .betweenIfPresent(DictTypeDO::getCreateTime, reqVO.getStartTime(), reqVO.getEndTime())
-                .orderByDesc(DictTypeDO::getId));
+    default DictTypeDO selectByCode(String code) {
+        return selectOne(DictTypeDO::getCode, code);
     }
 }

@@ -98,7 +98,7 @@ public class AccessServiceImpl implements AccessService {
         EventContext eventContext = new EventContext();
         IndicatorContext indicatorContext = new IndicatorContext();
 
-        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()), null, fieldContext, indicatorContext, policyContext, eventContext);
+        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode()), null, fieldContext, indicatorContext, policyContext, eventContext);
         if (!syncRisk.isSuccess()) {
             throw exception(Integer.valueOf(syncRisk.getCode()), syncRisk.getMessage());
         }
@@ -111,7 +111,7 @@ public class AccessServiceImpl implements AccessService {
         // TODO 增加接口耗时和流程耗时
         if (CollUtil.isNotEmpty(outputFieldList)) {
             for (OutputFieldVO outputField : outputFieldList) {
-                outFields.put(outputField.getParamName(), fieldContext.getStringData(outputField.getName()));
+                outFields.put(outputField.getParamName(), fieldContext.getStringData(outputField.getCode()));
             }
         }
         result.put("outFields", outFields);
@@ -150,13 +150,13 @@ public class AccessServiceImpl implements AccessService {
     @Transactional(rollbackFor = Exception.class)
     public Long createAccess(AccessCreateVO createVO) {
         // 1、校验服务name唯一性
-        if (accessMapper.selectByName(createVO.getName()) != null) {
+        if (accessMapper.selectByCode(createVO.getCode()) != null) {
             throw exception(ACCESS_NAME_EXIST);
         }
         Access access = AccessConvert.INSTANCE.convert(createVO);
         accessMapper.insert(access);
         // TODO 创建chain
-        String aChain = StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName());
+        String aChain = StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode());
         chainMapper.insert(new Chain().setChainName(aChain));
         return access.getId();
     }
@@ -178,7 +178,7 @@ public class AccessServiceImpl implements AccessService {
             throw exception(ACCESS_NOT_EXIST);
         }
         accessMapper.deleteById(id);
-        chainMapper.deleteByChainName(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getName()));
+        chainMapper.deleteByChainName(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode()));
     }
 
     @Override
@@ -195,7 +195,7 @@ public class AccessServiceImpl implements AccessService {
 
     @Override
     public Access getAccessByName(String name) {
-        Access access = accessMapper.selectByName(name);
+        Access access = accessMapper.selectByCode(name);
         if (access == null) {
             throw exception(ACCESS_NOT_EXIST);
         }
@@ -209,7 +209,7 @@ public class AccessServiceImpl implements AccessService {
         List<InputFieldVO> inputFieldVOList = new ArrayList<>();
         if (CollUtil.isNotEmpty(configFieldList)) {
             for (ConfigField configField : configFieldList) {
-                Field field = fieldMapper.selectByName(configField.getFieldName());
+                Field field = fieldMapper.selectByCode(configField.getFieldName());
                 if (field != null) {
                     InputFieldVO inputFieldVO = FieldConvert.INSTANCE.convert2InputFieldVO(field);
                     inputFieldVO.setParamName(configField.getParamName());
@@ -228,10 +228,10 @@ public class AccessServiceImpl implements AccessService {
         List<OutputFieldVO> outputFieldVOList = new ArrayList<>();
         if (CollUtil.isNotEmpty(configFieldList)) {
             for (ConfigField configField : configFieldList) {
-                Field field = fieldMapper.selectByName(configField.getFieldName());
+                Field field = fieldMapper.selectByCode(configField.getFieldName());
                 if (field != null) {
                     outputFieldVOList.add(new OutputFieldVO()
-                            .setName(configField.getFieldName())
+                            .setCode(configField.getFieldName())
                             .setParamName(configField.getParamName()));
                 }
             }

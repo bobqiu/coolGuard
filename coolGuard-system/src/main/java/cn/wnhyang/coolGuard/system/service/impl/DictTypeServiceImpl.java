@@ -1,9 +1,8 @@
 package cn.wnhyang.coolGuard.system.service.impl;
 
-import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.DictTypeConvert;
-import cn.wnhyang.coolGuard.system.entity.DictDataDO;
 import cn.wnhyang.coolGuard.system.entity.DictTypeDO;
 import cn.wnhyang.coolGuard.system.mapper.DictDataMapper;
 import cn.wnhyang.coolGuard.system.mapper.DictTypeMapper;
@@ -11,6 +10,7 @@ import cn.wnhyang.coolGuard.system.service.DictTypeService;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeCreateVO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypePageVO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeUpdateVO;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +39,7 @@ public class DictTypeServiceImpl implements DictTypeService {
     @Transactional(rollbackFor = Exception.class)
     public Long createDictType(DictTypeCreateVO reqVO) {
         // 校验正确性
-        validateDictTypeForCreateOrUpdate(null, reqVO.getName(), reqVO.getType());
+        validateDictForCreateOrUpdate(null, reqVO.getName(), reqVO.getCode());
 
         // 插入字典类型
         DictTypeDO dictType = DictTypeConvert.INSTANCE.convert(reqVO);
@@ -51,32 +51,24 @@ public class DictTypeServiceImpl implements DictTypeService {
     @Transactional(rollbackFor = Exception.class)
     public void updateDictType(DictTypeUpdateVO reqVO) {
         // 校验正确性
-        validateDictTypeForCreateOrUpdate(reqVO.getId(), reqVO.getName(), null);
-
-        DictTypeDO oldDictType = dictTypeMapper.selectById(reqVO.getId());
+        validateDictForCreateOrUpdate(reqVO.getId(), reqVO.getName(), null);
         // 更新字典类型
         DictTypeDO dictType = DictTypeConvert.INSTANCE.convert(reqVO);
         dictTypeMapper.updateById(dictType);
-        // 字典类型更新时同时更新关联的字段数据
-        if (StrUtil.isNotBlank(dictType.getType())) {
-            List<DictDataDO> dictDataList = dictDataMapper.selectListByDictType(oldDictType.getType());
-            for (DictDataDO dictData : dictDataList) {
-                dictData.setDictType(dictType.getType());
-            }
-            dictDataMapper.updateBatch(dictDataList);
-        }
-
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteDictType(Long id) {
-        // 校验是否存在
-        DictTypeDO dictType = validateDictTypeExists(id);
-        // 校验是否有字典数据
-        if (dictDataMapper.selectCountByDictType(dictType.getType()) > 0) {
-            throw exception(DICT_TYPE_HAS_CHILDREN);
+        DictTypeDO dictTypeDO = dictTypeMapper.selectById(id);
+        if (dictTypeDO == null) {
+            throw exception(DICT_TYPE_NOT_EXISTS);
         }
+        if (dictTypeDO.getStandard()) {
+            throw exception(DICT_TYPE_STANDARD_NOT_ALLOW_DELETE);
+        }
+        // 删除字典数据
+        dictDataMapper.deleteByTypeCode(dictTypeDO.getCode());
         // 删除字典类型
         dictTypeMapper.deleteById(id);
     }
@@ -92,62 +84,55 @@ public class DictTypeServiceImpl implements DictTypeService {
     }
 
     @Override
-    public List<DictTypeDO> getDictTypeList() {
-        return dictTypeMapper.selectList();
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(dictTypeMapper.selectList(), DictTypeDO::getLabelValue);
     }
 
-    private void validateDictTypeForCreateOrUpdate(Long id, String name, String type) {
-        // 校验自己存在
-        validateDictTypeExists(id);
-        // 校验字典类型的名字的唯一性
-        validateDictTypeNameUnique(id, name);
-        // 校验字典类型的类型的唯一性
-        validateDictTypeUnique(id, type);
+    private void validateDictForCreateOrUpdate(Long id, String name, String code) {
+        // 校验用户存在
+        validateDictExists(id);
+        // 校验label唯一
+        validateLabelUnique(id, name);
+        // 校验value唯一
+        validateValueUnique(id, code);
     }
 
-    void validateDictTypeNameUnique(Long id, String name) {
-        DictTypeDO dictType = dictTypeMapper.selectByName(name);
-        if (dictType == null) {
+    private void validateDictExists(Long id) {
+        if (id == null) {
             return;
         }
-        // 如果 id 为空，说明不用比较是否为相同 id 的字典类型
-        if (id == null) {
-            throw exception(DICT_TYPE_NAME_DUPLICATE);
-        }
-        if (!dictType.getId().equals(id)) {
-            throw exception(DICT_TYPE_NAME_DUPLICATE);
-        }
-    }
-
-    void validateDictTypeUnique(Long id, String type) {
-        if (StrUtil.isEmpty(type)) {
-            return;
-        }
-        DictTypeDO dictType = dictTypeMapper.selectByType(type);
-        if (dictType == null) {
-            return;
-        }
-        // 如果 id 为空，说明不用比较是否为相同 id 的字典类型
-        if (id == null) {
-            throw exception(DICT_TYPE_TYPE_DUPLICATE);
-        }
-        if (!dictType.getId().equals(id)) {
-            throw exception(DICT_TYPE_TYPE_DUPLICATE);
-        }
-    }
-
-    DictTypeDO validateDictTypeExists(Long id) {
-        if (id == null) {
-            return null;
-        }
-        DictTypeDO dictType = dictTypeMapper.selectById(id);
-        if (dictType == null) {
+        DictTypeDO dictTypeDO = dictTypeMapper.selectById(id);
+        if (dictTypeDO == null) {
             throw exception(DICT_TYPE_NOT_EXISTS);
         }
-        if (dictType.getStandard()) {
-            throw exception(DICT_TYPE_IS_STANDARD);
+    }
+
+    private void validateLabelUnique(Long id, String name) {
+        DictTypeDO dictTypeDO = dictTypeMapper.selectByName(name);
+        if (dictTypeDO == null) {
+            return;
         }
-        return dictType;
+        // 如果 id 为空，说明不用比较是否为相同 id 的用户
+        if (id == null) {
+            throw exception(DICT_TYPE_LABEL_EXISTS);
+        }
+        if (!dictTypeDO.getId().equals(id)) {
+            throw exception(DICT_TYPE_LABEL_EXISTS);
+        }
+    }
+
+    private void validateValueUnique(Long id, String code) {
+        DictTypeDO dictTypeDO = dictTypeMapper.selectByCode(code);
+        if (dictTypeDO == null) {
+            return;
+        }
+        // 如果 id 为空，说明不用比较是否为相同 id 的用户
+        if (id == null) {
+            throw exception(DICT_TYPE_VALUE_EXISTS);
+        }
+        if (!dictTypeDO.getId().equals(id)) {
+            throw exception(DICT_TYPE_VALUE_EXISTS);
+        }
     }
 
 }

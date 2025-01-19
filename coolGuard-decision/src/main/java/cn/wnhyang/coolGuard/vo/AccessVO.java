@@ -23,6 +23,6 @@ public class AccessVO extends AccessBaseVO {
     /**
      * 服务标识
      */
-    private String name;
+    private String code;
 
 }

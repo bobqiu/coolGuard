@@ -24,7 +24,7 @@ public class AccessBaseVO implements Serializable {
      */
     @NotBlank(message = "字段显示名不能为空")
     @Size(min = 1, max = 50, message = "字段显示名长度必须在1-50之间")
-    private String displayName;
+    private String name;
 
     /**
      * 输入配置

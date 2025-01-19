@@ -17,5 +17,5 @@ public class RoleSimpleVO {
 
     private String name;
 
-    private String value;
+    private String code;
 }

@@ -25,5 +25,5 @@ public class OutputFieldVO {
      * N普通字段，D动态字段
      * S/N/F/D/E/B字段类型
      */
-    private String name;
+    private String code;
 }

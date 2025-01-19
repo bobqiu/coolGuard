@@ -37,22 +37,22 @@ public class Field extends BaseDO {
     /**
      * 显示名
      */
-    @TableField("display_name")
-    private String displayName;
+    @TableField("name")
+    private String name;
 
     /**
      * 字段名，命名N/D_S/N/F/D/E/B_name
      * N普通字段，D动态字段
      * S/N/F/D/E/B字段类型
      */
-    @TableField("name")
-    private String name;
+    @TableField("code")
+    private String code;
 
     /**
      * 字段分组
      */
-    @TableField("group_name")
-    private String groupName;
+    @TableField("group_code")
+    private String groupCode;
 
     /**
      * 是否标准字段

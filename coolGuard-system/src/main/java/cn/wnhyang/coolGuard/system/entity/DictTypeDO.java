@@ -1,11 +1,16 @@
 package cn.wnhyang.coolGuard.system.entity;
 
+import cn.wnhyang.coolGuard.LabelValueAble;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+
+import java.io.Serial;
 
 /**
  * 字典类型表
@@ -19,9 +24,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("sys_dict_type")
-public class DictTypeDO extends BaseDO {
+public class DictTypeDO extends BaseDO implements LabelValueAble {
 
+    @Serial
     private static final long serialVersionUID = 4590391796032232229L;
+
     /**
      * 字典类型主键
      */
@@ -37,8 +44,8 @@ public class DictTypeDO extends BaseDO {
     /**
      * 字典类型
      */
-    @TableField("type")
-    private String type;
+    @TableField("code")
+    private String code;
 
     /**
      * 是否标准字典（0否 1是）
@@ -47,14 +54,14 @@ public class DictTypeDO extends BaseDO {
     private Boolean standard;
 
     /**
-     * 状态（0正常 1停用）
-     */
-    @TableField("status")
-    private Boolean status;
-
-    /**
      * 备注
      */
     @TableField("remark")
     private String remark;
+
+    @Override
+    @JsonIgnore
+    public LabelValue getLabelValue() {
+        return new LabelValue(id, name, code);
+    }
 }

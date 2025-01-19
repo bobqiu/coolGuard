@@ -20,13 +20,13 @@ public interface AccessMapper extends BaseMapperX<Access> {
 
     default PageResult<Access> selectPage(AccessPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<Access>()
-                .likeIfPresent(Access::getName, pageVO.getName())
-                .likeIfPresent(Access::getDisplayName, pageVO.getDisplayName()));
+                .likeIfPresent(Access::getCode, pageVO.getCode())
+                .likeIfPresent(Access::getName, pageVO.getName()));
     }
 
-    @Cacheable(cacheNames = RedisKey.ACCESS + "::na", key = "#name", unless = "#result == null")
-    default Access selectByName(String name) {
-        return selectOne(Access::getName, name);
+    @Cacheable(cacheNames = RedisKey.ACCESS + "::co", key = "#value", unless = "#result == null")
+    default Access selectByCode(String code) {
+        return selectOne(Access::getCode, code);
     }
 
 }

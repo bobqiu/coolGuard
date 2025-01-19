@@ -46,7 +46,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.APPLICATION, allEntries = true)
     public Long createApplication(ApplicationCreateVO createVO) {
-        if (applicationMapper.selectByName(createVO.getName()) != null) {
+        if (applicationMapper.selectByCode(createVO.getCode()) != null) {
             throw exception(APPLICATION_NAME_EXIST);
         }
         Application application = ApplicationConvert.INSTANCE.convert(createVO);
@@ -71,12 +71,12 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw exception(APPLICATION_NOT_EXIST);
         }
         // 确认是否有指标引用
-        List<Indicator> indicatorList = indicatorMapper.selectList(SceneType.APP, application.getName());
+        List<Indicator> indicatorList = indicatorMapper.selectList(SceneType.APP, application.getCode());
         if (CollUtil.isNotEmpty(indicatorList)) {
             throw exception(APPLICATION_REFERENCE_DELETE);
         }
         // 确认是否有策略集引用
-        List<PolicySet> policySets = policySetMapper.selectList(null, application.getName(), null, null);
+        List<PolicySet> policySets = policySetMapper.selectList(null, application.getCode(), null, null);
         if (CollUtil.isNotEmpty(policySets)) {
             throw exception(APPLICATION_REFERENCE_DELETE);
         }

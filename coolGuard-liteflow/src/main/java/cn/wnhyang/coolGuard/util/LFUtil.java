@@ -1,16 +1,7 @@
 package cn.wnhyang.coolGuard.util;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.entity.Cond;
-import cn.wnhyang.coolGuard.enums.CondType;
-import cn.wnhyang.coolGuard.enums.LogicType;
-import lombok.SneakyThrows;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.stream.Collectors;
 
 /**
  * @author wnhyang
@@ -109,14 +100,14 @@ public class LFUtil {
     public static final String POLICY_BREAK_NODE = "p_bn";
 
     /**
-     * true普通组件
+     * 条件普通组件
      */
-    public static final String COND_TRUE = "condTrue";
+    public static final String COND = "cond";
 
     /**
      * 条件普通组件
      */
-    public static final String COND = "cond";
+    public static final String COND_LEAF = "cond_leaf";
 
     /**
      * 加入list组件
@@ -160,164 +151,18 @@ public class LFUtil {
     }
 
     public static String buildElWithData(String nodeId, String data) {
-        return StrUtil.format("{}.data(\"{}\")", nodeId, data);
+        return StrUtil.format("{}.data('\"{}\"')", nodeId, data);
     }
 
     public static String buildWhen(String... el) {
         return "when(" + StrUtil.join(",", el) + ");";
     }
 
-    private static List<String> splitExpressions(String expression) {
-        List<String> parts = new ArrayList<>();
-        int level = 0;
-        int startIndex = 0;
-
-        for (int i = 0; i < expression.length(); i++) {
-            char c = expression.charAt(i);
-            if (c == '(') {
-                level++;
-            } else if (c == ')') {
-                level--;
-            } else if (c == ',' && level == 0) {
-                parts.add(expression.substring(startIndex, i));
-                startIndex = i + 1;
-            }
-        }
-        parts.add(expression.substring(startIndex));
-
-        return parts;
-    }
-
-    @SneakyThrows
     public static String buildCondEl(Cond cond) {
-        if (cond == null) {
-            return COND_TRUE;
-        }
-        if (cond.getRelation() != null && CollUtil.isNotEmpty(cond.getChildren())) {
-            List<String> expressions = cond.getChildren().stream()
-                    .map(LFUtil::buildCondEl)
-                    .collect(Collectors.toList());
-            return cond.getRelation() + "(" + String.join(", ", expressions) + ")";
-        } else {
-            return "c_cn.data('" + JsonUtil.toJsonString(cond) + "')";
-        }
-    }
-
-    @SneakyThrows
-    public static Cond parseToCond(String expression) {
-        expression = expression.replaceAll("\\s+", "");
-        return parseExpressionToCond(expression);
-    }
-
-    private static Cond parseExpressionToCond(String expression) throws Exception {
-        if (expression.startsWith("AND(")) {
-            return parseLogicExpression("AND", expression.substring(4, expression.length() - 1));
-        } else if (expression.startsWith("OR(")) {
-            return parseLogicExpression("OR", expression.substring(3, expression.length() - 1));
-        } else if (expression.startsWith("NOT(")) {
-            return parseLogicExpression("NOT", expression.substring(4, expression.length() - 1));
-        } else {
-            return parseVariable(expression);
-        }
-    }
-
-    private static Cond parseVariable(String variableExpression) throws Exception {
-        if (variableExpression.contains(".data('")) {
-            int dataIndex = variableExpression.indexOf(".data('");
-            String jsonData = variableExpression.substring(dataIndex + 7, variableExpression.length() - 2).trim();
-            return JsonUtil.parseObject(jsonData, Cond.class);
-        }
-        return new Cond();
-    }
-
-    private static Cond parseLogicExpression(String operator, String subExpression) throws Exception {
-        Cond cond = new Cond();
-        cond.setRelation(operator);
-        cond.setChildren(new ArrayList<>());
-        List<String> subExpressions = splitExpressions(subExpression);
-        for (String subExp : subExpressions) {
-            cond.getChildren().add(parseExpressionToCond(subExp.trim()));
-        }
-        return cond;
-    }
-
-
-    public static List<String> parseIfEl(String el) {
-        el = el.replaceAll("\\s+", "");
-        el = el.substring(3, el.length() - 2);
-        List<String> params = new ArrayList<>();
-        Stack<Character> stack = new Stack<>();
-        StringBuilder currentParam = new StringBuilder();
-        boolean inQuotes = false;
-
-        for (char c : el.toCharArray()) {
-            if (c == '(' || c == '[' || c == '{') {
-                stack.push(c);
-            } else if (c == ')' || c == ']' || c == '}') {
-                if (!stack.isEmpty() && stack.peek() == getMatchingOpeningBracket(c)) {
-                    stack.pop();
-                }
-            } else if (c == ',' && stack.isEmpty() && !inQuotes) {
-                params.add(currentParam.toString().trim());
-                currentParam.setLength(0);
-                continue;
-            } else if (c == '"' || c == '\'') {
-                inQuotes = !inQuotes;
-            }
-            currentParam.append(c);
-        }
-
-        if (!currentParam.isEmpty()) {
-            params.add(currentParam.toString().trim());
-        }
-
-        return params;
-    }
-
-    private static char getMatchingOpeningBracket(char closingBracket) {
-        return switch (closingBracket) {
-            case ')' -> '(';
-            case ']' -> '[';
-            case '}' -> '{';
-            default -> '\0';
-        };
+        return "cond.data('" + JsonUtil.toJsonString(cond) + "')";
     }
 
     public static void main(String[] args) throws Exception {
-
-        Cond cond = new Cond();
-        cond.setRelation("AND");
-        List<Cond> children = new ArrayList<>();
-        children.add(new Cond().setType(CondType.NORMAL.getType())
-                .setLeftValue("N_S_appName").setLogicType(LogicType.EQ.getType())
-                .setRightType("input").setRightValue("Phone"));
-        children.add(new Cond().setType(CondType.NORMAL.getType())
-                .setLeftValue("N_F_transAmount").setLogicType(LogicType.LT.getType())
-                .setRightType("input").setRightValue("100"));
-        cond.setChildren(children);
-
-        String condEl = buildCondEl(cond);
-        System.out.println(condEl);
-
-        System.out.println(parseToCond(condEl));
-
-        String content = "IF(" +
-                "AND(" +
-                "c_cn.data(" + "'" +
-                "{\"type\":\"normal\",\"leftValue\":\"N_S_appName\",\"logicType\":\"eq\",\"rightType\":\"input\",\"rightValue\":\"Phone\"}')," +
-                "c_cn.data('" +
-                "{\"type\":\"normal\",\"leftValue\":\"N_S_payerAccount\",\"logicType\":\"eq\",\"rightType\":\"input\",\"rightValue\":\"123456\"}')," +
-                "c_cn.data('" +
-                "{\"type\":\"normal\",\"leftValue\":\"N_F_transAmount\",\"logicType\":\"gt\",\"rightType\":\"input\",\"rightValue\":\"15\"}'))," +
-                "r_tcn.tag(\"1\"),r_fcn);";
-
-        List<String> ifEl = parseIfEl(content);
-        for (String parseParam : ifEl) {
-            System.out.println(parseParam);
-        }
-
-        Cond parseToCond = parseToCond(ifEl.get(0));
-        System.out.println(parseToCond);
 
     }
 }

@@ -18,17 +18,17 @@ public class FieldPageVO extends PageParam {
     /**
      * 显示名
      */
-    private String displayName;
+    private String name;
 
     /**
      * 字段名
      */
-    private String name;
+    private String code;
 
     /**
      * 字段分组名
      */
-    private String groupName;
+    private String groupCode;
 
     /**
      * 字段类型

@@ -1,14 +1,16 @@
 package cn.wnhyang.coolGuard.system.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.dev33.satoken.annotation.SaIgnore;
 import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.DictDataConvert;
-import cn.wnhyang.coolGuard.system.entity.DictDataDO;
 import cn.wnhyang.coolGuard.system.service.DictDataService;
-import cn.wnhyang.coolGuard.system.vo.dictdata.*;
+import cn.wnhyang.coolGuard.system.vo.dictdata.DictDataCreateVO;
+import cn.wnhyang.coolGuard.system.vo.dictdata.DictDataPageVO;
+import cn.wnhyang.coolGuard.system.vo.dictdata.DictDataRespVO;
+import cn.wnhyang.coolGuard.system.vo.dictdata.DictDataUpdateVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -77,11 +79,10 @@ public class DictDataController {
      *
      * @return 菜单列表
      */
-    @GetMapping("/simpleList")
-    @SaIgnore
-    public CommonResult<List<DictDataSimpleVO>> getSimpleDictDataList() {
-        List<DictDataDO> list = dictDataService.getDictDataList();
-        return success(DictDataConvert.INSTANCE.convertList(list));
+    @GetMapping("/list")
+    @SaCheckLogin
+    public CommonResult<List<DictDataRespVO>> getList(@RequestParam("type") String type) {
+        return success(DictDataConvert.INSTANCE.convertList(dictDataService.getDictDataListByDictType(type)));
     }
 
     /**
@@ -108,19 +109,6 @@ public class DictDataController {
     @SaCheckPermission("system:dict:query")
     public CommonResult<DictDataRespVO> getDictData(@RequestParam("id") Long id) {
         return success(DictDataConvert.INSTANCE.convert(dictDataService.getDictData(id)));
-    }
-
-    /**
-     * 根据字典类型查询字典数据
-     *
-     * @param type 字典类型
-     * @return 字典数据
-     */
-    @GetMapping("/byType")
-    @SaIgnore
-    public CommonResult<List<DictDataSimpleVO>> getDictDataListByType(@RequestParam("type") String type) {
-        List<DictDataDO> list = dictDataService.getDictDataListByDictType(type);
-        return success(DictDataConvert.INSTANCE.convertList(list));
     }
 
 }

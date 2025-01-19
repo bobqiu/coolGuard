@@ -38,14 +38,14 @@ public class Application extends BaseDO implements LabelValueAble {
     /**
      * 显示名
      */
-    @TableField("display_name")
-    private String displayName;
+    @TableField("name")
+    private String name;
 
     /**
      * 应用名
      */
-    @TableField("name")
-    private String name;
+    @TableField("code")
+    private String code;
 
     /**
      * 密钥
@@ -62,6 +62,6 @@ public class Application extends BaseDO implements LabelValueAble {
     @Override
     @JsonIgnore
     public LabelValue getLabelValue() {
-        return new LabelValue(id, displayName, name);
+        return new LabelValue(id, name, code);
     }
 }

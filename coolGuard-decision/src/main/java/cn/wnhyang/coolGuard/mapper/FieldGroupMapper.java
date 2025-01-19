@@ -20,12 +20,12 @@ public interface FieldGroupMapper extends BaseMapperX<FieldGroup> {
 
     default PageResult<FieldGroup> selectPage(FieldGroupPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<FieldGroup>()
-                .likeIfPresent(FieldGroup::getDisplayName, pageVO.getDisplayName())
-                .likeIfPresent(FieldGroup::getName, pageVO.getName()));
+                .likeIfPresent(FieldGroup::getName, pageVO.getName())
+                .likeIfPresent(FieldGroup::getCode, pageVO.getCode()));
     }
 
-    @Cacheable(cacheNames = RedisKey.FIELD_GROUP + "::na", key = "#name", unless = "#result == null")
-    default FieldGroup selectByName(String name) {
-        return selectOne(FieldGroup::getName, name);
+    @Cacheable(cacheNames = RedisKey.FIELD_GROUP + "::co", key = "#value", unless = "#result == null")
+    default FieldGroup selectByCode(String code) {
+        return selectOne(FieldGroup::getCode, code);
     }
 }

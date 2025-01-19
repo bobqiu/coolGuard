@@ -1,14 +1,16 @@
 package cn.wnhyang.coolGuard.system.controller;
 
-import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.DictTypeConvert;
-import cn.wnhyang.coolGuard.system.entity.DictTypeDO;
 import cn.wnhyang.coolGuard.system.service.DictTypeService;
-import cn.wnhyang.coolGuard.system.vo.dicttype.*;
+import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeCreateVO;
+import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypePageVO;
+import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeRespVO;
+import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeUpdateVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -81,7 +83,7 @@ public class DictTypeController {
     @GetMapping("/page")
     @OperateLog(module = "后台-字典", name = "分页字典类型")
     @SaCheckPermission("system:dict:query")
-    public CommonResult<PageResult<DictTypeRespVO>> pageDictTypes(@Valid DictTypePageVO reqVO) {
+    public CommonResult<PageResult<DictTypeRespVO>> pageDictType(@Valid DictTypePageVO reqVO) {
         return success(DictTypeConvert.INSTANCE.convertPage(dictTypeService.getDictTypePage(reqVO)));
     }
 
@@ -99,15 +101,12 @@ public class DictTypeController {
     }
 
     /**
-     * 查询简单字典类型
+     * 获取字典列表
      *
-     * @return 字典类型
+     * @return list
      */
-    @GetMapping("/simpleList")
-    @OperateLog(module = "后台-字典", name = "查询简单字典类型")
-    @SaCheckLogin
-    public CommonResult<List<DictTypeSimpleVO>> getSimpleDictTypeList() {
-        List<DictTypeDO> list = dictTypeService.getDictTypeList();
-        return success(DictTypeConvert.INSTANCE.convertList(list));
+    @GetMapping("/lvList")
+    public CommonResult<List<LabelValue>> getLabelValueList() {
+        return success(dictTypeService.getLabelValueList());
     }
 }

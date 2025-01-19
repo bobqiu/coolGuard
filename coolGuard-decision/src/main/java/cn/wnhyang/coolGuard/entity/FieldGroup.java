@@ -37,14 +37,14 @@ public class FieldGroup extends BaseDO implements LabelValueAble {
     /**
      * 显示分组名
      */
-    @TableField("display_name")
-    private String displayName;
+    @TableField("name")
+    private String name;
 
     /**
      * 分组标识
      */
-    @TableField("name")
-    private String name;
+    @TableField("code")
+    private String code;
 
     /**
      * 是否为标准
@@ -61,6 +61,6 @@ public class FieldGroup extends BaseDO implements LabelValueAble {
     @Override
     @JsonIgnore
     public LabelValue getLabelValue() {
-        return new LabelValue(id, displayName, name);
+        return new LabelValue(id, name, code);
     }
 }

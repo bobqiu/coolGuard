@@ -28,7 +28,6 @@ public interface UserMapper extends BaseMapperX<UserDO> {
                 .likeIfPresent(UserDO::getUsername, reqVO.getUsername())
                 .likeIfPresent(UserDO::getMobile, reqVO.getMobile())
                 .eqIfPresent(UserDO::getStatus, reqVO.getStatus())
-                .betweenIfPresent(UserDO::getCreateTime, reqVO.getStartTime(), reqVO.getEndTime())
                 .orderByDesc(UserDO::getId));
     }
 

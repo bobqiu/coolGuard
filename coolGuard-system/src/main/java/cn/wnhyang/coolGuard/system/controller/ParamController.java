@@ -30,7 +30,7 @@ import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
  */
 @Slf4j
 @RestController
-@RequestMapping("/param")
+@RequestMapping("/system/param")
 @RequiredArgsConstructor
 public class ParamController {
 

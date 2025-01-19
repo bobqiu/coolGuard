@@ -44,8 +44,8 @@ public class RoleDO extends BaseDO implements LabelValueAble {
     /**
      * 角色权限字符串
      */
-    @TableField("value")
-    private String value;
+    @TableField("code")
+    private String code;
 
     /**
      * 备注
@@ -56,6 +56,6 @@ public class RoleDO extends BaseDO implements LabelValueAble {
     @Override
     @JsonIgnore
     public LabelValue getLabelValue() {
-        return new LabelValue(id, name, value);
+        return new LabelValue(id, name, code);
     }
 }

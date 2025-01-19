@@ -21,7 +21,7 @@ public class AccessMapperTest {
 
     @Test
     public void test() {
-        Access access = accessMapper.selectByName("publicInterface");
+        Access access = accessMapper.selectByCode("publicInterface");
         log.info("access: {}", access);
         for (ConfigField configField : access.getInputConfig()) {
             log.info("configField: {}", configField);

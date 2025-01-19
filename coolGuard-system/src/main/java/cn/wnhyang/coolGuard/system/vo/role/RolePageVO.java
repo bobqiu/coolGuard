@@ -1,13 +1,10 @@
 package cn.wnhyang.coolGuard.system.vo.role;
 
-import cn.hutool.core.date.DatePattern;
 import cn.wnhyang.coolGuard.pojo.PageParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serial;
-import java.time.LocalDateTime;
 
 /**
  * @author wnhyang
@@ -28,17 +25,6 @@ public class RolePageVO extends PageParam {
     /**
      * 角色标识
      */
-    private String value;
+    private String code;
 
-    /**
-     * 开始时间
-     */
-    @DateTimeFormat(pattern = DatePattern.NORM_DATETIME_PATTERN)
-    private LocalDateTime startTime;
-
-    /**
-     * 结束时间
-     */
-    @DateTimeFormat(pattern = DatePattern.NORM_DATETIME_PATTERN)
-    private LocalDateTime endTime;
 }

@@ -17,14 +17,19 @@ import org.apache.ibatis.annotations.Mapper;
 public interface ParamMapper extends BaseMapperX<ParamDO> {
 
     default PageResult<ParamDO> selectPage(ParamPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<ParamDO>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<ParamDO>()
+                .likeIfPresent(ParamDO::getName, pageVO.getName())
+                .likeIfPresent(ParamDO::getCode, pageVO.getCode())
+                .eqIfPresent(ParamDO::getType, pageVO.getType())
+                .likeIfPresent(ParamDO::getData, pageVO.getData())
+        );
     }
 
-    default ParamDO selectByLabel(String label) {
-        return selectOne(new LambdaQueryWrapperX<ParamDO>().eq(ParamDO::getLabel, label));
+    default ParamDO selectByName(String name) {
+        return selectOne(new LambdaQueryWrapperX<ParamDO>().eq(ParamDO::getName, name));
     }
 
-    default ParamDO selectByValue(String value) {
-        return selectOne(new LambdaQueryWrapperX<ParamDO>().eq(ParamDO::getValue, value));
+    default ParamDO selectByCode(String code) {
+        return selectOne(new LambdaQueryWrapperX<ParamDO>().eq(ParamDO::getCode, code));
     }
 }

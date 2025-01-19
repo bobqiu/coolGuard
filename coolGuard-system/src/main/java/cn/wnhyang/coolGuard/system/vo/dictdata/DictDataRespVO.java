@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 /**
  * @author wnhyang
  * @date 2023/9/14
@@ -18,6 +16,4 @@ import java.time.LocalDateTime;
 public class DictDataRespVO extends DictDataCreateVO {
 
     private Long id;
-
-    private LocalDateTime createTime;
 }

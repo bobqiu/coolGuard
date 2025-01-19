@@ -95,7 +95,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<MenuDO> getMenuList(MenuListVO reqVO) {
-        return menuMapper.selectList(reqVO);
+        return menuMapper.selectListOrder(reqVO);
     }
 
     @Override
@@ -113,17 +113,17 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<MenuDO> getMenuList() {
-        return menuMapper.selectList();
+        return menuMapper.selectListOrder();
     }
 
     @Override
     public List<MenuTreeRespVO> getMenuTreeList(MenuListVO reqVO) {
 
         // 1、查询所有菜单
-        List<MenuDO> all = menuMapper.selectList();
+        List<MenuDO> all = menuMapper.selectListOrder();
 
         // 2、查询满足条件的菜单
-        List<MenuDO> menuDOS = menuMapper.selectList(reqVO);
+        List<MenuDO> menuDOS = menuMapper.selectListOrder(reqVO);
         Set<Long> menuIds = menuDOS.stream().map(MenuDO::getId).collect(Collectors.toSet());
 
         Set<MenuDO> menuDOSet = findMenusWithParentsOrChildrenByIds(all, menuIds, true, true);
@@ -141,7 +141,7 @@ public class MenuServiceImpl implements MenuService {
         }
         Long id = loginUser.getId();
 
-        List<MenuDO> all = menuMapper.selectList();
+        List<MenuDO> all = menuMapper.selectListOrder();
         if (LoginUtil.isAdministrator(id)) {
             return buildMenuTree(all, removeButton);
         }
@@ -303,7 +303,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     private List<MenuSimpleTreeVO> getMenuSimpleTreeList(boolean withRoot) {
-        List<MenuDO> all = menuMapper.selectList();
+        List<MenuDO> all = menuMapper.selectListOrder();
 
         List<MenuSimpleTreeVO> menuSimpleTreeList = buildMenuSimpleTree(all, false);
 

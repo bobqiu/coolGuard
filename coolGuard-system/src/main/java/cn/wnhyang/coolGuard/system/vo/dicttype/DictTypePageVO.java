@@ -1,12 +1,10 @@
 package cn.wnhyang.coolGuard.system.vo.dicttype;
 
-import cn.hutool.core.date.DatePattern;
 import cn.wnhyang.coolGuard.pojo.PageParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.io.Serial;
 
 /**
  * @author wnhyang
@@ -16,18 +14,11 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class DictTypePageVO extends PageParam {
 
+    @Serial
     private static final long serialVersionUID = -2268644414650536395L;
 
     private String name;
 
-    private String type;
-
-    private Boolean status;
-
-    @DateTimeFormat(pattern = DatePattern.NORM_DATETIME_PATTERN)
-    private LocalDateTime startTime;
-
-    @DateTimeFormat(pattern = DatePattern.NORM_DATETIME_PATTERN)
-    private LocalDateTime endTime;
+    private String code;
 
 }

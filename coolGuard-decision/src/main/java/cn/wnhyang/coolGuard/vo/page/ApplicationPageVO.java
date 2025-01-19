@@ -20,11 +20,11 @@ public class ApplicationPageVO extends PageParam {
     /**
      * 显示名
      */
-    private String displayName;
+    private String name;
 
     /**
      * 应用名
      */
-    private String name;
+    private String code;
 
 }

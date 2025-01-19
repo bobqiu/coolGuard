@@ -68,22 +68,14 @@ public interface ErrorCodes {
 
     // ========== 字典类型 1002006000 ==========
     ErrorCode DICT_TYPE_NOT_EXISTS = new ErrorCode(1002006001, "当前字典类型不存在");
-    ErrorCode DICT_TYPE_NOT_ENABLE = new ErrorCode(1002006002, "字典类型不处于开启状态，不允许选择");
-    ErrorCode DICT_TYPE_NAME_DUPLICATE = new ErrorCode(1002006003, "已经存在该名字的字典类型");
-    ErrorCode DICT_TYPE_TYPE_DUPLICATE = new ErrorCode(1002006004, "已经存在该类型的字典类型");
-    ErrorCode DICT_TYPE_HAS_CHILDREN = new ErrorCode(1002006005, "无法删除，该字典类型还有字典数据");
-    ErrorCode DICT_TYPE_IS_STANDARD = new ErrorCode(1002006006, "无法删除，标准字典类型不可删除");
+    ErrorCode DICT_TYPE_LABEL_EXISTS = new ErrorCode(1002006002, "字典类型名已存在");
+    ErrorCode DICT_TYPE_VALUE_EXISTS = new ErrorCode(1002006003, "字典类型编码已存在");
+    ErrorCode DICT_TYPE_STANDARD_NOT_ALLOW_DELETE = new ErrorCode(1002006005, "标准字典类型不允许删除");
 
     // ========== 字典数据 1002007000 ==========
     ErrorCode DICT_DATA_NOT_EXISTS = new ErrorCode(1002007001, "当前字典数据不存在");
     ErrorCode DICT_DATA_NOT_ENABLE = new ErrorCode(1002007002, "字典数据({})不处于开启状态，不允许选择");
     ErrorCode DICT_DATA_VALUE_DUPLICATE = new ErrorCode(1002007003, "已经存在该值的字典数据");
-
-    ErrorCode DICT_NOT_EXISTS = new ErrorCode(1002007001, "当前字典不存在");
-    ErrorCode DICT_LABEL_EXISTS = new ErrorCode(1002007002, "当前字典标签存在");
-    ErrorCode DICT_VALUE_EXISTS = new ErrorCode(1002007003, "当前字典值存在");
-    ErrorCode DICT_STANDARD_NOT_ALLOW_DELETE = new ErrorCode(1002007004, "标准字段不允许删除");
-
 
     // ========== 通知公告 1002008000 ==========
     ErrorCode NOTICE_NOT_FOUND = new ErrorCode(1002008001, "当前通知公告不存在");

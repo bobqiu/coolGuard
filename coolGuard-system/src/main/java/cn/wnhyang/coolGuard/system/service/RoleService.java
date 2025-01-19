@@ -38,7 +38,7 @@ public interface RoleService {
      * @return 角色编码
      */
     default Set<String> getRoleValueList(Set<Long> ids) {
-        return convertSet(getRoleList(ids), RoleDO::getValue);
+        return convertSet(getRoleList(ids), RoleDO::getCode);
     }
 
     /**

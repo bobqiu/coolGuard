@@ -41,7 +41,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.FIELD_GROUP, allEntries = true)
     public Long createFieldGroup(FieldGroupCreateVO createVO) {
-        if (fieldGroupMapper.selectByName(createVO.getName()) != null) {
+        if (fieldGroupMapper.selectByCode(createVO.getName()) != null) {
             throw exception(FIELD_GROUP_NAME_EXIST);
         }
         FieldGroup fieldGroup = FieldGroupConvert.INSTANCE.convert(createVO);
@@ -77,7 +77,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
         if (fieldGroup.getStandard()) {
             throw exception(FIELD_GROUP_STANDARD);
         }
-        Long count = fieldMapper.selectCountByFieldGroupName(fieldGroup.getName());
+        Long count = fieldMapper.selectCountByFieldGroupCode(fieldGroup.getCode());
         if (count > 0) {
             throw exception(FIELD_GROUP_HAS_FIELD);
         }
@@ -89,7 +89,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
         FieldGroup fieldGroup = fieldGroupMapper.selectById(id);
         FieldGroupVO fieldGroupVO = FieldGroupConvert.INSTANCE.convert(fieldGroup);
         if (fieldGroupVO != null) {
-            fieldGroupVO.setCount(fieldMapper.selectCountByFieldGroupName(fieldGroup.getName()));
+            fieldGroupVO.setCount(fieldMapper.selectCountByFieldGroupCode(fieldGroup.getCode()));
         }
         return fieldGroupVO;
     }
@@ -98,7 +98,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
     public PageResult<FieldGroupVO> pageFieldGroup(FieldGroupPageVO pageVO) {
         PageResult<FieldGroup> pageResult = fieldGroupMapper.selectPage(pageVO);
         PageResult<FieldGroupVO> convert = FieldGroupConvert.INSTANCE.convert(pageResult);
-        convert.getList().forEach(fieldGroup -> fieldGroup.setCount(fieldMapper.selectCountByFieldGroupName(fieldGroup.getName())));
+        convert.getList().forEach(fieldGroup -> fieldGroup.setCount(fieldMapper.selectCountByFieldGroupCode(fieldGroup.getName())));
         return convert;
     }
 

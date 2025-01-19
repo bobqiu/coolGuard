@@ -1,11 +1,16 @@
 package cn.wnhyang.coolGuard.system.entity;
 
+import cn.wnhyang.coolGuard.LabelValueAble;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+
+import java.io.Serial;
 
 /**
  * 字典数据表
@@ -19,9 +24,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("sys_dict_data")
-public class DictDataDO extends BaseDO {
+public class DictDataDO extends BaseDO implements LabelValueAble {
 
+    @Serial
     private static final long serialVersionUID = 2306681901836679890L;
+
     /**
      * 字典数据主键
      */
@@ -37,20 +44,20 @@ public class DictDataDO extends BaseDO {
     /**
      * 字典标签
      */
-    @TableField("label")
-    private String label;
+    @TableField("name")
+    private String name;
 
     /**
      * 字典键值
      */
-    @TableField("value")
-    private String value;
+    @TableField("code")
+    private String code;
 
     /**
-     * 字典类型id
+     * 字典类型
      */
-    @TableField("dict_type")
-    private String dictType;
+    @TableField("type_code")
+    private String typeCode;
 
     /**
      * 字典标签颜色
@@ -69,4 +76,10 @@ public class DictDataDO extends BaseDO {
      */
     @TableField("remark")
     private String remark;
+
+    @Override
+    @JsonIgnore
+    public LabelValue getLabelValue() {
+        return new LabelValue(id, name, code);
+    }
 }

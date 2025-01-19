@@ -21,9 +21,9 @@ public class AccessCreateVO extends AccessBaseVO {
     /**
      * 服务标识
      */
-    @NotBlank(message = "字段名不能为空")
+    @NotBlank(message = "接入编码不能为空")
     @Size(min = 1, max = 30, message = "字段名长度必须在1-30之间")
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "字段名只能包含字母和数字")
-    private String name;
+    private String code;
 
 }

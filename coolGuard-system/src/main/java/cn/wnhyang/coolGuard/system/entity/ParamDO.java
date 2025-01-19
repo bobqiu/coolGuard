@@ -32,14 +32,14 @@ public class ParamDO extends BaseDO {
     /**
      * 参数标签
      */
-    @TableField("label")
-    private String label;
+    @TableField("name")
+    private String name;
 
     /**
      * 参数值
      */
-    @TableField("value")
-    private String value;
+    @TableField("code")
+    private String code;
 
     /**
      * 参数类型

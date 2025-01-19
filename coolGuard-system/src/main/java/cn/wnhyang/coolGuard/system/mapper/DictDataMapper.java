@@ -22,21 +22,23 @@ public interface DictDataMapper extends BaseMapperX<DictDataDO> {
 
     default PageResult<DictDataDO> selectPage(DictDataPageVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<DictDataDO>()
-                .likeIfPresent(DictDataDO::getLabel, reqVO.getLabel())
-                .eqIfPresent(DictDataDO::getDictType, reqVO.getDictType())
+                .likeIfPresent(DictDataDO::getName, reqVO.getName())
+                .eqIfPresent(DictDataDO::getTypeCode, reqVO.getTypeCode())
                 .eqIfPresent(DictDataDO::getStatus, reqVO.getStatus())
-                .orderByDesc(Arrays.asList(DictDataDO::getDictType, DictDataDO::getSort)));
+                .orderByDesc(Arrays.asList(DictDataDO::getTypeCode, DictDataDO::getSort)));
     }
 
-    default long selectCountByDictType(String dictType) {
-        return selectCount(DictDataDO::getDictType, dictType);
+
+    default DictDataDO selectByTypeCodeAndCode(String typeCode, String code) {
+        return selectOne(DictDataDO::getTypeCode, typeCode, DictDataDO::getCode, code);
     }
 
-    default DictDataDO selectByDictTypeAndValue(String dictType, String value) {
-        return selectOne(DictDataDO::getDictType, dictType, DictDataDO::getValue, value);
+    default List<DictDataDO> selectListByDictTypeCode(String typeCode) {
+        return selectList(new LambdaQueryWrapperX<DictDataDO>()
+                .eqIfPresent(DictDataDO::getTypeCode, typeCode));
     }
 
-    default List<DictDataDO> selectListByDictType(String type) {
-        return selectList(DictDataDO::getDictType, type);
+    default int deleteByTypeCode(String typeCode) {
+        return delete(DictDataDO::getTypeCode, typeCode);
     }
 }

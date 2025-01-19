@@ -22,13 +22,13 @@ public class ParamCreateVO implements Serializable {
      * 参数标签
      */
     @NotBlank(message = "参数标签不能为空")
-    private String label;
+    private String name;
 
     /**
      * 参数值
      */
     @NotBlank(message = "参数值不能为空")
-    private String value;
+    private String code;
 
     /**
      * 参数类型

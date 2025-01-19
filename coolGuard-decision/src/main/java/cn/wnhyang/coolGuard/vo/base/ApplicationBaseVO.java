@@ -20,7 +20,7 @@ public class ApplicationBaseVO implements Serializable {
      * 显示名
      */
     @NotBlank(message = "显示名不能为空")
-    private String displayName;
+    private String name;
 
     /**
      * 描述

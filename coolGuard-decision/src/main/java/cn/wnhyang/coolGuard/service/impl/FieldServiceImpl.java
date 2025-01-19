@@ -73,12 +73,12 @@ public class FieldServiceImpl implements FieldService {
     @CacheEvict(value = RedisKey.FIELD, allEntries = true)
     public Long createField(FieldCreateVO createVO) {
         String prefix = createVO.getDynamic() ? "D_" : "N_";
-        String fieldName = prefix + createVO.getType() + "_" + createVO.getCode();
-        if (fieldMapper.selectByName(fieldName) != null) {
+        String fieldName = prefix + createVO.getType() + "_" + createVO.getTmpCode();
+        if (fieldMapper.selectByCode(fieldName) != null) {
             throw exception(FIELD_NAME_EXIST);
         }
         Field field = FieldConvert.INSTANCE.convert(createVO);
-        field.setName(fieldName);
+        field.setCode(fieldName);
         fieldMapper.insert(field);
         return field.getId();
     }
@@ -130,10 +130,10 @@ public class FieldServiceImpl implements FieldService {
         FieldContext fieldContext = new FieldContext();
         Map<String, Object> params = testDynamicFieldScript.getParams();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
-            Field field = fieldMapper.selectByName(entry.getKey());
+            Field field = fieldMapper.selectByCode(entry.getKey());
             FieldType byType = FieldType.getByType(field.getType());
             if (byType != null) {
-                fieldContext.setDataByType(field.getName(), (String) entry.getValue(), byType);
+                fieldContext.setDataByType(field.getCode(), (String) entry.getValue(), byType);
             }
         }
 
@@ -179,7 +179,7 @@ public class FieldServiceImpl implements FieldService {
             try {
                 FieldType fieldType = FieldType.getByType(inputField.getType());
                 if (fieldType != null) {
-                    fieldContext.setDataByType(inputField.getName(), value, fieldType);
+                    fieldContext.setDataByType(inputField.getCode(), value, fieldType);
                 }
 
             } catch (Exception e) {
@@ -238,7 +238,7 @@ public class FieldServiceImpl implements FieldService {
         inputFieldList.stream().filter(InputFieldVO::getDynamic).forEach(inputField -> {
             try {
                 Object result = QLExpressUtil.execute(inputField.getScript(), fieldContext);
-                fieldContext.setDataByType(inputField.getName(), String.valueOf(result), FieldType.getByType(inputField.getType()));
+                fieldContext.setDataByType(inputField.getCode(), String.valueOf(result), FieldType.getByType(inputField.getType()));
 
             } catch (Exception e) {
                 throw new RuntimeException(e);

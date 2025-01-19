@@ -20,21 +20,21 @@ public interface FieldMapper extends BaseMapperX<Field> {
 
     default PageResult<Field> selectPage(FieldPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<Field>()
+                .likeIfPresent(Field::getCode, pageVO.getCode())
                 .likeIfPresent(Field::getName, pageVO.getName())
-                .likeIfPresent(Field::getDisplayName, pageVO.getDisplayName())
-                .eqIfPresent(Field::getGroupName, pageVO.getGroupName())
+                .eqIfPresent(Field::getGroupCode, pageVO.getGroupCode())
                 .eqIfPresent(Field::getDynamic, pageVO.getDynamic())
                 .eqIfPresent(Field::getType, pageVO.getType())
                 .eqIfPresent(Field::getStandard, pageVO.getStandard()));
     }
 
-    @Cacheable(cacheNames = RedisKey.FIELD + "::na", key = "#name", unless = "#result == null")
-    default Field selectByName(String name) {
-        return selectOne(Field::getName, name);
+    @Cacheable(cacheNames = RedisKey.FIELD + "::co", key = "#code", unless = "#result == null")
+    default Field selectByCode(String code) {
+        return selectOne(Field::getCode, code);
     }
 
-    default Long selectCountByFieldGroupName(String groupName) {
-        return selectCount(Field::getName, groupName);
+    default Long selectCountByFieldGroupCode(String groupCode) {
+        return selectCount(Field::getCode, groupCode);
     }
 
 }

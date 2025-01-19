@@ -1,15 +1,12 @@
 package cn.wnhyang.coolGuard.system.vo.user;
 
-import cn.hutool.core.date.DatePattern;
 import cn.wnhyang.coolGuard.pojo.PageParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serial;
-import java.time.LocalDateTime;
 
 /**
  * @author wnhyang
@@ -39,15 +36,4 @@ public class UserPageVO extends PageParam {
      */
     private Boolean status;
 
-    /**
-     * 开始时间
-     */
-    @DateTimeFormat(pattern = DatePattern.NORM_DATETIME_PATTERN)
-    private LocalDateTime startTime;
-
-    /**
-     * 结束时间
-     */
-    @DateTimeFormat(pattern = DatePattern.NORM_DATETIME_PATTERN)
-    private LocalDateTime endTime;
 }

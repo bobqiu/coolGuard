@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class DictTypeUpdateVO extends DictTypeCreateVO {
+public class DictTypeUpdateVO extends DictTypeBaseVO {
 
     @NotNull(message = "字典类型编号不能为空")
     private Long id;

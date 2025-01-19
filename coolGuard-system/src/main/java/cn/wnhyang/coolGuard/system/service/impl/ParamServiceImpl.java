@@ -32,7 +32,7 @@ public class ParamServiceImpl implements ParamService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long create(ParamCreateVO createVO) {
-        validateDictForCreateOrUpdate(null, createVO.getLabel(), createVO.getValue());
+        validateDictForCreateOrUpdate(null, createVO.getName(), createVO.getCode());
         ParamDO paramDO = ParamConvert.INSTANCE.convert(createVO);
         paramMapper.insert(paramDO);
         return paramDO.getId();
@@ -41,7 +41,7 @@ public class ParamServiceImpl implements ParamService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(ParamUpdateVO updateVO) {
-        validateDictForCreateOrUpdate(updateVO.getId(), updateVO.getLabel(), updateVO.getValue());
+        validateDictForCreateOrUpdate(updateVO.getId(), updateVO.getName(), updateVO.getCode());
         ParamDO paramDO = ParamConvert.INSTANCE.convert(updateVO);
         paramMapper.updateById(paramDO);
     }
@@ -70,13 +70,13 @@ public class ParamServiceImpl implements ParamService {
         return paramMapper.selectPage(pageVO);
     }
 
-    private void validateDictForCreateOrUpdate(Long id, String label, String value) {
+    private void validateDictForCreateOrUpdate(Long id, String name, String code) {
         // 校验用户存在
         validateParamExists(id);
         // 校验label唯一
-        validateLabelUnique(id, label);
+        validateLabelUnique(id, name);
         // 校验value唯一
-        validateValueUnique(id, value);
+        validateValueUnique(id, code);
     }
 
     private void validateParamExists(Long id) {
@@ -89,8 +89,8 @@ public class ParamServiceImpl implements ParamService {
         }
     }
 
-    private void validateLabelUnique(Long id, String label) {
-        ParamDO paramDO = paramMapper.selectByLabel(label);
+    private void validateLabelUnique(Long id, String name) {
+        ParamDO paramDO = paramMapper.selectByName(name);
         if (paramDO == null) {
             return;
         }
@@ -103,8 +103,8 @@ public class ParamServiceImpl implements ParamService {
         }
     }
 
-    private void validateValueUnique(Long id, String value) {
-        ParamDO paramDO = paramMapper.selectByValue(value);
+    private void validateValueUnique(Long id, String code) {
+        ParamDO paramDO = paramMapper.selectByCode(code);
         if (paramDO == null) {
             return;
         }

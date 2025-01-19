@@ -20,12 +20,12 @@ public interface ApplicationMapper extends BaseMapperX<Application> {
 
     default PageResult<Application> selectPage(ApplicationPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<Application>()
-                .likeIfPresent(Application::getDisplayName, pageVO.getDisplayName())
-                .likeIfPresent(Application::getName, pageVO.getName()));
+                .likeIfPresent(Application::getName, pageVO.getName())
+                .likeIfPresent(Application::getCode, pageVO.getCode()));
     }
 
-    @Cacheable(cacheNames = RedisKey.APPLICATION + "::na", key = "#name", unless = "#result == null")
-    default Application selectByName(String name) {
-        return selectOne(Application::getName, name);
+    @Cacheable(cacheNames = RedisKey.APPLICATION + "::co", key = "#value", unless = "#result == null")
+    default Application selectByCode(String code) {
+        return selectOne(Application::getCode, code);
     }
 }

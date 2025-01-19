@@ -52,7 +52,7 @@ public class PermissionServiceImpl implements PermissionService {
         }
         // 如果是管理员的情况下，获取全部菜单编号
         if (hasAnyAdministrator(roleIds)) {
-            return convertSet(menuMapper.selectList(), MenuDO::getId);
+            return convertSet(menuMapper.selectListOrder(), MenuDO::getId);
         }
         // 如果是非管理员的情况下，获得拥有的菜单编号
         return convertSet(roleMenuMapper.selectListByRoleId(roleIds), RoleMenuDO::getMenuId);

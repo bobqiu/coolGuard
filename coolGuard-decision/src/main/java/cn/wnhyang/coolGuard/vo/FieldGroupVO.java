@@ -23,7 +23,7 @@ public class FieldGroupVO extends FieldGroupBaseVO {
     /**
      * 分组标识
      */
-    private String name;
+    private String code;
 
     /**
      * 是否为标准

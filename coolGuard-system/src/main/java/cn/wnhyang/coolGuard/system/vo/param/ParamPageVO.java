@@ -18,7 +18,23 @@ public class ParamPageVO extends PageParam {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 参数id
+     * 参数标签
      */
-    private Long id;
+    private String name;
+
+    /**
+     * 参数值
+     */
+    private String code;
+
+    /**
+     * 参数类型
+     */
+    private String type;
+
+    /**
+     * 参数数据
+     */
+    private String data;
+
 }

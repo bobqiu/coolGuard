@@ -25,7 +25,7 @@ public class RoleCreateVO {
      */
     @NotBlank(message = "角色标识不能为空")
     @Size(max = 100, message = "角色标识长度不能超过100个字符")
-    private String value;
+    private String code;
 
     /**
      * 角色描述

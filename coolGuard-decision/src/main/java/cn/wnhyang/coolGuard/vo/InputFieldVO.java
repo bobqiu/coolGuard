@@ -36,19 +36,19 @@ public class InputFieldVO {
     /**
      * 显示名
      */
-    private String displayName;
+    private String name;
 
     /**
      * 字段名，命名N/D_S/N/F/D/E/B_name
      * N普通字段，D动态字段
      * S/N/F/D/E/B字段类型
      */
-    private String name;
+    private String code;
 
     /**
      * 字段分组
      */
-    private String groupName;
+    private String groupCode;
 
     /**
      * 是否标准字段

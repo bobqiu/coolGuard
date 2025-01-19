@@ -37,14 +37,14 @@ public class Access extends BaseDO {
     /**
      * 显示服务名
      */
-    @TableField("display_name")
-    private String displayName;
+    @TableField("name")
+    private String name;
 
     /**
      * 服务标识
      */
-    @TableField("name")
-    private String name;
+    @TableField("code")
+    private String code;
 
     /**
      * 输入配置

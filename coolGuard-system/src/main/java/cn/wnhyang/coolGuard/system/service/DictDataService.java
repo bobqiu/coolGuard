@@ -66,10 +66,10 @@ public interface DictDataService {
      * 通过字典类型和字典数据获取字典
      *
      * @param dictType 字典类型
-     * @param value    字典数据
+     * @param code     字典数据
      * @return 字典
      */
-    DictDataDO getDictData(String dictType, String value);
+    DictDataDO getDictData(String dictType, String code);
 
     /**
      * 通过字典类型获取字典数据列表

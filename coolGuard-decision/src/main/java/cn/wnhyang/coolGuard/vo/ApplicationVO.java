@@ -25,7 +25,7 @@ public class ApplicationVO extends ApplicationBaseVO {
     /**
      * 应用名
      */
-    private String name;
+    private String code;
 
     /**
      * 密钥

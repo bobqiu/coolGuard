@@ -18,15 +18,15 @@ public class DictDataCreateVO {
 
     @NotBlank(message = "字典标签不能为空")
     @Size(max = 100, message = "字典标签长度不能超过100个字符")
-    private String label;
+    private String name;
 
     @NotBlank(message = "字典键值不能为空")
     @Size(max = 100, message = "字典键值长度不能超过100个字符")
-    private String value;
+    private String code;
 
     @NotBlank(message = "字典类型不能为空")
     @Size(max = 100, message = "字典类型长度不能超过100个字符")
-    private String dictType;
+    private String typeCode;
 
     private String color;
 
