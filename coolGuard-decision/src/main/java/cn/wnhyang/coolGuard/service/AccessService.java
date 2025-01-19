@@ -3,13 +3,10 @@ package cn.wnhyang.coolGuard.service;
 import cn.wnhyang.coolGuard.entity.Access;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.AccessVO;
-import cn.wnhyang.coolGuard.vo.InputFieldVO;
-import cn.wnhyang.coolGuard.vo.OutputFieldVO;
 import cn.wnhyang.coolGuard.vo.create.AccessCreateVO;
 import cn.wnhyang.coolGuard.vo.page.AccessPageVO;
 import cn.wnhyang.coolGuard.vo.update.AccessUpdateVO;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -85,19 +82,9 @@ public interface AccessService {
     Access getAccessByName(String name);
 
     /**
-     * 根据服务id查询
+     * 复制
      *
-     * @param access 服务
-     * @return inputFieldVO集合
+     * @param id id
      */
-    List<InputFieldVO> getAccessInputFieldList(Access access);
-
-    /**
-     * 根据服务id查询
-     *
-     * @param access 服务
-     * @return outputFieldVO集合
-     */
-    List<OutputFieldVO> getAccessOutputFieldList(Access access);
-
+    Long copyAccess(Long id);
 }

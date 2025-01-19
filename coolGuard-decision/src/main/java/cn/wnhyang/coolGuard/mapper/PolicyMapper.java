@@ -24,12 +24,12 @@ public interface PolicyMapper extends BaseMapperX<Policy> {
         return selectPage(pageVO, new LambdaQueryWrapperX<Policy>());
     }
 
-    @Cacheable(cacheNames = RedisKey.POLICY + "::sCode", key = "#setCode", unless = "#result == null")
+    @Cacheable(value = RedisKey.POLICY + "::sCode", key = "#setCode", unless = "#result == null")
     default List<Policy> selectListBySetCode(String setCode) {
         return selectList(Policy::getPolicySetCode, setCode);
     }
 
-    @Cacheable(cacheNames = RedisKey.POLICY + "::co", key = "#code", unless = "#result == null")
+    @Cacheable(value = RedisKey.POLICY + "::co", key = "#code", unless = "#result == null")
     default Policy selectByCode(String code) {
         return selectOne(Policy::getCode, code);
     }

@@ -28,12 +28,12 @@ public interface RuleMapper extends BaseMapperX<Rule> {
                 .eqIfPresent(Rule::getDisposalCode, pageVO.getDisposalCode()));
     }
 
-    @Cacheable(cacheNames = RedisKey.RULE + "::co", key = "#code", unless = "#result == null")
+    @Cacheable(value = RedisKey.RULE + "::co", key = "#code", unless = "#result == null")
     default Rule selectByCode(String code) {
         return selectOne(Rule::getCode, code);
     }
 
-    @Cacheable(cacheNames = RedisKey.RULES + "::sId", key = "#policyCode", unless = "#result == null")
+    @Cacheable(value = RedisKey.RULES + "::sId", key = "#policyCode", unless = "#result == null")
     default List<Rule> selectByPolicyCode(String policyCode) {
         return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getPolicyCode, policyCode).orderByDesc(Rule::getSort));
     }

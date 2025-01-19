@@ -47,7 +47,8 @@ public class MenuServiceImpl implements MenuService {
         // 校验父菜单存在
         validateParentMenu(reqVO.getParentId(), null);
         // 校验菜单（自己）
-        validateMenu(reqVO.getParentId(), reqVO.getName(), null);
+        validateMenuNameUnique(reqVO.getName(), null);
+        validateMenuPathUnique(reqVO.getPath(), null);
 
         // 插入数据库
         MenuDO menuDO = MenuConvert.INSTANCE.convert(reqVO);
@@ -67,7 +68,8 @@ public class MenuServiceImpl implements MenuService {
         // 校验父菜单存在
         validateParentMenu(reqVO.getParentId(), reqVO.getId());
         // 校验菜单（自己）
-        validateMenu(reqVO.getParentId(), reqVO.getName(), reqVO.getId());
+        validateMenuNameUnique(reqVO.getName(), reqVO.getId());
+        validateMenuPathUnique(reqVO.getPath(), reqVO.getId());
 
         // 更新到数据库
         MenuDO updateObject = MenuConvert.INSTANCE.convert(reqVO);
@@ -347,26 +349,31 @@ public class MenuServiceImpl implements MenuService {
         }
     }
 
-    /**
-     * 校验菜单是否合法
-     * <p>
-     * 1. 校验相同父菜单编号下，是否存在相同的菜单名
-     *
-     * @param name     菜单名字
-     * @param parentId 父菜单编号
-     * @param id       菜单编号
-     */
-    void validateMenu(Long parentId, String name, Long id) {
-        MenuDO menuDO = menuMapper.selectByParentIdAndName(parentId, name);
+    void validateMenuNameUnique(String name, Long id) {
+        MenuDO menuDO = menuMapper.selectByName(name);
         if (menuDO == null) {
             return;
         }
         // 如果 id 为空，说明不用比较是否为相同 id 的菜单
         if (id == null) {
-            throw exception(MENU_NAME_DUPLICATE);
+            throw exception(MENU_NAME_EXISTS);
         }
         if (!menuDO.getId().equals(id)) {
-            throw exception(MENU_NAME_DUPLICATE);
+            throw exception(MENU_NAME_EXISTS);
+        }
+    }
+
+    void validateMenuPathUnique(String path, Long id) {
+        MenuDO menuDO = menuMapper.selectByPath(path);
+        if (menuDO == null) {
+            return;
+        }
+        // 如果 id 为空，说明不用比较是否为相同 id 的菜单
+        if (id == null) {
+            throw exception(MENU_PATH_EXISTS);
+        }
+        if (!menuDO.getId().equals(id)) {
+            throw exception(MENU_PATH_EXISTS);
         }
     }
 

@@ -28,13 +28,13 @@ public interface FieldMapper extends BaseMapperX<Field> {
                 .eqIfPresent(Field::getStandard, pageVO.getStandard()));
     }
 
-    @Cacheable(cacheNames = RedisKey.FIELD + "::co", key = "#code", unless = "#result == null")
+    @Cacheable(value = RedisKey.FIELD + "::co", key = "#code", unless = "#result == null")
     default Field selectByCode(String code) {
         return selectOne(Field::getCode, code);
     }
 
     default Long selectCountByFieldGroupCode(String groupCode) {
-        return selectCount(Field::getCode, groupCode);
+        return selectCount(Field::getGroupCode, groupCode);
     }
 
 }

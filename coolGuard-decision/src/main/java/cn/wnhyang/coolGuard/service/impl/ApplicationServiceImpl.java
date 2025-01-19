@@ -40,6 +40,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationMapper applicationMapper;
 
     private final IndicatorMapper indicatorMapper;
+
     private final PolicySetMapper policySetMapper;
 
     @Override
@@ -47,7 +48,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @CacheEvict(value = RedisKey.APPLICATION, allEntries = true)
     public Long createApplication(ApplicationCreateVO createVO) {
         if (applicationMapper.selectByCode(createVO.getCode()) != null) {
-            throw exception(APPLICATION_NAME_EXIST);
+            throw exception(APPLICATION_CODE_EXIST);
         }
         Application application = ApplicationConvert.INSTANCE.convert(createVO);
         applicationMapper.insert(application);
@@ -71,7 +72,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw exception(APPLICATION_NOT_EXIST);
         }
         // 确认是否有指标引用
-        List<Indicator> indicatorList = indicatorMapper.selectList(SceneType.APP, application.getCode());
+        List<Indicator> indicatorList = indicatorMapper.selectListByScene(SceneType.APP, application.getCode());
         if (CollUtil.isNotEmpty(indicatorList)) {
             throw exception(APPLICATION_REFERENCE_DELETE);
         }

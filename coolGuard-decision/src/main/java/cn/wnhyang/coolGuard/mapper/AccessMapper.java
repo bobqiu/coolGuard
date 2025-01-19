@@ -24,7 +24,7 @@ public interface AccessMapper extends BaseMapperX<Access> {
                 .likeIfPresent(Access::getName, pageVO.getName()));
     }
 
-    @Cacheable(cacheNames = RedisKey.ACCESS + "::co", key = "#value", unless = "#result == null")
+    @Cacheable(value = RedisKey.ACCESS + "::co", key = "#code", unless = "#result == null")
     default Access selectByCode(String code) {
         return selectOne(Access::getCode, code);
     }

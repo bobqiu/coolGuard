@@ -41,7 +41,7 @@ public class DisposalServiceImpl implements DisposalService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
+    @CacheEvict(value = RedisKey.DISPOSAL, allEntries = true)
     public Long createDisposal(DisposalCreateVO createVO) {
         if (disposalMapper.selectByCode(createVO.getCode()) != null) {
             throw exception(DISPOSAL_CODE_EXIST);
@@ -53,7 +53,7 @@ public class DisposalServiceImpl implements DisposalService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
+    @CacheEvict(value = RedisKey.DISPOSAL, allEntries = true)
     public void updateDisposal(DisposalUpdateVO updateVO) {
         Disposal disposal = disposalMapper.selectById(updateVO.getId());
         if (disposal == null) {
@@ -69,7 +69,7 @@ public class DisposalServiceImpl implements DisposalService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = RedisKey.DISPOSAL, allEntries = true)
+    @CacheEvict(value = RedisKey.DISPOSAL, allEntries = true)
     public void deleteDisposal(Long id) {
         Disposal disposal = disposalMapper.selectById(id);
         if (disposal == null) {
@@ -97,7 +97,7 @@ public class DisposalServiceImpl implements DisposalService {
     }
 
     @Override
-    @Cacheable(cacheNames = RedisKey.DISPOSAL + "::list", unless = "#result == null")
+    @Cacheable(value = RedisKey.DISPOSAL + "::list", unless = "#result == null")
     public List<Disposal> listDisposal() {
         return disposalMapper.selectList();
     }

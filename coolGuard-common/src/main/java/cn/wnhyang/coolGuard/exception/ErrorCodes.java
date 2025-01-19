@@ -8,7 +8,7 @@ public interface ErrorCodes {
 
     ErrorCode APPLICATION_NOT_EXIST = new ErrorCode(1001001000, "应用不存在");
 
-    ErrorCode APPLICATION_NAME_EXIST = new ErrorCode(1001001001, "应用名已存在");
+    ErrorCode APPLICATION_CODE_EXIST = new ErrorCode(1001001001, "应用名已存在");
 
     ErrorCode APPLICATION_REFERENCE_DELETE = new ErrorCode(1006001002, "应用有引用不可删除");
 
@@ -22,19 +22,19 @@ public interface ErrorCodes {
 
     ErrorCode ACCESS_NOT_EXIST = new ErrorCode(1003001000, "接入不存在");
 
-    ErrorCode ACCESS_NAME_EXIST = new ErrorCode(1003001001, "接入名已存在");
+    ErrorCode ACCESS_CODE_EXIST = new ErrorCode(1003001001, "接入名已存在");
 
     ErrorCode FIELD_NOT_EXIST = new ErrorCode(1004001000, "字段不存在");
 
-    ErrorCode FIELD_NAME_EXIST = new ErrorCode(1004001001, "字段名已存在");
+    ErrorCode FIELD_CODE_EXIST = new ErrorCode(1004001001, "字段名已存在");
 
     ErrorCode FIELD_STANDARD = new ErrorCode(1004001002, "标准字段名不可更改");
 
-    ErrorCode FIELD_NAME_ERROR = new ErrorCode(1004001003, "字段名格式错误");
+    ErrorCode FIELD_CODE_ERROR = new ErrorCode(1004001003, "字段名格式错误");
 
     ErrorCode FIELD_GROUP_NOT_EXIST = new ErrorCode(1004001002, "字段组不存在");
 
-    ErrorCode FIELD_GROUP_NAME_EXIST = new ErrorCode(1004001003, "字段组名已存在");
+    ErrorCode FIELD_GROUP_CODE_EXIST = new ErrorCode(1004001003, "字段组名已存在");
 
     ErrorCode FIELD_GROUP_HAS_FIELD = new ErrorCode(1004001004, "字段组存在字段");
 

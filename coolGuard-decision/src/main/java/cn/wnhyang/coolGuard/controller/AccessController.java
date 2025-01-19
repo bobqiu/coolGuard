@@ -109,4 +109,15 @@ public class AccessController {
         return success(accessService.pageAccess(pageVO));
     }
 
+    /**
+     * 复制接入
+     *
+     * @param id 接入id
+     * @return 结果
+     */
+    @PostMapping("/copy")
+    public CommonResult<Long> copyAccess(@RequestParam("id") Long id) {
+        return success(accessService.copyAccess(id));
+    }
+
 }

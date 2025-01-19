@@ -24,7 +24,7 @@ public interface ApplicationMapper extends BaseMapperX<Application> {
                 .likeIfPresent(Application::getCode, pageVO.getCode()));
     }
 
-    @Cacheable(cacheNames = RedisKey.APPLICATION + "::co", key = "#value", unless = "#result == null")
+    @Cacheable(value = RedisKey.APPLICATION + "::co", key = "#code", unless = "#result == null")
     default Application selectByCode(String code) {
         return selectOne(Application::getCode, code);
     }

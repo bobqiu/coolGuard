@@ -24,4 +24,6 @@ public interface AccessConvert {
     AccessVO convert(Access po);
 
     PageResult<AccessVO> convert(PageResult<Access> pageResult);
+
+    AccessCreateVO convert2Create(Access access);
 }

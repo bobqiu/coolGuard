@@ -10,43 +10,61 @@ import lombok.*;
 import java.io.Serial;
 
 /**
- * 接入表
+ * 字段引用
  *
  * @author wnhyang
- * @since 2024/03/14
+ * @since 2025/01/19
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_access")
-public class Access extends BaseDO {
+@TableName("de_field_ref")
+public class FieldRef extends BaseDO {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 自增编号
+     * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 显示服务名
+     * 被引用类型
      */
-    @TableField("name")
-    private String name;
+    @TableField("ref_type")
+    private String refType;
 
     /**
-     * 服务标识
+     * 被引用
      */
-    @TableField("code")
-    private String code;
+    @TableField("ref_by")
+    private String refBy;
 
     /**
-     * 描述
+     * 被引用子类型
      */
-    @TableField("description")
-    private String description;
+    @TableField("ref_sub_type")
+    private String refSubType;
+
+    /**
+     * 字段编码
+     */
+    @TableField("field_code")
+    private String fieldCode;
+
+    /**
+     * 必须
+     */
+    @TableField("required")
+    private Boolean required;
+
+    /**
+     * 参数名
+     */
+    @TableField("param_name")
+    private String paramName;
 }

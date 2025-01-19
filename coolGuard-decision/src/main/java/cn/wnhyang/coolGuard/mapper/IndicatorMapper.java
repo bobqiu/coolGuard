@@ -48,7 +48,7 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
                 .apply("FIND_IN_SET({0}, scenes)", scene));
     }
 
-    @Cacheable(cacheNames = RedisKey.INDICATORS + "::a-p", key = "#app+'-'+#policySet", unless = "#result == null")
+    @Cacheable(value = RedisKey.INDICATORS + "::a-p", key = "#app+'-'+#policySet", unless = "#result == null")
     default List<Indicator> selectListByScenes(String app, String policySet) {
         return selectList(new LambdaQueryWrapperX<Indicator>()
                 .and(w -> w.eq(Indicator::getSceneType, SceneType.APP).apply("FIND_IN_SET({0}, scenes)", app))

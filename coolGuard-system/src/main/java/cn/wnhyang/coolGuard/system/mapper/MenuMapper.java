@@ -22,10 +22,6 @@ public interface MenuMapper extends BaseMapperX<MenuDO> {
                 .orderByAsc(MenuDO::getOrder));
     }
 
-    default MenuDO selectByParentIdAndName(Long parentId, String name) {
-        return selectOne(MenuDO::getParentId, parentId, MenuDO::getName, name);
-    }
-
     default Long selectCountByParentId(Long parentId) {
         return selectCount(MenuDO::getParentId, parentId);
     }
@@ -34,5 +30,13 @@ public interface MenuMapper extends BaseMapperX<MenuDO> {
         return selectList(new LambdaQueryWrapperX<MenuDO>()
                 .likeIfPresent(MenuDO::getTitle, reqVO.getTitle())
                 .orderByAsc(MenuDO::getOrder));
+    }
+
+    default MenuDO selectByName(String name) {
+        return selectOne(MenuDO::getName, name);
+    }
+
+    default MenuDO selectByPath(String path) {
+        return selectOne(MenuDO::getPath, path);
     }
 }

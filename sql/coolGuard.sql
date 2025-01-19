@@ -1,16 +1,14 @@
 create table coolGuard.de_access
 (
-    id            bigint auto_increment comment '自增编号'
+    id          bigint auto_increment comment '自增编号'
         primary key,
-    name          varchar(36) charset utf8mb4 default ''                not null comment '服务名',
-    code          varchar(36) charset utf8mb4 default ''                not null comment 'code',
-    input_config  varchar(10000) charset utf8mb4                        null comment '输入配置',
-    output_config varchar(5000) charset utf8mb4                         null comment '输出配置',
-    description   varchar(64) charset utf8mb4 default ''                null comment '描述',
-    creator       varchar(36) charset utf8mb4 default ''                null comment '创建者',
-    create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater       varchar(36) charset utf8mb4 default ''                null comment '更新者',
-    update_time   datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    name        varchar(36) charset utf8mb4 default ''                not null comment '服务名',
+    code        varchar(36) charset utf8mb4 default ''                not null comment 'code',
+    description varchar(64) charset utf8mb4 default ''                null comment '描述',
+    creator     varchar(36) charset utf8mb4 default ''                null comment '创建者',
+    create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater     varchar(36) charset utf8mb4 default ''                null comment '更新者',
+    update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     constraint uk_code
         unique (code)
 )
@@ -39,7 +37,7 @@ create table coolGuard.de_chain
         primary key,
     application_name varchar(32)                 default 'coolGuard'       not null comment '应用名',
     chain_name       varchar(64)                 default ''                not null comment 'chain名',
-    el_data          text                                                  not null comment 'el数据',
+    el_data          varchar(3000)               default ''                not null comment 'el数据',
     enable           bit                         default b'1'              not null comment 'chain状态',
     description      varchar(64) charset utf8mb4 default ''                null comment '描述',
     creator          varchar(36) charset utf8mb4 default ''                null comment '创建者',
@@ -109,6 +107,23 @@ create table coolGuard.de_field_group
         unique (code)
 )
     comment '字段分组表';
+
+create table coolGuard.de_field_ref
+(
+    id           bigint auto_increment comment '主键'
+        primary key,
+    ref_type     varchar(36)                 default ''                not null comment '被引用类型',
+    ref_by       varchar(36)                 default ''                not null comment '被引用',
+    ref_sub_type varchar(36)                                           null comment '引用子类型',
+    field_code   varchar(36)                 default ''                not null comment '字段编码',
+    required     bit                         default b'1'              not null comment '必须',
+    param_name   varchar(36)                 default ''                null comment '参数名',
+    creator      varchar(36) charset utf8mb4 default ''                null comment '创建者',
+    create_time  datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater      varchar(36) charset utf8mb4 default ''                null comment '更新者',
+    update_time  datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+)
+    comment '字段引用';
 
 create table coolGuard.de_indicator
 (

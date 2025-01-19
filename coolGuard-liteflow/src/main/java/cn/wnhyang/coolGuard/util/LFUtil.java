@@ -50,11 +50,6 @@ public class LFUtil {
     public static final String RULE_CHAIN = "R_C#{}";
 
     /**
-     * empty普通组件
-     */
-    public static final String EMPTY_COMMON_NODE = "e_cn";
-
-    /**
      * 设置字段组件
      */
     public static final String SET_FIELD = "setField";
@@ -140,6 +135,8 @@ public class LFUtil {
     public static final String RULE_FALSE = "ruleFalse";
 
     public static final String NODE_WITH_TAG = "{}.tag(\"{}\")";
+
+    public static final String DEFAULT_ACCESS_CHAIN = "THEN(I_F,ps_cn);";
 
     /**
      * @param nodeId 组件id

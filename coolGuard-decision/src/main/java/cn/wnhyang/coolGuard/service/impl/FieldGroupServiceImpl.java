@@ -42,7 +42,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
     @CacheEvict(value = RedisKey.FIELD_GROUP, allEntries = true)
     public Long createFieldGroup(FieldGroupCreateVO createVO) {
         if (fieldGroupMapper.selectByCode(createVO.getName()) != null) {
-            throw exception(FIELD_GROUP_NAME_EXIST);
+            throw exception(FIELD_GROUP_CODE_EXIST);
         }
         FieldGroup fieldGroup = FieldGroupConvert.INSTANCE.convert(createVO);
         fieldGroupMapper.insert(fieldGroup);
@@ -98,7 +98,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
     public PageResult<FieldGroupVO> pageFieldGroup(FieldGroupPageVO pageVO) {
         PageResult<FieldGroup> pageResult = fieldGroupMapper.selectPage(pageVO);
         PageResult<FieldGroupVO> convert = FieldGroupConvert.INSTANCE.convert(pageResult);
-        convert.getList().forEach(fieldGroup -> fieldGroup.setCount(fieldMapper.selectCountByFieldGroupCode(fieldGroup.getName())));
+        convert.getList().forEach(fieldGroup -> fieldGroup.setCount(fieldMapper.selectCountByFieldGroupCode(fieldGroup.getCode())));
         return convert;
     }
 

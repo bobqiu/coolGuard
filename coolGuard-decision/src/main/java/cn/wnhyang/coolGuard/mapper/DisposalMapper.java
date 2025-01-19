@@ -24,7 +24,7 @@ public interface DisposalMapper extends BaseMapperX<Disposal> {
                 .likeIfPresent(Disposal::getName, pageVO.getName()));
     }
 
-    @Cacheable(cacheNames = RedisKey.DISPOSAL + "::co", key = "#code", unless = "#result == null")
+    @Cacheable(value = RedisKey.DISPOSAL + "::co", key = "#code", unless = "#result == null")
     default Disposal selectByCode(String code) {
         return selectOne(Disposal::getCode, code);
     }

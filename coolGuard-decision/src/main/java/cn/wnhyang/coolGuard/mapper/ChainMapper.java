@@ -40,4 +40,8 @@ public interface ChainMapper extends BaseMapperX<Chain> {
     default boolean selectByChainNameAndEl(String chainName, String el) {
         return selectCount(new LambdaQueryWrapperX<Chain>().eq(Chain::getChainName, chainName).like(Chain::getElData, el)) > 0;
     }
+
+    default void updateNewChainNameByOldChainName(String oldChainName, String newChainName) {
+        update(new Chain().setChainName(newChainName), new LambdaUpdateWrapper<Chain>().eq(Chain::getChainName, oldChainName));
+    }
 }

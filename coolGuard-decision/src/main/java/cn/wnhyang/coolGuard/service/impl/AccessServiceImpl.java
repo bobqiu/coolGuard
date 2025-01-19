@@ -9,17 +9,15 @@ import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.AccessConvert;
-import cn.wnhyang.coolGuard.convert.FieldConvert;
 import cn.wnhyang.coolGuard.entity.Access;
 import cn.wnhyang.coolGuard.entity.Chain;
-import cn.wnhyang.coolGuard.entity.ConfigField;
-import cn.wnhyang.coolGuard.entity.Field;
 import cn.wnhyang.coolGuard.kafka.producer.CommonProducer;
 import cn.wnhyang.coolGuard.mapper.AccessMapper;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.AccessService;
+import cn.wnhyang.coolGuard.service.FieldRefService;
 import cn.wnhyang.coolGuard.service.FieldService;
 import cn.wnhyang.coolGuard.util.JsonUtil;
 import cn.wnhyang.coolGuard.util.LFUtil;
@@ -30,11 +28,7 @@ import cn.wnhyang.coolGuard.vo.create.AccessCreateVO;
 import cn.wnhyang.coolGuard.vo.page.AccessPageVO;
 import cn.wnhyang.coolGuard.vo.update.AccessUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
-import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.FlowExecutor;
-import com.yomahub.liteflow.core.NodeComponent;
-import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
-import com.yomahub.liteflow.enums.NodeTypeEnum;
 import com.yomahub.liteflow.flow.LiteflowResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,14 +36,13 @@ import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_NAME_EXIST;
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_CODE_EXIST;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_NOT_EXIST;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
@@ -79,6 +72,8 @@ public class AccessServiceImpl implements AccessService {
 
     private final FieldService fieldService;
 
+    private final FieldRefService fieldRefService;
+
     @Override
     public Map<String, Object> syncRisk(String name, Map<String, String> params) {
         log.info("服务名：{}, 入参：{}", name, params);
@@ -90,8 +85,8 @@ public class AccessServiceImpl implements AccessService {
         log.info("access: {}", access);
 
         // 设置接入
-        List<InputFieldVO> inputFieldList = getAccessInputFieldList(access);
-        List<OutputFieldVO> outputFieldList = getAccessOutputFieldList(access);
+        List<InputFieldVO> inputFieldList = fieldRefService.getAccessInputFieldList(access);
+        List<OutputFieldVO> outputFieldList = fieldRefService.getAccessOutputFieldList(access);
 
         FieldContext fieldContext = fieldService.fieldParse(inputFieldList, params);
         PolicyContext policyContext = new PolicyContext();
@@ -151,23 +146,31 @@ public class AccessServiceImpl implements AccessService {
     public Long createAccess(AccessCreateVO createVO) {
         // 1、校验服务name唯一性
         if (accessMapper.selectByCode(createVO.getCode()) != null) {
-            throw exception(ACCESS_NAME_EXIST);
+            throw exception(ACCESS_CODE_EXIST);
         }
         Access access = AccessConvert.INSTANCE.convert(createVO);
         accessMapper.insert(access);
         // TODO 创建chain
         String aChain = StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode());
-        chainMapper.insert(new Chain().setChainName(aChain));
+        chainMapper.insert(new Chain().setChainName(aChain).setElData(LFUtil.DEFAULT_ACCESS_CHAIN));
         return access.getId();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateAccess(AccessUpdateVO updateVO) {
-        // TODO 是否可删除，最近有数据？
-        Access access = AccessConvert.INSTANCE.convert(updateVO);
-
-        accessMapper.updateById(access);
+        Access access = accessMapper.selectById(updateVO.getId());
+        if (access == null) {
+            throw exception(ACCESS_NOT_EXIST);
+        }
+        Access byCode = accessMapper.selectByCode(access.getCode());
+        if (byCode != null && !byCode.getId().equals(access.getId())) {
+            throw exception(ACCESS_CODE_EXIST);
+        }
+        Access convert = AccessConvert.INSTANCE.convert(updateVO);
+        accessMapper.updateById(convert);
+        String aChain = StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode());
+        chainMapper.updateNewChainNameByOldChainName(aChain, StrUtil.format(LFUtil.ACCESS_CHAIN, convert.getCode()));
     }
 
     @Override
@@ -203,45 +206,16 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @Override
-    public List<InputFieldVO> getAccessInputFieldList(Access access) {
-        List<ConfigField> configFieldList = access.getInputConfig();
+    @Transactional(rollbackFor = Exception.class)
+    public Long copyAccess(Long id) {
+        Access access = accessMapper.selectById(id);
+        String accessCode = access.getCode();
+        access.setCode(access.getCode() + "_copy").setName(access.getName() + "_副本");
+        Long insertId = createAccess(AccessConvert.INSTANCE.convert2Create(access));
 
-        List<InputFieldVO> inputFieldVOList = new ArrayList<>();
-        if (CollUtil.isNotEmpty(configFieldList)) {
-            for (ConfigField configField : configFieldList) {
-                Field field = fieldMapper.selectByCode(configField.getFieldName());
-                if (field != null) {
-                    InputFieldVO inputFieldVO = FieldConvert.INSTANCE.convert2InputFieldVO(field);
-                    inputFieldVO.setParamName(configField.getParamName());
-                    inputFieldVO.setRequired(configField.getRequired());
-                    inputFieldVOList.add(inputFieldVO);
-                }
-            }
-        }
-        return inputFieldVOList;
-    }
+        fieldRefService.copyAccess(accessCode, access.getCode());
 
-    @Override
-    public List<OutputFieldVO> getAccessOutputFieldList(Access access) {
-        List<ConfigField> configFieldList = access.getOutputConfig();
-
-        List<OutputFieldVO> outputFieldVOList = new ArrayList<>();
-        if (CollUtil.isNotEmpty(configFieldList)) {
-            for (ConfigField configField : configFieldList) {
-                Field field = fieldMapper.selectByCode(configField.getFieldName());
-                if (field != null) {
-                    outputFieldVOList.add(new OutputFieldVO()
-                            .setCode(configField.getFieldName())
-                            .setParamName(configField.getParamName()));
-                }
-            }
-        }
-        return outputFieldVOList;
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.EMPTY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "空组件")
-    public void empty(NodeComponent bindCmp) {
-        log.info("空组件");
+        return insertId;
     }
 
 }

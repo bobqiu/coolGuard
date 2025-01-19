@@ -24,7 +24,7 @@ public interface FieldGroupMapper extends BaseMapperX<FieldGroup> {
                 .likeIfPresent(FieldGroup::getCode, pageVO.getCode()));
     }
 
-    @Cacheable(cacheNames = RedisKey.FIELD_GROUP + "::co", key = "#value", unless = "#result == null")
+    @Cacheable(value = RedisKey.FIELD_GROUP + "::co", key = "#code", unless = "#result == null")
     default FieldGroup selectByCode(String code) {
         return selectOne(FieldGroup::getCode, code);
     }
