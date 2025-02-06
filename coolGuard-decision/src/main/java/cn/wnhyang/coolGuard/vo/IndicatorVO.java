@@ -4,6 +4,7 @@ import cn.wnhyang.coolGuard.vo.base.IndicatorBaseVO;
 import lombok.Data;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * @author wnhyang
@@ -69,7 +70,7 @@ public class IndicatorVO extends IndicatorBaseVO {
     /**
      * 从字段
      */
-    private String slaveFields;
+    private List<String> slaveFields;
 
     /**
      * 过滤脚本

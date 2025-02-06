@@ -28,10 +28,23 @@ public interface IndicatorVersionMapper extends BaseMapperX<IndicatorVersion> {
                 .eqIfPresent(IndicatorVersion::getScenes, pageVO.getScene()));
     }
 
+    default PageResult<IndicatorVersion> selectPageByCode(IndicatorVersionPageVO pageVO) {
+        return selectPage(pageVO, new LambdaQueryWrapperX<IndicatorVersion>()
+                .eq(IndicatorVersion::getCode, pageVO.getCode())
+                .orderByDesc(IndicatorVersion::getVersion));
+    }
+
     default IndicatorVersion selectLatestByCode(String code) {
         return selectOne(new LambdaQueryWrapperX<IndicatorVersion>()
                 .eq(IndicatorVersion::getCode, code)
                 .eq(IndicatorVersion::getLatest, Boolean.TRUE));
+    }
+
+    default IndicatorVersion selectLatestVersionByCode(String code) {
+        return selectOne(new LambdaQueryWrapperX<IndicatorVersion>()
+                .eq(IndicatorVersion::getCode, code)
+                .orderByDesc(IndicatorVersion::getVersion)
+                .last("LIMIT 1"));
     }
 
     default List<IndicatorVersion> selectLatestListByScenes(String app, String policySet) {

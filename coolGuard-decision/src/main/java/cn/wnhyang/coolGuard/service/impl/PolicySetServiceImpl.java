@@ -204,7 +204,7 @@ public class PolicySetServiceImpl implements PolicySetService {
         policySetMapper.updateById(new PolicySet().setId(policySet.getId()).setPublish(Boolean.TRUE));
         // 2、查询是否有已运行的
         PolicySetVersion policySetVersion = policySetVersionMapper.selectLatest(policySet.getCode());
-        int version = 0;
+        int version = 1;
         if (policySetVersion != null) {
             version = policySetVersion.getVersion() + 1;
             // 关闭已运行的

@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @date 2024/11/22
  **/
 @Data
-public class BatchVersionSubmitResultVO implements Serializable {
+public class VersionSubmitResultVO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -6177443339834044186L;

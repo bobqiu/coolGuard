@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.indicator;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
@@ -52,9 +53,8 @@ public abstract class AbstractIndicator {
     private boolean filter(IndicatorContext.IndicatorCtx indicator, Map<String, Object> eventDetail) {
         // 1、主属性不能为空，并且主属性取值也不能为空
         if (StrUtil.isNotBlank(indicator.getMasterField()) && ObjectUtil.isNotNull(eventDetail.get(indicator.getMasterField()))) {
-            if (StrUtil.isNotBlank(indicator.getSlaveFields())) {
-                String[] split = indicator.getSlaveFields().split(",");
-                for (String s : split) {
+            if (CollUtil.isNotEmpty(indicator.getSlaveFields())) {
+                for (String s : indicator.getSlaveFields()) {
                     if (eventDetail.get(s) == null) {
                         return false;
                     }
@@ -70,11 +70,13 @@ public abstract class AbstractIndicator {
      * 如：masterField分别为a、b，其在事件中的取值可能一样，那么指标key也就一样，可以优化为a：xxx，b：xxx
      */
     private String getRedisKey(IndicatorContext.IndicatorCtx indicator, Map<String, Object> eventDetail) {
-        String redisKey = RedisKey.ZB + indicator.getCode() + ":" + eventDetail.get(indicator.getMasterField());
-        if (StrUtil.isNotBlank(indicator.getSlaveFields())) {
-            redisKey += "-" + eventDetail.get(indicator.getSlaveFields());
+        StringBuilder redisKey = new StringBuilder(RedisKey.ZB + indicator.getCode() + ":" + eventDetail.get(indicator.getMasterField()));
+        if (CollUtil.isNotEmpty(indicator.getSlaveFields())) {
+            for (String slaveField : indicator.getSlaveFields()) {
+                redisKey.append("-").append(eventDetail.get(slaveField));
+            }
         }
-        return redisKey;
+        return redisKey.toString();
     }
 
     /**

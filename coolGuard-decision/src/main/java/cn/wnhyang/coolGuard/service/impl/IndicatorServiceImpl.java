@@ -25,8 +25,8 @@ import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
 import cn.wnhyang.coolGuard.util.LFUtil;
-import cn.wnhyang.coolGuard.vo.BatchVersionSubmitResultVO;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
+import cn.wnhyang.coolGuard.vo.VersionSubmitResultVO;
 import cn.wnhyang.coolGuard.vo.base.BatchVersionSubmit;
 import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
@@ -131,6 +131,8 @@ public class IndicatorServiceImpl implements IndicatorService {
             throw exception(INDICATOR_IS_RUNNING);
         }
         // TODO 查找引用
+
+        // TODO 删除历史指标
         indicatorMapper.deleteById(id);
     }
 
@@ -163,8 +165,8 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public BatchVersionSubmitResultVO submit(VersionSubmitVO submitVO) {
-        BatchVersionSubmitResultVO result = new BatchVersionSubmitResultVO().setId(submitVO.getId());
+    public VersionSubmitResultVO submit(VersionSubmitVO submitVO) {
+        VersionSubmitResultVO result = new VersionSubmitResultVO().setId(submitVO.getId());
         // 提交后就同时在version表中增加一条记录，表示该指标在运行状态
         Indicator indicator = indicatorMapper.selectById(submitVO.getId());
         if (ObjectUtil.isNull(indicator)) {
@@ -176,8 +178,8 @@ public class IndicatorServiceImpl implements IndicatorService {
         // 1、更新当前指标为已提交
         indicatorMapper.updateById(new Indicator().setId(submitVO.getId()).setPublish(Boolean.TRUE));
         // 2、查询是否有已运行的，有版本+1，没有版本1
-        IndicatorVersion indicatorVersion = indicatorVersionMapper.selectLatestByCode(indicator.getCode());
-        int version = 0;
+        IndicatorVersion indicatorVersion = indicatorVersionMapper.selectLatestVersionByCode(indicator.getCode());
+        int version = 1;
         if (indicatorVersion != null) {
             version = indicatorVersion.getVersion() + 1;
             // 关闭已运行的
@@ -209,14 +211,14 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<BatchVersionSubmitResultVO> batchSubmit(BatchVersionSubmit submitVO) {
-        List<BatchVersionSubmitResultVO> result = new ArrayList<>();
+    public List<VersionSubmitResultVO> batchSubmit(BatchVersionSubmit submitVO) {
+        List<VersionSubmitResultVO> result = new ArrayList<>();
         submitVO.getIds().forEach(id -> {
             try {
                 result.add(submit(new VersionSubmitVO().setId(id).setVersionDesc(submitVO.getVersionDesc())));
             } catch (Exception e) {
                 log.error("指标提交失败，id:{}", id, e);
-                result.add(new BatchVersionSubmitResultVO().setId(id).setSuccess(Boolean.FALSE).setMsg(e.getMessage()));
+                result.add(new VersionSubmitResultVO().setId(id).setSuccess(Boolean.FALSE).setMsg(e.getMessage()));
             }
         });
         return result;

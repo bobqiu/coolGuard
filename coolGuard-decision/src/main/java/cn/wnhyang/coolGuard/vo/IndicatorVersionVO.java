@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 指标表版本表
@@ -86,7 +87,7 @@ public class IndicatorVersionVO implements Serializable {
     /**
      * 从字段
      */
-    private String slaveFields;
+    private List<String> slaveFields;
 
     /**
      * 计算脚本

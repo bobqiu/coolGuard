@@ -27,7 +27,8 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
                 .likeIfPresent(Indicator::getName, pageVO.getName())
                 .eqIfPresent(Indicator::getType, pageVO.getType())
                 .eqIfPresent(Indicator::getSceneType, pageVO.getSceneType())
-                .eqIfPresent(Indicator::getScenes, pageVO.getScene()));
+                .eqIfPresent(Indicator::getScenes, pageVO.getScene())
+                .eqIfPresent(Indicator::getPublish, pageVO.getPublish()));
     }
 
     default List<Long> selectIdListByScene(String sceneType, String scene) {
@@ -59,5 +60,15 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
     default Indicator selectByName(String name) {
         return selectOne(new LambdaQueryWrapperX<Indicator>()
                 .eq(Indicator::getName, name));
+    }
+
+    default void updateByCode(Indicator indicator) {
+        update(indicator, new LambdaQueryWrapperX<Indicator>()
+                .eq(Indicator::getCode, indicator.getCode()));
+    }
+
+    default Indicator selectByCode(String code) {
+        return selectOne(new LambdaQueryWrapperX<Indicator>()
+                .eq(Indicator::getCode, code));
     }
 }

@@ -18,6 +18,11 @@ public class IndicatorVersionPageVO extends PageParam {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 指标编码
+     */
+    private String code;
+
+    /**
      * 指标名
      */
     private String name;

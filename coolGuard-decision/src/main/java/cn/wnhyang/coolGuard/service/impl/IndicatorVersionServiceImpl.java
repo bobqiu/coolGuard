@@ -1,9 +1,12 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.convert.IndicatorVersionConvert;
+import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.entity.IndicatorVersion;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
+import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
 import cn.wnhyang.coolGuard.mapper.IndicatorVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorVersionService;
@@ -15,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.INDICATOR_NAME_EXIST;
 import static cn.wnhyang.coolGuard.exception.ErrorCodes.INDICATOR_VERSION_NOT_EXIST;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
@@ -30,6 +34,8 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
 public class IndicatorVersionServiceImpl implements IndicatorVersionService {
 
     private final IndicatorVersionMapper indicatorVersionMapper;
+
+    private final IndicatorMapper indicatorMapper;
 
     private final ChainMapper chainMapper;
 
@@ -68,8 +74,31 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
         if (indicatorVersion == null) {
             throw exception(INDICATOR_VERSION_NOT_EXIST);
         }
+        indicatorMapper.updateByCode(new Indicator().setCode(indicatorVersion.getCode()).setPublish(Boolean.FALSE));
         indicatorVersionMapper.updateById(new IndicatorVersion().setId(id).setLatest(Boolean.FALSE));
         chainMapper.deleteByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, indicatorVersion.getCode()));
+    }
+
+    @Override
+    public PageResult<IndicatorVersionVO> pageByCode(IndicatorVersionPageVO pageVO) {
+        PageResult<IndicatorVersion> indicatorVersionPageResult = indicatorVersionMapper.selectPageByCode(pageVO);
+        return IndicatorVersionConvert.INSTANCE.convert(indicatorVersionPageResult);
+    }
+
+    @Override
+    public void chose(Long id) {
+        IndicatorVersion indicatorVersion = indicatorVersionMapper.selectById(id);
+        if (indicatorVersion == null) {
+            throw exception(INDICATOR_VERSION_NOT_EXIST);
+        }
+        Indicator indicator = indicatorMapper.selectByCode(indicatorVersion.getCode());
+        Indicator byName = indicatorMapper.selectByName(indicatorVersion.getName());
+        if (byName != null && !indicator.getId().equals(byName.getId())) {
+            throw exception(INDICATOR_NAME_EXIST);
+        }
+        Indicator convert = IndicatorConvert.INSTANCE.convert(indicatorVersion);
+        convert.setPublish(Boolean.FALSE);
+        indicatorMapper.updateByCode(convert);
     }
 
 }

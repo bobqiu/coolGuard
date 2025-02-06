@@ -105,7 +105,7 @@ public class IndicatorContext {
         /**
          * 从字段
          */
-        private String slaveFields;
+        private List<String> slaveFields;
 
         /**
          * 过滤脚本

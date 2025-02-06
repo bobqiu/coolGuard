@@ -9,7 +9,7 @@ public interface SceneType {
     /**
      * appName场景
      */
-    String APP = "appName";
+    String APP = "app";
 
     /**
      * 策略集场景

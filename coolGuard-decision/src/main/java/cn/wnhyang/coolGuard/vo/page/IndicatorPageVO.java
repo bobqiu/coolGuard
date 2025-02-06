@@ -35,4 +35,9 @@ public class IndicatorPageVO extends PageParam {
      */
     private String sceneType;
 
+    /**
+     * 是否发布
+     */
+    private Boolean publish;
+
 }

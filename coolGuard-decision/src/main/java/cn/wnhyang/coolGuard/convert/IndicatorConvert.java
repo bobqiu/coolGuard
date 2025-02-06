@@ -33,4 +33,6 @@ public interface IndicatorConvert {
     List<IndicatorVO> convertVersion(List<IndicatorVersion> indicatorVersionList);
 
     IndicatorUpdateVO convert2Update(IndicatorVO indicatorVO);
+
+    Indicator convert(IndicatorVersion indicatorVersion);
 }

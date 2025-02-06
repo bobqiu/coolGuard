@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 指标表
@@ -109,8 +110,8 @@ public class Indicator extends BaseDO {
     /**
      * 从字段 只能是字符类
      */
-    @TableField("slave_fields")
-    private String slaveFields;
+    @TableField(value = "slave_fields", typeHandler = JacksonTypeHandler.class)
+    private List<String> slaveFields;
 
     /**
      * 过滤脚本

@@ -5,6 +5,7 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorVersionService;
 import cn.wnhyang.coolGuard.util.ExcelUtil;
 import cn.wnhyang.coolGuard.vo.IndicatorVersionVO;
+import cn.wnhyang.coolGuard.vo.base.IdBaseVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorVersionPageVO;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -36,12 +37,24 @@ public class IndicatorVersionController {
     /**
      * 下线
      *
-     * @param id id
+     * @param idBaseVO idBaseVO
      * @return true/false
      */
     @PostMapping("/offline")
-    public CommonResult<Boolean> offline(@RequestParam("id") Long id) {
-        indicatorVersionService.offline(id);
+    public CommonResult<Boolean> offline(@RequestBody IdBaseVO idBaseVO) {
+        indicatorVersionService.offline(idBaseVO.getId());
+        return success(true);
+    }
+
+    /**
+     * 选中
+     *
+     * @param idBaseVO idBaseVO
+     * @return true/false
+     */
+    @PostMapping("/chose")
+    public CommonResult<Boolean> chose(@RequestBody IdBaseVO idBaseVO) {
+        indicatorVersionService.chose(idBaseVO.getId());
         return success(true);
     }
 
@@ -76,6 +89,17 @@ public class IndicatorVersionController {
     @GetMapping("/page")
     public CommonResult<PageResult<IndicatorVersionVO>> page(@Valid IndicatorVersionPageVO pageVO) {
         return success(indicatorVersionService.page(pageVO));
+    }
+
+    /**
+     * 根据code分页查询
+     *
+     * @param pageVO 分页VO
+     * @return pageResult
+     */
+    @GetMapping("/pageByCode")
+    public CommonResult<PageResult<IndicatorVersionVO>> pageByCode(@Valid IndicatorVersionPageVO pageVO) {
+        return success(indicatorVersionService.pageByCode(pageVO));
     }
 
     /**
