@@ -35,13 +35,13 @@ public class FieldGroup extends BaseDO implements LabelValueAble {
     private Long id;
 
     /**
-     * 显示分组名
+     * 字段分组名
      */
     @TableField("name")
     private String name;
 
     /**
-     * 分组标识
+     * 字段分组编码
      */
     @TableField("code")
     private String code;

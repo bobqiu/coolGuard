@@ -25,7 +25,7 @@ public class IndicatorVersionVO implements Serializable {
     private Long id;
 
     /**
-     * code
+     * 指标版本编码
      */
     private String code;
 
@@ -95,9 +95,9 @@ public class IndicatorVersionVO implements Serializable {
     private String computeScript;
 
     /**
-     * 场景（,分割）
+     * 场景
      */
-    private String scenes;
+    private List<String> scenes;
 
     /**
      * 场景类型

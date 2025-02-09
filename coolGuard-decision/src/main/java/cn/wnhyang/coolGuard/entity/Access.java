@@ -33,13 +33,13 @@ public class Access extends BaseDO {
     private Long id;
 
     /**
-     * 显示服务名
+     * 接入名
      */
     @TableField("name")
     private String name;
 
     /**
-     * 服务标识
+     * 接入编码
      */
     @TableField("code")
     private String code;

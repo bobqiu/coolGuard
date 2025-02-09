@@ -96,6 +96,11 @@ public class FieldGroupController {
         return success(fieldGroupService.listFieldGroup());
     }
 
+    /**
+     * 获取字段分组lv列表
+     *
+     * @return lv列表
+     */
     @GetMapping("/lvList")
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(fieldGroupService.getLabelValueList());

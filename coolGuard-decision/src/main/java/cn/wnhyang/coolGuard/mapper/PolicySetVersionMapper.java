@@ -21,18 +21,14 @@ public interface PolicySetVersionMapper extends BaseMapperX<PolicySetVersion> {
     }
 
     default PolicySetVersion selectLatest(String code) {
-        return selectOne(new LambdaQueryWrapperX<PolicySetVersion>()
-                .eq(PolicySetVersion::getCode, code)
-                .eq(PolicySetVersion::getLatest, Boolean.TRUE));
+        return selectOne(PolicySetVersion::getCode, code, PolicySetVersion::getLatest, Boolean.TRUE);
     }
 
     default void deleteBySetCode(String code) {
-        delete(new LambdaQueryWrapperX<PolicySetVersion>()
-                .eq(PolicySetVersion::getCode, code));
+        delete(PolicySetVersion::getCode, code);
     }
 
     default PolicySetVersion selectByCode(String code) {
-        return selectOne(new LambdaQueryWrapperX<PolicySetVersion>()
-                .eq(PolicySetVersion::getCode, code));
+        return selectOne(PolicySetVersion::getCode, code);
     }
 }

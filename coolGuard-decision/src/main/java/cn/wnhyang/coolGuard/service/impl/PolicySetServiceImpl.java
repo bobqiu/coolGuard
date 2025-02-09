@@ -72,8 +72,11 @@ public class PolicySetServiceImpl implements PolicySetService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.POLICY_SET, allEntries = true)
     public Long createPolicySet(PolicySetCreateVO createVO) {
-        if (policySetMapper.selectByCode(createVO.getName()) != null) {
+        if (policySetMapper.selectByCode(createVO.getCode()) != null) {
             throw exception(POLICY_SET_CODE_EXIST);
+        }
+        if (policySetMapper.selectByName(createVO.getName()) != null) {
+            throw exception(POLICY_SET_NAME_EXIST);
         }
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(createVO);
         // 创建默认空chain，其实应该是图的json数据
@@ -97,6 +100,10 @@ public class PolicySetServiceImpl implements PolicySetService {
         PolicySet policySet = policySetMapper.selectById(updateVO.getId());
         if (policySet == null) {
             throw exception(POLICY_SET_NOT_EXIST);
+        }
+        PolicySet byName = policySetMapper.selectByName(updateVO.getName());
+        if (byName != null && !policySet.getId().equals(byName.getId())) {
+            throw exception(POLICY_SET_NAME_EXIST);
         }
         PolicySet convert = PolicySetConvert.INSTANCE.convert(updateVO);
         policySetMapper.updateById(convert);

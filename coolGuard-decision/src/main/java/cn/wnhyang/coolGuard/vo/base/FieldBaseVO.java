@@ -20,10 +20,10 @@ public class FieldBaseVO implements Serializable {
     private static final long serialVersionUID = 5431692545506779115L;
 
     /**
-     * 显示名
+     * 字段名
      */
-    @NotBlank(message = "字段显示名不能为空")
-    @Size(min = 1, max = 50, message = "字段显示名长度必须在1-50之间")
+    @NotBlank(message = "字段名不能为空")
+    @Size(min = 1, max = 50, message = "字段名长度必须在1-50之间")
     private String name;
 
     /**

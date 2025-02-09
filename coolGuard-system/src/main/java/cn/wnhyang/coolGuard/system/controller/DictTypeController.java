@@ -101,7 +101,7 @@ public class DictTypeController {
     }
 
     /**
-     * 获取字典列表
+     * 获取字典lv列表
      *
      * @return list
      */

@@ -28,11 +28,6 @@ public class DisposalVO extends DisposalBaseVO {
     private String code;
 
     /**
-     * 处置名
-     */
-    private String name;
-
-    /**
      * 是否为标准
      */
     private Boolean standard;

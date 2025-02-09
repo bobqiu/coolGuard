@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.entity.IndicatorVersion;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
@@ -25,7 +26,9 @@ public interface IndicatorVersionMapper extends BaseMapperX<IndicatorVersion> {
                 .likeIfPresent(IndicatorVersion::getName, pageVO.getName())
                 .eqIfPresent(IndicatorVersion::getType, pageVO.getType())
                 .eqIfPresent(IndicatorVersion::getSceneType, pageVO.getSceneType())
-                .eqIfPresent(IndicatorVersion::getScenes, pageVO.getScene()));
+                .isNotNull(StrUtil.isNotBlank(pageVO.getScene()), IndicatorVersion::getScenes)
+                .ne(StrUtil.isNotBlank(pageVO.getScene()), IndicatorVersion::getScenes, "''")
+                .apply(StrUtil.isNotBlank(pageVO.getScene()), "JSON_CONTAINS(scenes, '\"" + pageVO.getScene() + "\"')"));
     }
 
     default PageResult<IndicatorVersion> selectPageByCode(IndicatorVersionPageVO pageVO) {
@@ -35,9 +38,7 @@ public interface IndicatorVersionMapper extends BaseMapperX<IndicatorVersion> {
     }
 
     default IndicatorVersion selectLatestByCode(String code) {
-        return selectOne(new LambdaQueryWrapperX<IndicatorVersion>()
-                .eq(IndicatorVersion::getCode, code)
-                .eq(IndicatorVersion::getLatest, Boolean.TRUE));
+        return selectOne(IndicatorVersion::getCode, code, IndicatorVersion::getLatest, Boolean.TRUE);
     }
 
     default IndicatorVersion selectLatestVersionByCode(String code) {
@@ -50,13 +51,18 @@ public interface IndicatorVersionMapper extends BaseMapperX<IndicatorVersion> {
     default List<IndicatorVersion> selectLatestListByScenes(String app, String policySet) {
         return selectList(new LambdaQueryWrapperX<IndicatorVersion>()
                 .eq(IndicatorVersion::getLatest, Boolean.TRUE)
-                .and(w -> w.eq(IndicatorVersion::getSceneType, SceneType.APP).apply("FIND_IN_SET({0}, scenes)", app))
-                .or(w -> w.eq(IndicatorVersion::getSceneType, SceneType.POLICY_SET).apply("FIND_IN_SET({0}, scenes)", policySet))
+                .and(w -> w.eq(IndicatorVersion::getSceneType, SceneType.APP)
+                        .isNotNull(IndicatorVersion::getScenes)
+                        .ne(IndicatorVersion::getScenes, "''")
+                        .apply("JSON_CONTAINS(scenes, '\"" + app + "\"')"))
+                .or(w -> w.eq(IndicatorVersion::getSceneType, SceneType.POLICY_SET)
+                        .isNotNull(IndicatorVersion::getScenes)
+                        .ne(IndicatorVersion::getScenes, "''")
+                        .apply("JSON_CONTAINS(scenes, '\"" + policySet + "\"')"))
         );
     }
 
     default IndicatorVersion selectByCode(String code) {
-        return selectOne(new LambdaQueryWrapperX<IndicatorVersion>()
-                .eq(IndicatorVersion::getCode, code));
+        return selectOne(IndicatorVersion::getCode, code);
     }
 }

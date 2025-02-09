@@ -21,7 +21,11 @@ import java.util.List;
 public interface PolicyMapper extends BaseMapperX<Policy> {
 
     default PageResult<Policy> selectPage(PolicyPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<Policy>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<Policy>()
+                .eqIfPresent(Policy::getPolicySetCode, pageVO.getPolicySetCode())
+                .likeIfPresent(Policy::getName, pageVO.getName())
+                .likeIfPresent(Policy::getCode, pageVO.getCode())
+                .eqIfPresent(Policy::getMode, pageVO.getMode()));
     }
 
     @Cacheable(value = RedisKey.POLICY + "::sCode", key = "#setCode", unless = "#result == null")
@@ -41,4 +45,7 @@ public interface PolicyMapper extends BaseMapperX<Policy> {
                 .eqIfPresent(Policy::getCode, code));
     }
 
+    default Policy selectByName(String name) {
+        return selectOne(Policy::getName, name);
+    }
 }

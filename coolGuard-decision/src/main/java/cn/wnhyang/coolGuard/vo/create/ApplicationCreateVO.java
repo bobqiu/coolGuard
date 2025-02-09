@@ -21,11 +21,11 @@ public class ApplicationCreateVO extends ApplicationBaseVO {
     private static final long serialVersionUID = -4178585550757568445L;
 
     /**
-     * 应用名
+     * 应用编码
      */
-    @NotBlank(message = "应用名不能为空")
-    @Size(min = 1, max = 30, message = "应用名长度必须在1-30之间")
-    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "应用名只能包含字母和数字")
+    @NotBlank(message = "应用编码不能为空")
+    @Size(min = 1, max = 30, message = "应用编码长度必须在1-30之间")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "应用编码只能包含字母和数字")
     private String code;
 
     /**

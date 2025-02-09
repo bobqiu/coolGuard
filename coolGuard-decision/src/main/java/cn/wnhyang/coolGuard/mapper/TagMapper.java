@@ -21,6 +21,6 @@ public interface TagMapper extends BaseMapperX<Tag> {
     }
 
     default Tag selectByCode(String code) {
-        return selectOne(new LambdaQueryWrapperX<Tag>().eq(Tag::getCode, code));
+        return selectOne(Tag::getCode, code);
     }
 }

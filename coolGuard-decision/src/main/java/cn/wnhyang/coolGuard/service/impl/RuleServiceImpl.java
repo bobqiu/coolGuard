@@ -72,6 +72,9 @@ public class RuleServiceImpl implements RuleService {
         if (ruleMapper.selectByRuleId(createVO.getRuleId()) != null) {
             throw exception(RULE_RULE_ID_EXIST);
         }
+        if (ruleMapper.selectByName(createVO.getName()) != null) {
+            throw exception(RULE_NAME_EXIST);
+        }
         Rule rule = RuleConvert.INSTANCE.convert(createVO);
         rule.setCode(IdUtil.fastSimpleUUID());
         ruleMapper.insert(rule);
@@ -98,6 +101,10 @@ public class RuleServiceImpl implements RuleService {
         Rule byRuleId = ruleMapper.selectByRuleId(updateVO.getRuleId());
         if (byRuleId != null && !byRuleId.getId().equals(updateVO.getId())) {
             throw exception(RULE_RULE_ID_EXIST);
+        }
+        Rule byName = ruleMapper.selectByName(updateVO.getName());
+        if (byName != null && !rule.getId().equals(byName.getId())) {
+            throw exception(RULE_NAME_EXIST);
         }
         Rule convert = RuleConvert.INSTANCE.convert(updateVO);
         ruleMapper.updateById(convert);

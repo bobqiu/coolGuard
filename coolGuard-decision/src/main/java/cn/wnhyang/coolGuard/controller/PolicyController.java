@@ -98,7 +98,7 @@ public class PolicyController {
     }
 
     /**
-     * 获取下拉列表
+     * 获取策略lv列表
      *
      * @return list
      */

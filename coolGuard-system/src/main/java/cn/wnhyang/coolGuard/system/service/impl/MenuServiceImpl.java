@@ -162,7 +162,7 @@ public class MenuServiceImpl implements MenuService {
 
         List<MenuTreeRespVO> convert = MenuConvert.INSTANCE.convert2TreeRespList(menuDOList);
 
-        Map<Long, MenuTreeRespVO> menuTreeMap = new HashMap<>();
+        Map<Long, MenuTreeRespVO> menuTreeMap = new LinkedHashMap<>();
         for (MenuTreeRespVO menu : convert) {
             menuTreeMap.put(menu.getId(), menu);
         }
@@ -194,7 +194,7 @@ public class MenuServiceImpl implements MenuService {
 
         List<MenuSimpleTreeVO> convert = MenuConvert.INSTANCE.convert02(menuDOList);
 
-        Map<Long, MenuSimpleTreeVO> menuTreeMap = new HashMap<>();
+        Map<Long, MenuSimpleTreeVO> menuTreeMap = new LinkedHashMap<>();
         for (MenuSimpleTreeVO menu : convert) {
             menuTreeMap.put(menu.getId(), menu);
         }

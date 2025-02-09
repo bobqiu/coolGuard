@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.vo.base;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -15,6 +16,12 @@ public class DisposalBaseVO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -2853793969240349334L;
+
+    /**
+     * 处置名
+     */
+    @NotBlank(message = "处置名不能为空")
+    private String name;
 
     /**
      * 等级

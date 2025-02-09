@@ -125,7 +125,7 @@ public class IndicatorContext {
         /**
          * 场景
          */
-        private String scenes;
+        private List<String> scenes;
 
         /**
          * 场景类型

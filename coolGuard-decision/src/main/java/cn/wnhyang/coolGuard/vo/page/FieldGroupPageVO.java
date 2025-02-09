@@ -16,12 +16,12 @@ public class FieldGroupPageVO extends PageParam {
     private static final long serialVersionUID = -4138518261130779757L;
 
     /**
-     * 显示名
+     * 字段分组名
      */
     private String name;
 
     /**
-     * 字段名
+     * 字段分组编码
      */
     private String code;
 

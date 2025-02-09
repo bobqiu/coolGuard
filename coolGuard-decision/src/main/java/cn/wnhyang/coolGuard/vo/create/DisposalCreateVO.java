@@ -28,9 +28,4 @@ public class DisposalCreateVO extends DisposalBaseVO {
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "处置编码只能包含字母和数字")
     private String code;
 
-    /**
-     * 处置名
-     */
-    @NotBlank(message = "处置名不能为空")
-    private String name;
 }

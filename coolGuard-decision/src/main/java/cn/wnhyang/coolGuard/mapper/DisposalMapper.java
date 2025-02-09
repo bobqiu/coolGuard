@@ -21,11 +21,16 @@ public interface DisposalMapper extends BaseMapperX<Disposal> {
     default PageResult<Disposal> selectPage(DisposalPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<Disposal>()
                 .likeIfPresent(Disposal::getCode, pageVO.getCode())
-                .likeIfPresent(Disposal::getName, pageVO.getName()));
+                .likeIfPresent(Disposal::getName, pageVO.getName())
+                .orderByAsc(Disposal::getGrade));
     }
 
     @Cacheable(value = RedisKey.DISPOSAL + "::co", key = "#code", unless = "#result == null")
     default Disposal selectByCode(String code) {
         return selectOne(Disposal::getCode, code);
+    }
+
+    default Disposal selectByName(String name) {
+        return selectOne(Disposal::getName, name);
     }
 }

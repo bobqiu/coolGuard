@@ -23,8 +23,10 @@ public interface RuleMapper extends BaseMapperX<Rule> {
 
     default PageResult<Rule> selectPage(RulePageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<Rule>()
+                .eqIfPresent(Rule::getPolicyCode, pageVO.getPolicyCode())
                 .likeIfPresent(Rule::getName, pageVO.getName())
                 .likeIfPresent(Rule::getCode, pageVO.getCode())
+                .likeIfPresent(Rule::getRuleId, pageVO.getRuleId())
                 .eqIfPresent(Rule::getDisposalCode, pageVO.getDisposalCode()));
     }
 
@@ -63,5 +65,9 @@ public interface RuleMapper extends BaseMapperX<Rule> {
 
     default Rule selectByRuleId(String ruleId) {
         return selectOne(Rule::getRuleId, ruleId);
+    }
+
+    default Rule selectByName(String name) {
+        return selectOne(Rule::getName, name);
     }
 }

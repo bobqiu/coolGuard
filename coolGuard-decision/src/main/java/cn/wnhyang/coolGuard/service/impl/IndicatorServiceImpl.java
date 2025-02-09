@@ -131,8 +131,6 @@ public class IndicatorServiceImpl implements IndicatorService {
             throw exception(INDICATOR_IS_RUNNING);
         }
         // TODO 查找引用
-
-        // TODO 删除历史指标
         indicatorMapper.deleteById(id);
     }
 

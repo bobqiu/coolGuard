@@ -23,7 +23,7 @@ public class ApplicationVO extends ApplicationBaseVO {
     private Long id;
 
     /**
-     * 应用名
+     * 应用编码
      */
     private String code;
 

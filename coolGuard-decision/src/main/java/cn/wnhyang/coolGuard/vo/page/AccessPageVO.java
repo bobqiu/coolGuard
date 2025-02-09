@@ -16,12 +16,12 @@ public class AccessPageVO extends PageParam {
     private static final long serialVersionUID = -4138518261130779757L;
 
     /**
-     * 显示名
+     * 接入名
      */
     private String name;
 
     /**
-     * 字段名
+     * 接入编码
      */
     private String code;
 

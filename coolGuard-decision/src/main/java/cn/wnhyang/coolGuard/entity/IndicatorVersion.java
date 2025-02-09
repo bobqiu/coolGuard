@@ -35,7 +35,7 @@ public class IndicatorVersion extends BaseDO {
     private Long id;
 
     /**
-     * code
+     * 指标版本编码
      */
     @TableField("code")
     private String code;
@@ -119,10 +119,10 @@ public class IndicatorVersion extends BaseDO {
     private String computeScript;
 
     /**
-     * 场景（,分割）
+     * 场景
      */
-    @TableField("scenes")
-    private String scenes;
+    @TableField(value = "scenes", typeHandler = JacksonTypeHandler.class)
+    private List<String> scenes;
 
     /**
      * 场景类型

@@ -26,10 +26,10 @@ public interface ParamMapper extends BaseMapperX<ParamDO> {
     }
 
     default ParamDO selectByName(String name) {
-        return selectOne(new LambdaQueryWrapperX<ParamDO>().eq(ParamDO::getName, name));
+        return selectOne(ParamDO::getName, name);
     }
 
     default ParamDO selectByCode(String code) {
-        return selectOne(new LambdaQueryWrapperX<ParamDO>().eq(ParamDO::getCode, code));
+        return selectOne(ParamDO::getCode, code);
     }
 }

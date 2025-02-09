@@ -28,4 +28,8 @@ public interface ApplicationMapper extends BaseMapperX<Application> {
     default Application selectByCode(String code) {
         return selectOne(Application::getCode, code);
     }
+
+    default Application selectByName(String name) {
+        return selectOne(Application::getName, name);
+    }
 }

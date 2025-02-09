@@ -121,6 +121,11 @@ public class PolicySetController {
         return success(policySetService.listPolicySet());
     }
 
+    /**
+     * 获取策略集lv列表
+     *
+     * @return lv列表
+     */
     @GetMapping("/lvList")
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(policySetService.getLabelValueList());

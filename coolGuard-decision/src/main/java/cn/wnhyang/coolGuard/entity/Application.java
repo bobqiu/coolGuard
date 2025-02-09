@@ -36,13 +36,13 @@ public class Application extends BaseDO implements LabelValueAble {
     private Long id;
 
     /**
-     * 显示名
+     * 应用名
      */
     @TableField("name")
     private String name;
 
     /**
-     * 应用名
+     * 应用编码
      */
     @TableField("code")
     private String code;

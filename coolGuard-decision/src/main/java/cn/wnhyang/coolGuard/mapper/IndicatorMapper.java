@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.entity.Indicator;
@@ -27,39 +28,52 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
                 .likeIfPresent(Indicator::getName, pageVO.getName())
                 .eqIfPresent(Indicator::getType, pageVO.getType())
                 .eqIfPresent(Indicator::getSceneType, pageVO.getSceneType())
-                .eqIfPresent(Indicator::getScenes, pageVO.getScene())
-                .eqIfPresent(Indicator::getPublish, pageVO.getPublish()));
+                .eqIfPresent(Indicator::getPublish, pageVO.getPublish())
+                .isNotNull(StrUtil.isNotBlank(pageVO.getScene()), Indicator::getScenes)
+                .ne(StrUtil.isNotBlank(pageVO.getScene()), Indicator::getScenes, "''")
+                .apply(StrUtil.isNotBlank(pageVO.getScene()), "JSON_CONTAINS(scenes, '\"" + pageVO.getScene() + "\"')"));
     }
 
     default List<Long> selectIdListByScene(String sceneType, String scene) {
         return selectObjs(new LambdaQueryWrapperX<Indicator>()
                 .eq(Indicator::getSceneType, sceneType)
-                .apply("FIND_IN_SET({0}, scenes)", scene).select(Indicator::getId));
+                .isNotNull(Indicator::getScenes)
+                .ne(Indicator::getScenes, "''")
+                .apply("JSON_CONTAINS(scenes, '\"" + scene + "\"')").select(Indicator::getId));
     }
 
     default PageResult<Indicator> selectPageByScene(PageParam pageVO, String sceneType, String scene) {
         return selectPage(pageVO, new LambdaQueryWrapperX<Indicator>()
                 .eq(Indicator::getSceneType, sceneType)
-                .apply("FIND_IN_SET({0}, scenes)", scene));
+                .isNotNull(Indicator::getScenes)
+                .ne(Indicator::getScenes, "''")
+                .apply("JSON_CONTAINS(scenes, '\"" + scene + "\"')"));
     }
 
     default List<Indicator> selectListByScene(String sceneType, String scene) {
         return selectList(new LambdaQueryWrapperX<Indicator>()
                 .eq(Indicator::getSceneType, sceneType)
-                .apply("FIND_IN_SET({0}, scenes)", scene));
+                .isNotNull(Indicator::getScenes)
+                .ne(Indicator::getScenes, "''")
+                .apply("JSON_CONTAINS(scenes, '\"" + scene + "\"')"));
     }
 
     @Cacheable(value = RedisKey.INDICATORS + "::a-p", key = "#app+'-'+#policySet", unless = "#result == null")
     default List<Indicator> selectListByScenes(String app, String policySet) {
         return selectList(new LambdaQueryWrapperX<Indicator>()
-                .and(w -> w.eq(Indicator::getSceneType, SceneType.APP).apply("FIND_IN_SET({0}, scenes)", app))
-                .or(w -> w.eq(Indicator::getSceneType, SceneType.POLICY_SET).apply("FIND_IN_SET({0}, scenes)", policySet))
+                .and(w -> w.eq(Indicator::getSceneType, SceneType.APP)
+                        .isNotNull(Indicator::getScenes)
+                        .ne(Indicator::getScenes, "''")
+                        .apply("JSON_CONTAINS(scenes, '\"" + app + "\"')"))
+                .or(w -> w.eq(Indicator::getSceneType, SceneType.POLICY_SET)
+                        .isNotNull(Indicator::getScenes)
+                        .ne(Indicator::getScenes, "''")
+                        .apply("JSON_CONTAINS(scenes, '\"" + policySet + "\"')"))
         );
     }
 
     default Indicator selectByName(String name) {
-        return selectOne(new LambdaQueryWrapperX<Indicator>()
-                .eq(Indicator::getName, name));
+        return selectOne(Indicator::getName, name);
     }
 
     default void updateByCode(Indicator indicator) {
@@ -68,7 +82,6 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
     }
 
     default Indicator selectByCode(String code) {
-        return selectOne(new LambdaQueryWrapperX<Indicator>()
-                .eq(Indicator::getCode, code));
+        return selectOne(Indicator::getCode, code);
     }
 }

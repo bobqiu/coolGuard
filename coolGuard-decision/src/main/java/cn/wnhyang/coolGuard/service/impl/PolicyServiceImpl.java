@@ -67,6 +67,9 @@ public class PolicyServiceImpl implements PolicyService {
         if (policyMapper.selectByCode(createVO.getCode()) != null) {
             throw exception(POLICY_CODE_EXIST);
         }
+        if (policyMapper.selectByName(createVO.getName()) != null) {
+            throw exception(POLICY_NAME_EXIST);
+        }
         Policy policy = PolicyConvert.INSTANCE.convert(createVO);
         policyMapper.insert(policy);
         return policy.getId();
@@ -79,6 +82,10 @@ public class PolicyServiceImpl implements PolicyService {
         Policy policy = policyMapper.selectById(updateVO.getId());
         if (policy == null) {
             throw exception(POLICY_NOT_EXIST);
+        }
+        Policy byName = policyMapper.selectByName(updateVO.getName());
+        if (byName != null && !policy.getId().equals(byName.getId())) {
+            throw exception(POLICY_NAME_EXIST);
         }
         Policy convert = PolicyConvert.INSTANCE.convert(updateVO);
         policyMapper.updateById(convert);

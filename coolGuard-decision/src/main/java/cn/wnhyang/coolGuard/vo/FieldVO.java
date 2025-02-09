@@ -26,7 +26,7 @@ public class FieldVO extends FieldBaseVO {
     private Boolean standard;
 
     /**
-     * 字段名
+     * 字段编码
      */
     private String code;
 

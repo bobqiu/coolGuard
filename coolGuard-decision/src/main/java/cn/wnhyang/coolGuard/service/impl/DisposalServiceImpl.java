@@ -46,6 +46,9 @@ public class DisposalServiceImpl implements DisposalService {
         if (disposalMapper.selectByCode(createVO.getCode()) != null) {
             throw exception(DISPOSAL_CODE_EXIST);
         }
+        if (disposalMapper.selectByCode(createVO.getName()) != null) {
+            throw exception(DISPOSAL_NAME_EXIST);
+        }
         Disposal disposal = DisposalConvert.INSTANCE.convert(createVO);
         disposalMapper.insert(disposal);
         return disposal.getId();
@@ -62,6 +65,10 @@ public class DisposalServiceImpl implements DisposalService {
         // 标准，不允许删除
         if (disposal.getStandard()) {
             throw exception(DISPOSAL_STANDARD);
+        }
+        Disposal byName = disposalMapper.selectByName(updateVO.getName());
+        if (byName != null && !disposal.getId().equals(byName.getId())) {
+            throw exception(DISPOSAL_NAME_EXIST);
         }
         Disposal convert = DisposalConvert.INSTANCE.convert(updateVO);
         disposalMapper.updateById(convert);

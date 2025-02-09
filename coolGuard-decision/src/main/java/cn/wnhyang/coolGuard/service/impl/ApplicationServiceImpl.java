@@ -50,6 +50,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (applicationMapper.selectByCode(createVO.getCode()) != null) {
             throw exception(APPLICATION_CODE_EXIST);
         }
+        if (applicationMapper.selectByCode(createVO.getName()) != null) {
+            throw exception(APPLICATION_NAME_EXIST);
+        }
         Application application = ApplicationConvert.INSTANCE.convert(createVO);
         applicationMapper.insert(application);
         return application.getId();
@@ -59,8 +62,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.APPLICATION, allEntries = true)
     public void updateApplication(ApplicationUpdateVO updateVO) {
-        Application application = ApplicationConvert.INSTANCE.convert(updateVO);
-        applicationMapper.updateById(application);
+        Application application = applicationMapper.selectById(updateVO.getId());
+        if (application == null) {
+            throw exception(APPLICATION_NOT_EXIST);
+        }
+        Application byName = applicationMapper.selectByName(updateVO.getName());
+        if (byName != null && !application.getId().equals(byName.getId())) {
+            throw exception(APPLICATION_NAME_EXIST);
+        }
+        Application convert = ApplicationConvert.INSTANCE.convert(updateVO);
+        applicationMapper.updateById(convert);
     }
 
     @Override

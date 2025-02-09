@@ -18,10 +18,10 @@ public class AccessBaseVO implements Serializable {
     private static final long serialVersionUID = -5565734558672093346L;
 
     /**
-     * 显示服务名
+     * 接入名
      */
-    @NotBlank(message = "字段显示名不能为空")
-    @Size(min = 1, max = 50, message = "字段显示名长度必须在1-50之间")
+    @NotBlank(message = "接入名不能为空")
+    @Size(min = 1, max = 50, message = "接入名长度必须在1-50之间")
     private String name;
 
     /**

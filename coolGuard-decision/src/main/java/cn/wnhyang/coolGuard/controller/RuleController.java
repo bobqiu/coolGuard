@@ -110,7 +110,7 @@ public class RuleController {
     }
 
     /**
-     * 获取下拉列表
+     * 获取规则lv列表
      *
      * @return list
      */

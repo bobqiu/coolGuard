@@ -21,7 +21,7 @@ public class AccessVO extends AccessBaseVO {
     private Long id;
 
     /**
-     * 服务标识
+     * 接入编码
      */
     private String code;
 

@@ -22,7 +22,7 @@ public class IndicatorVO extends IndicatorBaseVO {
     private Long id;
 
     /**
-     * 编码
+     * 指标编码
      */
     private String code;
 
@@ -90,7 +90,7 @@ public class IndicatorVO extends IndicatorBaseVO {
     /**
      * 场景
      */
-    private String scenes;
+    private List<String> scenes;
 
     /**
      * 场景类型

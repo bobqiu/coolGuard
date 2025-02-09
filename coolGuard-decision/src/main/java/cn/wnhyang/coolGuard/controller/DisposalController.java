@@ -97,6 +97,11 @@ public class DisposalController {
         return success(DisposalConvert.INSTANCE.convert(disposalService.listDisposal()));
     }
 
+    /**
+     * 获取应用处置列表
+     *
+     * @return lv列表
+     */
     @GetMapping("/lvList")
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(disposalService.getLabelValueList());

@@ -19,11 +19,11 @@ public class FieldGroupCreateVO extends FieldGroupBaseVO {
     private static final long serialVersionUID = -150564966296898687L;
 
     /**
-     * 分组标识
+     * 字段分组编码
      */
-    @NotBlank(message = "分组标识不能为空")
-    @Size(min = 1, max = 30, message = "分组标识长度必须在1-30之间")
-    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "分组标识只能包含字母和数字")
+    @NotBlank(message = "字段分组编码不能为空")
+    @Size(min = 1, max = 30, message = "字段分组编码长度必须在1-30之间")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "字段分组编码只能包含字母和数字")
     private String code;
 
 }

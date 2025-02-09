@@ -21,7 +21,7 @@ public class OutputFieldVO {
     private String paramName;
 
     /**
-     * 字段名，命名N/D_S/N/F/D/E/B_name
+     * 字段编码，命名N/D_S/N/F/D/E/B_name
      * N普通字段，D动态字段
      * S/N/F/D/E/B字段类型
      */

@@ -42,4 +42,8 @@ public interface PolicySetMapper extends BaseMapperX<PolicySet> {
                 .likeIfPresent(PolicySet::getName, name)
                 .eqIfPresent(PolicySet::getCode, code));
     }
+
+    default PolicySet selectByName(String name) {
+        return selectOne(PolicySet::getName, name);
+    }
 }

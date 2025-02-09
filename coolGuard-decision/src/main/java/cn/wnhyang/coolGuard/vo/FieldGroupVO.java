@@ -21,7 +21,7 @@ public class FieldGroupVO extends FieldGroupBaseVO {
     private Long id;
 
     /**
-     * 分组标识
+     * 字段分组编码
      */
     private String code;
 

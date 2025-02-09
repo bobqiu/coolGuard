@@ -35,7 +35,7 @@ public class Indicator extends BaseDO {
     private Long id;
 
     /**
-     * uuid
+     * 指标编码
      */
     @TableField("code")
     private String code;
@@ -124,8 +124,8 @@ public class Indicator extends BaseDO {
      * appName
      * policySetCode
      */
-    @TableField("scenes")
-    private String scenes;
+    @TableField(value = "scenes", typeHandler = JacksonTypeHandler.class)
+    private List<String> scenes;
 
     /**
      * 场景类型

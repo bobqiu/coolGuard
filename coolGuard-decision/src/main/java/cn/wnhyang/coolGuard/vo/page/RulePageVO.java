@@ -18,6 +18,16 @@ public class RulePageVO extends PageParam {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 策略编码
+     */
+    private String policyCode;
+
+    /**
+     * 规则id
+     */
+    private String ruleId;
+
+    /**
      * 规则编码
      */
     private String code;
