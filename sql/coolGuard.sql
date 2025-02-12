@@ -230,6 +230,7 @@ create table coolGuard.de_policy
     name            varchar(36)                 default ''                not null comment '策略名',
     mode            varchar(32)                 default 'order'           not null comment '策略模式',
     th_list         varchar(500)                                          null comment '阈值表',
+    publish         bit                         default b'0'              not null comment '发布',
     description     varchar(64) charset utf8mb4 default ''                null comment '描述',
     creator         varchar(36) charset utf8mb4 default ''                null comment '创建者',
     create_time     datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
@@ -261,18 +262,42 @@ create table coolGuard.de_policy_set
 
 create table coolGuard.de_policy_set_version
 (
-    id          bigint auto_increment comment '主键'
+    id           bigint auto_increment comment '主键'
         primary key,
-    code        varchar(36)                 default ''                not null comment '策略集code',
-    latest      bit                         default b'0'              not null comment '最新',
-    chain       varchar(5000)               default ''                not null comment '策略集链路',
-    version     int                         default 1                 not null comment '版本号',
-    creator     varchar(36) charset utf8mb4 default ''                null comment '创建者',
-    create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater     varchar(36) charset utf8mb4 default ''                null comment '更新者',
-    update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+    app_name     varchar(32)                 default 'ALL'             not null comment '应用名',
+    code         varchar(36)                 default ''                not null comment '策略集code',
+    name         varchar(36)                 default ''                not null comment '策略集名',
+    chain        varchar(5000)               default ''                not null comment '策略集链路',
+    description  varchar(64) charset utf8mb4 default ''                null comment '描述',
+    latest       bit                         default b'0'              not null comment '最新',
+    version      int                         default 1                 not null comment '版本号',
+    version_desc varchar(64)                                           null comment '版本描述',
+    creator      varchar(36) charset utf8mb4 default ''                null comment '创建者',
+    create_time  datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater      varchar(36) charset utf8mb4 default ''                null comment '更新者',
+    update_time  datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
 )
     comment '策略集表历史';
+
+create table coolGuard.de_policy_version
+(
+    id              bigint auto_increment comment '主键'
+        primary key,
+    policy_set_code varchar(36)                                           not null comment '策略集编码',
+    code            varchar(36)                 default ''                not null comment '策略编码',
+    name            varchar(36)                 default ''                not null comment '策略名',
+    mode            varchar(32)                 default 'order'           not null comment '策略模式',
+    th_list         varchar(500)                                          null comment '阈值表',
+    description     varchar(64) charset utf8mb4 default ''                null comment '描述',
+    latest          bit                         default b'0'              not null comment '最新',
+    version         int                         default 1                 not null comment '版本号',
+    version_desc    varchar(64)                                           null comment '版本描述',
+    creator         varchar(36) charset utf8mb4 default ''                null comment '创建者',
+    create_time     datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater         varchar(36) charset utf8mb4 default ''                null comment '更新者',
+    update_time     datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+)
+    comment '策略版本表';
 
 create table coolGuard.de_rule
 (
@@ -321,18 +346,29 @@ create table coolGuard.de_rule_script
 
 create table coolGuard.de_rule_version
 (
-    id          bigint auto_increment comment '主键'
+    id            bigint auto_increment comment '主键'
         primary key,
-    code        varchar(36)                 default ''                not null comment '规则编码',
-    rule        text                                                  not null comment '规则',
-    latest      bit                         default b'0'              not null comment '最新',
-    version     int                         default 1                 not null comment '版本号',
-    creator     varchar(36) charset utf8mb4 default ''                null comment '创建者',
-    create_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater     varchar(36) charset utf8mb4 default ''                null comment '更新者',
-    update_time datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+    policy_code   varchar(36)                                           not null comment '策略编码',
+    code          varchar(36)                 default ''                not null comment '规则编码',
+    rule_id       varchar(6)                  default ''                not null comment '规则id',
+    name          varchar(36)                 default ''                not null comment '规则名',
+    disposal_code varchar(36)                                           not null comment '处置code',
+    express       varchar(2000)                                         null comment '表达式',
+    status        varchar(10)                 default 'off'             not null comment '状态',
+    sort          int                         default 99                not null comment '排序',
+    cond          varchar(2000)                                         null comment '条件',
+    rule_true     varchar(2000)                                         null comment 'true执行',
+    rule_false    varchar(2000)                                         null comment 'false执行',
+    description   varchar(64) charset utf8mb4 default ''                null comment '描述',
+    latest        bit                         default b'0'              not null comment '最新',
+    version       int                         default 1                 not null comment '版本号',
+    version_desc  varchar(64)                                           null comment '版本描述',
+    creator       varchar(36) charset utf8mb4 default ''                null comment '创建者',
+    create_time   datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater       varchar(36) charset utf8mb4 default ''                null comment '更新者',
+    update_time   datetime                    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
 )
-    comment '策略版本扩展表';
+    comment '规则版本表';
 
 create table coolGuard.de_sms_template
 (

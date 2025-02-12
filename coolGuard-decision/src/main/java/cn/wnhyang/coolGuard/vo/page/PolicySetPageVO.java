@@ -51,4 +51,14 @@ public class PolicySetPageVO extends PageParam {
      * 规则名
      */
     private String ruleName;
+
+    /**
+     * 最新
+     */
+    private Boolean latest;
+
+    /**
+     * 有版本号
+     */
+    private Boolean hasVersion;
 }

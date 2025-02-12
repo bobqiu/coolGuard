@@ -3,9 +3,9 @@ package cn.wnhyang.coolGuard.service;
 import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.PolicySetVO;
+import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.PolicySetCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetPageVO;
-import cn.wnhyang.coolGuard.vo.update.PolicySetChainUpdateVO;
 import cn.wnhyang.coolGuard.vo.update.PolicySetUpdateVO;
 
 import java.util.Collection;
@@ -62,21 +62,22 @@ public interface PolicySetService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<PolicySetVO> pagePolicySet(PolicySetPageVO pageVO);
+    PageResult<PolicySetVO> pagePolicySet0(PolicySetPageVO pageVO);
 
     /**
-     * 更新策略集链
+     * 分页查询
      *
-     * @param updateVO 更新VO
+     * @param pageVO 分页VO
+     * @return pageResult
      */
-    void updatePolicySetChain(PolicySetChainUpdateVO updateVO);
+    PageResult<PolicySetVO> pagePolicySet(PolicySetPageVO pageVO);
 
     /**
      * 提交
      *
-     * @param id id
+     * @param submitVO submitVO
      */
-    void submit(Long id);
+    void submit(VersionSubmitVO submitVO);
 
     /**
      * 列表

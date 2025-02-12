@@ -1,4 +1,4 @@
-package cn.wnhyang.coolGuard.vo;
+package cn.wnhyang.coolGuard.dto;
 
 import cn.wnhyang.coolGuard.vo.base.IndicatorBaseVO;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.util.List;
  * @date 2024/3/14
  **/
 @Data
-public class IndicatorVO extends IndicatorBaseVO {
+public class IndicatorDTO extends IndicatorBaseVO {
 
     @Serial
     private static final long serialVersionUID = -1533346951107805359L;

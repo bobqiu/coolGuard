@@ -33,10 +33,34 @@ public class PolicySetVersion extends BaseDO {
     private Long id;
 
     /**
+     * app名
+     */
+    @TableField("app_name")
+    private String appName;
+
+    /**
      * 策略集编码
      */
     @TableField("code")
     private String code;
+
+    /**
+     * 策略集名
+     */
+    @TableField("name")
+    private String name;
+
+    /**
+     * 策略集链
+     */
+    @TableField("chain")
+    private String chain;
+
+    /**
+     * 描述
+     */
+    @TableField("description")
+    private String description;
 
     /**
      * 最新
@@ -45,14 +69,14 @@ public class PolicySetVersion extends BaseDO {
     private Boolean latest;
 
     /**
-     * 策略集链路
-     */
-    @TableField("chain")
-    private String chain;
-
-    /**
      * 版本号
      */
     @TableField("version")
     private Integer version;
+
+    /**
+     * 版本描述
+     */
+    @TableField("version_desc")
+    private String versionDesc;
 }

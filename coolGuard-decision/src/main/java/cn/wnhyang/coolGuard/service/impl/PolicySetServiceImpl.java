@@ -10,6 +10,8 @@ import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.DisposalConvert;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.convert.PolicySetConvert;
+import cn.wnhyang.coolGuard.convert.PolicySetVersionConvert;
+import cn.wnhyang.coolGuard.dto.PolicySetDTO;
 import cn.wnhyang.coolGuard.entity.*;
 import cn.wnhyang.coolGuard.mapper.*;
 import cn.wnhyang.coolGuard.pojo.PageResult;
@@ -19,9 +21,9 @@ import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.PolicySetVO;
 import cn.wnhyang.coolGuard.vo.PolicyVO;
+import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.PolicySetCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetPageVO;
-import cn.wnhyang.coolGuard.vo.update.PolicySetChainUpdateVO;
 import cn.wnhyang.coolGuard.vo.update.PolicySetUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import com.yomahub.liteflow.annotation.LiteflowMethod;
@@ -64,6 +66,8 @@ public class PolicySetServiceImpl implements PolicySetService {
 
     private final PolicyService policyService;
 
+    private final PolicyVersionMapper policyVersionMapper;
+
     private final PolicySetVersionMapper policySetVersionMapper;
 
     private final DisposalMapper disposalMapper;
@@ -79,16 +83,8 @@ public class PolicySetServiceImpl implements PolicySetService {
             throw exception(POLICY_SET_NAME_EXIST);
         }
         PolicySet policySet = PolicySetConvert.INSTANCE.convert(createVO);
-        // 创建默认空chain，其实应该是图的json数据
-        policySet.setChain(LFUtil.WHEN_EMPTY_NODE);
-        String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode());
         // TODO json解析到el
         // TODO 注意区分这里的chain并非el，而是图的json数据需要转换为el
-        String elData = policySet.getChain();
-        chainMapper.insert(new Chain().setChainName(psChain).setElData(elData));
-        policySet.setChain(elData);
-        // 创建版本
-        policySetVersionMapper.insert(new PolicySetVersion().setCode(policySet.getCode()).setLatest(Boolean.TRUE).setChain(policySet.getChain()));
         policySetMapper.insert(policySet);
         return policySet.getId();
     }
@@ -106,6 +102,7 @@ public class PolicySetServiceImpl implements PolicySetService {
             throw exception(POLICY_SET_NAME_EXIST);
         }
         PolicySet convert = PolicySetConvert.INSTANCE.convert(updateVO);
+        convert.setPublish(Boolean.FALSE);
         policySetMapper.updateById(convert);
     }
 
@@ -123,19 +120,16 @@ public class PolicySetServiceImpl implements PolicySetService {
             throw exception(POLICY_SET_IS_RUNNING);
         }
         // 2、确认是否还有运行的策略
-        List<Policy> policyList = policyMapper.selectListBySetCode(policySet.getCode());
-        if (CollUtil.isNotEmpty(policyList)) {
+        List<PolicyVersion> policyVersionList = policyVersionMapper.selectLatestBySetCode(policySet.getCode());
+        if (CollUtil.isNotEmpty(policyVersionList)) {
             throw exception(POLICY_SET_REFERENCE_DELETE);
         }
         // 3、没有运行的策略就可以删除策略集了
-        // 4、删除策略集下的所有规则
-        policyList = policyMapper.selectListBySetCode(policySet.getCode());
-        policyService.deletePolicy(CollectionUtils.convertSet(policyList, Policy::getId));
-        // 4、删除chain
+        // 4、删除策略集下的所有策略
+        policyService.deletePolicy(CollectionUtils.convertSet(policyMapper.selectListBySetCode(policySet.getCode()), Policy::getId));
+        // 5、删除chain
         policySetMapper.deleteById(id);
-        chainMapper.deleteByChainName(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode()));
-        // 5、删除所有版本
-        policySetVersionMapper.deleteBySetCode(policySet.getCode());
+        // TODO 删除历史版本
     }
 
     @Override
@@ -153,6 +147,12 @@ public class PolicySetServiceImpl implements PolicySetService {
         List<PolicyVO> strategies = PolicyConvert.INSTANCE.convert(policyList);
         policySetVO.setPolicyList(strategies);
         return policySetVO;
+    }
+
+    @Override
+    public PageResult<PolicySetVO> pagePolicySet0(PolicySetPageVO pageVO) {
+        PageResult<PolicySetDTO> policySetPageResult = policySetMapper.selectPage(pageVO);
+        return PolicySetConvert.INSTANCE.convert2(policySetPageResult);
     }
 
     @Override
@@ -185,20 +185,9 @@ public class PolicySetServiceImpl implements PolicySetService {
     }
 
     @Override
-    public void updatePolicySetChain(PolicySetChainUpdateVO updateVO) {
-        PolicySet policySet = policySetMapper.selectById(updateVO.getId());
-        if (policySet == null) {
-            throw exception(POLICY_SET_NOT_EXIST);
-        }
-        if (updateVO.getChain().equals(policySet.getChain())) {
-            throw exception(POLICY_SET_CHAIN_NOT_CHANGE);
-        }
-        policySetMapper.updateById(new PolicySet().setId(updateVO.getId()).setChain(updateVO.getChain()));
-    }
-
-    @Override
-    public void submit(Long id) {
-        PolicySet policySet = policySetMapper.selectById(id);
+    @Transactional(rollbackFor = Exception.class)
+    public void submit(VersionSubmitVO submitVO) {
+        PolicySet policySet = policySetMapper.selectById(submitVO.getId());
         // 确认策略集是否存在
         if (policySet == null) {
             throw exception(POLICY_SET_NOT_EXIST);
@@ -210,7 +199,7 @@ public class PolicySetServiceImpl implements PolicySetService {
         // 1、更新当前策略集为已提交
         policySetMapper.updateById(new PolicySet().setId(policySet.getId()).setPublish(Boolean.TRUE));
         // 2、查询是否有已运行的
-        PolicySetVersion policySetVersion = policySetVersionMapper.selectLatest(policySet.getCode());
+        PolicySetVersion policySetVersion = policySetVersionMapper.selectLatestVersion(policySet.getCode());
         int version = 1;
         if (policySetVersion != null) {
             version = policySetVersion.getVersion() + 1;
@@ -218,17 +207,22 @@ public class PolicySetServiceImpl implements PolicySetService {
             policySetVersionMapper.updateById(new PolicySetVersion().setId(policySetVersion.getId()).setLatest(Boolean.FALSE));
         }
         // 3、插入新纪录并加入chain
-        PolicySetVersion convert = new PolicySetVersion().setCode(policySet.getCode()).setLatest(Boolean.TRUE)
-                .setVersion(version).setChain(policySet.getChain());
+        PolicySetVersion convert = PolicySetVersionConvert.INSTANCE.convert(policySet);
+        convert.setVersion(version);
+        convert.setVersionDesc(submitVO.getVersionDesc());
+        convert.setLatest(Boolean.TRUE);
         policySetVersionMapper.insert(convert);
         // 4、更新chain
         String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode());
-        // TODO 注意区分这里的chain并非el，而是json画图的数据需要转换为el
+        // TODO 注意区分这里的chain并非el，而是json画图的数据需要转换为el，同时检查el是否正确
         String elData = convert.getChain();
-        // 会存在没有chain的情况吗？
-        Chain chain = chainMapper.getByChainName(psChain);
-        chain.setElData(elData);
-        chainMapper.updateById(chain);
+        if (chainMapper.selectByChainName(psChain)) {
+            Chain chain = chainMapper.getByChainName(psChain);
+            chain.setElData(elData);
+            chainMapper.updateById(chain);
+        } else {
+            chainMapper.insert(new Chain().setChainName(psChain).setElData(elData));
+        }
     }
 
     @Override

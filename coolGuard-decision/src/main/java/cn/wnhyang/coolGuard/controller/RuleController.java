@@ -5,6 +5,7 @@ import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleService;
 import cn.wnhyang.coolGuard.vo.RuleVO;
+import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.RuleCreateVO;
 import cn.wnhyang.coolGuard.vo.page.RulePageVO;
 import cn.wnhyang.coolGuard.vo.update.RuleUpdateVO;
@@ -65,18 +66,6 @@ public class RuleController {
     }
 
     /**
-     * 提交
-     *
-     * @param id id
-     * @return true/false
-     */
-    @PostMapping("/submit")
-    public CommonResult<Boolean> submit(@RequestParam("id") Long id) {
-        ruleService.submit(id);
-        return success(true);
-    }
-
-    /**
      * 查询单个
      *
      * @param id id
@@ -96,6 +85,18 @@ public class RuleController {
     @GetMapping("/page")
     public CommonResult<PageResult<RuleVO>> pageRule(@Valid RulePageVO pageVO) {
         return success(ruleService.pageRule(pageVO));
+    }
+
+    /**
+     * 提交
+     *
+     * @param submitVO submitVO
+     * @return true/false
+     */
+    @PostMapping("/submit")
+    public CommonResult<Boolean> submit(@RequestBody @Valid VersionSubmitVO submitVO) {
+        ruleService.submit(submitVO);
+        return success(true);
     }
 
     /**

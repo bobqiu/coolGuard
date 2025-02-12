@@ -1,11 +1,17 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
+import cn.wnhyang.coolGuard.dto.PolicyDTO;
+import cn.wnhyang.coolGuard.dto.PolicySetDTO;
+import cn.wnhyang.coolGuard.entity.Policy;
 import cn.wnhyang.coolGuard.entity.PolicySet;
+import cn.wnhyang.coolGuard.entity.PolicySetVersion;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.PolicySetPageVO;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -21,8 +27,31 @@ import java.util.Set;
 @Mapper
 public interface PolicySetMapper extends BaseMapperX<PolicySet> {
 
-    default PageResult<PolicySet> selectPage(PolicySetPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<PolicySet>());
+    default PageResult<PolicySetDTO> selectPage(PolicySetPageVO pageVO) {
+        return selectJoinPage(pageVO, PolicySetDTO.class, new MPJLambdaWrapper<PolicySet>()
+                .setAlias("t")
+                .selectAll(PolicySet.class)
+                .selectAs("t1", PolicySetVersion::getLatest, PolicyDTO::getLatest)
+                .selectAs("t1", PolicySetVersion::getVersion, PolicySetDTO::getVersion)
+                .selectAs("t1", PolicySetVersion::getVersionDesc, PolicySetDTO::getVersionDesc)
+                .eqIfExists(PolicySet::getAppName, pageVO.getAppName())
+                .likeIfExists(PolicySet::getName, pageVO.getName())
+                .likeIfExists(PolicySet::getCode, pageVO.getCode())
+                // 如果有latest，则查询最新版本
+                .eq(ObjUtil.isNotNull(pageVO.getLatest()) && pageVO.getLatest(), PolicySetVersion::getLatest, pageVO.getLatest())
+                // 如果没有latest，则查询latest不为true的
+                .apply(ObjUtil.isNotNull(pageVO.getLatest()) && !pageVO.getLatest(), "t1.latest IS NULL OR t1.latest <> true")
+                // 如果有hasVersion，则查询有版本
+                .isNotNull(ObjUtil.isNotNull(pageVO.getHasVersion()) && pageVO.getHasVersion(), PolicySetVersion::getVersion)
+                // 如果没有hasVersion，则查询不为null的
+                .isNull(ObjUtil.isNotNull(pageVO.getHasVersion()) && !pageVO.getHasVersion(), PolicySetVersion::getVersion)
+                .leftJoin(PolicySetVersion.class, t2 -> {
+                    t2.setAlias("t2").select(PolicySetVersion::getCode).select(PolicySetVersion::getLatest).select(PolicySetVersion::getVersion).select(PolicySetVersion::getVersionDesc)
+                            .innerJoin("""
+                                    (SELECT code, MAX(version) AS max_version FROM de_policy_set_version GROUP BY code) t3 ON t2.code = t3.code AND t2.version = t3.max_version"""
+                            );
+                }, PolicySetVersion::getCode, Policy::getCode)
+        );
     }
 
     @Cacheable(value = RedisKey.POLICY_SET + "::co", key = "#{code}", unless = "#result == null")
@@ -45,5 +74,10 @@ public interface PolicySetMapper extends BaseMapperX<PolicySet> {
 
     default PolicySet selectByName(String name) {
         return selectOne(PolicySet::getName, name);
+    }
+
+    default void updateByCode(PolicySet policySet) {
+        update(policySet, new LambdaQueryWrapperX<PolicySet>()
+                .eq(PolicySet::getCode, policySet.getCode()));
     }
 }

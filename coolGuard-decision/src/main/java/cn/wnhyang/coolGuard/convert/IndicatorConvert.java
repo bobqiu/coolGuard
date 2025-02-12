@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.convert;
 
+import cn.wnhyang.coolGuard.dto.IndicatorDTO;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.entity.IndicatorVersion;
 import cn.wnhyang.coolGuard.pojo.PageResult;
@@ -35,4 +36,6 @@ public interface IndicatorConvert {
     IndicatorUpdateVO convert2Update(IndicatorVO indicatorVO);
 
     Indicator convert(IndicatorVersion indicatorVersion);
+
+    PageResult<IndicatorVO> convert2(PageResult<IndicatorDTO> pageResult);
 }

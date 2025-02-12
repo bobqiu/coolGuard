@@ -41,4 +41,14 @@ public class RulePageVO extends PageParam {
      * 处理编码
      */
     private String disposalCode;
+
+    /**
+     * 最新
+     */
+    private Boolean latest;
+
+    /**
+     * 有版本号
+     */
+    private Boolean hasVersion;
 }

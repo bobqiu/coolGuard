@@ -1,9 +1,11 @@
 package cn.wnhyang.coolGuard.convert;
 
+import cn.wnhyang.coolGuard.entity.PolicySet;
 import cn.wnhyang.coolGuard.entity.PolicySetVersion;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.PolicySetVersionVO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -20,5 +22,8 @@ public interface PolicySetVersionConvert {
     PolicySetVersionVO convert(PolicySetVersion po);
 
     PageResult<PolicySetVersionVO> convert(PageResult<PolicySetVersion> pageResult);
+
+    @Mapping(target = "id", ignore = true)
+    PolicySetVersion convert(PolicySet policySet);
 
 }

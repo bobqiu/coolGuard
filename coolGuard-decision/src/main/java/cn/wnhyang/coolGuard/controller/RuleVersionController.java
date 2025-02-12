@@ -79,6 +79,17 @@ public class RuleVersionController {
     }
 
     /**
+     * 根据code分页查询
+     *
+     * @param pageVO 分页VO
+     * @return pageResult
+     */
+    @GetMapping("/pageByCode")
+    public CommonResult<PageResult<RuleVersionVO>> pageByCode(@Valid RuleVersionPageVO pageVO) {
+        return success(ruleVersionService.pageByCode(pageVO));
+    }
+
+    /**
      * 导出
      *
      * @param pageVO   导出VO

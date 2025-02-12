@@ -1,22 +1,21 @@
-package cn.wnhyang.coolGuard.vo;
+package cn.wnhyang.coolGuard.dto;
 
-import cn.wnhyang.coolGuard.vo.base.PolicySetBaseVO;
 import lombok.Data;
 
 import java.io.Serial;
-import java.util.List;
+import java.io.Serializable;
 
 /**
- * 策略集表
+ * 策略集表版本
  *
  * @author wnhyang
- * @since 2024/04/04
+ * @since 2024/11/30
  */
 @Data
-public class PolicySetVO extends PolicySetBaseVO {
+public class PolicySetDTO implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = -3067674637266164651L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 主键
@@ -34,9 +33,19 @@ public class PolicySetVO extends PolicySetBaseVO {
     private String code;
 
     /**
+     * 策略集名
+     */
+    private String name;
+
+    /**
      * 策略集链
      */
     private String chain;
+
+    /**
+     * 描述
+     */
+    private String description;
 
     /**
      * 发布
@@ -44,19 +53,14 @@ public class PolicySetVO extends PolicySetBaseVO {
     private Boolean publish;
 
     /**
-     * 版本
-     */
-    private Integer version;
-
-    /**
-     * 策略
-     */
-    private List<PolicyVO> policyList;
-
-    /**
      * 最新
      */
     private Boolean latest;
+
+    /**
+     * 版本号
+     */
+    private Integer version;
 
     /**
      * 版本描述

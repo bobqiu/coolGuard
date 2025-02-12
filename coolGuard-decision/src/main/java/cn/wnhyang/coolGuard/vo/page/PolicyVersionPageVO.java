@@ -6,13 +6,13 @@ import lombok.Data;
 import java.io.Serial;
 
 /**
- * 规则版本表
+ * 策略版本表
  *
  * @author wnhyang
- * @since 2024/08/29
+ * @since 2025/02/11
  */
 @Data
-public class RuleVersionPageVO extends PageParam {
+public class PolicyVersionPageVO extends PageParam {
 
     @Serial
     private static final long serialVersionUID = 1L;

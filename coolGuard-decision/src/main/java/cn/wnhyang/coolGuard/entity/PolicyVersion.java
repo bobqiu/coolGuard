@@ -1,31 +1,28 @@
 package cn.wnhyang.coolGuard.entity;
 
-import cn.wnhyang.coolGuard.LabelValueAble;
 import cn.wnhyang.coolGuard.pojo.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.io.Serial;
 import java.util.List;
 
 /**
- * 策略表
+ * 策略版本表
  *
  * @author wnhyang
- * @since 2024/04/04
+ * @since 2025/02/11
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName(value = "de_policy", autoResultMap = true)
-public class Policy extends BaseDO implements LabelValueAble {
+@TableName("de_policy_version")
+public class PolicyVersion extends BaseDO {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -37,7 +34,7 @@ public class Policy extends BaseDO implements LabelValueAble {
     private Long id;
 
     /**
-     * 策略集id
+     * 策略集编码
      */
     @TableField("policy_set_code")
     private String policySetCode;
@@ -61,9 +58,9 @@ public class Policy extends BaseDO implements LabelValueAble {
     private String mode;
 
     /**
-     * 策略阈值
+     * 阈值表
      */
-    @TableField(value = "th_list", typeHandler = JacksonTypeHandler.class)
+    @TableField("th_list")
     private List<Th> thList;
 
     /**
@@ -73,14 +70,21 @@ public class Policy extends BaseDO implements LabelValueAble {
     private String description;
 
     /**
-     * 策略状态
+     * 最新
      */
-    @TableField("publish")
-    private Boolean publish;
+    @TableField("latest")
+    private Boolean latest;
 
-    @Override
-    @JsonIgnore
-    public LabelValue getLabelValue() {
-        return new LabelValue(id, name, code);
-    }
+    /**
+     * 版本号
+     */
+    @TableField("version")
+    private Integer version;
+
+    /**
+     * 版本描述
+     */
+    @TableField("version_desc")
+    private String versionDesc;
+
 }

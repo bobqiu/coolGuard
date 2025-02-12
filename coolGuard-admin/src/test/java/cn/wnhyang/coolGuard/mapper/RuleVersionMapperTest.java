@@ -2,7 +2,6 @@ package cn.wnhyang.coolGuard.mapper;
 
 import cn.wnhyang.coolGuard.AdminApplication;
 import cn.wnhyang.coolGuard.entity.Rule;
-import cn.wnhyang.coolGuard.entity.RuleVersion;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,6 @@ public class RuleVersionMapperTest {
     void test() {
         for (Rule rule : ruleMapper.selectList()) {
             log.info("{}", rule);
-            ruleVersionMapper.insert(new RuleVersion().setCode(rule.getCode()).setRule(rule).setLatest(Boolean.TRUE));
         }
     }
 }

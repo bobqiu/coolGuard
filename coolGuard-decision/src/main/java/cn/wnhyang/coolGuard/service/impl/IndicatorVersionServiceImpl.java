@@ -88,6 +88,7 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void chose(Long id) {
         IndicatorVersion indicatorVersion = indicatorVersionMapper.selectById(id);
         if (indicatorVersion == null) {

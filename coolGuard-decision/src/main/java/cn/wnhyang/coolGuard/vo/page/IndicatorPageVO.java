@@ -40,4 +40,14 @@ public class IndicatorPageVO extends PageParam {
      */
     private Boolean publish;
 
+    /**
+     * 最新
+     */
+    private Boolean latest;
+
+    /**
+     * 有版本号
+     */
+    private Boolean hasVersion;
+
 }

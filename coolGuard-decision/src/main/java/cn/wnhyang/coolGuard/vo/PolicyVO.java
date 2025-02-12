@@ -49,4 +49,24 @@ public class PolicyVO extends PolicyBaseVO {
      */
     private List<RuleVO> ruleList;
 
+    /**
+     * 策略状态
+     */
+    private Boolean publish;
+
+    /**
+     * 最新
+     */
+    private Boolean latest;
+
+    /**
+     * 版本号
+     */
+    private Integer version;
+
+    /**
+     * 版本描述
+     */
+    private String versionDesc;
+
 }

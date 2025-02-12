@@ -6,11 +6,12 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
+import com.github.yulichang.base.MPJBaseMapper;
+import com.github.yulichang.interfaces.MPJBaseJoin;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Collection;
@@ -20,7 +21,7 @@ import java.util.List;
  * @author wnhyang
  * @date 2024/3/13
  **/
-public interface BaseMapperX<T> extends BaseMapper<T> {
+public interface BaseMapperX<T> extends MPJBaseMapper<T> {
 
     /**
      * 分页查询
@@ -33,6 +34,13 @@ public interface BaseMapperX<T> extends BaseMapper<T> {
         // MyBatis Plus 查询
         IPage<T> mpPage = Page.of(pageParam.getPageNo(), pageParam.getPageSize());
         selectPage(mpPage, queryWrapper);
+        // 转换返回
+        return new PageResult<>(mpPage.getRecords(), mpPage.getTotal());
+    }
+
+    default <DTO> PageResult<DTO> selectJoinPage(PageParam pageParam, Class<DTO> resultTypeClass, MPJBaseJoin<T> joinQueryWrapper) {
+        IPage<DTO> mpPage = Page.of(pageParam.getPageNo(), pageParam.getPageSize());
+        selectJoinPage(mpPage, resultTypeClass, joinQueryWrapper);
         // 转换返回
         return new PageResult<>(mpPage.getRecords(), mpPage.getTotal());
     }

@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.service;
 import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.PolicyVO;
+import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.PolicyCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicyPageVO;
 import cn.wnhyang.coolGuard.vo.update.PolicyUpdateVO;
@@ -63,6 +64,13 @@ public interface PolicyService {
      * @return pageResult
      */
     PageResult<PolicyVO> pagePolicy(PolicyPageVO pageVO);
+
+    /**
+     * 提交
+     *
+     * @param submitVO submitVO
+     */
+    void submit(VersionSubmitVO submitVO);
 
     /**
      * 根据策略集code查询列表

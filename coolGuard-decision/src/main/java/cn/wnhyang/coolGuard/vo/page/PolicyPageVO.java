@@ -41,4 +41,14 @@ public class PolicyPageVO extends PageParam {
      * 策略模式
      */
     private String mode;
+
+    /**
+     * 最新
+     */
+    private Boolean latest;
+
+    /**
+     * 有版本号
+     */
+    private Boolean hasVersion;
 }

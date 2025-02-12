@@ -1,4 +1,4 @@
-package cn.wnhyang.coolGuard.vo;
+package cn.wnhyang.coolGuard.dto;
 
 import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.entity.Cond;
@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @since 2024/08/29
  */
 @Data
-public class RuleVersionVO implements Serializable {
+public class RuleDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -83,6 +83,11 @@ public class RuleVersionVO implements Serializable {
      * 描述
      */
     private String description;
+
+    /**
+     * 发布
+     */
+    private Boolean publish;
 
     /**
      * 最新

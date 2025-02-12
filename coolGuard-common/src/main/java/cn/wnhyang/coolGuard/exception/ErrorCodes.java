@@ -54,6 +54,8 @@ public interface ErrorCodes {
 
     ErrorCode RULE_IS_RUNNING = new ErrorCode(1005001004, "规则还在运行");
 
+    ErrorCode RULE_VERSION_EXIST = new ErrorCode(1005001004, "规则版本已存在");
+
     ErrorCode POLICY_NOT_EXIST = new ErrorCode(1006001000, "策略不存在");
 
     ErrorCode POLICY_CODE_EXIST = new ErrorCode(1006001001, "策略编码已存在");
@@ -65,6 +67,10 @@ public interface ErrorCodes {
     ErrorCode POLICY_REFERENCE_RULE_DELETE = new ErrorCode(1006001004, "策略有引用不可删除");
 
     ErrorCode POLICY_REFERENCE_UPDATE = new ErrorCode(1006001005, "策略下有运行规则，不可关闭当前策略");
+
+    ErrorCode POLICY_IS_RUNNING = new ErrorCode(1007001006, "策略还在运行");
+
+    ErrorCode POLICY_VERSION_EXIST = new ErrorCode(1007001007, "策略版本已存在");
 
     ErrorCode POLICY_SET_NOT_EXIST = new ErrorCode(1007001000, "策略集不存在");
 
@@ -92,7 +98,7 @@ public interface ErrorCodes {
 
     ErrorCode INDICATOR_VERSION_EXIST = new ErrorCode(1008001005, "指标版本已存在");
 
-    ErrorCode INDICATOR_IS_RUNNING = new ErrorCode(1008001006, "指标正在运行中，不可删除");
+    ErrorCode INDICATOR_IS_RUNNING = new ErrorCode(1008001006, "指标有运行版本，不可删除");
 
     ErrorCode INDICATOR_NOT_CHANGE = new ErrorCode(1008001007, "指标未修改");
 
@@ -100,6 +106,8 @@ public interface ErrorCodes {
 
     ErrorCode POLICY_SET_VERSION_EXIST = new ErrorCode(1009001002, "策略集版本已存在");
 
-    ErrorCode RULE_VERSION_NOT_EXIST = new ErrorCode(1010001001, "规则版本不存在");
+    ErrorCode POLICY_VERSION_NOT_EXIST = new ErrorCode(1010001002, "策略版本不存在");
+
+    ErrorCode RULE_VERSION_NOT_EXIST = new ErrorCode(1011001001, "规则版本不存在");
 
 }

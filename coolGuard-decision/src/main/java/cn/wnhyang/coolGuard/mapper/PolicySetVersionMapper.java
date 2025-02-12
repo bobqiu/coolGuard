@@ -20,8 +20,21 @@ public interface PolicySetVersionMapper extends BaseMapperX<PolicySetVersion> {
         return selectPage(pageVO, new LambdaQueryWrapperX<PolicySetVersion>());
     }
 
+    default PageResult<PolicySetVersion> selectPageByCode(PolicySetVersionPageVO pageVO) {
+        return selectPage(pageVO, new LambdaQueryWrapperX<PolicySetVersion>()
+                .eq(PolicySetVersion::getCode, pageVO.getCode())
+                .orderByDesc(PolicySetVersion::getVersion));
+    }
+
     default PolicySetVersion selectLatest(String code) {
         return selectOne(PolicySetVersion::getCode, code, PolicySetVersion::getLatest, Boolean.TRUE);
+    }
+
+    default PolicySetVersion selectLatestVersion(String code) {
+        return selectOne(new LambdaQueryWrapperX<PolicySetVersion>()
+                .eq(PolicySetVersion::getCode, code)
+                .orderByDesc(PolicySetVersion::getVersion)
+                .last("LIMIT 1"));
     }
 
     default void deleteBySetCode(String code) {

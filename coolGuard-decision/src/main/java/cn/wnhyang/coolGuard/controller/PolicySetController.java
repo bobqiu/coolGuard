@@ -5,9 +5,9 @@ import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicySetService;
 import cn.wnhyang.coolGuard.vo.PolicySetVO;
+import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.PolicySetCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetPageVO;
-import cn.wnhyang.coolGuard.vo.update.PolicySetChainUpdateVO;
 import cn.wnhyang.coolGuard.vo.update.PolicySetUpdateVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -66,26 +66,14 @@ public class PolicySetController {
     }
 
     /**
-     * 修改策略集chain
-     *
-     * @param updateVO 修改VO
-     * @return true/false
-     */
-    @PostMapping("/chain")
-    public CommonResult<Boolean> updatePolicySetChain(@RequestBody @Valid PolicySetChainUpdateVO updateVO) {
-        policySetService.updatePolicySetChain(updateVO);
-        return success(true);
-    }
-
-    /**
      * 提交
      *
-     * @param id id
+     * @param submitVO submitVO
      * @return true/false
      */
     @PostMapping("/submit")
-    public CommonResult<Boolean> submit(@RequestParam("id") Long id) {
-        policySetService.submit(id);
+    public CommonResult<Boolean> submit(@RequestBody @Valid VersionSubmitVO submitVO) {
+        policySetService.submit(submitVO);
         return success(true);
     }
 
@@ -108,7 +96,7 @@ public class PolicySetController {
      */
     @GetMapping("/page")
     public CommonResult<PageResult<PolicySetVO>> pagePolicySet(@Valid PolicySetPageVO pageVO) {
-        return success(policySetService.pagePolicySet(pageVO));
+        return success(policySetService.pagePolicySet0(pageVO));
     }
 
     /**

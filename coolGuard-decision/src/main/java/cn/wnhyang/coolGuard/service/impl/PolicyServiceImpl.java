@@ -6,13 +6,11 @@ import cn.wnhyang.coolGuard.constant.PolicyMode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
+import cn.wnhyang.coolGuard.convert.PolicyVersionConvert;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
-import cn.wnhyang.coolGuard.entity.LabelValue;
-import cn.wnhyang.coolGuard.entity.Policy;
-import cn.wnhyang.coolGuard.entity.Rule;
-import cn.wnhyang.coolGuard.mapper.ChainMapper;
-import cn.wnhyang.coolGuard.mapper.PolicyMapper;
-import cn.wnhyang.coolGuard.mapper.RuleMapper;
+import cn.wnhyang.coolGuard.dto.PolicyDTO;
+import cn.wnhyang.coolGuard.entity.*;
+import cn.wnhyang.coolGuard.mapper.*;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicyService;
 import cn.wnhyang.coolGuard.service.RuleService;
@@ -20,6 +18,7 @@ import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.PolicyVO;
 import cn.wnhyang.coolGuard.vo.RuleVO;
+import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.PolicyCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicyPageVO;
 import cn.wnhyang.coolGuard.vo.update.PolicyUpdateVO;
@@ -54,9 +53,13 @@ public class PolicyServiceImpl implements PolicyService {
 
     private final PolicyMapper policyMapper;
 
+    private final PolicyVersionMapper policyVersionMapper;
+
     private final ChainMapper chainMapper;
 
     private final RuleMapper ruleMapper;
+
+    private final RuleVersionMapper ruleVersionMapper;
 
     private final RuleService ruleService;
 
@@ -88,6 +91,7 @@ public class PolicyServiceImpl implements PolicyService {
             throw exception(POLICY_NAME_EXIST);
         }
         Policy convert = PolicyConvert.INSTANCE.convert(updateVO);
+        convert.setPublish(Boolean.FALSE);
         policyMapper.updateById(convert);
     }
 
@@ -99,20 +103,25 @@ public class PolicyServiceImpl implements PolicyService {
         if (policy == null) {
             throw exception(POLICY_NOT_EXIST);
         }
-        // 1、确认是否被策略集编排引用
+        // 1、确认策略是否在运行
+        PolicyVersion policyVersion = policyVersionMapper.selectLatestByCode(policy.getCode());
+        if (policyVersion != null) {
+            throw exception(POLICY_IS_RUNNING);
+        }
+        // 2、确认是否被策略集编排引用
         String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetCode());
         if (chainMapper.selectByChainNameAndEl(psChain, LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getCode()))) {
             throw exception(POLICY_REFERENCE_BY_POLICY_SET_DELETE);
         }
-        // 2、确认是否还有运行的规则
-        List<Rule> ruleList = ruleMapper.selectRunningListByPolicyCode(policy.getCode());
-        if (CollUtil.isNotEmpty(ruleList)) {
+        // 3、确认是否还有运行的规则
+        List<RuleVersion> ruleVersionList = ruleVersionMapper.selectLatestByPolicyCode(policy.getCode());
+        if (CollUtil.isNotEmpty(ruleVersionList)) {
             throw exception(POLICY_REFERENCE_RULE_DELETE);
         }
         // 3、删除策略下的所有规则
-        ruleList = ruleMapper.selectByPolicyCode(policy.getCode());
-        ruleService.deleteRule(CollectionUtils.convertSet(ruleList, Rule::getId));
+        ruleService.deleteRule(CollectionUtils.convertSet(ruleMapper.selectListByPolicyCode(policy.getCode()), Rule::getId));
         policyMapper.deleteById(id);
+        // TODO 删除历史版本
     }
 
     @Override
@@ -126,7 +135,7 @@ public class PolicyServiceImpl implements PolicyService {
     public PolicyVO getPolicy(Long id) {
         Policy policy = policyMapper.selectById(id);
         PolicyVO policyVO = PolicyConvert.INSTANCE.convert(policy);
-        List<Rule> ruleList = ruleMapper.selectByPolicyCode(policy.getCode());
+        List<Rule> ruleList = ruleMapper.selectListByPolicyCode(policy.getCode());
         List<RuleVO> ruleVOList = RuleConvert.INSTANCE.convert(ruleList);
         policyVO.setRuleList(ruleVOList);
         return policyVO;
@@ -134,11 +143,42 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     public PageResult<PolicyVO> pagePolicy(PolicyPageVO pageVO) {
-        PageResult<Policy> policyPageResult = policyMapper.selectPage(pageVO);
-        PageResult<PolicyVO> policyVOPageResult = PolicyConvert.INSTANCE.convert(policyPageResult);
+        PageResult<PolicyDTO> policyPageResult = policyMapper.selectPage(pageVO);
+        PageResult<PolicyVO> policyVOPageResult = PolicyConvert.INSTANCE.convert2(policyPageResult);
         policyVOPageResult.getList().forEach(policyVO ->
-                policyVO.setRuleList(RuleConvert.INSTANCE.convert(ruleMapper.selectByPolicyCode(policyVO.getCode()))));
+                policyVO.setRuleList(RuleConvert.INSTANCE.convert(ruleMapper.selectListByPolicyCode(policyVO.getCode()))));
         return policyVOPageResult;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void submit(VersionSubmitVO submitVO) {
+        Policy policy = policyMapper.selectById(submitVO.getId());
+        // 确认策略集是否存在
+        if (policy == null) {
+            throw exception(POLICY_NOT_EXIST);
+        }
+        // 确认策略集是否已发布
+        if (policy.getPublish()) {
+            throw exception(POLICY_VERSION_EXIST);
+        }
+        // 1、更新当前策略为已提交
+        policyMapper.updateById(new Policy().setId(policy.getId()).setPublish(Boolean.TRUE));
+        // 2、查询是否有已运行的
+        PolicyVersion policyVersion = policyVersionMapper.selectLatestVersion(policy.getCode());
+        int version = 1;
+        if (policyVersion != null) {
+            version = policyVersion.getVersion() + 1;
+            // 关闭已运行的
+            policyVersionMapper.updateById(new PolicyVersion().setId(policyVersion.getId()).setLatest(Boolean.FALSE));
+        }
+        // 3、插入新纪录并加入chain
+        PolicyVersion convert = PolicyVersionConvert.INSTANCE.convert(policy);
+        convert.setVersion(version);
+        convert.setVersionDesc(submitVO.getVersionDesc());
+        convert.setLatest(Boolean.TRUE);
+        policyVersionMapper.insert(convert);
+        // 4、策略不需要chain
     }
 
     @Override
@@ -171,7 +211,7 @@ public class PolicyServiceImpl implements PolicyService {
     public int policyFor(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
         String policyCode = bindCmp.getSubChainReqData();
-        List<PolicyContext.RuleCtx> ruleList = RuleConvert.INSTANCE.convert2Ctx(ruleMapper.selectByPolicyCode(policyCode));
+        List<PolicyContext.RuleCtx> ruleList = RuleConvert.INSTANCE.convert2Ctx(ruleMapper.selectListByPolicyCode(policyCode));
         policyContext.addRuleList(policyCode, ruleList);
         return ruleList.size();
     }

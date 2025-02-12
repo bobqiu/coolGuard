@@ -5,6 +5,7 @@ import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicyService;
 import cn.wnhyang.coolGuard.vo.PolicyVO;
+import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.PolicyCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicyPageVO;
 import cn.wnhyang.coolGuard.vo.update.PolicyUpdateVO;
@@ -84,6 +85,18 @@ public class PolicyController {
     @GetMapping("/page")
     public CommonResult<PageResult<PolicyVO>> pagePolicy(@Valid PolicyPageVO pageVO) {
         return success(policyService.pagePolicy(pageVO));
+    }
+
+    /**
+     * 提交
+     *
+     * @param submitVO submitVO
+     * @return true/false
+     */
+    @PostMapping("/submit")
+    public CommonResult<Boolean> submit(@RequestBody @Valid VersionSubmitVO submitVO) {
+        policyService.submit(submitVO);
+        return success(true);
     }
 
     /**

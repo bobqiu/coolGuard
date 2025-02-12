@@ -2,7 +2,9 @@ package cn.wnhyang.coolGuard.service;
 
 import cn.wnhyang.coolGuard.entity.PolicySetVersion;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.PolicySetVersionVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetVersionPageVO;
+import jakarta.validation.Valid;
 
 /**
  * 策略集表版本 服务类
@@ -44,9 +46,24 @@ public interface PolicySetVersionService {
     PageResult<PolicySetVersion> page(PolicySetVersionPageVO pageVO);
 
     /**
+     * 根据code分页查询
+     *
+     * @param pageVO 分页VO
+     * @return pageResult
+     */
+    PageResult<PolicySetVersionVO> pageByCode(@Valid PolicySetVersionPageVO pageVO);
+
+    /**
      * 下线
      *
      * @param id id
      */
     void offline(Long id);
+
+    /**
+     * 选中
+     *
+     * @param id id
+     */
+    void chose(Long id);
 }

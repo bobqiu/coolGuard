@@ -23,6 +23,12 @@ public class PolicySetBaseVO implements Serializable {
     private String name;
 
     /**
+     * 策略集链
+     */
+    @NotBlank(message = "策略集链不能为空")
+    private String chain;
+
+    /**
      * 描述
      */
     private String description;

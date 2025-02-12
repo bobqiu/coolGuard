@@ -1,12 +1,16 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.RuleStatus;
+import cn.wnhyang.coolGuard.dto.RuleDTO;
 import cn.wnhyang.coolGuard.entity.Rule;
+import cn.wnhyang.coolGuard.entity.RuleVersion;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.RulePageVO;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -21,13 +25,33 @@ import java.util.List;
 @Mapper
 public interface RuleMapper extends BaseMapperX<Rule> {
 
-    default PageResult<Rule> selectPage(RulePageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<Rule>()
-                .eqIfPresent(Rule::getPolicyCode, pageVO.getPolicyCode())
-                .likeIfPresent(Rule::getName, pageVO.getName())
-                .likeIfPresent(Rule::getCode, pageVO.getCode())
-                .likeIfPresent(Rule::getRuleId, pageVO.getRuleId())
-                .eqIfPresent(Rule::getDisposalCode, pageVO.getDisposalCode()));
+    default PageResult<RuleDTO> selectPage(RulePageVO pageVO) {
+        return selectJoinPage(pageVO, RuleDTO.class, new MPJLambdaWrapper<Rule>()
+                .setAlias("t")
+                .selectAll(Rule.class)
+                .selectAs("t1", RuleVersion::getLatest, RuleDTO::getLatest)
+                .selectAs("t1", RuleVersion::getVersion, RuleDTO::getVersion)
+                .selectAs("t1", RuleVersion::getVersionDesc, RuleDTO::getVersionDesc)
+                .eqIfExists(Rule::getPolicyCode, pageVO.getPolicyCode())
+                .likeIfExists(Rule::getName, pageVO.getName())
+                .likeIfExists(Rule::getCode, pageVO.getCode())
+                .likeIfExists(Rule::getRuleId, pageVO.getRuleId())
+                .eqIfExists(Rule::getDisposalCode, pageVO.getDisposalCode())
+                // 如果有latest，则查询最新版本
+                .eq(ObjUtil.isNotNull(pageVO.getLatest()) && pageVO.getLatest(), RuleVersion::getLatest, pageVO.getLatest())
+                // 如果没有latest，则查询latest不为true的
+                .apply(ObjUtil.isNotNull(pageVO.getLatest()) && !pageVO.getLatest(), "t1.latest IS NULL OR t1.latest <> true")
+                // 如果有hasVersion，则查询有版本
+                .isNotNull(ObjUtil.isNotNull(pageVO.getHasVersion()) && pageVO.getHasVersion(), RuleVersion::getVersion)
+                // 如果没有hasVersion，则查询不为null的
+                .isNull(ObjUtil.isNotNull(pageVO.getHasVersion()) && !pageVO.getHasVersion(), RuleVersion::getVersion)
+                .leftJoin(RuleVersion.class, t2 -> {
+                    t2.setAlias("t2").select(RuleVersion::getCode).select(RuleVersion::getLatest).select(RuleVersion::getVersion).select(RuleVersion::getVersionDesc)
+                            .innerJoin("""
+                                    (SELECT code, MAX(version) AS max_version FROM de_rule_version GROUP BY code) t3 ON t2.code = t3.code AND t2.version = t3.max_version"""
+                            );
+                }, RuleVersion::getCode, Rule::getCode)
+        );
     }
 
     @Cacheable(value = RedisKey.RULE + "::co", key = "#code", unless = "#result == null")
@@ -36,7 +60,7 @@ public interface RuleMapper extends BaseMapperX<Rule> {
     }
 
     @Cacheable(value = RedisKey.RULES + "::sId", key = "#policyCode", unless = "#result == null")
-    default List<Rule> selectByPolicyCode(String policyCode) {
+    default List<Rule> selectListByPolicyCode(String policyCode) {
         return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getPolicyCode, policyCode).orderByDesc(Rule::getSort));
     }
 
@@ -69,5 +93,10 @@ public interface RuleMapper extends BaseMapperX<Rule> {
 
     default Rule selectByName(String name) {
         return selectOne(Rule::getName, name);
+    }
+
+    default void updateByCode(Rule rule) {
+        update(rule, new LambdaQueryWrapperX<Rule>()
+                .eq(Rule::getCode, rule.getCode()));
     }
 }

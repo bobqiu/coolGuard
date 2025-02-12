@@ -8,6 +8,8 @@ import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
+import cn.wnhyang.coolGuard.convert.RuleVersionConvert;
+import cn.wnhyang.coolGuard.dto.RuleDTO;
 import cn.wnhyang.coolGuard.entity.*;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.RuleMapper;
@@ -19,6 +21,7 @@ import cn.wnhyang.coolGuard.util.JsonUtil;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.util.QLExpressUtil;
 import cn.wnhyang.coolGuard.vo.RuleVO;
+import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.RuleCreateVO;
 import cn.wnhyang.coolGuard.vo.page.RulePageVO;
 import cn.wnhyang.coolGuard.vo.update.RuleUpdateVO;
@@ -78,15 +81,6 @@ public class RuleServiceImpl implements RuleService {
         Rule rule = RuleConvert.INSTANCE.convert(createVO);
         rule.setCode(IdUtil.fastSimpleUUID());
         ruleMapper.insert(rule);
-
-        String condEl = LFUtil.buildCondEl(createVO.getCond());
-        String rTrue = buildRuleBingoEl(createVO.getRuleTrue());
-        String rChain = StrUtil.format(LFUtil.RULE_CHAIN, rule.getCode());
-        chainMapper.insert(new Chain().setChainName(rChain).setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                rTrue,
-                LFUtil.RULE_FALSE)));
-        // 创建版本
-        ruleVersionMapper.insert(new RuleVersion().setCode(rule.getCode()).setRule(rule).setLatest(Boolean.TRUE));
         return rule.getId();
     }
 
@@ -108,21 +102,6 @@ public class RuleServiceImpl implements RuleService {
         }
         Rule convert = RuleConvert.INSTANCE.convert(updateVO);
         ruleMapper.updateById(convert);
-        String condEl = LFUtil.buildCondEl(updateVO.getCond());
-        String rTrue = buildRuleBingoEl(updateVO.getRuleTrue());
-        String rChain = StrUtil.format(LFUtil.RULE_CHAIN, convert.getCode());
-        Chain chain = chainMapper.getByChainName(rChain);
-        chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                rTrue,
-                LFUtil.RULE_FALSE));
-        chainMapper.updateById(chain);
-        // 确认是否有更改
-        RuleVersion ruleVersion = ruleVersionMapper.selectLatest(convert.getCode());
-        // 有更改，1、旧版本状态改为旧版本，2、创建新版本版本号为新版本号+1
-        if (!convert.equals(ruleVersion.getRule())) {
-            ruleVersionMapper.updateById(new RuleVersion().setId(ruleVersion.getId()).setLatest(Boolean.FALSE));
-            ruleVersionMapper.insert(new RuleVersion().setCode(convert.getCode()).setRule(convert).setLatest(Boolean.TRUE).setVersion(ruleVersion.getVersion() + 1));
-        }
     }
 
     @Override
@@ -133,13 +112,12 @@ public class RuleServiceImpl implements RuleService {
         if (rule == null) {
             throw exception(RULE_NOT_EXIST);
         }
-        // 1、确认策略集是否还在运行
-        RuleVersion ruleVersion = ruleVersionMapper.selectLatest(rule.getCode());
+        // 1、确认规则是否还在运行
+        RuleVersion ruleVersion = ruleVersionMapper.selectLatestByCode(rule.getCode());
         if (ruleVersion != null) {
             throw exception(RULE_IS_RUNNING);
         }
         ruleMapper.deleteById(id);
-        chainMapper.deleteByChainName(StrUtil.format(LFUtil.RULE_CHAIN, rule.getCode()));
         // 删除所有版本
         ruleVersionMapper.deleteBySetCode(rule.getCode());
     }
@@ -159,20 +137,57 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public PageResult<RuleVO> pageRule(RulePageVO pageVO) {
-        PageResult<Rule> rulePageResult = ruleMapper.selectPage(pageVO);
+        PageResult<RuleDTO> rulePageResult = ruleMapper.selectPage(pageVO);
 
-        return RuleConvert.INSTANCE.convert(rulePageResult);
+        return RuleConvert.INSTANCE.convert2(rulePageResult);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void submit(VersionSubmitVO submitVO) {
+        Rule rule = ruleMapper.selectById(submitVO.getId());
+        // 确认策略集是否存在
+        if (rule == null) {
+            throw exception(RULE_NOT_EXIST);
+        }
+        // 确认策略集是否已发布
+        if (rule.getPublish()) {
+            throw exception(RULE_VERSION_EXIST);
+        }
+        // 1、更新当前规则为已提交
+        ruleMapper.updateById(new Rule().setId(rule.getId()).setPublish(Boolean.TRUE));
+        // 2、查询是否有已运行的
+        RuleVersion ruleVersion = ruleVersionMapper.selectLatestVersion(rule.getCode());
+        int version = 1;
+        if (ruleVersion != null) {
+            version = ruleVersion.getVersion() + 1;
+            // 关闭已运行的
+            ruleVersionMapper.updateById(new RuleVersion().setId(ruleVersion.getId()).setLatest(Boolean.FALSE));
+        }
+        // 3、插入新纪录并加入chain
+        RuleVersion convert = RuleVersionConvert.INSTANCE.convert(rule);
+        convert.setVersion(version);
+        convert.setVersionDesc(submitVO.getVersionDesc());
+        convert.setLatest(Boolean.TRUE);
+        ruleVersionMapper.insert(convert);
+        // 4、更新chain
+        String condEl = LFUtil.buildCondEl(convert.getCond());
+        String rTrue = buildRuleBingoEl(convert.getRuleTrue());
+        String rChain = StrUtil.format(LFUtil.RULE_CHAIN, rule.getCode());
+        String elData = StrUtil.format(LFUtil.IF_EL, condEl, rTrue, LFUtil.RULE_FALSE);
+        if (chainMapper.selectByChainName(rChain)) {
+            Chain chain = chainMapper.getByChainName(rChain);
+            chain.setElData(elData);
+            chainMapper.updateById(chain);
+        } else {
+            chainMapper.insert(new Chain().setChainName(rChain).setElData(elData));
+        }
     }
 
     @Override
     public List<RuleVO> listByPolicyCode(String policyCode) {
-        List<Rule> ruleList = ruleMapper.selectByPolicyCode(policyCode);
+        List<Rule> ruleList = ruleMapper.selectListByPolicyCode(policyCode);
         return RuleConvert.INSTANCE.convert(ruleList);
-    }
-
-    @Override
-    public void submit(Long id) {
-
     }
 
     @Override

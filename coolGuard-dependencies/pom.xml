@@ -18,6 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-boot.version>3.2.3</spring-boot.version>
         <mybatis-plus.version>3.5.9</mybatis-plus.version>
+        <mybatis-plus-join.version>1.5.2</mybatis-plus-join.version>
         <dynamic-datasource.version>4.2.0</dynamic-datasource.version>
         <redisson.version>3.24.3</redisson.version>
         <opensearch.version>2.18.0</opensearch.version>
@@ -53,6 +54,12 @@
                 <version>${mybatis-plus.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.yulichang</groupId>
+                <artifactId>mybatis-plus-join-boot-starter</artifactId> <!-- MyBatis 联表查询 -->
+                <version>${mybatis-plus-join.version}</version>
             </dependency>
 
             <dependency>

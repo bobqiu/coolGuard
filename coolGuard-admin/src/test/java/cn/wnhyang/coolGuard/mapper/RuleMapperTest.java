@@ -2,6 +2,9 @@ package cn.wnhyang.coolGuard.mapper;
 
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.AdminApplication;
+import cn.wnhyang.coolGuard.dto.RuleDTO;
+import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.page.RulePageVO;
 import com.ql.util.express.DefaultContext;
 import com.ql.util.express.ExpressRunner;
 import jakarta.annotation.Resource;
@@ -21,9 +24,6 @@ public class RuleMapperTest {
 
     @Resource
     private RuleMapper ruleMapper;
-
-    @Resource
-    private ChainMapper chainMapper;
 
     @Test
     public void test() {
@@ -46,5 +46,14 @@ public class RuleMapperTest {
         context.put("upperLimit", 3463.57);
         Object r = runner.execute(express, context, null, true, false);
         log.info("{}", r);
+    }
+
+    @Test
+    public void test4() {
+        RulePageVO pageVO = new RulePageVO();
+        pageVO.setPageNo(1).setPageSize(10);
+//        pageVO.setLatest(true);
+        pageVO.setHasVersion(true);
+        PageResult<RuleDTO> ruleDTOPageResult = ruleMapper.selectPage(pageVO);
     }
 }

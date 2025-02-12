@@ -3,10 +3,12 @@ package cn.wnhyang.coolGuard.mapper;
 import cn.wnhyang.coolGuard.AdminApplication;
 import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.convert.IndicatorVersionConvert;
+import cn.wnhyang.coolGuard.dto.IndicatorDTO;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.entity.IndicatorVersion;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
+import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -69,6 +71,15 @@ public class IndicatorMapperTest {
         log.info("indicator: {}", indicator);
         IndicatorVersion indicatorVersion = IndicatorVersionConvert.INSTANCE.convert(indicator);
         log.info("indicatorVersion: {}", indicatorVersion);
+    }
+
+    @Test
+    public void test7() {
+        IndicatorPageVO pageVO = new IndicatorPageVO();
+        pageVO.setPageNo(1).setPageSize(10);
+//        pageVO.setLatest(true);
+        pageVO.setHasVersion(true);
+        PageResult<IndicatorDTO> indicatorPageResult = indicatorMapper.selectPage(pageVO);
     }
 
 }

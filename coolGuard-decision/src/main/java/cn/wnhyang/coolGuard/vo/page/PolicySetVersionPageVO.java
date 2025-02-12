@@ -21,4 +21,9 @@ public class PolicySetVersionPageVO extends PageParam {
      * 主键
      */
     private Long id;
+
+    /**
+     * 编码
+     */
+    private String code;
 }

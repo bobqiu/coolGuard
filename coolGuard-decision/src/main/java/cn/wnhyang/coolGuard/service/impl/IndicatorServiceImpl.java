@@ -2,7 +2,6 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
 import cn.wnhyang.coolGuard.constant.RedisKey;
@@ -11,6 +10,7 @@ import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.convert.IndicatorVersionConvert;
+import cn.wnhyang.coolGuard.dto.IndicatorDTO;
 import cn.wnhyang.coolGuard.entity.Chain;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.entity.IndicatorVersion;
@@ -142,15 +142,15 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     public PageResult<IndicatorVO> pageIndicator(IndicatorPageVO pageVO) {
-        PageResult<Indicator> indicatorPageResult = indicatorMapper.selectPage(pageVO);
-        return IndicatorConvert.INSTANCE.convert(indicatorPageResult);
+        PageResult<IndicatorDTO> indicatorPageResult = indicatorMapper.selectPage(pageVO);
+        return IndicatorConvert.INSTANCE.convert2(indicatorPageResult);
     }
 
     @Override
     public PageResult<Indicator> pageIndicatorByPolicySet(IndicatorByPolicySetPageVO pageVO) {
         String policySetCode = pageVO.getPolicySetCode();
         PolicySet policySet = policySetMapper.selectByCode(policySetCode);
-        if (ObjectUtil.isNotNull(policySet)) {
+        if (policySet != null) {
             indicatorMapper.selectPageByScene(pageVO, SceneType.POLICY_SET, policySet.getCode());
         }
         return PageResult.empty();
@@ -167,14 +167,14 @@ public class IndicatorServiceImpl implements IndicatorService {
         VersionSubmitResultVO result = new VersionSubmitResultVO().setId(submitVO.getId());
         // 提交后就同时在version表中增加一条记录，表示该指标在运行状态
         Indicator indicator = indicatorMapper.selectById(submitVO.getId());
-        if (ObjectUtil.isNull(indicator)) {
+        if (indicator == null) {
             throw exception(INDICATOR_NOT_EXIST);
         }
         if (indicator.getPublish()) {
             throw exception(INDICATOR_VERSION_EXIST);
         }
         // 1、更新当前指标为已提交
-        indicatorMapper.updateById(new Indicator().setId(submitVO.getId()).setPublish(Boolean.TRUE));
+        indicatorMapper.updateById(new Indicator().setId(indicator.getId()).setPublish(Boolean.TRUE));
         // 2、查询是否有已运行的，有版本+1，没有版本1
         IndicatorVersion indicatorVersion = indicatorVersionMapper.selectLatestVersionByCode(indicator.getCode());
         int version = 1;

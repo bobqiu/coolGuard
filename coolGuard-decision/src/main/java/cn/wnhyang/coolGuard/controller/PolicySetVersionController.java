@@ -6,6 +6,7 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicySetVersionService;
 import cn.wnhyang.coolGuard.util.ExcelUtil;
 import cn.wnhyang.coolGuard.vo.PolicySetVersionVO;
+import cn.wnhyang.coolGuard.vo.base.IdBaseVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetVersionPageVO;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -47,6 +48,19 @@ public class PolicySetVersionController {
     }
 
     /**
+     * 选中
+     *
+     * @param idBaseVO idBaseVO
+     * @return true/false
+     */
+    @PostMapping("/chose")
+    public CommonResult<Boolean> chose(@RequestBody IdBaseVO idBaseVO) {
+        policySetVersionService.chose(idBaseVO.getId());
+        return success(true);
+    }
+
+
+    /**
      * 查询单个
      *
      * @param id id
@@ -77,6 +91,17 @@ public class PolicySetVersionController {
     @GetMapping("/page")
     public CommonResult<PageResult<PolicySetVersionVO>> page(@Valid PolicySetVersionPageVO pageVO) {
         return success(PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.page(pageVO)));
+    }
+
+    /**
+     * 根据code分页查询
+     *
+     * @param pageVO 分页VO
+     * @return pageResult
+     */
+    @GetMapping("/pageByCode")
+    public CommonResult<PageResult<PolicySetVersionVO>> pageByCode(@Valid PolicySetVersionPageVO pageVO) {
+        return success(policySetVersionService.pageByCode(pageVO));
     }
 
     /**
