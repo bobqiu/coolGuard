@@ -31,4 +31,11 @@ public interface FieldRefMapper extends BaseMapperX<FieldRef> {
                 .eqIfPresent(FieldRef::getRefBy, refBy)
                 .eqIfPresent(FieldRef::getRefSubType, refSubType));
     }
+
+    default List<FieldRef> selectList(FieldRefPageVO pageVO) {
+        return selectList(new LambdaQueryWrapperX<FieldRef>()
+                .eqIfPresent(FieldRef::getRefType, pageVO.getRefType())
+                .eqIfPresent(FieldRef::getRefBy, pageVO.getRefBy())
+                .eqIfPresent(FieldRef::getRefSubType, pageVO.getRefSubType()));
+    }
 }

@@ -4,6 +4,7 @@ import cn.wnhyang.coolGuard.entity.Tag;
 import cn.wnhyang.coolGuard.vo.result.PolicySetResult;
 import lombok.Data;
 
+import java.io.Serial;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -22,7 +23,11 @@ public class EventContext {
         tags.add(tag);
     }
 
-    public static class TagCtx {
+    @Data
+    public static class TagCtx extends Tag {
+
+        @Serial
+        private static final long serialVersionUID = 4268648821226830437L;
 
     }
 

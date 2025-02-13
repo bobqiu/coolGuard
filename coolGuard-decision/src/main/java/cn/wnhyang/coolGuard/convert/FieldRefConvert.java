@@ -8,6 +8,8 @@ import cn.wnhyang.coolGuard.vo.update.FieldRefUpdateVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * 字段引用
  *
@@ -26,4 +28,6 @@ public interface FieldRefConvert {
     FieldRefVO convert(FieldRef po);
 
     PageResult<FieldRefVO> convert(PageResult<FieldRef> pageResult);
+
+    List<FieldRefVO> convert(List<FieldRef> list);
 }

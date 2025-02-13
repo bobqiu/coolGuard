@@ -116,4 +116,9 @@ public class FieldRefServiceImpl implements FieldRefService {
         return outputFieldVOList;
     }
 
+    @Override
+    public List<FieldRef> list(FieldRefPageVO pageVO) {
+        return fieldRefMapper.selectList(pageVO);
+    }
+
 }

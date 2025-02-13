@@ -77,9 +77,10 @@ public class IndicatorMapperTest {
     public void test7() {
         IndicatorPageVO pageVO = new IndicatorPageVO();
         pageVO.setPageNo(1).setPageSize(10);
-//        pageVO.setLatest(true);
-        pageVO.setHasVersion(true);
+//        pageVO.setLatest(false);
+        pageVO.setHasVersion(false);
         PageResult<IndicatorDTO> indicatorPageResult = indicatorMapper.selectPage(pageVO);
+        System.out.println(indicatorPageResult.getList());
     }
 
 }

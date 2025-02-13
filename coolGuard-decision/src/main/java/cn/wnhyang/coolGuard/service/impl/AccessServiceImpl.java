@@ -75,13 +75,20 @@ public class AccessServiceImpl implements AccessService {
     private final FieldRefService fieldRefService;
 
     @Override
-    public Map<String, Object> syncRisk(String name, Map<String, String> params) {
-        log.info("服务名：{}, 入参：{}", name, params);
+    public Map<String, Object> test(String code, Map<String, String> params) {
+        Map<String, Object> result = syncRisk(code, params);
+        accessMapper.updateByCode(new Access().setCode(code).setTestParams(params));
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> syncRisk(String code, Map<String, String> params) {
+        log.info("服务名：{}, 入参：{}", code, params);
 
         Map<String, Object> result = new HashMap<>();
 
         // 根据接入名称获取接入
-        Access access = getAccessByName(name);
+        Access access = getAccessByCode(code);
         log.info("access: {}", access);
 
         // 设置接入
@@ -125,7 +132,7 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @Override
-    public Map<String, Object> asyncRisk(String name, Map<String, String> params) {
+    public Map<String, Object> asyncRisk(String code, Map<String, String> params) {
 
         Map<String, Object> map = new HashMap<>();
         map.put("code", "000000");
@@ -133,7 +140,7 @@ public class AccessServiceImpl implements AccessService {
         // TODO 异步决策不需要跑策略
         try {
             return asyncExecutor.submit(() ->
-                    syncRisk(name, params)).get(100, TimeUnit.MILLISECONDS);
+                    syncRisk(code, params)).get(100, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             return map;
         } catch (Exception e) {
@@ -197,8 +204,8 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @Override
-    public Access getAccessByName(String name) {
-        Access access = accessMapper.selectByCode(name);
+    public Access getAccessByCode(String code) {
+        Access access = accessMapper.selectByCode(code);
         if (access == null) {
             throw exception(ACCESS_NOT_EXIST);
         }

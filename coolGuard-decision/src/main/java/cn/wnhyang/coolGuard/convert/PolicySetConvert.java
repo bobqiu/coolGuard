@@ -36,11 +36,11 @@ public interface PolicySetConvert {
 
     List<PolicySetVO> convert(List<PolicySet> list);
 
-    PolicyContext.PolicySetCtx convert2Ctx(PolicySet policySet);
-
     PolicySet convert(PolicySetVersion policySetVersion);
 
     Rule convert(RuleVersion ruleVersion);
 
     PageResult<PolicySetVO> convert2(PageResult<PolicySetDTO> policySetPageResult);
+
+    PolicyContext.PolicySetCtx convert2Ctx(PolicySetVersion policySetVersion);
 }

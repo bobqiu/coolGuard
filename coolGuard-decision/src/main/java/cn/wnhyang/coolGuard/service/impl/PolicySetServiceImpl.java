@@ -242,20 +242,17 @@ public class PolicySetServiceImpl implements PolicySetService {
         String appName = fieldContext.getStringData(FieldName.appName);
         String policySetCode = fieldContext.getStringData(FieldName.policySetCode);
 
-        PolicySet policySet = policySetMapper.selectByAppNameAndCode(appName, policySetCode);
-        if (policySet != null && policySet.getPublish()) {
-            log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", policySet.getAppName(), policySet.getCode(), policySet.getName());
+        PolicySetVersion policySetVersion = policySetVersionMapper.selectLatestByAppNameAndCode(appName, policySetCode);
+        if (policySetVersion != null) {
+            log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", policySetVersion.getAppName(), policySetVersion.getCode(), policySetVersion.getName());
             PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-            PolicyContext.PolicySetCtx policySetCtx = PolicySetConvert.INSTANCE.convert2Ctx(policySet);
-            PolicySetVersion policySetVersion = policySetVersionMapper.selectLatest(policySet.getCode());
-            policySetCtx.setVersion(policySetVersion.getVersion());
-            policySetCtx.setChain(policySetVersion.getChain());
+            PolicyContext.PolicySetCtx policySetCtx = PolicySetConvert.INSTANCE.convert2Ctx(policySetVersion);
             policyContext.init(DisposalConvert.INSTANCE.convert2Ctx(disposalMapper.selectList()), policySetCtx);
-            bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySet.getCode()), null);
+            bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySetVersion.getCode()), null);
 
             EventContext eventContext = bindCmp.getContextBean(EventContext.class);
             eventContext.setPolicySetResult(policyContext.convert());
-            log.info("策略集(name:{})执行完毕", policySet.getName());
+            log.info("策略集(name:{})执行完毕", policySetVersion.getName());
         } else {
             log.info("未匹配应用名:{}, 策略集编码:{}", appName, policySetCode);
         }

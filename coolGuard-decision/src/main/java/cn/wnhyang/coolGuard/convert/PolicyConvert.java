@@ -34,9 +34,9 @@ public interface PolicyConvert {
 
     List<PolicyVO> convert(List<Policy> list);
 
-    PolicyContext.PolicyCtx convert2Ctx(Policy policy);
-
     Policy convert(PolicyVersion policyVersion);
 
     PageResult<PolicyVO> convert2(PageResult<PolicyDTO> policyPageResult);
+
+    PolicyContext.PolicyCtx convert2Ctx(PolicyVersion policyVersion);
 }

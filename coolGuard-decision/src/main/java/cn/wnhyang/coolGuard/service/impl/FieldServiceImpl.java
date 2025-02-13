@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.IdcardUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.analysis.ad.Pca;
 import cn.wnhyang.coolGuard.analysis.geo.GeoAnalysis;
 import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
@@ -194,7 +195,7 @@ public class FieldServiceImpl implements FieldService {
 
         // 身份证解析
         String idCard = fieldContext.getStringData(FieldName.payerIDNumber);
-        if (IdcardUtil.isValidCard(idCard)) {
+        if (StrUtil.isNotBlank(idCard) && IdcardUtil.isValidCard(idCard)) {
             Pca pca = AdocUtil.getPca(IdcardUtil.getDistrictCodeByIdCard(idCard));
             if (pca != null) {
                 fieldContext.setDataByType(FieldName.idCardProvince, pca.getProvince(), FieldType.STRING);
@@ -205,32 +206,37 @@ public class FieldServiceImpl implements FieldService {
 
         // 手机号解析
         String phoneNumber = fieldContext.getStringData(FieldName.payerPhoneNumber);
-        PhoneNoInfo phoneNoInfo = phoneNoAnalysis.analysis(phoneNumber);
-        fieldContext.setDataByType(FieldName.phoneNumberProvince, phoneNoInfo.getProvince(), FieldType.STRING);
-        fieldContext.setDataByType(FieldName.phoneNumberCity, phoneNoInfo.getCity(), FieldType.STRING);
-        fieldContext.setDataByType(FieldName.phoneNumberIsp, phoneNoInfo.getIsp(), FieldType.STRING);
+        if (StrUtil.isNotBlank(phoneNumber)) {
+            PhoneNoInfo phoneNoInfo = phoneNoAnalysis.analysis(phoneNumber);
+            fieldContext.setDataByType(FieldName.phoneNumberProvince, phoneNoInfo.getProvince(), FieldType.STRING);
+            fieldContext.setDataByType(FieldName.phoneNumberCity, phoneNoInfo.getCity(), FieldType.STRING);
+            fieldContext.setDataByType(FieldName.phoneNumberIsp, phoneNoInfo.getIsp(), FieldType.STRING);
+        }
 
         // ip解析
         String ip = fieldContext.getStringData(FieldName.ip);
-        Ip2Region ip2Region = ipAnalysis.analysis(ip);
-        if (ip2Region != null) {
-            fieldContext.setDataByType(FieldName.ipCountry, ip2Region.getCountry(), FieldType.STRING);
-            fieldContext.setDataByType(FieldName.ipProvince, ip2Region.getProvince(), FieldType.STRING);
-            fieldContext.setDataByType(FieldName.ipCity, ip2Region.getCity(), FieldType.STRING);
-            fieldContext.setDataByType(FieldName.ipIsp, ip2Region.getIsp(), FieldType.STRING);
+        if (StrUtil.isNotBlank(ip)) {
+            Ip2Region ip2Region = ipAnalysis.analysis(ip);
+            if (ip2Region != null) {
+                fieldContext.setDataByType(FieldName.ipCountry, ip2Region.getCountry(), FieldType.STRING);
+                fieldContext.setDataByType(FieldName.ipProvince, ip2Region.getProvince(), FieldType.STRING);
+                fieldContext.setDataByType(FieldName.ipCity, ip2Region.getCity(), FieldType.STRING);
+                fieldContext.setDataByType(FieldName.ipIsp, ip2Region.getIsp(), FieldType.STRING);
+            }
         }
 
         // 经纬度解析
         String lonAndLat = fieldContext.getStringData(FieldName.lonAndLat);
-        Pca pca = geoAnalysis.analysis(lonAndLat);
-        if (pca != null) {
-            fieldContext.setDataByType(FieldName.geoProvince, pca.getProvince(), FieldType.STRING);
-            fieldContext.setDataByType(FieldName.geoCity, pca.getCity(), FieldType.STRING);
-            fieldContext.setDataByType(FieldName.geoDistrict, pca.getArea(), FieldType.STRING);
+        if (StrUtil.isNotBlank(lonAndLat)) {
+            Pca pca = geoAnalysis.analysis(lonAndLat);
+            if (pca != null) {
+                fieldContext.setDataByType(FieldName.geoProvince, pca.getProvince(), FieldType.STRING);
+                fieldContext.setDataByType(FieldName.geoCity, pca.getCity(), FieldType.STRING);
+                fieldContext.setDataByType(FieldName.geoDistrict, pca.getArea(), FieldType.STRING);
+            }
+            // 经纬度geoHash编码
+            fieldContext.setDataByType(FieldName.geoHash, GeoHash.geoHash(lonAndLat), FieldType.STRING);
         }
-
-        // 经纬度geoHash编码
-        fieldContext.setDataByType(FieldName.geoHash, GeoHash.geoHash(lonAndLat), FieldType.STRING);
 
     }
 
@@ -257,7 +263,7 @@ public class FieldServiceImpl implements FieldService {
             if (ValueType.CONTEXT.equals(setField.getType())) {
                 value = fieldContext.getStringData(value);
             }
-            fieldContext.setDataByType(setField.getFieldName(), value, FieldType.STRING);
+            fieldContext.setDataByType(setField.getFieldCode(), value, FieldType.STRING);
         });
     }
 

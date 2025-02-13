@@ -34,7 +34,7 @@ public interface RuleVersionMapper extends BaseMapperX<RuleVersion> {
 
     default List<RuleVersion> selectLatestByPolicyCode(String policyCode) {
         return selectList(new LambdaQueryWrapperX<RuleVersion>()
-                .eq(RuleVersion::getCode, policyCode)
+                .eq(RuleVersion::getPolicyCode, policyCode)
                 .eq(RuleVersion::getLatest, Boolean.TRUE));
     }
 

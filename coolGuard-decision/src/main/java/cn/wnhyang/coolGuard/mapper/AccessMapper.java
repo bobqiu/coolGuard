@@ -6,6 +6,7 @@ import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.AccessPageVO;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -29,4 +30,8 @@ public interface AccessMapper extends BaseMapperX<Access> {
         return selectOne(Access::getCode, code);
     }
 
+    default void updateByCode(Access access) {
+        update(access, new LambdaUpdateWrapper<Access>()
+                .eq(Access::getCode, access.getCode()));
+    }
 }

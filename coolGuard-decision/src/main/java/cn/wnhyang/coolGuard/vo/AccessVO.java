@@ -4,6 +4,7 @@ import cn.wnhyang.coolGuard.vo.base.AccessBaseVO;
 import lombok.Data;
 
 import java.io.Serial;
+import java.util.Map;
 
 /**
  * @author wnhyang
@@ -24,5 +25,10 @@ public class AccessVO extends AccessBaseVO {
      * 接入编码
      */
     private String code;
+
+    /**
+     * 测试参数
+     */
+    private Map<String, String> testParams;
 
 }

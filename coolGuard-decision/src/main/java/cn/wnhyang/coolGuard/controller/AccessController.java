@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.controller;
 
+import cn.wnhyang.coolGuard.convert.AccessConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.AccessService;
@@ -29,27 +30,39 @@ public class AccessController {
     private final AccessService accessService;
 
     /**
-     * 同步接入
+     * 测试接入
      *
-     * @param name   服务名
+     * @param code   服务名
      * @param params 参数
      * @return map
      */
-    @PostMapping("/{name}/sync")
-    public CommonResult<Map<String, Object>> syncRisk(@PathVariable("name") String name, @RequestBody Map<String, String> params) {
-        return success(accessService.syncRisk(name, params));
+    @PostMapping("/test/{code}")
+    public CommonResult<Map<String, Object>> risk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
+        return success(accessService.test(code, params));
+    }
+
+    /**
+     * 同步接入
+     *
+     * @param code   服务code
+     * @param params 参数
+     * @return map
+     */
+    @PostMapping("/{code}/sync")
+    public CommonResult<Map<String, Object>> syncRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
+        return success(accessService.syncRisk(code, params));
     }
 
     /**
      * 异步接入
      *
-     * @param name   服务名
+     * @param code   服务code
      * @param params 参数
      * @return map
      */
-    @PostMapping("/{name}/async")
-    public CommonResult<Map<String, Object>> asyncRisk(@PathVariable("name") String name, @RequestBody Map<String, String> params) {
-        return success(accessService.asyncRisk(name, params));
+    @PostMapping("/{code}/async")
+    public CommonResult<Map<String, Object>> asyncRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
+        return success(accessService.asyncRisk(code, params));
     }
 
     /**
@@ -96,6 +109,17 @@ public class AccessController {
     @GetMapping
     public CommonResult<AccessVO> getAccess(@RequestParam("id") Long id) {
         return success(accessService.getAccess(id));
+    }
+
+    /**
+     * 查询单个
+     *
+     * @param code code
+     * @return vo
+     */
+    @GetMapping("/code")
+    public CommonResult<AccessVO> getAccessByCode(@RequestParam("code") String code) {
+        return success(AccessConvert.INSTANCE.convert(accessService.getAccessByCode(code)));
     }
 
     /**

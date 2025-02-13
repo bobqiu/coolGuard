@@ -15,13 +15,13 @@ import java.util.List;
 @AllArgsConstructor
 public class Action {
 
-    private List<AddTag> addTags;
+    private List<AddTag> addTag;
 
-    private List<AddList> addLists;
+    private List<AddList> addList;
 
     private SendSms sendSms;
 
-    private List<SetField> setFields;
+    private List<SetField> setField;
 
     @Data
     public static class AddTag {
@@ -32,7 +32,7 @@ public class Action {
     public static class AddList {
         private String listSetCode;
 
-        private String fieldName;
+        private String fieldCode;
     }
 
     @Data
@@ -42,7 +42,7 @@ public class Action {
 
     @Data
     public static class SetField {
-        private String fieldName;
+        private String fieldCode;
 
         private String type;
 

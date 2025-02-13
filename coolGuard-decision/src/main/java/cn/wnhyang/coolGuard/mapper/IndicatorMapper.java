@@ -35,22 +35,6 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
                         .selectAs("t1", IndicatorVersion::getLatest, IndicatorDTO::getLatest)
                         .selectAs("t1", IndicatorVersion::getVersion, IndicatorDTO::getVersion)
                         .selectAs("t1", IndicatorVersion::getVersionDesc, IndicatorDTO::getVersionDesc)
-                        .likeIfExists(Indicator::getName, pageVO.getName())
-                        .eqIfExists(Indicator::getType, pageVO.getType())
-                        .eqIfExists(Indicator::getSceneType, pageVO.getSceneType())
-                        .eqIfExists(Indicator::getPublish, pageVO.getPublish())
-                        // 如果有latest，则查询最新版本
-                        .eq(ObjUtil.isNotNull(pageVO.getLatest()) && pageVO.getLatest(), IndicatorVersion::getLatest, pageVO.getLatest())
-                        // 如果没有latest，则查询latest不为true的
-                        .apply(ObjUtil.isNotNull(pageVO.getLatest()) && !pageVO.getLatest(), "t1.latest IS NULL OR t1.latest <> true")
-                        // 如果有hasVersion，则查询有版本
-                        .isNotNull(ObjUtil.isNotNull(pageVO.getHasVersion()) && pageVO.getHasVersion(), IndicatorVersion::getVersion)
-                        // 如果没有hasVersion，则查询不为null的
-                        .isNull(ObjUtil.isNotNull(pageVO.getHasVersion()) && !pageVO.getHasVersion(), IndicatorVersion::getVersion)
-                        // 筛选场景
-                        .isNotNull(StrUtil.isNotBlank(pageVO.getScene()), Indicator::getScenes)
-                        .ne(StrUtil.isNotBlank(pageVO.getScene()), Indicator::getScenes, "''")
-                        .apply(StrUtil.isNotBlank(pageVO.getScene()), "JSON_CONTAINS(scenes, '\"" + pageVO.getScene() + "\"')")
                         .leftJoin(IndicatorVersion.class, t2 -> {
                             t2.setAlias("t2").select(IndicatorVersion::getCode).select(IndicatorVersion::getLatest).select(IndicatorVersion::getVersion).select(IndicatorVersion::getVersionDesc)
                                     .innerJoin("""
@@ -63,8 +47,23 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
 //                                "                                   FROM de_indicator_version\n" +
 //                                "                                   GROUP BY code) t3 ON t2.code = t3.code AND t2.version = t3.max_version) t1\n" +
 //                                "                   ON (t1.code = t.code)")
+                        .likeIfExists(Indicator::getName, pageVO.getName())
+                        .eqIfExists(Indicator::getType, pageVO.getType())
+                        .eqIfExists(Indicator::getSceneType, pageVO.getSceneType())
+                        .eqIfExists(Indicator::getPublish, pageVO.getPublish())
+                        // 如果有latest，则查询最新版本
+                        .eq(ObjUtil.isNotNull(pageVO.getLatest()) && pageVO.getLatest(), IndicatorVersion::getLatest, pageVO.getLatest())
+                        // 如果有hasVersion，则查询有版本
+                        .isNotNull(ObjUtil.isNotNull(pageVO.getHasVersion()) && pageVO.getHasVersion(), IndicatorVersion::getVersion)
+                        // 筛选场景
+                        .isNotNull(StrUtil.isNotBlank(pageVO.getScene()), Indicator::getScenes)
+                        .ne(StrUtil.isNotBlank(pageVO.getScene()), Indicator::getScenes, "''")
+                        .apply(StrUtil.isNotBlank(pageVO.getScene()), "JSON_CONTAINS(scenes, '\"" + pageVO.getScene() + "\"')")
+
         );
     }
+
+    PageResult<IndicatorDTO> selectPage0(IndicatorPageVO pageVO);
 
     default List<Long> selectIdListByScene(String sceneType, String scene) {
         return selectObjs(new LambdaQueryWrapperX<Indicator>()

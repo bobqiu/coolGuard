@@ -4,14 +4,13 @@ import cn.hutool.core.collection.CollUtil;
 import cn.wnhyang.coolGuard.constant.DisposalConstant;
 import cn.wnhyang.coolGuard.constant.PolicyMode;
 import cn.wnhyang.coolGuard.constant.RuleStatus;
-import cn.wnhyang.coolGuard.entity.Action;
-import cn.wnhyang.coolGuard.entity.Cond;
-import cn.wnhyang.coolGuard.entity.Th;
+import cn.wnhyang.coolGuard.entity.*;
 import cn.wnhyang.coolGuard.vo.result.PolicyResult;
 import cn.wnhyang.coolGuard.vo.result.PolicySetResult;
 import cn.wnhyang.coolGuard.vo.result.RuleResult;
 import lombok.Data;
 
+import java.io.Serial;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -237,194 +236,40 @@ public class PolicyContext {
     }
 
     @Data
-    public static class PolicySetCtx {
+    public static class PolicySetCtx extends PolicySetVersion {
 
-        /**
-         * 主键
-         */
-        private Long id;
+        @Serial
+        private static final long serialVersionUID = 9048934318756528328L;
 
-        /**
-         * app名
-         */
-        private String appName;
-
-        /**
-         * 策略集编码
-         */
-        private String code;
-
-        /**
-         * 策略集名
-         */
-        private String name;
-
-        /**
-         * 描述
-         */
-        private String description;
-
-        /**
-         * 策略集链
-         */
-        private String chain;
-
-        /**
-         * 发布
-         */
-        private Boolean publish;
-
-        /**
-         * 版本
-         */
-        private Integer version;
     }
 
     @Data
-    public static class PolicyCtx {
+    public static class PolicyCtx extends PolicyVersion {
 
-        /**
-         * 主键
-         */
-        private Long id;
+        @Serial
+        private static final long serialVersionUID = -565112921090197276L;
 
-        /**
-         * 策略集id
-         */
-        private String policySetCode;
-
-        /**
-         * 策略编码
-         */
-        private String code;
-
-        /**
-         * 策略名
-         */
-        private String name;
-
-        /**
-         * 策略模式
-         */
-        private String mode;
-
-        /**
-         * 策略阈值
-         */
-        private List<Th> thList;
-
-        /**
-         * 描述
-         */
-        private String description;
     }
 
     @Data
-    public static class RuleCtx {
+    public static class RuleCtx extends RuleVersion {
 
-        /**
-         * 主键
-         */
-        private Long id;
-
-        /**
-         * 策略编码
-         */
-        private String policyCode;
-
-        /**
-         * 规则编码
-         */
-        private String code;
-
-        /**
-         * 规则名
-         */
-        private String name;
-
-        /**
-         * 处理编码
-         */
-        private String disposalCode;
-
-        /**
-         * 表达式
-         */
-        private String express;
+        @Serial
+        private static final long serialVersionUID = -8804595883699673307L;
 
         /**
          * 表达式值
          */
         private Double expressValue;
 
-        /**
-         * 状态
-         */
-        private String status;
-
-        /**
-         * 排序
-         */
-        private Integer sort;
-
-        /**
-         * 描述
-         */
-        private String description;
-
-        /**
-         * 条件
-         */
-        private Cond cond;
-
-        /**
-         * true执行
-         */
-        private Action ruleTrue;
-
-        /**
-         * false执行
-         */
-        private Action ruleFalse;
     }
 
     @Data
-    public static class DisposalCtx {
+    public static class DisposalCtx extends Disposal {
 
-        /**
-         * 主键
-         */
-        private Long id;
+        @Serial
+        private static final long serialVersionUID = -108866466366941665L;
 
-        /**
-         * 处置编码
-         */
-        private String code;
-
-        /**
-         * 处置名
-         */
-        private String name;
-
-        /**
-         * 等级
-         */
-        private Integer grade;
-
-        /**
-         * 颜色
-         */
-        private String color;
-
-        /**
-         * 是否为标准
-         */
-        private Boolean standard;
-
-        /**
-         * 描述
-         */
-        private String description;
     }
 
 }

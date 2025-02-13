@@ -62,10 +62,10 @@ public class RuleServiceImpl implements RuleService {
 
     public static String buildRuleBingoEl(Action action) {
         return LFUtil.buildWhen(LFUtil.RULE_TRUE,
-                LFUtil.buildElWithData(LFUtil.ADD_TAG, JsonUtil.toJsonString(action.getAddTags())),
-                LFUtil.buildElWithData(LFUtil.ADD_LIST_DATA, JsonUtil.toJsonString(action.getAddLists())),
+                LFUtil.buildElWithData(LFUtil.ADD_TAG, JsonUtil.toJsonString(action.getAddTag())),
+                LFUtil.buildElWithData(LFUtil.ADD_LIST_DATA, JsonUtil.toJsonString(action.getAddList())),
                 LFUtil.buildElWithData(LFUtil.SEND_SMS, JsonUtil.toJsonString(action.getSendSms())),
-                LFUtil.buildElWithData(LFUtil.SET_FIELD, JsonUtil.toJsonString(action.getSetFields())));
+                LFUtil.buildElWithData(LFUtil.SET_FIELD, JsonUtil.toJsonString(action.getSetField())));
     }
 
     @Override

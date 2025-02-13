@@ -5,9 +5,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.*;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
+import java.util.Map;
 
 /**
  * 接入表
@@ -17,10 +22,9 @@ import java.io.Serial;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("de_access")
+@TableName(value = "de_access", autoResultMap = true)
 public class Access extends BaseDO {
 
     @Serial
@@ -43,6 +47,12 @@ public class Access extends BaseDO {
      */
     @TableField("code")
     private String code;
+
+    /**
+     * 测试参数
+     */
+    @TableField(value = "test_params", typeHandler = JacksonTypeHandler.class)
+    private Map<String, String> testParams;
 
     /**
      * 描述

@@ -1,7 +1,6 @@
 package cn.wnhyang.coolGuard.vo;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
  * @date 2024/5/9
  **/
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class OutputFieldVO {

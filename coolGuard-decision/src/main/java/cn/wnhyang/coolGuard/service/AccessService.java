@@ -18,22 +18,31 @@ import java.util.Map;
 public interface AccessService {
 
     /**
-     * 同步调用
+     * 测试
      *
-     * @param name   服务名
+     * @param code   服务code
      * @param params 参数
      * @return map
      */
-    Map<String, Object> syncRisk(String name, Map<String, String> params);
+    Map<String, Object> test(String code, Map<String, String> params);
+
+    /**
+     * 同步调用
+     *
+     * @param code   服务code
+     * @param params 参数
+     * @return map
+     */
+    Map<String, Object> syncRisk(String code, Map<String, String> params);
 
     /**
      * 异步调用
      *
-     * @param name   服务名
+     * @param code   服务code
      * @param params 参数
      * @return map
      */
-    Map<String, Object> asyncRisk(String name, Map<String, String> params);
+    Map<String, Object> asyncRisk(String code, Map<String, String> params);
 
     /**
      * 新建
@@ -74,12 +83,12 @@ public interface AccessService {
     PageResult<AccessVO> pageAccess(AccessPageVO pageVO);
 
     /**
-     * 根据名称查询
+     * 根据编码查询
      *
-     * @param name 名称
+     * @param code 编码
      * @return po
      */
-    Access getAccessByName(String name);
+    Access getAccessByCode(String code);
 
     /**
      * 复制

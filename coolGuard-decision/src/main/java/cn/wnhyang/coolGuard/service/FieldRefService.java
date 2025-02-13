@@ -8,6 +8,7 @@ import cn.wnhyang.coolGuard.vo.OutputFieldVO;
 import cn.wnhyang.coolGuard.vo.create.FieldRefCreateVO;
 import cn.wnhyang.coolGuard.vo.page.FieldRefPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldRefUpdateVO;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -80,4 +81,12 @@ public interface FieldRefService {
      * @return 输出字段列表
      */
     List<OutputFieldVO> getAccessOutputFieldList(Access access);
+
+    /**
+     * 获取字段引用列表
+     *
+     * @param pageVO 分页VO
+     * @return 字段引用列表
+     */
+    List<FieldRef> list(@Valid FieldRefPageVO pageVO);
 }

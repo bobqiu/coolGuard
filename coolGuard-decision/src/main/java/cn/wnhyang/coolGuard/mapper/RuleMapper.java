@@ -32,6 +32,12 @@ public interface RuleMapper extends BaseMapperX<Rule> {
                 .selectAs("t1", RuleVersion::getLatest, RuleDTO::getLatest)
                 .selectAs("t1", RuleVersion::getVersion, RuleDTO::getVersion)
                 .selectAs("t1", RuleVersion::getVersionDesc, RuleDTO::getVersionDesc)
+                .leftJoin(RuleVersion.class, t2 -> {
+                    t2.setAlias("t2").select(RuleVersion::getCode).select(RuleVersion::getLatest).select(RuleVersion::getVersion).select(RuleVersion::getVersionDesc)
+                            .innerJoin("""
+                                    (SELECT code, MAX(version) AS max_version FROM de_rule_version GROUP BY code) t3 ON t2.code = t3.code AND t2.version = t3.max_version"""
+                            );
+                }, RuleVersion::getCode, Rule::getCode)
                 .eqIfExists(Rule::getPolicyCode, pageVO.getPolicyCode())
                 .likeIfExists(Rule::getName, pageVO.getName())
                 .likeIfExists(Rule::getCode, pageVO.getCode())
@@ -39,18 +45,8 @@ public interface RuleMapper extends BaseMapperX<Rule> {
                 .eqIfExists(Rule::getDisposalCode, pageVO.getDisposalCode())
                 // 如果有latest，则查询最新版本
                 .eq(ObjUtil.isNotNull(pageVO.getLatest()) && pageVO.getLatest(), RuleVersion::getLatest, pageVO.getLatest())
-                // 如果没有latest，则查询latest不为true的
-                .apply(ObjUtil.isNotNull(pageVO.getLatest()) && !pageVO.getLatest(), "t1.latest IS NULL OR t1.latest <> true")
                 // 如果有hasVersion，则查询有版本
                 .isNotNull(ObjUtil.isNotNull(pageVO.getHasVersion()) && pageVO.getHasVersion(), RuleVersion::getVersion)
-                // 如果没有hasVersion，则查询不为null的
-                .isNull(ObjUtil.isNotNull(pageVO.getHasVersion()) && !pageVO.getHasVersion(), RuleVersion::getVersion)
-                .leftJoin(RuleVersion.class, t2 -> {
-                    t2.setAlias("t2").select(RuleVersion::getCode).select(RuleVersion::getLatest).select(RuleVersion::getVersion).select(RuleVersion::getVersionDesc)
-                            .innerJoin("""
-                                    (SELECT code, MAX(version) AS max_version FROM de_rule_version GROUP BY code) t3 ON t2.code = t3.code AND t2.version = t3.max_version"""
-                            );
-                }, RuleVersion::getCode, Rule::getCode)
         );
     }
 

@@ -1,10 +1,7 @@
 package cn.wnhyang.coolGuard.vo;
 
 import cn.wnhyang.coolGuard.entity.LabelValue;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -13,12 +10,9 @@ import java.util.List;
  * @date 2024/3/6
  **/
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class InputFieldVO {
 
-    /**
+    /** 【
      * 参数名
      */
     private String paramName;

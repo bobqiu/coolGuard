@@ -195,7 +195,7 @@ public class PolicyServiceImpl implements PolicyService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略普通组件")
     public void policy(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        PolicyContext.PolicyCtx policy = PolicyConvert.INSTANCE.convert2Ctx(policyMapper.selectByCode(bindCmp.getTag()));
+        PolicyContext.PolicyCtx policy = PolicyConvert.INSTANCE.convert2Ctx(policyVersionMapper.selectLatestByCode(bindCmp.getTag()));
         policyContext.addPolicy(policy.getCode(), policy);
 
         log.info("当前策略(code:{}, name:{}, code:{})", policy.getCode(), policy.getName(), policy.getCode());
@@ -211,7 +211,7 @@ public class PolicyServiceImpl implements PolicyService {
     public int policyFor(NodeComponent bindCmp) {
         PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
         String policyCode = bindCmp.getSubChainReqData();
-        List<PolicyContext.RuleCtx> ruleList = RuleConvert.INSTANCE.convert2Ctx(ruleMapper.selectListByPolicyCode(policyCode));
+        List<PolicyContext.RuleCtx> ruleList = RuleConvert.INSTANCE.convert2Ctx(ruleVersionMapper.selectLatestByPolicyCode(policyCode));
         policyContext.addRuleList(policyCode, ruleList);
         return ruleList.size();
     }

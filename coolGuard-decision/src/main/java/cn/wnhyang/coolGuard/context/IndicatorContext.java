@@ -1,10 +1,11 @@
 package cn.wnhyang.coolGuard.context;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.wnhyang.coolGuard.entity.Cond;
+import cn.wnhyang.coolGuard.entity.IndicatorVersion;
 import cn.wnhyang.coolGuard.vo.result.IndicatorResult;
 import lombok.Data;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,112 +50,15 @@ public class IndicatorContext {
     }
 
     @Data
-    public static class IndicatorCtx {
+    public static class IndicatorCtx extends IndicatorVersion {
 
-        /**
-         * 主键
-         */
-        private Long id;
-
-        /**
-         * 编码
-         */
-        private String code;
-
-        /**
-         * 类型
-         */
-        private String type;
-
-        /**
-         * 计算字段
-         */
-        private String calcField;
-
-        /**
-         * 返回类型
-         */
-        private String returnType;
-
-        /**
-         * earliest latest
-         * 返回取值方式
-         */
-        private String returnFlag;
-
-        /**
-         * 窗口大小
-         */
-        private String winSize;
-
-        /**
-         * 窗口类型
-         */
-        private String winType;
-
-        /**
-         * 窗口数量
-         */
-        private Integer winCount;
-
-        /**
-         * 主字段
-         */
-        private String masterField;
-
-        /**
-         * 从字段
-         */
-        private List<String> slaveFields;
-
-        /**
-         * 过滤脚本
-         */
-        private String filterScript;
-
-        /**
-         * 是否发布
-         */
-        private Boolean publish;
-
-        /**
-         * 版本号
-         */
-        private Integer version;
-
-        /**
-         * 场景
-         */
-        private List<String> scenes;
-
-        /**
-         * 场景类型
-         */
-        private String sceneType;
-
-        /**
-         * 时间片
-         */
-        private Long timeSlice;
+        @Serial
+        private static final long serialVersionUID = 1355749887039607327L;
 
         /**
          * 指标值
          */
         private Object value;
 
-        /**
-         * 指标名
-         */
-        private String name;
-
-        /**
-         * 描述
-         */
-        private String description;
-
-        /**
-         * 条件
-         */
-        private Cond cond;
     }
 }

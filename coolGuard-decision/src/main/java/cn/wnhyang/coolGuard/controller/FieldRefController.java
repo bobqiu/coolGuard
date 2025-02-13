@@ -93,6 +93,17 @@ public class FieldRefController {
     }
 
     /**
+     * 分页查询
+     *
+     * @param pageVO 分页VO
+     * @return pageResult
+     */
+    @GetMapping("/list")
+    public CommonResult<List<FieldRefVO>> list(@Valid FieldRefPageVO pageVO) {
+        return success(FieldRefConvert.INSTANCE.convert(fieldRefService.list(pageVO)));
+    }
+
+    /**
      * 导出
      *
      * @param pageVO   导出VO
