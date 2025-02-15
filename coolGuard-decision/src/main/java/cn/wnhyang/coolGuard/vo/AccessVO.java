@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author wnhyang
@@ -25,6 +26,11 @@ public class AccessVO extends AccessBaseVO {
      * 接入编码
      */
     private String code;
+
+    /**
+     * 测试参数
+     */
+    private Map<String, String> testParams;
 
     /**
      * 输入字段

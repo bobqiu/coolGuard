@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.constant.FieldName;
+import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.context.FieldContext;
@@ -226,8 +226,8 @@ public class IndicatorServiceImpl implements IndicatorService {
     public int indicatorFor(NodeComponent bindCmp) {
         FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
-        String appName = fieldContext.getStringData(FieldName.appName);
-        String policySetCode = fieldContext.getStringData(FieldName.policySetCode);
+        String appName = fieldContext.getStringData(FieldCode.appName);
+        String policySetCode = fieldContext.getStringData(FieldCode.policySetCode);
         List<IndicatorVersion> indicatorVersionList = indicatorVersionMapper.selectLatestListByScenes(appName, policySetCode);
         indicatorContext.setIndicatorList(ListUtil.toCopyOnWriteArrayList(IndicatorVersionConvert.INSTANCE.convert2Ctx(indicatorVersionList)));
         return indicatorVersionList.size();

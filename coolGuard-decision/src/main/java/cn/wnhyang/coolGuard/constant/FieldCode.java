@@ -6,7 +6,7 @@ package cn.wnhyang.coolGuard.constant;
  * @author wnhyang
  * @date 2024/4/30
  **/
-public interface FieldName {
+public interface FieldCode {
 
     String appName = "N_S_appName";
     String policySetCode = "N_S_policySetCode";

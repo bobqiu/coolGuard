@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.constant.FieldName;
+import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.FieldRefType;
 import cn.wnhyang.coolGuard.constant.KafkaConstant;
 import cn.wnhyang.coolGuard.context.EventContext;
@@ -113,7 +113,7 @@ public class AccessServiceImpl implements AccessService {
         result.put("policySetResult", eventContext.getPolicySetResult());
         // 设置出参
         Map<String, Object> outFields = new HashMap<>();
-        outFields.put(FieldName.seqId, fieldContext.getStringData(FieldName.seqId));
+        outFields.put(FieldCode.seqId, fieldContext.getStringData(FieldCode.seqId));
         // TODO 增加接口耗时和流程耗时
         if (CollUtil.isNotEmpty(outputFieldList)) {
             for (OutputFieldVO outputField : outputFieldList) {

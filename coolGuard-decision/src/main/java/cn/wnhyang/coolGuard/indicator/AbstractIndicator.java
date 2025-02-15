@@ -3,7 +3,7 @@ package cn.wnhyang.coolGuard.indicator;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.constant.FieldName;
+import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.WinType;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
@@ -120,7 +120,7 @@ public abstract class AbstractIndicator {
         String redisKey = getRedisKey(indicator, eventDetail);
         log.info("redisKey:{}", redisKey);
         RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(redisKey);
-        Long eventTime = (Long) eventDetail.get(FieldName.eventTimeStamp);
+        Long eventTime = (Long) eventDetail.get(FieldCode.eventTimeStamp);
         // 1、状态检查和过滤
         if (addEvent) {
             // 2、添加事件

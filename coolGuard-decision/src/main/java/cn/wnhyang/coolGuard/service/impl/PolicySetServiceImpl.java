@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.constant.FieldName;
+import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.context.EventContext;
 import cn.wnhyang.coolGuard.context.FieldContext;
@@ -239,8 +239,8 @@ public class PolicySetServiceImpl implements PolicySetService {
     public void policySet(NodeComponent bindCmp) {
         // TODO 策略集下策略默认并行，运行时判断有无配置Chain，有则运行，没有则for并行
         FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
-        String appName = fieldContext.getStringData(FieldName.appName);
-        String policySetCode = fieldContext.getStringData(FieldName.policySetCode);
+        String appName = fieldContext.getStringData(FieldCode.appName);
+        String policySetCode = fieldContext.getStringData(FieldCode.policySetCode);
 
         PolicySetVersion policySetVersion = policySetVersionMapper.selectLatestByAppNameAndCode(appName, policySetCode);
         if (policySetVersion != null) {

@@ -10,7 +10,7 @@ import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
 import cn.wnhyang.coolGuard.analysis.ip.IpAnalysis;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoAnalysis;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoInfo;
-import cn.wnhyang.coolGuard.constant.FieldName;
+import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.ValueType;
 import cn.wnhyang.coolGuard.context.FieldContext;
@@ -166,7 +166,7 @@ public class FieldServiceImpl implements FieldService {
 
     private void normalFieldParse(List<InputFieldVO> inputFieldList, Map<String, String> params, FieldContext fieldContext) {
         // 设置唯一id
-        fieldContext.setDataByType(FieldName.seqId, IdUtil.fastSimpleUUID(), FieldType.STRING);
+        fieldContext.setDataByType(FieldCode.seqId, IdUtil.fastSimpleUUID(), FieldType.STRING);
 
         // 普通字段处理
         inputFieldList.stream().filter(inputField -> !inputField.getDynamic()).forEach(inputField -> {
@@ -192,54 +192,54 @@ public class FieldServiceImpl implements FieldService {
             }
         });
 
-        LocalDateTime eventTime = fieldContext.getDateData(FieldName.eventTime);
+        LocalDateTime eventTime = fieldContext.getDateData(FieldCode.eventTime);
         // 内置扩展字段
-        fieldContext.setDataByType(FieldName.eventTimeStamp, String.valueOf(LocalDateTimeUtil.toEpochMilli(eventTime)), FieldType.STRING);
+        fieldContext.setDataByType(FieldCode.eventTimeStamp, String.valueOf(LocalDateTimeUtil.toEpochMilli(eventTime)), FieldType.STRING);
 
 
         // 身份证解析
-        String idCard = fieldContext.getStringData(FieldName.payerIDNumber);
+        String idCard = fieldContext.getStringData(FieldCode.payerIDNumber);
         if (StrUtil.isNotBlank(idCard) && IdcardUtil.isValidCard(idCard)) {
             Pca pca = AdocUtil.getPca(IdcardUtil.getDistrictCodeByIdCard(idCard));
             if (pca != null) {
-                fieldContext.setDataByType(FieldName.idCardProvince, pca.getProvince(), FieldType.STRING);
-                fieldContext.setDataByType(FieldName.idCardCity, pca.getCity(), FieldType.STRING);
-                fieldContext.setDataByType(FieldName.idCardDistrict, pca.getArea(), FieldType.STRING);
+                fieldContext.setDataByType(FieldCode.idCardProvince, pca.getProvince(), FieldType.STRING);
+                fieldContext.setDataByType(FieldCode.idCardCity, pca.getCity(), FieldType.STRING);
+                fieldContext.setDataByType(FieldCode.idCardDistrict, pca.getArea(), FieldType.STRING);
             }
         }
 
         // 手机号解析
-        String phoneNumber = fieldContext.getStringData(FieldName.payerPhoneNumber);
+        String phoneNumber = fieldContext.getStringData(FieldCode.payerPhoneNumber);
         if (StrUtil.isNotBlank(phoneNumber)) {
             PhoneNoInfo phoneNoInfo = phoneNoAnalysis.analysis(phoneNumber);
-            fieldContext.setDataByType(FieldName.phoneNumberProvince, phoneNoInfo.getProvince(), FieldType.STRING);
-            fieldContext.setDataByType(FieldName.phoneNumberCity, phoneNoInfo.getCity(), FieldType.STRING);
-            fieldContext.setDataByType(FieldName.phoneNumberIsp, phoneNoInfo.getIsp(), FieldType.STRING);
+            fieldContext.setDataByType(FieldCode.phoneNumberProvince, phoneNoInfo.getProvince(), FieldType.STRING);
+            fieldContext.setDataByType(FieldCode.phoneNumberCity, phoneNoInfo.getCity(), FieldType.STRING);
+            fieldContext.setDataByType(FieldCode.phoneNumberIsp, phoneNoInfo.getIsp(), FieldType.STRING);
         }
 
         // ip解析
-        String ip = fieldContext.getStringData(FieldName.ip);
+        String ip = fieldContext.getStringData(FieldCode.ip);
         if (StrUtil.isNotBlank(ip)) {
             Ip2Region ip2Region = ipAnalysis.analysis(ip);
             if (ip2Region != null) {
-                fieldContext.setDataByType(FieldName.ipCountry, ip2Region.getCountry(), FieldType.STRING);
-                fieldContext.setDataByType(FieldName.ipProvince, ip2Region.getProvince(), FieldType.STRING);
-                fieldContext.setDataByType(FieldName.ipCity, ip2Region.getCity(), FieldType.STRING);
-                fieldContext.setDataByType(FieldName.ipIsp, ip2Region.getIsp(), FieldType.STRING);
+                fieldContext.setDataByType(FieldCode.ipCountry, ip2Region.getCountry(), FieldType.STRING);
+                fieldContext.setDataByType(FieldCode.ipProvince, ip2Region.getProvince(), FieldType.STRING);
+                fieldContext.setDataByType(FieldCode.ipCity, ip2Region.getCity(), FieldType.STRING);
+                fieldContext.setDataByType(FieldCode.ipIsp, ip2Region.getIsp(), FieldType.STRING);
             }
         }
 
         // 经纬度解析
-        String lonAndLat = fieldContext.getStringData(FieldName.lonAndLat);
+        String lonAndLat = fieldContext.getStringData(FieldCode.lonAndLat);
         if (StrUtil.isNotBlank(lonAndLat)) {
             Pca pca = geoAnalysis.analysis(lonAndLat);
             if (pca != null) {
-                fieldContext.setDataByType(FieldName.geoProvince, pca.getProvince(), FieldType.STRING);
-                fieldContext.setDataByType(FieldName.geoCity, pca.getCity(), FieldType.STRING);
-                fieldContext.setDataByType(FieldName.geoDistrict, pca.getArea(), FieldType.STRING);
+                fieldContext.setDataByType(FieldCode.geoProvince, pca.getProvince(), FieldType.STRING);
+                fieldContext.setDataByType(FieldCode.geoCity, pca.getCity(), FieldType.STRING);
+                fieldContext.setDataByType(FieldCode.geoDistrict, pca.getArea(), FieldType.STRING);
             }
             // 经纬度geoHash编码
-            fieldContext.setDataByType(FieldName.geoHash, GeoHash.geoHash(lonAndLat), FieldType.STRING);
+            fieldContext.setDataByType(FieldCode.geoHash, GeoHash.geoHash(lonAndLat), FieldType.STRING);
         }
 
     }

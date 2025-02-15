@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.indicator;
 
-import cn.wnhyang.coolGuard.constant.FieldName;
+import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
 import org.redisson.api.RScoredSortedSet;
@@ -33,7 +33,7 @@ public class CountIndicator extends AbstractIndicator {
 
     @Override
     public void addEvent(IndicatorContext.IndicatorCtx indicator, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
-        set.add(eventTime, (String) eventDetail.get(FieldName.seqId));
+        set.add(eventTime, (String) eventDetail.get(FieldCode.seqId));
     }
 
 }
