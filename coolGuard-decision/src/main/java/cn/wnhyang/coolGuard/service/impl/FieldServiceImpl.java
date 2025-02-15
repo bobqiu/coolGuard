@@ -118,7 +118,11 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public Field getField(Long id) {
-        return fieldMapper.selectById(id);
+        Field field = fieldMapper.selectById(id);
+        if (field == null) {
+            throw exception(FIELD_NOT_EXIST);
+        }
+        return field;
     }
 
     @Override

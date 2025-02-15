@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.wnhyang.coolGuard.constant.FieldRefType;
 import cn.wnhyang.coolGuard.convert.FieldConvert;
 import cn.wnhyang.coolGuard.convert.FieldRefConvert;
 import cn.wnhyang.coolGuard.entity.Access;
@@ -23,6 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cn.wnhyang.coolGuard.exception.ErrorCodes.FIELD_REF_EXIST;
+import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
+
 /**
  * 字段引用 服务实现类
  *
@@ -41,6 +45,9 @@ public class FieldRefServiceImpl implements FieldRefService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long create(FieldRefCreateVO createVO) {
+        if (fieldRefMapper.selectByRefAndFieldCode(createVO.getRefType(), createVO.getRefBy(), createVO.getRefSubType(), createVO.getFieldCode()) != null) {
+            throw exception(FIELD_REF_EXIST);
+        }
         FieldRef fieldRef = FieldRefConvert.INSTANCE.convert(createVO);
         fieldRefMapper.insert(fieldRef);
         return fieldRef.getId();
@@ -72,7 +79,7 @@ public class FieldRefServiceImpl implements FieldRefService {
     @Override
     public void copyAccess(String sourceCode, String targetCode) {
         // 将所有源字段引用复制一份目标字段
-        List<FieldRef> fieldRefList = fieldRefMapper.selectListByRef("access", sourceCode, null);
+        List<FieldRef> fieldRefList = fieldRefMapper.selectListByRef(FieldRefType.ACCESS, sourceCode, null);
         fieldRefList.forEach(fieldRef -> {
             fieldRef.setRefBy(targetCode).setId(null);
         });
@@ -81,7 +88,7 @@ public class FieldRefServiceImpl implements FieldRefService {
 
     @Override
     public List<InputFieldVO> getAccessInputFieldList(Access access) {
-        List<FieldRef> fieldRefList = fieldRefMapper.selectListByRef("access", access.getCode(), "input");
+        List<FieldRef> fieldRefList = fieldRefMapper.selectListByRef(FieldRefType.ACCESS, access.getCode(), FieldRefType.ACCESS_INPUT);
 
         List<InputFieldVO> inputFieldVOList = new ArrayList<>();
         if (CollUtil.isNotEmpty(fieldRefList)) {
@@ -100,16 +107,16 @@ public class FieldRefServiceImpl implements FieldRefService {
 
     @Override
     public List<OutputFieldVO> getAccessOutputFieldList(Access access) {
-        List<FieldRef> fieldRefList = fieldRefMapper.selectListByRef("access", access.getCode(), "output");
+        List<FieldRef> fieldRefList = fieldRefMapper.selectListByRef(FieldRefType.ACCESS, access.getCode(), FieldRefType.ACCESS_OUTPUT);
 
         List<OutputFieldVO> outputFieldVOList = new ArrayList<>();
         if (CollUtil.isNotEmpty(fieldRefList)) {
             for (FieldRef fieldRef : fieldRefList) {
                 Field field = fieldMapper.selectByCode(fieldRef.getFieldCode());
                 if (field != null) {
-                    outputFieldVOList.add(new OutputFieldVO()
-                            .setCode(fieldRef.getFieldCode())
-                            .setParamName(fieldRef.getParamName()));
+                    OutputFieldVO outputFieldVO = FieldConvert.INSTANCE.convert2OutputFieldVO(field);
+                    outputFieldVO.setParamName(fieldRef.getParamName());
+                    outputFieldVOList.add(outputFieldVO);
                 }
             }
         }

@@ -38,4 +38,25 @@ public interface FieldRefMapper extends BaseMapperX<FieldRef> {
                 .eqIfPresent(FieldRef::getRefBy, pageVO.getRefBy())
                 .eqIfPresent(FieldRef::getRefSubType, pageVO.getRefSubType()));
     }
+
+    default void update(String refType, String refBy, String newRefBy) {
+        update(new FieldRef().setRefBy(newRefBy), new LambdaQueryWrapperX<FieldRef>()
+                .eq(FieldRef::getRefType, refType)
+                .eq(FieldRef::getRefBy, refBy));
+    }
+
+    default void delete(String refType, String refBy, String refSubType) {
+        delete(new LambdaQueryWrapperX<FieldRef>()
+                .eq(FieldRef::getRefType, refType)
+                .eqIfPresent(FieldRef::getRefBy, refBy)
+                .eqIfPresent(FieldRef::getRefSubType, refSubType));
+    }
+
+    default FieldRef selectByRefAndFieldCode(String refType, String refBy, String refSubType, String fieldCode) {
+        return selectOne(new LambdaQueryWrapperX<FieldRef>()
+                .eq(FieldRef::getRefType, refType)
+                .eq(FieldRef::getRefBy, refBy)
+                .eq(FieldRef::getRefSubType, refSubType)
+                .eq(FieldRef::getFieldCode, fieldCode));
+    }
 }

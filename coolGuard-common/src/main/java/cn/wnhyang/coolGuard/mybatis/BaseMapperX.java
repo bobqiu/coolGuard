@@ -130,10 +130,6 @@ public interface BaseMapperX<T> extends MPJBaseMapper<T> {
         Db.updateBatchById(entities, size);
     }
 
-    default int delete(String field, String value) {
-        return delete(new QueryWrapper<T>().eq(field, value));
-    }
-
     default int delete(SFunction<T, ?> field, Object value) {
         return delete(new LambdaQueryWrapper<T>().eq(field, value));
     }

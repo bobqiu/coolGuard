@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class InputFieldVO {
 
-    /** 【
+    /**
      * 参数名
      */
     private String paramName;

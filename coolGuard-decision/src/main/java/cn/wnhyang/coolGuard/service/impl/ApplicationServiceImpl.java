@@ -97,7 +97,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Application getApplication(Long id) {
-        return applicationMapper.selectById(id);
+        Application application = applicationMapper.selectById(id);
+        if (application == null) {
+            throw exception(APPLICATION_NOT_EXIST);
+        }
+        return application;
     }
 
     @Override

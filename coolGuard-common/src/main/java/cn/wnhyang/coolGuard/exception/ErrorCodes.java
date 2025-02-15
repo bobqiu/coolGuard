@@ -44,6 +44,10 @@ public interface ErrorCodes {
 
     ErrorCode FIELD_GROUP_STANDARD = new ErrorCode(1004001005, "标准字段组不可更改");
 
+    ErrorCode FIELD_REF_NOT_EXIST = new ErrorCode(1004001000, "字段引用不存在");
+
+    ErrorCode FIELD_REF_EXIST = new ErrorCode(1004001001, "字段引用已存在");
+
     ErrorCode RULE_NOT_EXIST = new ErrorCode(1005001000, "规则不存在");
 
     ErrorCode RULE_CODE_EXIST = new ErrorCode(1005001001, "规则编码已存在");

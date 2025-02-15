@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldName;
+import cn.wnhyang.coolGuard.constant.FieldRefType;
 import cn.wnhyang.coolGuard.constant.KafkaConstant;
 import cn.wnhyang.coolGuard.context.EventContext;
 import cn.wnhyang.coolGuard.context.FieldContext;
@@ -15,6 +16,7 @@ import cn.wnhyang.coolGuard.kafka.producer.CommonProducer;
 import cn.wnhyang.coolGuard.mapper.AccessMapper;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
+import cn.wnhyang.coolGuard.mapper.FieldRefMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.AccessService;
 import cn.wnhyang.coolGuard.service.FieldRefService;
@@ -73,6 +75,8 @@ public class AccessServiceImpl implements AccessService {
     private final FieldService fieldService;
 
     private final FieldRefService fieldRefService;
+
+    private final FieldRefMapper fieldRefMapper;
 
     @Override
     public Map<String, Object> test(String code, Map<String, String> params) {
@@ -170,12 +174,14 @@ public class AccessServiceImpl implements AccessService {
         if (access == null) {
             throw exception(ACCESS_NOT_EXIST);
         }
-        Access byCode = accessMapper.selectByCode(access.getCode());
+        Access byCode = accessMapper.selectByCode(updateVO.getCode());
         if (byCode != null && !byCode.getId().equals(access.getId())) {
             throw exception(ACCESS_CODE_EXIST);
         }
         Access convert = AccessConvert.INSTANCE.convert(updateVO);
         accessMapper.updateById(convert);
+        // TODO 更新fieldRef
+        fieldRefMapper.update(FieldRefType.ACCESS, access.getCode(), updateVO.getCode());
         String aChain = StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode());
         chainMapper.updateNewChainNameByOldChainName(aChain, StrUtil.format(LFUtil.ACCESS_CHAIN, convert.getCode()));
     }
@@ -188,13 +194,21 @@ public class AccessServiceImpl implements AccessService {
             throw exception(ACCESS_NOT_EXIST);
         }
         accessMapper.deleteById(id);
+        // TODO 删除fieldRef
+        fieldRefMapper.delete(FieldRefType.ACCESS, access.getCode(), null);
         chainMapper.deleteByChainName(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode()));
     }
 
     @Override
     public AccessVO getAccess(Long id) {
         Access access = accessMapper.selectById(id);
-        return AccessConvert.INSTANCE.convert(access);
+        if (access == null) {
+            throw exception(ACCESS_NOT_EXIST);
+        }
+        AccessVO convert = AccessConvert.INSTANCE.convert(access);
+        convert.setInputFieldList(fieldRefService.getAccessInputFieldList(access));
+        convert.setOutputFieldList(fieldRefService.getAccessOutputFieldList(access));
+        return convert;
     }
 
     @Override
@@ -216,6 +230,9 @@ public class AccessServiceImpl implements AccessService {
     @Transactional(rollbackFor = Exception.class)
     public Long copyAccess(Long id) {
         Access access = accessMapper.selectById(id);
+        if (access == null) {
+            throw exception(ACCESS_NOT_EXIST);
+        }
         String accessCode = access.getCode();
         access.setCode(access.getCode() + "_copy").setName(access.getName() + "_副本");
         Long insertId = createAccess(AccessConvert.INSTANCE.convert2Create(access));

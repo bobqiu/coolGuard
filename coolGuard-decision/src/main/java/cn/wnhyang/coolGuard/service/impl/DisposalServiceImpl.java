@@ -95,7 +95,11 @@ public class DisposalServiceImpl implements DisposalService {
 
     @Override
     public Disposal getDisposal(Long id) {
-        return disposalMapper.selectById(id);
+        Disposal disposal = disposalMapper.selectById(id);
+        if (disposal == null) {
+            throw exception(DISPOSAL_NOT_EXIST);
+        }
+        return disposal;
     }
 
     @Override
