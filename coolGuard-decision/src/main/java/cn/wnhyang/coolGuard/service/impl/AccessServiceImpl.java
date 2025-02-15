@@ -174,14 +174,8 @@ public class AccessServiceImpl implements AccessService {
         if (access == null) {
             throw exception(ACCESS_NOT_EXIST);
         }
-        Access byCode = accessMapper.selectByCode(updateVO.getCode());
-        if (byCode != null && !byCode.getId().equals(access.getId())) {
-            throw exception(ACCESS_CODE_EXIST);
-        }
         Access convert = AccessConvert.INSTANCE.convert(updateVO);
         accessMapper.updateById(convert);
-        // TODO 更新fieldRef
-        fieldRefMapper.update(FieldRefType.ACCESS, access.getCode(), updateVO.getCode());
         String aChain = StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode());
         chainMapper.updateNewChainNameByOldChainName(aChain, StrUtil.format(LFUtil.ACCESS_CHAIN, convert.getCode()));
     }

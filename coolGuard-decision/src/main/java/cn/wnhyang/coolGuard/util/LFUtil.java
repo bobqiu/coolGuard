@@ -134,8 +134,6 @@ public class LFUtil {
      */
     public static final String RULE_FALSE = "ruleFalse";
 
-    public static final String NODE_WITH_TAG = "{}.tag(\"{}\")";
-
     public static final String DEFAULT_ACCESS_CHAIN = "THEN(I_F,ps_cn);";
 
     /**
@@ -144,22 +142,36 @@ public class LFUtil {
      * @return 带标签的组件
      */
     public static String getNodeWithTag(String nodeId, String tag) {
-        return StrUtil.format(NODE_WITH_TAG, nodeId, tag);
+        return StrUtil.format("{}.tag(\"{}\")", nodeId, tag);
     }
 
-    public static String buildElWithData(String nodeId, String data) {
-        return StrUtil.format("{}.data('\"{}\"')", nodeId, data);
+    public static String buildElWithData(String nodeId, Object data) {
+        if (data == null) {
+            return "";
+        }
+        return StrUtil.format("{}.data('{}')", nodeId, JsonUtil.toJsonString(data));
     }
 
     public static String buildWhen(String... el) {
-        return "when(" + StrUtil.join(",", el) + ");";
+        // 判断每一项都不为空字符串，才加入
+        StringBuilder stringBuilder = new StringBuilder().append("WHEN(");
+        for (String s : el) {
+            if (StrUtil.isNotBlank(s)) {
+                stringBuilder.append(s).append(",");
+            }
+        }
+        int length = stringBuilder.length();
+        if (length > 5) {
+            stringBuilder.deleteCharAt(length - 1);
+        }
+        return stringBuilder.append(");").toString();
     }
 
     public static String buildCondEl(Cond cond) {
         return "cond.data('" + JsonUtil.toJsonString(cond) + "')";
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
     }
 }

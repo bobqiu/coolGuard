@@ -24,7 +24,7 @@ public class RuleBaseVO implements Serializable {
      * 规则id
      */
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "规则编码只能包含字母和数字")
-    @Size(min = 6, max = 10, message = "规则编码长度为6-10位")
+    @Size(min = 6, max = 6, message = "规则编码长度为6-10位")
     @NotBlank(message = "规则编码不能为空")
     private String ruleId;
 

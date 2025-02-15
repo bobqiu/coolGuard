@@ -43,6 +43,7 @@ public interface RuleMapper extends BaseMapperX<Rule> {
                 .likeIfExists(Rule::getCode, pageVO.getCode())
                 .likeIfExists(Rule::getRuleId, pageVO.getRuleId())
                 .eqIfExists(Rule::getDisposalCode, pageVO.getDisposalCode())
+                .eqIfExists(Rule::getStatus, pageVO.getStatus())
                 // 如果有latest，则查询最新版本
                 .eq(ObjUtil.isNotNull(pageVO.getLatest()) && pageVO.getLatest(), RuleVersion::getLatest, pageVO.getLatest())
                 // 如果有hasVersion，则查询有版本

@@ -43,6 +43,11 @@ public class RulePageVO extends PageParam {
     private String disposalCode;
 
     /**
+     * 状态
+     */
+    private String status;
+
+    /**
      * 最新
      */
     private Boolean latest;

@@ -50,7 +50,7 @@ public interface PolicySetMapper extends BaseMapperX<PolicySet> {
         );
     }
 
-    @Cacheable(value = RedisKey.POLICY_SET + "::co", key = "#{code}", unless = "#result == null")
+    @Cacheable(value = RedisKey.POLICY_SET + "::co", key = "#code", unless = "#result == null")
     default PolicySet selectByCode(String code) {
         return selectOne(PolicySet::getCode, code);
     }

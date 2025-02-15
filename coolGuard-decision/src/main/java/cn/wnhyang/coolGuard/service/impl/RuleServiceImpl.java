@@ -17,7 +17,6 @@ import cn.wnhyang.coolGuard.mapper.RuleVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleService;
 import cn.wnhyang.coolGuard.util.CollectionUtils;
-import cn.wnhyang.coolGuard.util.JsonUtil;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.util.QLExpressUtil;
 import cn.wnhyang.coolGuard.vo.RuleVO;
@@ -61,11 +60,14 @@ public class RuleServiceImpl implements RuleService {
     private final RuleVersionMapper ruleVersionMapper;
 
     public static String buildRuleBingoEl(Action action) {
+        if (action == null) {
+            return LFUtil.RULE_TRUE;
+        }
         return LFUtil.buildWhen(LFUtil.RULE_TRUE,
-                LFUtil.buildElWithData(LFUtil.ADD_TAG, JsonUtil.toJsonString(action.getAddTag())),
-                LFUtil.buildElWithData(LFUtil.ADD_LIST_DATA, JsonUtil.toJsonString(action.getAddList())),
-                LFUtil.buildElWithData(LFUtil.SEND_SMS, JsonUtil.toJsonString(action.getSendSms())),
-                LFUtil.buildElWithData(LFUtil.SET_FIELD, JsonUtil.toJsonString(action.getSetField())));
+                LFUtil.buildElWithData(LFUtil.ADD_TAG, action.getAddTag()),
+                LFUtil.buildElWithData(LFUtil.ADD_LIST_DATA, action.getAddList()),
+                LFUtil.buildElWithData(LFUtil.SEND_SMS, action.getSendSms()),
+                LFUtil.buildElWithData(LFUtil.SET_FIELD, action.getSetField()));
     }
 
     @Override

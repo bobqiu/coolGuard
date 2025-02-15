@@ -1,9 +1,7 @@
 package cn.wnhyang.coolGuard.vo.update;
 
 import cn.wnhyang.coolGuard.vo.base.AccessBaseVO;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serial;
@@ -24,10 +22,4 @@ public class AccessUpdateVO extends AccessBaseVO {
     @NotNull(message = "id不能为空")
     private Long id;
 
-    /**
-     * 接入编码
-     */
-    @NotBlank(message = "接入编码不能为空")
-    @Size(min = 1, max = 50, message = "接入编码长度必须在1-50之间")
-    private String code;
 }
