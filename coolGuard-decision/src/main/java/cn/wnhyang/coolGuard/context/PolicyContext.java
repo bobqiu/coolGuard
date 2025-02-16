@@ -3,7 +3,6 @@ package cn.wnhyang.coolGuard.context;
 import cn.hutool.core.collection.CollUtil;
 import cn.wnhyang.coolGuard.constant.DisposalConstant;
 import cn.wnhyang.coolGuard.constant.PolicyMode;
-import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.entity.*;
 import cn.wnhyang.coolGuard.vo.result.PolicyResult;
 import cn.wnhyang.coolGuard.vo.result.PolicySetResult;
@@ -170,36 +169,36 @@ public class PolicyContext {
             // 权重
             double weight = 0.0;
             List<RuleCtx> ruleList = hitRuleListMap.get(policy.getCode());
-            if (CollUtil.isNotEmpty(ruleList)) {
-                for (RuleCtx rule : ruleList) {
-                    if (PolicyMode.VOTE.equals(policy.getMode())) {
-                        // 投票
-                        votes.put(rule.getDisposalCode(), votes.getOrDefault(rule.getDisposalCode(), 0) + 1);
-                    } else if (PolicyMode.WEIGHT.equals(policy.getMode())) {
-                        // 权重
-                        weight += rule.getExpressValue();
-                    }
+            for (RuleCtx rule : ruleList) {
+                if (PolicyMode.VOTE.equals(policy.getMode())) {
+                    // 投票
+                    votes.put(rule.getDisposalCode(), votes.getOrDefault(rule.getDisposalCode(), 0) + 1);
+                } else if (PolicyMode.WEIGHT.equals(policy.getMode())) {
+                    // 权重
+                    weight += rule.getExpressValue();
+                }
 
-                    RuleResult ruleResult = new RuleResult(rule.getName(), rule.getCode(), rule.getExpress());
+                RuleResult ruleResult = new RuleResult(rule.getName(), rule.getCode(), rule.getExpress());
 
-                    // 最坏和顺序
-                    DisposalCtx disposal = disposalMap.get(rule.getDisposalCode());
-                    if (null != disposal) {
-                        ruleResult.setDisposalName(disposal.getName());
-                        ruleResult.setDisposalCode(disposal.getCode());
-                        if (disposal.getGrade() > maxGrade) {
-                            maxGrade = disposal.getGrade();
-                            maxDisposalCode = disposal.getCode();
-                        }
-                    }
-                    // 模拟/正式规则区分开
-                    if (RuleStatus.MOCK.equals(rule.getStatus())) {
-                        policyResult.addMockRuleResult(ruleResult);
-                    } else {
-                        policyResult.addRuleResult(ruleResult);
+                // 最坏和顺序
+                DisposalCtx disposal = disposalMap.get(rule.getDisposalCode());
+                if (null != disposal) {
+                    ruleResult.setDisposalName(disposal.getName());
+                    ruleResult.setDisposalCode(disposal.getCode());
+                    if (disposal.getGrade() > maxGrade) {
+                        maxGrade = disposal.getGrade();
+                        maxDisposalCode = disposal.getCode();
                     }
                 }
+                policyResult.addRuleResult(ruleResult);
             }
+            // 模拟规则
+            hitMockRuleListMap.get(policy.getCode()).forEach(rule -> {
+                RuleResult ruleResult = new RuleResult(rule.getName(), rule.getCode(), rule.getExpress());
+                ruleResult.setDisposalName(disposalMap.get(rule.getDisposalCode()).getName());
+                ruleResult.setDisposalCode(rule.getDisposalCode());
+                policyResult.addMockRuleResult(ruleResult);
+            });
             if (PolicyMode.VOTE.equals(policy.getMode())) {
                 String maxVoteDisposalCode = DisposalConstant.PASS_CODE;
                 int maxVoteCount = Integer.MIN_VALUE;

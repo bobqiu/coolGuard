@@ -120,7 +120,7 @@ public abstract class AbstractIndicator {
         String redisKey = getRedisKey(indicator, eventDetail);
         log.info("redisKey:{}", redisKey);
         RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(redisKey);
-        Long eventTime = (Long) eventDetail.get(FieldCode.eventTimeStamp);
+        long eventTime = Long.parseLong(eventDetail.get(FieldCode.eventTimeStamp).toString());
         // 1、状态检查和过滤
         if (addEvent) {
             // 2、添加事件

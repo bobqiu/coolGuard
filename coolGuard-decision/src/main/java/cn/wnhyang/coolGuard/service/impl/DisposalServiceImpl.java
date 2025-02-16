@@ -16,7 +16,6 @@ import cn.wnhyang.coolGuard.vo.page.DisposalPageVO;
 import cn.wnhyang.coolGuard.vo.update.DisposalUpdateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -108,7 +107,6 @@ public class DisposalServiceImpl implements DisposalService {
     }
 
     @Override
-    @Cacheable(value = RedisKey.DISPOSAL + "::list", unless = "#result == null")
     public List<Disposal> listDisposal() {
         return disposalMapper.selectList();
     }

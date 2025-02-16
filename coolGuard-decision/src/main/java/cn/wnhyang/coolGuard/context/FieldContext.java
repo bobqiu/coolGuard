@@ -46,19 +46,19 @@ public class FieldContext extends ConcurrentHashMap<String, Object> implements I
     }
 
     public String getStringData(String key) {
-        return (String) get(key);
+        return String.valueOf(get(key));
     }
 
     public Integer getNumberData(String key) {
-        return (Integer) get(key);
+        return Integer.parseInt(get(key).toString());
     }
 
     public Boolean getBooleanData(String key) {
-        return (Boolean) get(key);
+        return Boolean.parseBoolean(get(key).toString());
     }
 
     public String getEnumData(String key) {
-        return (String) get(key);
+        return get(key).toString();
     }
 
     public LocalDateTime getDateData(String key) {
@@ -66,7 +66,7 @@ public class FieldContext extends ConcurrentHashMap<String, Object> implements I
     }
 
     public Double getFloatData(String key) {
-        return (Double) get(key);
+        return Double.parseDouble(get(key).toString());
     }
 
 

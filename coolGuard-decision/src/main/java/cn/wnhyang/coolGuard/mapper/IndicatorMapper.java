@@ -2,7 +2,6 @@ package cn.wnhyang.coolGuard.mapper;
 
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.dto.IndicatorDTO;
 import cn.wnhyang.coolGuard.entity.Indicator;
@@ -14,7 +13,6 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
@@ -89,7 +87,6 @@ public interface IndicatorMapper extends BaseMapperX<Indicator> {
                 .apply("JSON_CONTAINS(scenes, '\"" + scene + "\"')"));
     }
 
-    @Cacheable(value = RedisKey.INDICATORS + "::a-p", key = "#app+'-'+#policySet", unless = "#result == null")
     default List<Indicator> selectListByScenes(String app, String policySet) {
         return selectList(new LambdaQueryWrapperX<Indicator>()
                 .and(w -> w.eq(Indicator::getSceneType, SceneType.APP)

@@ -32,6 +32,6 @@ public class AssIndicator extends AbstractIndicator {
 
     @Override
     public void addEvent(IndicatorContext.IndicatorCtx indicator, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
-        set.add(eventTime, (String) eventDetail.get(indicator.getCalcField()));
+        set.add(eventTime, eventDetail.get(indicator.getCalcField()).toString());
     }
 }

@@ -74,7 +74,7 @@ public class IndicatorCreateVO extends IndicatorBaseVO {
     /**
      * 场景
      */
-    @NotBlank(message = "场景不能为空")
+    @NotNull(message = "场景不能为空")
     private List<String> scenes;
 
     /**

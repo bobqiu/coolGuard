@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.mapper;
 
-import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.Access;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -8,7 +7,6 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.AccessPageVO;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 接入表 Mapper 接口
@@ -25,7 +23,6 @@ public interface AccessMapper extends BaseMapperX<Access> {
                 .likeIfPresent(Access::getName, pageVO.getName()));
     }
 
-    @Cacheable(value = RedisKey.ACCESS + "::co", key = "#code", unless = "#result == null")
     default Access selectByCode(String code) {
         return selectOne(Access::getCode, code);
     }

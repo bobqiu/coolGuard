@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.wnhyang.coolGuard.constant.ValueType;
@@ -45,28 +46,31 @@ public class CondServiceImpl implements CondService {
         if (cond == null) {
             return true;
         }
+        log.info("条件组件:{}", cond);
+        // 获取上下文
+        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
+        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
         // 如果有子节点，则递归计算子节点的结果
-        if (cond.getChildren() != null && !cond.getChildren().isEmpty()) {
+        if (CollUtil.isNotEmpty(cond.getChildren())) {
             List<Cond> children = cond.getChildren();
             return switch (cond.getRelation().toUpperCase()) {
-                case "AND" -> children.stream().allMatch((item) -> condLeaf(bindCmp, item));
-                case "OR" -> children.stream().anyMatch((item) -> condLeaf(bindCmp, item));
+                case "AND" -> children.stream().allMatch((item) -> condLeaf(fieldContext, indicatorContext, item));
+                case "OR" -> children.stream().anyMatch((item) -> condLeaf(fieldContext, indicatorContext, item));
                 default -> throw new IllegalArgumentException("Unsupported relation: " + cond.getRelation());
             };
         }
 
         // 处理叶子节点
-        return condLeaf(bindCmp, cond);
+        return condLeaf(fieldContext, indicatorContext, cond);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.COND_LEAF, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "条件叶子组件")
-    public boolean condLeaf(NodeComponent bindCmp, Cond cond) {
+    public boolean condLeaf(FieldContext fieldContext, IndicatorContext indicatorContext, Cond cond) {
         if (cond == null) {
             return false;
         }
-
-        // 获取上下文
-        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
+        if (cond.getType() == null) {
+            return true;
+        }
 
         boolean b = false;
 
@@ -128,7 +132,6 @@ public class CondServiceImpl implements CondService {
                 case ZB -> {
                     log.info("指标条件");
                     String indicatorCode = cond.getLeftValue();
-                    IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
                     String iType = indicatorContext.getIndicatorReturnType(indicatorCode);
                     FieldType fieldType = FieldType.getByType(iType);
 
@@ -141,37 +144,37 @@ public class CondServiceImpl implements CondService {
                         return false;
                     }
 
+                    String strValue = indicatorContext.getIndicatorValue(indicatorCode).toString();
+
                     switch (fieldType) {
                         case STRING:
-                            String stringData = (String) indicatorContext.getIndicatorValue(indicatorCode);
-                            log.debug("字段值:{}, 操作:{}, 期望值:{}", stringData, byType, expectValue);
-                            b = FunUtil.INSTANCE.stringLogicOp.apply(stringData, byType, expectValue);
+                            log.debug("字段值:{}, 操作:{}, 期望值:{}", strValue, byType, expectValue);
+                            b = FunUtil.INSTANCE.stringLogicOp.apply(strValue, byType, expectValue);
                             break;
                         case NUMBER:
-                            Integer numberData = (Integer) indicatorContext.getIndicatorValue(indicatorCode);
+                            Integer numberData = Integer.parseInt(strValue);
                             Integer expectInteger = Integer.parseInt(expectValue);
                             log.debug("字段值:{}, 操作:{}, 期望值:{}", numberData, byType, expectInteger);
                             b = FunUtil.INSTANCE.integerLogicOp.apply(numberData, byType, expectInteger);
                             break;
                         case FLOAT:
-                            Double floatData = (Double) indicatorContext.getIndicatorValue(indicatorCode);
+                            Double floatData = Double.parseDouble(strValue);
                             Double expectDouble = Double.parseDouble(expectValue);
                             log.debug("字段值:{}, 操作:{}, 期望值:{}", floatData, byType, expectDouble);
                             b = FunUtil.INSTANCE.doubleLogicOp.apply(floatData, byType, expectDouble);
                             break;
                         case DATE:
-                            LocalDateTime dateData = (LocalDateTime) indicatorContext.getIndicatorValue(indicatorCode);
+                            LocalDateTime dateData = LocalDateTime.parse(strValue, DatePattern.NORM_DATETIME_FORMATTER);
                             LocalDateTime expectDateTime = LocalDateTimeUtil.parse(expectValue, DatePattern.NORM_DATETIME_FORMATTER);
                             log.debug("字段值:{}, 操作:{}, 期望值:{}", dateData, byType, expectDateTime);
                             b = FunUtil.INSTANCE.dateLogicOp.apply(dateData, byType, expectDateTime);
                             break;
                         case ENUM:
-                            String enumData = (String) indicatorContext.getIndicatorValue(indicatorCode);
-                            log.debug("字段值:{}, 操作:{}, 期望值:{}", enumData, byType, expectValue);
-                            b = FunUtil.INSTANCE.enumLogicOp.apply(enumData, byType, expectValue);
+                            log.debug("字段值:{}, 操作:{}, 期望值:{}", strValue, byType, expectValue);
+                            b = FunUtil.INSTANCE.enumLogicOp.apply(strValue, byType, expectValue);
                             break;
                         case BOOLEAN:
-                            Boolean booleanData = (Boolean) indicatorContext.getIndicatorValue(indicatorCode);
+                            Boolean booleanData = Boolean.parseBoolean(strValue);
                             log.debug("字段值:{}", booleanData);
                             b = FunUtil.INSTANCE.booleanLogicOp.apply(booleanData, byType, Boolean.parseBoolean(expectValue));
                             break;

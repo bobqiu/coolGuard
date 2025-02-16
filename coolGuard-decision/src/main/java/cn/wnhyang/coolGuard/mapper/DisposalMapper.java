@@ -1,13 +1,11 @@
 package cn.wnhyang.coolGuard.mapper;
 
-import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.Disposal;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.DisposalPageVO;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 处置表 Mapper 接口
@@ -25,7 +23,6 @@ public interface DisposalMapper extends BaseMapperX<Disposal> {
                 .orderByAsc(Disposal::getGrade));
     }
 
-    @Cacheable(value = RedisKey.DISPOSAL + "::co", key = "#code", unless = "#result == null")
     default Disposal selectByCode(String code) {
         return selectOne(Disposal::getCode, code);
     }

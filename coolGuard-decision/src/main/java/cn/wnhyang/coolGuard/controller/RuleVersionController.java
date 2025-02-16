@@ -27,7 +27,7 @@ import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
  */
 @Slf4j
 @RestController
-@RequestMapping("/policyVersionExt")
+@RequestMapping("/ruleVersion")
 @RequiredArgsConstructor
 public class RuleVersionController {
 

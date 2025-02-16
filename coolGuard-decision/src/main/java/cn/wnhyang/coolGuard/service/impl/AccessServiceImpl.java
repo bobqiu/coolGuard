@@ -176,8 +176,6 @@ public class AccessServiceImpl implements AccessService {
         }
         Access convert = AccessConvert.INSTANCE.convert(updateVO);
         accessMapper.updateById(convert);
-        String aChain = StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode());
-        chainMapper.updateNewChainNameByOldChainName(aChain, StrUtil.format(LFUtil.ACCESS_CHAIN, convert.getCode()));
     }
 
     @Override

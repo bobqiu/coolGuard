@@ -1,7 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
 import cn.hutool.core.util.ObjUtil;
-import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.dto.PolicyDTO;
 import cn.wnhyang.coolGuard.entity.Policy;
 import cn.wnhyang.coolGuard.entity.PolicyVersion;
@@ -11,7 +10,6 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.PolicyPageVO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
@@ -50,12 +48,10 @@ public interface PolicyMapper extends BaseMapperX<Policy> {
 
     }
 
-    @Cacheable(value = RedisKey.POLICY + "::sCode", key = "#setCode", unless = "#result == null")
     default List<Policy> selectListBySetCode(String setCode) {
         return selectList(Policy::getPolicySetCode, setCode);
     }
 
-    @Cacheable(value = RedisKey.POLICY + "::co", key = "#code", unless = "#result == null")
     default Policy selectByCode(String code) {
         return selectOne(Policy::getCode, code);
     }

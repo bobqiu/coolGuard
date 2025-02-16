@@ -1,7 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
 import cn.hutool.core.util.ObjUtil;
-import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.dto.RuleDTO;
 import cn.wnhyang.coolGuard.entity.Rule;
@@ -12,7 +11,6 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.RulePageVO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
@@ -51,12 +49,10 @@ public interface RuleMapper extends BaseMapperX<Rule> {
         );
     }
 
-    @Cacheable(value = RedisKey.RULE + "::co", key = "#code", unless = "#result == null")
     default Rule selectByCode(String code) {
         return selectOne(Rule::getCode, code);
     }
 
-    @Cacheable(value = RedisKey.RULES + "::sId", key = "#policyCode", unless = "#result == null")
     default List<Rule> selectListByPolicyCode(String policyCode) {
         return selectList(new LambdaQueryWrapperX<Rule>().eq(Rule::getPolicyCode, policyCode).orderByDesc(Rule::getSort));
     }

@@ -138,7 +138,7 @@ public class FieldServiceImpl implements FieldService {
             Field field = fieldMapper.selectByCode(entry.getKey());
             FieldType byType = FieldType.getByType(field.getType());
             if (byType != null) {
-                fieldContext.setDataByType(field.getCode(), (String) entry.getValue(), byType);
+                fieldContext.setDataByType(field.getCode(), entry.getValue().toString(), byType);
             }
         }
 
@@ -249,7 +249,6 @@ public class FieldServiceImpl implements FieldService {
             try {
                 Object result = QLExpressUtil.execute(inputField.getScript(), fieldContext);
                 fieldContext.setDataByType(inputField.getCode(), String.valueOf(result), FieldType.getByType(inputField.getType()));
-
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

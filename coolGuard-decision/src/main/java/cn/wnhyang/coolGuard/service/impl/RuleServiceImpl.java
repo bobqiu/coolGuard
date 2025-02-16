@@ -103,6 +103,7 @@ public class RuleServiceImpl implements RuleService {
             throw exception(RULE_NAME_EXIST);
         }
         Rule convert = RuleConvert.INSTANCE.convert(updateVO);
+        convert.setPublish(Boolean.FALSE);
         ruleMapper.updateById(convert);
     }
 

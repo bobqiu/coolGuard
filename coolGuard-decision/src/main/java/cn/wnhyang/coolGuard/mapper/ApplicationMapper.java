@@ -1,13 +1,11 @@
 package cn.wnhyang.coolGuard.mapper;
 
-import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.Application;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.ApplicationPageVO;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 应用表 Mapper 接口
@@ -24,7 +22,6 @@ public interface ApplicationMapper extends BaseMapperX<Application> {
                 .likeIfPresent(Application::getCode, pageVO.getCode()));
     }
 
-    @Cacheable(value = RedisKey.APPLICATION + "::co", key = "#code", unless = "#result == null")
     default Application selectByCode(String code) {
         return selectOne(Application::getCode, code);
     }

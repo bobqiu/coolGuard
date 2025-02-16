@@ -17,6 +17,8 @@ public class FunUtilTest {
 
     @Test
     public void test() {
+        Long l = Long.parseLong("1739631110000");
+        System.out.println(l);
         log.info("{}", FunUtil.INSTANCE.today.get());
     }
 

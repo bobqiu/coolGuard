@@ -1,13 +1,11 @@
 package cn.wnhyang.coolGuard.mapper;
 
-import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.entity.Field;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.FieldPageVO;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 字段表 Mapper 接口
@@ -28,7 +26,6 @@ public interface FieldMapper extends BaseMapperX<Field> {
                 .eqIfPresent(Field::getStandard, pageVO.getStandard()));
     }
 
-    @Cacheable(value = RedisKey.FIELD + "::co", key = "#code", unless = "#result == null")
     default Field selectByCode(String code) {
         return selectOne(Field::getCode, code);
     }
