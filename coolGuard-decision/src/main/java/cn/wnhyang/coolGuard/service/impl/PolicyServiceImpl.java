@@ -121,7 +121,8 @@ public class PolicyServiceImpl implements PolicyService {
         // 3、删除策略下的所有规则
         ruleService.deleteRule(CollectionUtils.convertSet(ruleMapper.selectListByPolicyCode(policy.getCode()), Rule::getId));
         policyMapper.deleteById(id);
-        // TODO 删除历史版本
+        // 删除历史版本
+        policyVersionMapper.deleteByCode(policy.getCode());
     }
 
     @Override

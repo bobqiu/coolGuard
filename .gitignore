@@ -37,4 +37,5 @@ build/
 *.log
 *.log.gz
 
+.DS_Store
 **/application-local.yml

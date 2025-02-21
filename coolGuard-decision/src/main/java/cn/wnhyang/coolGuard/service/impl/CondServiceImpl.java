@@ -86,42 +86,34 @@ public class CondServiceImpl implements CondService {
 
                     String expectValue = cond.getRightValue();
                     if (ValueType.CONTEXT.equals(cond.getRightType())) {
-                        expectValue = fieldContext.getStringData(expectValue);
+                        expectValue = fieldContext.getData2String(expectValue);
                     }
 
                     if (fieldType == null || byType == null) {
                         return false;
                     }
-                    String strValue = fieldContext.getStringData(fieldName);
+                    String strValue = fieldContext.getData2String(fieldName);
                     log.info("普通条件，字段类型:{}, 字段值:{}, 操作:{}, 期望值:{}", fieldType, strValue, byType, expectValue);
-                    switch (fieldType) {
-                        case STRING:
-                            b = FunUtil.INSTANCE.stringLogicOp.apply(strValue, byType, expectValue);
-                            break;
-                        case NUMBER:
-                            Integer numberData = fieldContext.getNumberData(fieldName);
+                    b = switch (fieldType) {
+                        case STRING ->
+                                FunUtil.INSTANCE.stringLogicOp.apply(fieldContext.getData(fieldName, String.class), byType, expectValue);
+                        case NUMBER -> {
                             Integer expectInteger = Integer.parseInt(expectValue);
-                            b = FunUtil.INSTANCE.integerLogicOp.apply(numberData, byType, expectInteger);
-                            break;
-                        case FLOAT:
-                            Double floatData = fieldContext.getFloatData(fieldName);
+                            yield FunUtil.INSTANCE.integerLogicOp.apply(fieldContext.getData(fieldName, Integer.class), byType, expectInteger);
+                        }
+                        case FLOAT -> {
                             Double expectDouble = Double.parseDouble(expectValue);
-                            b = FunUtil.INSTANCE.doubleLogicOp.apply(floatData, byType, expectDouble);
-                            break;
-                        case DATE:
-                            LocalDateTime dateData = fieldContext.getDateData(fieldName);
+                            yield FunUtil.INSTANCE.doubleLogicOp.apply(fieldContext.getData(fieldName, Double.class), byType, expectDouble);
+                        }
+                        case DATE -> {
                             LocalDateTime expectDateTime = LocalDateTimeUtil.parse(expectValue, DatePattern.NORM_DATETIME_FORMATTER);
-                            b = FunUtil.INSTANCE.dateLogicOp.apply(dateData, byType, expectDateTime);
-                            break;
-                        case ENUM:
-                            String enumData = fieldContext.getEnumData(fieldName);
-                            b = FunUtil.INSTANCE.enumLogicOp.apply(enumData, byType, expectValue);
-                            break;
-                        case BOOLEAN:
-                            Boolean booleanData = fieldContext.getBooleanData(fieldName);
-                            b = FunUtil.INSTANCE.booleanLogicOp.apply(booleanData, byType, Boolean.parseBoolean(expectValue));
-                            break;
-                    }
+                            yield FunUtil.INSTANCE.dateLogicOp.apply(fieldContext.getData(fieldName, LocalDateTime.class), byType, expectDateTime);
+                        }
+                        case ENUM ->
+                                FunUtil.INSTANCE.enumLogicOp.apply(fieldContext.getData(fieldName, String.class), byType, expectValue);
+                        case BOOLEAN ->
+                                FunUtil.INSTANCE.booleanLogicOp.apply(fieldContext.getData(fieldName, Boolean.class), byType, Boolean.parseBoolean(expectValue));
+                    };
                 }
                 case ZB -> {
                     log.info("指标条件");
@@ -131,7 +123,7 @@ public class CondServiceImpl implements CondService {
 
                     String expectValue = cond.getRightValue();
                     if (ValueType.CONTEXT.equals(cond.getRightType())) {
-                        expectValue = fieldContext.getStringData(expectValue);
+                        expectValue = fieldContext.getData2String(expectValue);
                     }
 
                     if (fieldType == null || byType == null) {
@@ -173,14 +165,14 @@ public class CondServiceImpl implements CondService {
 
                     String fieldName = cond.getLeftValue();
 
-                    String stringData = fieldContext.getStringData(fieldName);
+                    String stringData = fieldContext.getData2String(fieldName);
                     b = FunUtil.INSTANCE.regularLogicOp.apply(stringData, byType, cond.getRightValue());
                 }
                 case LIST -> {
                     log.info("名单条件");
                     String fieldName = cond.getLeftValue();
 
-                    String stringData = fieldContext.getStringData(fieldName);
+                    String stringData = fieldContext.getData2String(fieldName);
                     // 查名单集做匹配
                     b = listDataService.hasListData(cond.getRightValue(), stringData);
                 }

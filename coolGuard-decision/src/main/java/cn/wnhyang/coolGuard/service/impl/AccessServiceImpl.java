@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.constant.AccessMode;
 import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.FieldRefType;
 import cn.wnhyang.coolGuard.constant.KafkaConstant;
@@ -78,15 +79,7 @@ public class AccessServiceImpl implements AccessService {
 
     private final FieldRefMapper fieldRefMapper;
 
-    @Override
-    public Map<String, Object> test(String code, Map<String, String> params) {
-        Map<String, Object> result = syncRisk(code, params);
-        accessMapper.updateByCode(new Access().setCode(code).setTestParams(params));
-        return result;
-    }
-
-    @Override
-    public Map<String, Object> syncRisk(String code, Map<String, String> params) {
+    private Map<String, Object> access(String code, Map<String, String> params, String mode) {
         log.info("服务名：{}, 入参：{}", code, params);
 
         Map<String, Object> result = new HashMap<>();
@@ -104,7 +97,12 @@ public class AccessServiceImpl implements AccessService {
         EventContext eventContext = new EventContext();
         IndicatorContext indicatorContext = new IndicatorContext();
 
-        LiteflowResponse syncRisk = flowExecutor.execute2Resp(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode()), null, fieldContext, indicatorContext, policyContext, eventContext);
+        String chain = StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode());
+        if (AccessMode.ASYNC.equals(mode)) {
+            // TODO 要不要自定义异步chain
+            chain = "I_F";
+        }
+        LiteflowResponse syncRisk = flowExecutor.execute2Resp(chain, null, fieldContext, indicatorContext, policyContext, eventContext);
         if (!syncRisk.isSuccess()) {
             throw exception(Integer.valueOf(syncRisk.getCode()), syncRisk.getMessage());
         }
@@ -113,11 +111,11 @@ public class AccessServiceImpl implements AccessService {
         result.put("policySetResult", eventContext.getPolicySetResult());
         // 设置出参
         Map<String, Object> outFields = new HashMap<>();
-        outFields.put(FieldCode.seqId, fieldContext.getStringData(FieldCode.seqId));
+        outFields.put(FieldCode.SEQ_ID, fieldContext.getData(FieldCode.SEQ_ID, String.class));
         // TODO 增加接口耗时和流程耗时
         if (CollUtil.isNotEmpty(outputFieldList)) {
             for (OutputFieldVO outputField : outputFieldList) {
-                outFields.put(outputField.getParamName(), fieldContext.getStringData(outputField.getCode()));
+                outFields.put(outputField.getParamName(), fieldContext.getData2String(outputField.getCode()));
             }
         }
         result.put("outFields", outFields);
@@ -136,15 +134,26 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @Override
+    public Map<String, Object> testRisk(String code, Map<String, String> params) {
+        Map<String, Object> result = access(code, params, AccessMode.TEST);
+        accessMapper.updateByCode(new Access().setCode(code).setTestParams(params));
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> syncRisk(String code, Map<String, String> params) {
+        return access(code, params, AccessMode.SYNC);
+    }
+
+    @Override
     public Map<String, Object> asyncRisk(String code, Map<String, String> params) {
 
         Map<String, Object> map = new HashMap<>();
         map.put("code", "000000");
 
-        // TODO 异步决策不需要跑策略
         try {
             return asyncExecutor.submit(() ->
-                    syncRisk(code, params)).get(100, TimeUnit.MILLISECONDS);
+                    access(code, params, AccessMode.ASYNC)).get(100, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             return map;
         } catch (Exception e) {
@@ -186,7 +195,6 @@ public class AccessServiceImpl implements AccessService {
             throw exception(ACCESS_NOT_EXIST);
         }
         accessMapper.deleteById(id);
-        // TODO 删除fieldRef
         fieldRefMapper.delete(FieldRefType.ACCESS, access.getCode(), null);
         chainMapper.deleteByChainName(StrUtil.format(LFUtil.ACCESS_CHAIN, access.getCode()));
     }

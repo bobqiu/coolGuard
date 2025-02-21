@@ -51,4 +51,8 @@ public interface PolicySetVersionMapper extends BaseMapperX<PolicySetVersion> {
                 .eq(PolicySetVersion::getCode, code)
                 .eq(PolicySetVersion::getLatest, Boolean.TRUE));
     }
+
+    default void deleteByCode(String code) {
+        delete(PolicySetVersion::getCode, code);
+    }
 }

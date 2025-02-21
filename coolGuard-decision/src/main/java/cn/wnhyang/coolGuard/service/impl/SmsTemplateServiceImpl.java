@@ -86,7 +86,7 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         Map<String, Object> map = new HashMap<>();
         for (String param : smsTemplate.getParams()) {
-            map.put(param, fieldContext.getStringData(param));
+            map.put(param, fieldContext.getData2String(param));
         }
         String smsContent = StrUtil.format(smsTemplate.getContent(), map);
         log.info("smsContent: {}", smsContent);

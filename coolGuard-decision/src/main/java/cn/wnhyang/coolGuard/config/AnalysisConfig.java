@@ -2,6 +2,8 @@ package cn.wnhyang.coolGuard.config;
 
 import cn.wnhyang.coolGuard.analysis.geo.GeoAnalysis;
 import cn.wnhyang.coolGuard.analysis.geo.GeoAnalysisDefault;
+import cn.wnhyang.coolGuard.analysis.idcard.IdCardAnalysis;
+import cn.wnhyang.coolGuard.analysis.idcard.IdCardAnalysisDefaultImpl;
 import cn.wnhyang.coolGuard.analysis.ip.IpAnalysis;
 import cn.wnhyang.coolGuard.analysis.ip.IpAnalysisDefaultImpl;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoAnalysis;
@@ -16,6 +18,14 @@ import org.springframework.context.annotation.Configuration;
  **/
 @Configuration
 public class AnalysisConfig {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public IdCardAnalysis idCardAnalysis() {
+        IdCardAnalysis idCardAnalysis = new IdCardAnalysisDefaultImpl();
+        idCardAnalysis.init();
+        return idCardAnalysis;
+    }
 
     @Bean
     @ConditionalOnMissingBean

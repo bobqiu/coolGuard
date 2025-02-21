@@ -33,7 +33,7 @@ public class CountIndicator extends AbstractIndicator {
 
     @Override
     public void addEvent(IndicatorContext.IndicatorCtx indicator, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
-        set.add(eventTime, eventDetail.get(FieldCode.seqId).toString());
+        set.add(eventTime, eventDetail.get(FieldCode.SEQ_ID).toString());
     }
 
 }

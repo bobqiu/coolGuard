@@ -37,8 +37,8 @@ public class AccessController {
      * @return map
      */
     @PostMapping("/{code}/test")
-    public CommonResult<Map<String, Object>> risk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
-        return success(accessService.test(code, params));
+    public CommonResult<Map<String, Object>> testRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
+        return success(accessService.testRisk(code, params));
     }
 
     /**

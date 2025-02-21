@@ -45,29 +45,18 @@ public class FieldContext extends ConcurrentHashMap<String, Object> implements I
         }
     }
 
-    public String getStringData(String key) {
-        return String.valueOf(get(key));
+    public <T> T getData(String key, Class<T> clazz) {
+        return clazz.cast(get(key));
     }
 
-    public Integer getNumberData(String key) {
-        return Integer.parseInt(get(key).toString());
-    }
-
-    public Boolean getBooleanData(String key) {
-        return Boolean.parseBoolean(get(key).toString());
-    }
-
-    public String getEnumData(String key) {
+    public String getData2String(String key) {
+        if (get(key) == null) {
+            return null;
+        }
+        if (get(key) instanceof LocalDateTime) {
+            return LocalDateTimeUtil.formatNormal(getData(key, LocalDateTime.class));
+        }
         return get(key).toString();
     }
-
-    public LocalDateTime getDateData(String key) {
-        return (LocalDateTime) get(key);
-    }
-
-    public Double getFloatData(String key) {
-        return Double.parseDouble(get(key).toString());
-    }
-
 
 }

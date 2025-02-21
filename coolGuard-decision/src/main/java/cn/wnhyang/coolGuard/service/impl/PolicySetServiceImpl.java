@@ -129,7 +129,8 @@ public class PolicySetServiceImpl implements PolicySetService {
         policyService.deletePolicy(CollectionUtils.convertSet(policyMapper.selectListBySetCode(policySet.getCode()), Policy::getId));
         // 5、删除chain
         policySetMapper.deleteById(id);
-        // TODO 删除历史版本
+        // 删除历史版本
+        policySetVersionMapper.deleteByCode(policySet.getCode());
     }
 
     @Override
@@ -239,8 +240,8 @@ public class PolicySetServiceImpl implements PolicySetService {
     public void policySet(NodeComponent bindCmp) {
         // TODO 策略集下策略默认并行，运行时判断有无配置Chain，有则运行，没有则for并行
         FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
-        String appName = fieldContext.getStringData(FieldCode.appName);
-        String policySetCode = fieldContext.getStringData(FieldCode.policySetCode);
+        String appName = fieldContext.getData(FieldCode.APP_NAME, String.class);
+        String policySetCode = fieldContext.getData(FieldCode.POLICY_SET_CODE, String.class);
 
         PolicySetVersion policySetVersion = policySetVersionMapper.selectLatestByAppNameAndCode(appName, policySetCode);
         if (policySetVersion != null) {

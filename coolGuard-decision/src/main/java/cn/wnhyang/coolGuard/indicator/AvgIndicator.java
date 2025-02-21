@@ -41,7 +41,7 @@ public class AvgIndicator extends AbstractIndicator {
 
     @Override
     public void addEvent(IndicatorContext.IndicatorCtx indicator, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
-        set.add(eventTime, eventDetail.get(FieldCode.seqId) + "-" + eventDetail.get(indicator.getCalcField()));
+        set.add(eventTime, eventDetail.get(FieldCode.SEQ_ID) + "-" + eventDetail.get(indicator.getCalcField()));
 
     }
 

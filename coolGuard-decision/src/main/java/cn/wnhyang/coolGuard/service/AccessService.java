@@ -24,7 +24,7 @@ public interface AccessService {
      * @param params 参数
      * @return map
      */
-    Map<String, Object> test(String code, Map<String, String> params);
+    Map<String, Object> testRisk(String code, Map<String, String> params);
 
     /**
      * 同步调用

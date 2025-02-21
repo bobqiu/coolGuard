@@ -2,14 +2,11 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.analysis.ad.Pca;
 import cn.wnhyang.coolGuard.analysis.geo.GeoAnalysis;
-import cn.wnhyang.coolGuard.analysis.ip.Ip2Region;
+import cn.wnhyang.coolGuard.analysis.idcard.IdCardAnalysis;
 import cn.wnhyang.coolGuard.analysis.ip.IpAnalysis;
 import cn.wnhyang.coolGuard.analysis.pn.PhoneNoAnalysis;
-import cn.wnhyang.coolGuard.analysis.pn.PhoneNoInfo;
 import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.ValueType;
@@ -22,8 +19,6 @@ import cn.wnhyang.coolGuard.exception.ServiceException;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.FieldService;
-import cn.wnhyang.coolGuard.util.AdocUtil;
-import cn.wnhyang.coolGuard.util.GeoHash;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.util.QLExpressUtil;
 import cn.wnhyang.coolGuard.vo.InputFieldVO;
@@ -62,6 +57,8 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
 public class FieldServiceImpl implements FieldService {
 
     private final FieldMapper fieldMapper;
+
+    private final IdCardAnalysis idCardAnalysis;
 
     private final PhoneNoAnalysis phoneNoAnalysis;
 
@@ -166,7 +163,7 @@ public class FieldServiceImpl implements FieldService {
 
     private void normalFieldParse(List<InputFieldVO> inputFieldList, Map<String, String> params, FieldContext fieldContext) {
         // 设置唯一id
-        fieldContext.setDataByType(FieldCode.seqId, IdUtil.fastSimpleUUID(), FieldType.STRING);
+        fieldContext.setDataByType(FieldCode.SEQ_ID, IdUtil.fastSimpleUUID(), FieldType.STRING);
 
         // 普通字段处理
         inputFieldList.stream().filter(inputField -> !inputField.getDynamic()).forEach(inputField -> {
@@ -174,11 +171,11 @@ public class FieldServiceImpl implements FieldService {
             // 先处理普通字段
             String value = params.get(inputField.getParamName());
             // 如果必须，但输入为空则抛异常
-            if (required && value == null) {
+            if (required && StrUtil.isBlank(value)) {
                 throw new ServiceException(400, "参数[" + inputField.getParamName() + "]不能为空");
             }
             // 非必需，但为空，继续
-            if (!required && value == null) {
+            if (!required && StrUtil.isBlank(value)) {
                 return;
             }
             try {
@@ -188,59 +185,26 @@ public class FieldServiceImpl implements FieldService {
                 }
 
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new ServiceException(400, "参数[" + inputField.getParamName() + "]类型不合法");
             }
         });
 
-        LocalDateTime eventTime = fieldContext.getDateData(FieldCode.eventTime);
+        LocalDateTime eventTime = fieldContext.getData(FieldCode.EVENT_TIME, LocalDateTime.class);
         // 内置扩展字段
-        fieldContext.setDataByType(FieldCode.eventTimeStamp, String.valueOf(LocalDateTimeUtil.toEpochMilli(eventTime)), FieldType.STRING);
+        fieldContext.setDataByType(FieldCode.EVENT_TIME_STAMP, String.valueOf(LocalDateTimeUtil.toEpochMilli(eventTime)), FieldType.STRING);
 
 
         // 身份证解析
-        String idCard = fieldContext.getStringData(FieldCode.payerIDNumber);
-        if (StrUtil.isNotBlank(idCard) && IdcardUtil.isValidCard(idCard)) {
-            Pca pca = AdocUtil.getPca(IdcardUtil.getDistrictCodeByIdCard(idCard));
-            if (pca != null) {
-                fieldContext.setDataByType(FieldCode.idCardProvince, pca.getProvince(), FieldType.STRING);
-                fieldContext.setDataByType(FieldCode.idCardCity, pca.getCity(), FieldType.STRING);
-                fieldContext.setDataByType(FieldCode.idCardDistrict, pca.getArea(), FieldType.STRING);
-            }
-        }
+        idCardAnalysis.parseIdCard(fieldContext);
 
         // 手机号解析
-        String phoneNumber = fieldContext.getStringData(FieldCode.payerPhoneNumber);
-        if (StrUtil.isNotBlank(phoneNumber)) {
-            PhoneNoInfo phoneNoInfo = phoneNoAnalysis.analysis(phoneNumber);
-            fieldContext.setDataByType(FieldCode.phoneNumberProvince, phoneNoInfo.getProvince(), FieldType.STRING);
-            fieldContext.setDataByType(FieldCode.phoneNumberCity, phoneNoInfo.getCity(), FieldType.STRING);
-            fieldContext.setDataByType(FieldCode.phoneNumberIsp, phoneNoInfo.getIsp(), FieldType.STRING);
-        }
+        phoneNoAnalysis.parsePhoneNumber(fieldContext);
 
         // ip解析
-        String ip = fieldContext.getStringData(FieldCode.ip);
-        if (StrUtil.isNotBlank(ip)) {
-            Ip2Region ip2Region = ipAnalysis.analysis(ip);
-            if (ip2Region != null) {
-                fieldContext.setDataByType(FieldCode.ipCountry, ip2Region.getCountry(), FieldType.STRING);
-                fieldContext.setDataByType(FieldCode.ipProvince, ip2Region.getProvince(), FieldType.STRING);
-                fieldContext.setDataByType(FieldCode.ipCity, ip2Region.getCity(), FieldType.STRING);
-                fieldContext.setDataByType(FieldCode.ipIsp, ip2Region.getIsp(), FieldType.STRING);
-            }
-        }
+        ipAnalysis.parseIp(fieldContext);
 
         // 经纬度解析
-        String lonAndLat = fieldContext.getStringData(FieldCode.lonAndLat);
-        if (StrUtil.isNotBlank(lonAndLat)) {
-            Pca pca = geoAnalysis.analysis(lonAndLat);
-            if (pca != null) {
-                fieldContext.setDataByType(FieldCode.geoProvince, pca.getProvince(), FieldType.STRING);
-                fieldContext.setDataByType(FieldCode.geoCity, pca.getCity(), FieldType.STRING);
-                fieldContext.setDataByType(FieldCode.geoDistrict, pca.getArea(), FieldType.STRING);
-            }
-            // 经纬度geoHash编码
-            fieldContext.setDataByType(FieldCode.geoHash, GeoHash.geoHash(lonAndLat), FieldType.STRING);
-        }
+        geoAnalysis.parseGeo(fieldContext);
 
     }
 
@@ -264,8 +228,9 @@ public class FieldServiceImpl implements FieldService {
         setFields.forEach(setField -> {
             String value = setField.getValue();
             if (ValueType.CONTEXT.equals(setField.getType())) {
-                value = fieldContext.getStringData(value);
+                value = fieldContext.getData2String(value);
             }
+            // TODO 根据value类型设置
             fieldContext.setDataByType(setField.getFieldCode(), value, FieldType.STRING);
         });
     }

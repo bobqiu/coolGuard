@@ -65,4 +65,8 @@ public interface IndicatorVersionMapper extends BaseMapperX<IndicatorVersion> {
     default IndicatorVersion selectByCode(String code) {
         return selectOne(IndicatorVersion::getCode, code);
     }
+
+    default void deleteByCode(String code) {
+        delete(IndicatorVersion::getCode, code);
+    }
 }

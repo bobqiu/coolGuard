@@ -132,6 +132,8 @@ public class IndicatorServiceImpl implements IndicatorService {
         }
         // TODO 查找引用
         indicatorMapper.deleteById(id);
+        // 删除历史版本
+        indicatorVersionMapper.deleteByCode(indicator.getCode());
     }
 
     @Override
@@ -226,8 +228,8 @@ public class IndicatorServiceImpl implements IndicatorService {
     public int indicatorFor(NodeComponent bindCmp) {
         FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
-        String appName = fieldContext.getStringData(FieldCode.appName);
-        String policySetCode = fieldContext.getStringData(FieldCode.policySetCode);
+        String appName = fieldContext.getData(FieldCode.APP_NAME, String.class);
+        String policySetCode = fieldContext.getData(FieldCode.POLICY_SET_CODE, String.class);
         List<IndicatorVersion> indicatorVersionList = indicatorVersionMapper.selectLatestListByScenes(appName, policySetCode);
         indicatorContext.setIndicatorList(ListUtil.toCopyOnWriteArrayList(IndicatorVersionConvert.INSTANCE.convert2Ctx(indicatorVersionList)));
         return indicatorVersionList.size();

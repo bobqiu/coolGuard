@@ -77,8 +77,6 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
         indicatorMapper.updateByCode(new Indicator().setCode(indicatorVersion.getCode()).setPublish(Boolean.FALSE));
         indicatorVersionMapper.updateById(new IndicatorVersion().setId(id).setLatest(Boolean.FALSE));
         chainMapper.deleteByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, indicatorVersion.getCode()));
-        // TODO 删除指标数据
-
     }
 
     @Override

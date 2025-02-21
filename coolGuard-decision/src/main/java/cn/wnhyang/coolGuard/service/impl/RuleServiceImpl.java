@@ -122,7 +122,7 @@ public class RuleServiceImpl implements RuleService {
         }
         ruleMapper.deleteById(id);
         // 删除所有版本
-        ruleVersionMapper.deleteBySetCode(rule.getCode());
+        ruleVersionMapper.deleteByCode(rule.getCode());
     }
 
     @Override

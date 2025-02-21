@@ -135,7 +135,7 @@ public class ListDataServiceImpl implements ListDataService {
         for (Action.AddList addList : addLists) {
             ListData listData = new ListData();
             listData.setListSetCode(addList.getListSetCode());
-            listData.setValue(fieldContext.getStringData(addList.getFieldCode()));
+            listData.setValue(fieldContext.getData2String(addList.getFieldCode()));
             listData.setSource("规则生成");
             listDataMapper.insert(listData);
         }

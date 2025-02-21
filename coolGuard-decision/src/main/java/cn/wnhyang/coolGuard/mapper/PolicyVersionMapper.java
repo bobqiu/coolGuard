@@ -48,4 +48,8 @@ public interface PolicyVersionMapper extends BaseMapperX<PolicyVersion> {
     default PolicyVersion selectByCode(String code) {
         return selectOne(PolicyVersion::getCode, code);
     }
+
+    default void deleteByCode(String code) {
+        delete(PolicyVersion::getCode, code);
+    }
 }

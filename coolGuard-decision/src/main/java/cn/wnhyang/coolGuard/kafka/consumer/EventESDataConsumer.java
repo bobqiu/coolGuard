@@ -20,7 +20,7 @@ public class EventESDataConsumer {
 
     @KafkaListener(topics = KafkaConstant.EVENT_ES_DATA, groupId = KafkaConstant.EVENT_ES_DATA_GROUP)
     public void consume(String message) {
-        // TODO 存储到ES
+        // TODO ES索引设计与存储
         log.info("consume message: {}", message);
         try {
             elasticSearchService.indexDocument("event_20241219", message);

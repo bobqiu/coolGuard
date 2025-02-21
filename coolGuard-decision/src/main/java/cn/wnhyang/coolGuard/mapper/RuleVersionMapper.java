@@ -38,11 +38,6 @@ public interface RuleVersionMapper extends BaseMapperX<RuleVersion> {
                 .eq(RuleVersion::getLatest, Boolean.TRUE));
     }
 
-    default void deleteBySetCode(String code) {
-        delete(new LambdaQueryWrapperX<RuleVersion>()
-                .eq(RuleVersion::getCode, code));
-    }
-
     default RuleVersion selectByCode(String code) {
         return selectOne(RuleVersion::getCode, code);
     }
@@ -52,5 +47,9 @@ public interface RuleVersionMapper extends BaseMapperX<RuleVersion> {
                 .eq(RuleVersion::getCode, code)
                 .orderByDesc(RuleVersion::getVersion)
                 .last("LIMIT 1"));
+    }
+
+    default void deleteByCode(String code) {
+        delete(RuleVersion::getCode, code);
     }
 }
