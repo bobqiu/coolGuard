@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.vo.update;
 
+import cn.wnhyang.coolGuard.vo.base.ListSetBaseVO;
 import lombok.Data;
 
 import java.io.Serial;
@@ -11,7 +12,7 @@ import java.io.Serial;
  * @since 2024/05/28
  */
 @Data
-public class ListSetUpdateVO extends ListDataUpdateVO {
+public class ListSetUpdateVO extends ListSetBaseVO {
 
     @Serial
     private static final long serialVersionUID = 1L;

@@ -26,11 +26,6 @@ public class ListSetBaseVO implements Serializable {
     private String type;
 
     /**
-     * 名单集状态
-     */
-    private Boolean status;
-
-    /**
      * 描述
      */
     private String description;

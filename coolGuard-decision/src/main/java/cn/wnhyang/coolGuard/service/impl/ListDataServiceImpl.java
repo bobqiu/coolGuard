@@ -115,7 +115,7 @@ public class ListDataServiceImpl implements ListDataService {
     @Override
     public boolean hasListData(String setCode, String value) {
         ListSet listSet = listSetMapper.selectByCode(setCode);
-        if (listSet != null && listSet.getStatus()) {
+        if (listSet != null) {
             // 两种方式，1、查询名单集id和名单数据作为一次查询；2、查询名单集所有名单数据做集合，再判断是否存在名单数据
             // 区别：1做缓存会是很多个，2做缓存更值得一些
             List<String> listData = getListData(setCode);

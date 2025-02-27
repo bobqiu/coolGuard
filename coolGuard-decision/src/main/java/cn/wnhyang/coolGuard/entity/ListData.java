@@ -53,12 +53,6 @@ public class ListData extends BaseDO {
     private String source;
 
     /**
-     * 名单集状态
-     */
-    @TableField("status")
-    private Boolean status;
-
-    /**
      * 描述
      */
     @TableField("description")

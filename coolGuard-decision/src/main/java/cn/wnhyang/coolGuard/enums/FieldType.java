@@ -1,14 +1,10 @@
 package cn.wnhyang.coolGuard.enums;
 
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.entity.LabelValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author wnhyang
@@ -70,12 +66,6 @@ public enum FieldType {
             return getByType(sub);
         }
         return null;
-    }
-
-    public static List<LabelValue> getLvList() {
-        return Arrays.stream(values())
-                .map(fieldType -> new LabelValue(fieldType.getName(), fieldType.getType()))
-                .collect(Collectors.toList());
     }
 
 }

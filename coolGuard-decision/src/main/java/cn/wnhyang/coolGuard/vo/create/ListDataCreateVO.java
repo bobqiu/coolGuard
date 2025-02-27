@@ -33,11 +33,6 @@ public class ListDataCreateVO implements Serializable {
     private String source;
 
     /**
-     * 名单集状态
-     */
-    private Boolean status;
-
-    /**
      * 描述
      */
     private String description;

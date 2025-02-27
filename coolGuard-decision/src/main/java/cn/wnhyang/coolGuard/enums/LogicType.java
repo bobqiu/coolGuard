@@ -33,21 +33,27 @@ public enum LogicType {
      * 适用正则、名单条件
      */
     MATCH("正则匹配", "match"),
-
     /**
      * 适用正则、名单条件
      */
     NOT_MATCH("非正则匹配", "not_match"),
-
     /**
      * 适用正则条件
      */
     MATCH_IGNORE_CASE("正则匹配忽略大小写", "match_ignore_case"),
-
     /**
      * 适用正则条件
      */
-    NOT_MATCH_IGNORE_CASE("非正则匹配忽略大小写", "not_match_ignore_case");
+    NOT_MATCH_IGNORE_CASE("非正则匹配忽略大小写", "not_match_ignore_case"),
+
+    /**
+     * 适用于名单规则，在名单中
+     */
+    IN("在", "in"),
+    /**
+     * 适用于名单规则，不在名单中
+     */
+    NOT_IN("在", "in");
 
     private final String name;
 

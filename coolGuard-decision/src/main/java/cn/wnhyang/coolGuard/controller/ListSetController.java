@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.controller;
 
 import cn.wnhyang.coolGuard.convert.ListSetConvert;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ListSetService;
@@ -117,5 +118,15 @@ public class ListSetController {
         List<ListSetVO> read = ExcelUtil.read(file, ListSetVO.class);
         // do something
         return success(true);
+    }
+
+    /**
+     * 获取lvList
+     *
+     * @return lvList
+     */
+    @GetMapping("/lvList")
+    public CommonResult<List<LabelValue>> getLabelValueList() {
+        return success(listSetService.getLabelValueList());
     }
 }

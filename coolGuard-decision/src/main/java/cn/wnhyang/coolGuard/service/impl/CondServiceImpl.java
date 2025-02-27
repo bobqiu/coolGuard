@@ -155,7 +155,12 @@ public class CondServiceImpl implements CondService {
 
                     String stringData = fieldContext.getData2String(fieldCode);
                     // TODO 查名单集做匹配，加上在/不在
-                    b = listDataService.hasListData(cond.getRightValue(), stringData);
+
+                    b = switch (byType) {
+                        case IN -> listDataService.hasListData(cond.getRightValue(), stringData);
+                        case NOT_IN -> !listDataService.hasListData(cond.getRightValue(), stringData);
+                        default -> throw new IllegalStateException("Unexpected value: " + byType);
+                    };
                 }
                 case SCRIPT -> {
                     // TODO 脚本条件

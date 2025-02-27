@@ -1,10 +1,13 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.ListSet;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.create.ListSetCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ListSetPageVO;
 import cn.wnhyang.coolGuard.vo.update.ListSetUpdateVO;
+
+import java.util.List;
 
 /**
  * 名单集表 服务类
@@ -52,4 +55,10 @@ public interface ListSetService {
      */
     PageResult<ListSet> page(ListSetPageVO pageVO);
 
+    /**
+     * 获取lvList
+     *
+     * @return lvList
+     */
+    List<LabelValue> getLabelValueList();
 }
