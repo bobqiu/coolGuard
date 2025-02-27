@@ -28,6 +28,7 @@ public class HisIndicator extends AbstractIndicator {
 
     @Override
     public Object getResult0(IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set) {
+        // TODO 问题这样取值，类型都是字符串
         if (!set.isEmpty()) {
             if (IndicatorReturnFlag.EARLIEST.equals(indicator.getReturnFlag())) {
                 return set.first().split("-")[1];

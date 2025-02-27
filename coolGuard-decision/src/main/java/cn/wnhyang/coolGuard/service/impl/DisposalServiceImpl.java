@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**

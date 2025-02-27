@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class TraceAspect {
 
+    private static final String TRACE_ID = "traceId";
+
     /**
      * 对所有controller切面
      *
@@ -29,11 +31,11 @@ public class TraceAspect {
         long startTime = System.currentTimeMillis();
         try {
             String traceId = IdUtil.simpleUUID();
-            MDC.put("traceId", traceId);
+            MDC.put(TRACE_ID, traceId);
             return pjp.proceed();
 
         } finally {
-            MDC.clear();
+            MDC.remove(TRACE_ID);
             log.info("cost:{}", System.currentTimeMillis() - startTime);
         }
 

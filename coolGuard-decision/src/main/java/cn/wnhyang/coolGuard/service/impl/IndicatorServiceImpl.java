@@ -11,10 +11,7 @@ import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.convert.IndicatorVersionConvert;
 import cn.wnhyang.coolGuard.dto.IndicatorDTO;
-import cn.wnhyang.coolGuard.entity.Chain;
-import cn.wnhyang.coolGuard.entity.Indicator;
-import cn.wnhyang.coolGuard.entity.IndicatorVersion;
-import cn.wnhyang.coolGuard.entity.PolicySet;
+import cn.wnhyang.coolGuard.entity.*;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
 import cn.wnhyang.coolGuard.enums.WinSize;
 import cn.wnhyang.coolGuard.indicator.AbstractIndicator;
@@ -24,6 +21,7 @@ import cn.wnhyang.coolGuard.mapper.IndicatorVersionMapper;
 import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
 import cn.wnhyang.coolGuard.vo.VersionSubmitResultVO;
@@ -47,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -222,6 +220,11 @@ public class IndicatorServiceImpl implements IndicatorService {
             }
         });
         return result;
+    }
+
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(indicatorMapper.selectList(), Indicator::getLabelValue);
     }
 
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_FOR, nodeId = LFUtil.INDICATOR_FOR_NODE, nodeType = NodeTypeEnum.FOR, nodeName = "指标for组件")

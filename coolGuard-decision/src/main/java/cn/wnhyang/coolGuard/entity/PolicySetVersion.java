@@ -1,10 +1,12 @@
 package cn.wnhyang.coolGuard.entity;
 
+import cn.wnhyang.coolGuard.LabelValueAble;
 import cn.wnhyang.coolGuard.pojo.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +25,7 @@ import java.io.Serial;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("de_policy_set_version")
-public class PolicySetVersion extends BaseDO {
+public class PolicySetVersion extends BaseDO implements LabelValueAble {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -81,4 +83,10 @@ public class PolicySetVersion extends BaseDO {
      */
     @TableField("version_desc")
     private String versionDesc;
+
+    @Override
+    @JsonIgnore
+    public LabelValue getLabelValue() {
+        return new LabelValue(id, name, code);
+    }
 }

@@ -38,6 +38,10 @@ public interface RuleVersionMapper extends BaseMapperX<RuleVersion> {
                 .eq(RuleVersion::getLatest, Boolean.TRUE));
     }
 
+    default List<RuleVersion> selectLatestList() {
+        return selectList(RuleVersion::getLatest, Boolean.TRUE);
+    }
+
     default RuleVersion selectByCode(String code) {
         return selectOne(RuleVersion::getCode, code);
     }

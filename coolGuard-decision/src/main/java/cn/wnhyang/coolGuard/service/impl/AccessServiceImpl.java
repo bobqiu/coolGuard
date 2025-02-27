@@ -45,8 +45,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_CODE_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.ACCESS_NOT_EXIST;
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.ACCESS_CODE_EXIST;
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.ACCESS_NOT_EXIST;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**

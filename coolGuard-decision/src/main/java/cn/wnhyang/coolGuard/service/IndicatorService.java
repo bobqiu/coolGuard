@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.service;
 
 import cn.wnhyang.coolGuard.entity.Indicator;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
 import cn.wnhyang.coolGuard.vo.VersionSubmitResultVO;
@@ -87,4 +88,11 @@ public interface IndicatorService {
      * @param submitVO 提交VO
      */
     List<VersionSubmitResultVO> batchSubmit(BatchVersionSubmit submitVO);
+
+    /**
+     * 获取lvList
+     *
+     * @return lvList
+     */
+    List<LabelValue> getLabelValueList();
 }

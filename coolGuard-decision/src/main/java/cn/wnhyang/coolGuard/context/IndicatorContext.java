@@ -1,11 +1,13 @@
 package cn.wnhyang.coolGuard.context;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.wnhyang.coolGuard.entity.IndicatorVersion;
 import cn.wnhyang.coolGuard.vo.result.IndicatorResult;
 import lombok.Data;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,15 +32,19 @@ public class IndicatorContext {
     }
 
     public void setIndicatorValue(int index, Object value) {
-        indicatorList.get(index).setValue(String.valueOf(value));
+        indicatorList.get(index).setValue(value);
     }
 
     public String getIndicatorReturnType(String code) {
         return indicatorMap.get(code).getReturnType();
     }
 
-    public Object getIndicatorValue(String code) {
-        return indicatorMap.get(code).getValue();
+    public String getIndicatorValue2String(String code) {
+        return indicatorMap.get(code).getValueData2String();
+    }
+
+    public <T> T getIndicatorValue(String code, Class<T> clazz) {
+        return indicatorMap.get(code).getValueData(clazz);
     }
 
     public List<IndicatorResult> convert() {
@@ -59,6 +65,20 @@ public class IndicatorContext {
          * 指标值
          */
         private Object value;
+
+        public String getValueData2String() {
+            if (this.value == null) {
+                return null;
+            }
+            if (this.value instanceof LocalDateTime) {
+                return LocalDateTimeUtil.formatNormal(getValueData(LocalDateTime.class));
+            }
+            return this.value.toString();
+        }
+
+        public <T> T getValueData(Class<T> clazz) {
+            return clazz.cast(this.value);
+        }
 
     }
 }

@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.*;
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**

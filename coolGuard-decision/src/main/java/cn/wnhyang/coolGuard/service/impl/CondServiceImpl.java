@@ -81,8 +81,8 @@ public class CondServiceImpl implements CondService {
                 // 普通条件，适用指标、规则
                 case NORMAL -> {
                     // 获取条件字段
-                    String fieldName = cond.getLeftValue();
-                    FieldType fieldType = FieldType.getByFieldName(fieldName);
+                    String fieldCode = cond.getLeftValue();
+                    FieldType fieldType = FieldType.getByFieldCode(fieldCode);
 
                     String expectValue = cond.getRightValue();
                     if (ValueType.CONTEXT.equals(cond.getRightType())) {
@@ -92,27 +92,21 @@ public class CondServiceImpl implements CondService {
                     if (fieldType == null || byType == null) {
                         return false;
                     }
-                    String strValue = fieldContext.getData2String(fieldName);
+                    String strValue = fieldContext.getData2String(fieldCode);
                     log.info("普通条件，字段类型:{}, 字段值:{}, 操作:{}, 期望值:{}", fieldType, strValue, byType, expectValue);
                     b = switch (fieldType) {
                         case STRING ->
-                                FunUtil.INSTANCE.stringLogicOp.apply(fieldContext.getData(fieldName, String.class), byType, expectValue);
-                        case NUMBER -> {
-                            Integer expectInteger = Integer.parseInt(expectValue);
-                            yield FunUtil.INSTANCE.integerLogicOp.apply(fieldContext.getData(fieldName, Integer.class), byType, expectInteger);
-                        }
-                        case FLOAT -> {
-                            Double expectDouble = Double.parseDouble(expectValue);
-                            yield FunUtil.INSTANCE.doubleLogicOp.apply(fieldContext.getData(fieldName, Double.class), byType, expectDouble);
-                        }
-                        case DATE -> {
-                            LocalDateTime expectDateTime = LocalDateTimeUtil.parse(expectValue, DatePattern.NORM_DATETIME_FORMATTER);
-                            yield FunUtil.INSTANCE.dateLogicOp.apply(fieldContext.getData(fieldName, LocalDateTime.class), byType, expectDateTime);
-                        }
+                                FunUtil.INSTANCE.stringLogicOp.apply(fieldContext.getData(fieldCode, String.class), byType, expectValue);
+                        case NUMBER ->
+                                FunUtil.INSTANCE.integerLogicOp.apply(fieldContext.getData(fieldCode, Integer.class), byType, Integer.parseInt(expectValue));
+                        case FLOAT ->
+                                FunUtil.INSTANCE.doubleLogicOp.apply(fieldContext.getData(fieldCode, Double.class), byType, Double.parseDouble(expectValue));
+                        case DATE ->
+                                FunUtil.INSTANCE.dateLogicOp.apply(fieldContext.getData(fieldCode, LocalDateTime.class), byType, LocalDateTimeUtil.parse(expectValue, DatePattern.NORM_DATETIME_FORMATTER));
                         case ENUM ->
-                                FunUtil.INSTANCE.enumLogicOp.apply(fieldContext.getData(fieldName, String.class), byType, expectValue);
+                                FunUtil.INSTANCE.enumLogicOp.apply(fieldContext.getData(fieldCode, String.class), byType, expectValue);
                         case BOOLEAN ->
-                                FunUtil.INSTANCE.booleanLogicOp.apply(fieldContext.getData(fieldName, Boolean.class), byType, Boolean.parseBoolean(expectValue));
+                                FunUtil.INSTANCE.booleanLogicOp.apply(fieldContext.getData(fieldCode, Boolean.class), byType, Boolean.parseBoolean(expectValue));
                     };
                 }
                 case ZB -> {
@@ -130,50 +124,37 @@ public class CondServiceImpl implements CondService {
                         return false;
                     }
 
-                    String strValue = indicatorContext.getIndicatorValue(indicatorCode).toString();
+                    String strValue = indicatorContext.getIndicatorValue2String(indicatorCode);
                     log.info("指标条件，字段类型:{}, 字段值:{}, 操作:{}, 期望值:{}", fieldType, strValue, byType, expectValue);
-                    switch (fieldType) {
-                        case STRING:
-                            b = FunUtil.INSTANCE.stringLogicOp.apply(strValue, byType, expectValue);
-                            break;
-                        case NUMBER:
-                            Integer numberData = Integer.parseInt(strValue);
-                            Integer expectInteger = Integer.parseInt(expectValue);
-                            b = FunUtil.INSTANCE.integerLogicOp.apply(numberData, byType, expectInteger);
-                            break;
-                        case FLOAT:
-                            Double floatData = Double.parseDouble(strValue);
-                            Double expectDouble = Double.parseDouble(expectValue);
-                            b = FunUtil.INSTANCE.doubleLogicOp.apply(floatData, byType, expectDouble);
-                            break;
-                        case DATE:
-                            LocalDateTime dateData = LocalDateTime.parse(strValue, DatePattern.NORM_DATETIME_FORMATTER);
-                            LocalDateTime expectDateTime = LocalDateTimeUtil.parse(expectValue, DatePattern.NORM_DATETIME_FORMATTER);
-                            b = FunUtil.INSTANCE.dateLogicOp.apply(dateData, byType, expectDateTime);
-                            break;
-                        case ENUM:
-                            b = FunUtil.INSTANCE.enumLogicOp.apply(strValue, byType, expectValue);
-                            break;
-                        case BOOLEAN:
-                            Boolean booleanData = Boolean.parseBoolean(strValue);
-                            b = FunUtil.INSTANCE.booleanLogicOp.apply(booleanData, byType, Boolean.parseBoolean(expectValue));
-                            break;
-                    }
+                    b = switch (fieldType) {
+                        case STRING ->
+                                FunUtil.INSTANCE.stringLogicOp.apply(indicatorContext.getIndicatorValue(indicatorCode, String.class), byType, expectValue);
+                        case NUMBER ->
+                                FunUtil.INSTANCE.integerLogicOp.apply(indicatorContext.getIndicatorValue(indicatorCode, Integer.class), byType, Integer.parseInt(expectValue));
+                        case FLOAT ->
+                                FunUtil.INSTANCE.doubleLogicOp.apply(indicatorContext.getIndicatorValue(indicatorCode, Double.class), byType, Double.parseDouble(expectValue));
+                        case DATE ->
+                                FunUtil.INSTANCE.dateLogicOp.apply(indicatorContext.getIndicatorValue(indicatorCode, LocalDateTime.class), byType, LocalDateTimeUtil.parse(expectValue, DatePattern.NORM_DATETIME_FORMATTER));
+                        case ENUM ->
+                                FunUtil.INSTANCE.enumLogicOp.apply(indicatorContext.getIndicatorValue(indicatorCode, String.class), byType, expectValue);
+                        case BOOLEAN ->
+                                FunUtil.INSTANCE.booleanLogicOp.apply(indicatorContext.getIndicatorValue(indicatorCode, Boolean.class), byType, Boolean.parseBoolean(expectValue));
+                    };
                 }
                 case REGULAR -> {
                     log.info("正则条件");
 
-                    String fieldName = cond.getLeftValue();
+                    String fieldCode = cond.getLeftValue();
 
-                    String stringData = fieldContext.getData2String(fieldName);
+                    String stringData = fieldContext.getData2String(fieldCode);
                     b = FunUtil.INSTANCE.regularLogicOp.apply(stringData, byType, cond.getRightValue());
                 }
                 case LIST -> {
                     log.info("名单条件");
-                    String fieldName = cond.getLeftValue();
+                    String fieldCode = cond.getLeftValue();
 
-                    String stringData = fieldContext.getData2String(fieldName);
-                    // 查名单集做匹配
+                    String stringData = fieldContext.getData2String(fieldCode);
+                    // TODO 查名单集做匹配，加上在/不在
                     b = listDataService.hasListData(cond.getRightValue(), stringData);
                 }
                 case SCRIPT -> {

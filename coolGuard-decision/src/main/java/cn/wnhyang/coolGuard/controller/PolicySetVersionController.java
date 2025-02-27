@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.controller;
 
 import cn.wnhyang.coolGuard.convert.PolicySetVersionConvert;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicySetVersionService;
@@ -129,5 +130,15 @@ public class PolicySetVersionController {
         List<PolicySetVersionVO> read = ExcelUtil.read(file, PolicySetVersionVO.class);
         // do something
         return success(true);
+    }
+
+    /**
+     * 获取策略集lv列表
+     *
+     * @return lv列表
+     */
+    @GetMapping("/lvList")
+    public CommonResult<List<LabelValue>> getLabelValueList() {
+        return success(policySetVersionService.getLabelValueList());
     }
 }

@@ -64,9 +64,9 @@ public enum FieldType {
         return null;
     }
 
-    public static FieldType getByFieldName(String fieldName) {
-        if (fieldName.length() >= 3) {
-            String sub = StrUtil.sub(fieldName, 2, 3);
+    public static FieldType getByFieldCode(String fieldCode) {
+        if (fieldCode.length() >= 3) {
+            String sub = StrUtil.sub(fieldCode, 2, 3);
             return getByType(sub);
         }
         return null;

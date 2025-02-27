@@ -1,9 +1,13 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.vo.IndicatorSimpleVO;
 import cn.wnhyang.coolGuard.vo.IndicatorVersionVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorVersionPageVO;
 import jakarta.validation.Valid;
+
+import java.util.List;
 
 /**
  * 指标表版本表 服务类
@@ -65,4 +69,18 @@ public interface IndicatorVersionService {
      * @param id id
      */
     void chose(Long id);
+
+    /**
+     * 获取lvList
+     *
+     * @return lvList
+     */
+    List<LabelValue> getLabelValueList();
+
+    /**
+     * 获取simpleList
+     *
+     * @return simpleList
+     */
+    List<IndicatorSimpleVO> getSimpleList();
 }

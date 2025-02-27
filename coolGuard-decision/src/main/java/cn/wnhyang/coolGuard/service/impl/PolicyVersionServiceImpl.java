@@ -2,12 +2,14 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.convert.PolicyVersionConvert;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.Policy;
 import cn.wnhyang.coolGuard.entity.PolicyVersion;
 import cn.wnhyang.coolGuard.mapper.PolicyMapper;
 import cn.wnhyang.coolGuard.mapper.PolicyVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicyVersionService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.vo.PolicyVersionVO;
 import cn.wnhyang.coolGuard.vo.page.PolicyVersionPageVO;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_NAME_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_VERSION_NOT_EXIST;
+import java.util.List;
+
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.POLICY_NAME_EXIST;
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.POLICY_VERSION_NOT_EXIST;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -91,6 +95,11 @@ public class PolicyVersionServiceImpl implements PolicyVersionService {
     @Override
     public PolicyVersion getByCode(String code) {
         return policyVersionMapper.selectByCode(code);
+    }
+
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(policyVersionMapper.selectLatestList(), PolicyVersion::getLabelValue);
     }
 
 }

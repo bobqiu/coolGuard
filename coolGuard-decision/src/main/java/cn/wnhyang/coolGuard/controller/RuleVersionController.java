@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.controller;
 
 import cn.wnhyang.coolGuard.convert.RuleVersionConvert;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleVersionService;
@@ -114,5 +115,15 @@ public class RuleVersionController {
         List<RuleVersionVO> read = ExcelUtil.read(file, RuleVersionVO.class);
         // do something
         return success(true);
+    }
+
+    /**
+     * 获取规则lv列表
+     *
+     * @return list
+     */
+    @GetMapping("/lvList")
+    public CommonResult<List<LabelValue>> getLabelValueList() {
+        return success(ruleVersionService.getLabelValueList());
     }
 }

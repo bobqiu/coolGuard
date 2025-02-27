@@ -1,9 +1,11 @@
 package cn.wnhyang.coolGuard.controller;
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorVersionService;
 import cn.wnhyang.coolGuard.util.ExcelUtil;
+import cn.wnhyang.coolGuard.vo.IndicatorSimpleVO;
 import cn.wnhyang.coolGuard.vo.IndicatorVersionVO;
 import cn.wnhyang.coolGuard.vo.base.IdBaseVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorVersionPageVO;
@@ -127,5 +129,25 @@ public class IndicatorVersionController {
         List<IndicatorVersionVO> read = ExcelUtil.read(file, IndicatorVersionVO.class);
         // do something
         return success(true);
+    }
+
+    /**
+     * 获取lvList
+     *
+     * @return lvList
+     */
+    @GetMapping("/lvList")
+    public CommonResult<List<LabelValue>> getLabelValueList() {
+        return success(indicatorVersionService.getLabelValueList());
+    }
+
+    /**
+     * 获取简单指标list
+     *
+     * @return 简单指标list
+     */
+    @GetMapping("/simpleList")
+    public CommonResult<List<IndicatorSimpleVO>> getSimpleLabelValueList() {
+        return success(indicatorVersionService.getSimpleList());
     }
 }

@@ -48,6 +48,10 @@ public interface IndicatorVersionMapper extends BaseMapperX<IndicatorVersion> {
                 .last("LIMIT 1"));
     }
 
+    default List<IndicatorVersion> selectLatestList() {
+        return selectList(IndicatorVersion::getLatest, Boolean.TRUE);
+    }
+
     default List<IndicatorVersion> selectLatestListByScenes(String app, String policySet) {
         return selectList(new LambdaQueryWrapperX<IndicatorVersion>()
                 .eq(IndicatorVersion::getLatest, Boolean.TRUE)

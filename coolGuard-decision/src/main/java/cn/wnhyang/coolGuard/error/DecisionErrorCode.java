@@ -1,10 +1,12 @@
-package cn.wnhyang.coolGuard.exception;
+package cn.wnhyang.coolGuard.error;
+
+import cn.wnhyang.coolGuard.exception.ErrorCode;
 
 /**
  * @author wnhyang
  * @date 2024/4/6
  **/
-public interface ErrorCodes {
+public interface DecisionErrorCode {
 
     ErrorCode APPLICATION_NOT_EXIST = new ErrorCode(1001001000, "应用不存在");
 

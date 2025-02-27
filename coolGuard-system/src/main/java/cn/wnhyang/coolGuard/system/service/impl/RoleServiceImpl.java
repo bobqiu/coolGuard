@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
-import static cn.wnhyang.coolGuard.system.enums.ErrorCodes.*;
+import static cn.wnhyang.coolGuard.system.error.SystemErrorCode.*;
 
 
 /**

@@ -26,8 +26,8 @@
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <coolGuard.version>1.0-SNAPSHOT</coolGuard.version>
-        <spring-boot.version>3.2.3</spring-boot.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <spring-boot.version>3.3.9</spring-boot.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
         <lombok.version>1.18.24</lombok.version>
     </properties>
 

@@ -5,12 +5,15 @@ import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.convert.IndicatorVersionConvert;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.entity.IndicatorVersion;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
 import cn.wnhyang.coolGuard.mapper.IndicatorVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorVersionService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
+import cn.wnhyang.coolGuard.vo.IndicatorSimpleVO;
 import cn.wnhyang.coolGuard.vo.IndicatorVersionVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorVersionPageVO;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.INDICATOR_NAME_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.INDICATOR_VERSION_NOT_EXIST;
+import java.util.List;
+
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.INDICATOR_NAME_EXIST;
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.INDICATOR_VERSION_NOT_EXIST;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -100,6 +105,16 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
         Indicator convert = IndicatorConvert.INSTANCE.convert(indicatorVersion);
         convert.setPublish(Boolean.FALSE);
         indicatorMapper.updateByCode(convert);
+    }
+
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(indicatorVersionMapper.selectLatestList(), IndicatorVersion::getLabelValue);
+    }
+
+    @Override
+    public List<IndicatorSimpleVO> getSimpleList() {
+        return IndicatorVersionConvert.INSTANCE.convert(indicatorVersionMapper.selectLatestList());
     }
 
 }

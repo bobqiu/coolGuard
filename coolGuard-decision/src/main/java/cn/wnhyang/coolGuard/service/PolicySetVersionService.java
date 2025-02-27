@@ -1,10 +1,13 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.PolicySetVersion;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.PolicySetVersionVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetVersionPageVO;
 import jakarta.validation.Valid;
+
+import java.util.List;
 
 /**
  * 策略集表版本 服务类
@@ -66,4 +69,11 @@ public interface PolicySetVersionService {
      * @param id id
      */
     void chose(Long id);
+
+    /**
+     * 获取lvList
+     *
+     * @return lvList
+     */
+    List<LabelValue> getLabelValueList();
 }

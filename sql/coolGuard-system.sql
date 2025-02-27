@@ -63,7 +63,7 @@ create table coolGuard.sys_menu
     redirect    varchar(50)                           null comment '可点击',
     permission  varchar(50)                           null comment '权限码',
     order_no    int                                   null comment '用于路由->菜单排序',
-    query_param text                                  null comment '菜单所携带的参数',
+    query_param varchar(3000)                         null comment '菜单所携带的参数',
     title       varchar(50)                           null comment '标题名称',
     meta        varchar(1000)                         null comment '路由配置',
     creator     varchar(30) default ''                null comment '创建者',

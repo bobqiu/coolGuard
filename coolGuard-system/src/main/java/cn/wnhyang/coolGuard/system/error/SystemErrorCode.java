@@ -1,4 +1,4 @@
-package cn.wnhyang.coolGuard.system.enums;
+package cn.wnhyang.coolGuard.system.error;
 
 
 import cn.wnhyang.coolGuard.exception.ErrorCode;
@@ -7,11 +7,13 @@ import cn.wnhyang.coolGuard.exception.ErrorCode;
  * System 错误码枚举类
  * <p>
  * system 系统，使用 1-002-000-000 段
+ *
+ * @author wnhyang
  */
-public interface ErrorCodes {
+public interface SystemErrorCode {
 
     // ========== AUTH 模块 1002000000 ==========
-    ErrorCode AUTH_LOGIN_BAD_CREDENTIALS = new ErrorCode(1002000000, "登录失败，账号密码不正确");
+    ErrorCode AUTH_LOGIN_BAD_CREDENTIALS = new ErrorCode(1002000000, "登录失败，账号或密码不正确");
     ErrorCode AUTH_LOGIN_USER_DISABLED = new ErrorCode(1002000001, "登录失败，账号被禁用");
     ErrorCode AUTH_LOGIN_BAD_MOBILE_CODE = new ErrorCode(1002000002, "登录失败，手机号或验证码不正确");
     ErrorCode AUTH_LOGIN_BAD_EMAIL_CODE = new ErrorCode(1002000003, "登录失败，邮箱或验证码不正确");

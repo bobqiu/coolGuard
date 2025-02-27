@@ -155,4 +155,14 @@ public class IndicatorController {
     public CommonResult<List<LabelValue>> getWinSize() {
         return success(WinSize.getLvList());
     }
+
+    /**
+     * 获取lvList
+     *
+     * @return lvList
+     */
+    @GetMapping("/lvList")
+    public CommonResult<List<LabelValue>> getLabelValueList() {
+        return success(indicatorService.getLabelValueList());
+    }
 }

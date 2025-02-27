@@ -3,7 +3,6 @@ package cn.wnhyang.coolGuard.log.core.aop;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.IdUtil;
 import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
 import cn.wnhyang.coolGuard.log.core.dto.LogCreateReqDTO;
 import cn.wnhyang.coolGuard.log.core.enums.OperateType;
@@ -87,9 +86,6 @@ public class OperateLogAspect {
         Object result = null;
         LogCreateReqDTO operateLogObj = null;
         try {
-            // 没有接入链路追踪，暂时使用uuid作为请求ID
-            String traceId = IdUtil.simpleUUID();
-            MDC.put("traceId", traceId);
 
             operateLogObj = new LogCreateReqDTO();
             // 补全通用字段

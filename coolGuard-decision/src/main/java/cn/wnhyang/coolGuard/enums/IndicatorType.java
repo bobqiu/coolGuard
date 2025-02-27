@@ -62,11 +62,22 @@ public enum IndicatorType {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 根据类型和计算字段获取返回类型
+     *
+     * @param type      指标类型
+     * @param calcField 计算字段
+     * @return 返回值类型
+     */
     public static String getReturnType(String type, String calcField) {
         return switch (type) {
+            // 次数统计，关联次数，返回值为整数
             case "count", "ass" -> "N";
-            case "his" -> Objects.requireNonNull(FieldType.getByFieldName(calcField)).getType();
+            // 历史取值，返回值为计算字段类型
+            case "his" -> Objects.requireNonNull(FieldType.getByFieldCode(calcField)).getType();
+            // 求和，平均，最大值，最小值，返回值为浮点数
             default -> "F";
+            // TODO 移动距离、移动速度
         };
     }
 }

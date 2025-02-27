@@ -7,6 +7,8 @@ import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.page.PolicySetVersionPageVO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 策略集表版本 Mapper 接口
  *
@@ -28,6 +30,10 @@ public interface PolicySetVersionMapper extends BaseMapperX<PolicySetVersion> {
 
     default PolicySetVersion selectLatest(String code) {
         return selectOne(PolicySetVersion::getCode, code, PolicySetVersion::getLatest, Boolean.TRUE);
+    }
+
+    default List<PolicySetVersion> selectLatestList() {
+        return selectList(PolicySetVersion::getLatest, Boolean.TRUE);
     }
 
     default PolicySetVersion selectLatestVersion(String code) {

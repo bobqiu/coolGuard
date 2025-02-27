@@ -38,6 +38,10 @@ public interface PolicyVersionMapper extends BaseMapperX<PolicyVersion> {
                 .eq(PolicyVersion::getLatest, Boolean.TRUE));
     }
 
+    default List<PolicyVersion> selectLatestList() {
+        return selectList(PolicyVersion::getLatest, Boolean.TRUE);
+    }
+
     default PolicyVersion selectLatestVersion(String code) {
         return selectOne(new LambdaQueryWrapperX<PolicyVersion>()
                 .eq(PolicyVersion::getCode, code)

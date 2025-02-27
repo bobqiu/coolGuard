@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.convert.PolicySetConvert;
 import cn.wnhyang.coolGuard.convert.RuleVersionConvert;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.entity.RuleVersion;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
@@ -10,6 +11,7 @@ import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.mapper.RuleVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleVersionService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.RuleVersionVO;
 import cn.wnhyang.coolGuard.vo.page.RuleVersionPageVO;
@@ -18,8 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.RULE_NAME_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.RULE_VERSION_NOT_EXIST;
+import java.util.List;
+
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.RULE_NAME_EXIST;
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.RULE_VERSION_NOT_EXIST;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -97,6 +101,11 @@ public class RuleVersionServiceImpl implements RuleVersionService {
         Rule convert = PolicySetConvert.INSTANCE.convert(ruleVersion);
         convert.setPublish(Boolean.FALSE);
         ruleMapper.updateByCode(convert);
+    }
+
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(ruleVersionMapper.selectList(), RuleVersion::getLabelValue);
     }
 
 }

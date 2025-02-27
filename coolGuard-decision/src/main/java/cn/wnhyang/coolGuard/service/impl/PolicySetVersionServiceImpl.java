@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.convert.PolicySetConvert;
 import cn.wnhyang.coolGuard.convert.PolicySetVersionConvert;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.PolicySet;
 import cn.wnhyang.coolGuard.entity.PolicySetVersion;
 import cn.wnhyang.coolGuard.mapper.ChainMapper;
@@ -10,6 +11,7 @@ import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.mapper.PolicySetVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.PolicySetVersionService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.PolicySetVersionVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetVersionPageVO;
@@ -18,8 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_SET_NAME_EXIST;
-import static cn.wnhyang.coolGuard.exception.ErrorCodes.POLICY_SET_VERSION_NOT_EXIST;
+import java.util.List;
+
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.POLICY_SET_NAME_EXIST;
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.POLICY_SET_VERSION_NOT_EXIST;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
@@ -97,6 +101,11 @@ public class PolicySetVersionServiceImpl implements PolicySetVersionService {
         PolicySet convert = PolicySetConvert.INSTANCE.convert(policySetVersion);
         convert.setPublish(Boolean.FALSE);
         policySetMapper.updateByCode(convert);
+    }
+
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(policySetVersionMapper.selectLatestList(), PolicySetVersion::getLabelValue);
     }
 
 }

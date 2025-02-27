@@ -16,25 +16,25 @@
         <maven-deploy-plugin.version>2.8</maven-deploy-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>3.2.3</spring-boot.version>
+        <spring-boot.version>3.3.9</spring-boot.version>
         <mybatis-plus.version>3.5.9</mybatis-plus.version>
         <mybatis-plus-join.version>1.5.2</mybatis-plus-join.version>
         <dynamic-datasource.version>4.2.0</dynamic-datasource.version>
         <redisson.version>3.24.3</redisson.version>
-        <opensearch.version>2.18.0</opensearch.version>
-        <liteflow.version>2.12.4</liteflow.version>
+        <liteflow.version>2.13.0</liteflow.version>
         <jsoup.version>1.17.2</jsoup.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
         <lombok.version>1.18.24</lombok.version>
-        <disruptor.version>3.4.4</disruptor.version>
-        <hutool.version>5.8.26</hutool.version>
+        <disruptor.version>4.0.0</disruptor.version>
+        <hutool.version>5.8.36</hutool.version>
         <easyexcel.verion>3.3.3</easyexcel.verion>
         <poi.version>4.1.2</poi.version>
         <phone-number-geo.version>1.0.9-202302</phone-number-geo.version>
         <ip2region.version>2.7.0</ip2region.version>
         <lock4j.version>2.2.7</lock4j.version>
-        <sa-token.version>1.39.0</sa-token.version>
-        <admin.version>3.2.3</admin.version>
+        <sa-token.version>1.40.0</sa-token.version>
+        <elasticsearch.version>7.14.0</elasticsearch.version>
+        <admin.version>3.3.6</admin.version>
     </properties>
 
     <dependencyManagement>
@@ -77,7 +77,7 @@
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-high-level-client</artifactId>
-                <version>7.14.0</version>
+                <version>${elasticsearch.version}</version>
             </dependency>
 
             <dependency>
