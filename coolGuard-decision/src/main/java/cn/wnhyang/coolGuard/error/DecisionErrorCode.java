@@ -116,4 +116,18 @@ public interface DecisionErrorCode {
 
     ErrorCode RULE_VERSION_NOT_EXIST = new ErrorCode(1011001001, "规则版本不存在");
 
+    ErrorCode LIST_SET_CODE_EXIST = new ErrorCode(1012001001, "名单集编号已存在");
+
+    ErrorCode LIST_SET_NOE_EXIST = new ErrorCode(1012001002, "名单集不存在");
+
+    ErrorCode LIST_SET_HAS_DATA = new ErrorCode(1012001003, "名单集有数据");
+
+    ErrorCode SMS_TEMPLATE_CODE_EXIST = new ErrorCode(1013001001, "消息模版编号已存在");
+
+    ErrorCode SMS_TEMPLATE_NOT_EXIST = new ErrorCode(1013001002, "消息模版不存在");
+
+    ErrorCode TAG_CODE_EXIST = new ErrorCode(1014001001, "标签编号已存在");
+
+    ErrorCode TAG_NOT_EXIST = new ErrorCode(1014001002, "标签不存在");
+
 }

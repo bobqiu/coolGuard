@@ -222,10 +222,11 @@ public class FieldServiceImpl implements FieldService {
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.SET_FIELD, nodeType = NodeTypeEnum.COMMON, nodeName = "设置字段组件")
     public void setField(NodeComponent bindCmp) {
         // TODO 完善
-        log.info("设置字段");
+        log.info("setField");
         List<Action.SetField> setFields = bindCmp.getCmpDataList(Action.SetField.class);
         FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         setFields.forEach(setField -> {
+            log.info("setField：{}", setField);
             String value = setField.getValue();
             if (ValueType.CONTEXT.equals(setField.getType())) {
                 value = fieldContext.getData2String(value);

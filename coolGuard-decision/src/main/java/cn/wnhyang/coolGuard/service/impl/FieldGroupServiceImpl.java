@@ -41,7 +41,7 @@ public class FieldGroupServiceImpl implements FieldGroupService {
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = RedisKey.FIELD_GROUP, allEntries = true)
     public Long createFieldGroup(FieldGroupCreateVO createVO) {
-        if (fieldGroupMapper.selectByCode(createVO.getName()) != null) {
+        if (fieldGroupMapper.selectByCode(createVO.getCode()) != null) {
             throw exception(FIELD_GROUP_CODE_EXIST);
         }
         FieldGroup fieldGroup = FieldGroupConvert.INSTANCE.convert(createVO);

@@ -1,10 +1,13 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.SmsTemplate;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.create.SmsTemplateCreateVO;
 import cn.wnhyang.coolGuard.vo.page.SmsTemplatePageVO;
 import cn.wnhyang.coolGuard.vo.update.SmsTemplateUpdateVO;
+
+import java.util.List;
 
 /**
  * 消息模版表 服务类
@@ -52,4 +55,10 @@ public interface SmsTemplateService {
      */
     PageResult<SmsTemplate> page(SmsTemplatePageVO pageVO);
 
+    /**
+     * 获取 lvList
+     *
+     * @return lvList
+     */
+    List<LabelValue> getLabelValueList();
 }

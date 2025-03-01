@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.wnhyang.coolGuard.convert.ListSetConvert;
 import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.ListSet;
+import cn.wnhyang.coolGuard.mapper.ListDataMapper;
 import cn.wnhyang.coolGuard.mapper.ListSetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ListSetService;
@@ -17,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.*;
+import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
+
 /**
  * 名单集表 服务实现类
  *
@@ -30,9 +34,14 @@ public class ListSetServiceImpl implements ListSetService {
 
     private final ListSetMapper listSetMapper;
 
+    private final ListDataMapper listDataMapper;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long create(ListSetCreateVO createVO) {
+        if (listSetMapper.selectByCode(createVO.getCode()) != null) {
+            throw exception(LIST_SET_CODE_EXIST);
+        }
         ListSet listSet = ListSetConvert.INSTANCE.convert(createVO);
         listSetMapper.insert(listSet);
         return listSet.getId();
@@ -41,13 +50,26 @@ public class ListSetServiceImpl implements ListSetService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(ListSetUpdateVO updateVO) {
-        ListSet listSet = ListSetConvert.INSTANCE.convert(updateVO);
-        listSetMapper.updateById(listSet);
+        ListSet listSet = listSetMapper.selectById(updateVO.getId());
+        if (listSet == null) {
+            throw exception(LIST_SET_NOE_EXIST);
+        }
+        ListSet convert = ListSetConvert.INSTANCE.convert(updateVO);
+        listSetMapper.updateById(convert);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
+        ListSet listSet = listSetMapper.selectById(id);
+        if (listSet == null) {
+            throw exception(LIST_SET_NOE_EXIST);
+        }
+        Long count = listDataMapper.selectCountBySetCode(listSet.getCode());
+        if (count > 0) {
+            throw exception(LIST_SET_HAS_DATA);
+        }
+        // TODO 引用
         listSetMapper.deleteById(id);
     }
 

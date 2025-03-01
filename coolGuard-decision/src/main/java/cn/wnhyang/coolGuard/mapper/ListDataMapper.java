@@ -27,4 +27,8 @@ public interface ListDataMapper extends BaseMapperX<ListData> {
         return selectObjs(new LambdaQueryWrapperX<ListData>()
                 .eq(ListData::getListSetCode, setCode).select(ListData::getValue));
     }
+
+    default Long selectCountBySetCode(String code) {
+        return selectCount(ListData::getListSetCode, code);
+    }
 }

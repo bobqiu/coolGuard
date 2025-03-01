@@ -15,18 +15,13 @@ import java.util.List;
 @AllArgsConstructor
 public class Action {
 
-    private List<AddTag> addTag;
+    private List<String> tagCodes;
 
     private List<AddList> addList;
 
     private SendSms sendSms;
 
     private List<SetField> setField;
-
-    @Data
-    public static class AddTag {
-        private String code;
-    }
 
     @Data
     public static class AddList {

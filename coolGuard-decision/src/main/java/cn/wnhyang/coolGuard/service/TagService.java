@@ -1,10 +1,13 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.Tag;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.create.TagCreateVO;
 import cn.wnhyang.coolGuard.vo.page.TagPageVO;
 import cn.wnhyang.coolGuard.vo.update.TagUpdateVO;
+
+import java.util.List;
 
 /**
  * 标签表 服务类
@@ -52,4 +55,10 @@ public interface TagService {
      */
     PageResult<Tag> page(TagPageVO pageVO);
 
+    /**
+     * 获取 lvList
+     *
+     * @return lvList
+     */
+    List<LabelValue> getLabelValueList();
 }

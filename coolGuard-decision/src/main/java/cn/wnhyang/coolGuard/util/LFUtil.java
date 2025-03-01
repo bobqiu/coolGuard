@@ -164,7 +164,7 @@ public class LFUtil {
         if (length > 5) {
             stringBuilder.deleteCharAt(length - 1);
         }
-        return stringBuilder.append(");").toString();
+        return stringBuilder.append(")").toString();
     }
 
     public static String buildCondEl(Cond cond) {

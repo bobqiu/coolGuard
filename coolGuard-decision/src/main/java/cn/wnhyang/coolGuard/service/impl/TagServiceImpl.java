@@ -3,10 +3,12 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.wnhyang.coolGuard.context.EventContext;
 import cn.wnhyang.coolGuard.convert.TagConvert;
 import cn.wnhyang.coolGuard.entity.Action;
+import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.Tag;
 import cn.wnhyang.coolGuard.mapper.TagMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.TagService;
+import cn.wnhyang.coolGuard.util.CollectionUtils;
 import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.create.TagCreateVO;
 import cn.wnhyang.coolGuard.vo.page.TagPageVO;
@@ -22,6 +24,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.TAG_CODE_EXIST;
+import static cn.wnhyang.coolGuard.error.DecisionErrorCode.TAG_NOT_EXIST;
+import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
 
 /**
  * 标签表 服务实现类
@@ -40,6 +46,9 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long create(TagCreateVO createVO) {
+        if (tagMapper.selectByCode(createVO.getCode()) != null) {
+            throw exception(TAG_CODE_EXIST);
+        }
         Tag tag = TagConvert.INSTANCE.convert(createVO);
         tagMapper.insert(tag);
         return tag.getId();
@@ -48,13 +57,22 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(TagUpdateVO updateVO) {
-        Tag tag = TagConvert.INSTANCE.convert(updateVO);
-        tagMapper.updateById(tag);
+        Tag tag = tagMapper.selectById(updateVO.getId());
+        if (tag == null) {
+            throw exception(TAG_NOT_EXIST);
+        }
+        Tag convert = TagConvert.INSTANCE.convert(updateVO);
+        tagMapper.updateById(convert);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
+        Tag tag = tagMapper.selectById(id);
+        if (tag == null) {
+            throw exception(TAG_NOT_EXIST);
+        }
+        // TODO 引用
         tagMapper.deleteById(id);
     }
 
@@ -68,14 +86,19 @@ public class TagServiceImpl implements TagService {
         return tagMapper.selectPage(pageVO);
     }
 
+    @Override
+    public List<LabelValue> getLabelValueList() {
+        return CollectionUtils.convertList(tagMapper.selectList(), Tag::getLabelValue);
+    }
+
     @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ADD_TAG, nodeType = NodeTypeEnum.COMMON, nodeName = "加入标签组件")
     public void addTag(NodeComponent bindCmp) {
         // TODO 完善
-        log.info("addTag");
-        List<Action.AddTag> addTags = bindCmp.getCmpDataList(Action.AddTag.class);
+        Action action = bindCmp.getCmpData(Action.class);
         EventContext eventContext = bindCmp.getContextBean(EventContext.class);
-        for (Action.AddTag addTag : addTags) {
-            eventContext.addTag(tagMapper.selectByCode(addTag.getCode()));
+        log.info("addTag:{}", action.getTagCodes());
+        for (String tagCode : action.getTagCodes()) {
+            eventContext.addTag(tagMapper.selectByCode(tagCode));
         }
     }
 

@@ -133,6 +133,7 @@ public class ListDataServiceImpl implements ListDataService {
         List<Action.AddList> addLists = bindCmp.getCmpDataList(Action.AddList.class);
         FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         for (Action.AddList addList : addLists) {
+            log.info("addListData:{}", addList);
             ListData listData = new ListData();
             listData.setListSetCode(addList.getListSetCode());
             listData.setValue(fieldContext.getData2String(addList.getFieldCode()));

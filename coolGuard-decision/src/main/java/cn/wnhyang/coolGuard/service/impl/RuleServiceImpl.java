@@ -64,7 +64,7 @@ public class RuleServiceImpl implements RuleService {
             return LFUtil.RULE_TRUE;
         }
         return LFUtil.buildWhen(LFUtil.RULE_TRUE,
-                LFUtil.buildElWithData(LFUtil.ADD_TAG, action.getAddTag()),
+                LFUtil.buildElWithData(LFUtil.ADD_TAG, action.getTagCodes()),
                 LFUtil.buildElWithData(LFUtil.ADD_LIST_DATA, action.getAddList()),
                 LFUtil.buildElWithData(LFUtil.SEND_SMS, action.getSendSms()),
                 LFUtil.buildElWithData(LFUtil.SET_FIELD, action.getSetField()));
