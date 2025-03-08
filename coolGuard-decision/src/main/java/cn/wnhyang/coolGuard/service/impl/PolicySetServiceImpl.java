@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
+import cn.wnhyang.coolGuard.context.DecisionContextHolder;
 import cn.wnhyang.coolGuard.context.EventContext;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.PolicyContext;
@@ -26,10 +27,8 @@ import cn.wnhyang.coolGuard.vo.create.PolicySetCreateVO;
 import cn.wnhyang.coolGuard.vo.page.PolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.update.PolicySetUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
-import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.core.NodeComponent;
-import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
-import com.yomahub.liteflow.enums.NodeTypeEnum;
+import com.yomahub.liteflow.core.FlowExecutor;
+import com.yomahub.liteflow.flow.LiteflowResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -71,6 +70,8 @@ public class PolicySetServiceImpl implements PolicySetService {
     private final PolicySetVersionMapper policySetVersionMapper;
 
     private final DisposalMapper disposalMapper;
+
+    private final FlowExecutor flowExecutor;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -236,24 +237,32 @@ public class PolicySetServiceImpl implements PolicySetService {
         return CollectionUtils.convertList(policySetMapper.selectList(), PolicySet::getLabelValue);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_SET_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略集普通组件")
-    public void policySet(NodeComponent bindCmp) {
-        // TODO 策略集下策略默认并行，运行时判断有无配置Chain，有则运行，没有则for并行
-        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
+    @Override
+    public void policySet() {
+        FieldContext fieldContext = DecisionContextHolder.getFieldContext();
         String appName = fieldContext.getData(FieldCode.APP_NAME, String.class);
         String policySetCode = fieldContext.getData(FieldCode.POLICY_SET_CODE, String.class);
 
         PolicySetVersion policySetVersion = policySetVersionMapper.selectLatestByAppNameAndCode(appName, policySetCode);
         if (policySetVersion != null) {
             log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", policySetVersion.getAppName(), policySetVersion.getCode(), policySetVersion.getName());
-            PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
+            PolicyContext policyContext = new PolicyContext();
             PolicyContext.PolicySetCtx policySetCtx = PolicySetConvert.INSTANCE.convert2Ctx(policySetVersion);
             policyContext.init(DisposalConvert.INSTANCE.convert2Ctx(disposalMapper.selectList()), policySetCtx);
-            bindCmp.invoke2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySetVersion.getCode()), null);
+            log.info("开始执行策略集(code:{}, name:{})", policySetCode, policySetVersion.getName());
 
-            EventContext eventContext = bindCmp.getContextBean(EventContext.class);
+            DecisionContextHolder.setPolicyContext(policyContext);
+            LiteflowResponse liteflowResponse = flowExecutor.execute2Resp(StrUtil.format(LFUtil.POLICY_SET_CHAIN, policySetVersion.getCode()), null);
+            if (!liteflowResponse.isSuccess()) {
+                throw exception(Integer.valueOf(liteflowResponse.getCode()), liteflowResponse.getMessage());
+            }
+            liteflowResponse.getExecuteStepQueue().forEach(step -> {
+                log.info("nodeId: {}, nodeName:{}, tag:{}, timeSpent:{}, stepData:{}",
+                        step.getNodeId(), step.getNodeName(), step.getTag(), step.getTimeSpent(), step.getStepData());
+            });
+            EventContext eventContext = DecisionContextHolder.getEventContext();
             eventContext.setPolicySetResult(policyContext.convert());
-            log.info("策略集(name:{})执行完毕", policySetVersion.getName());
+            log.info("执行策略集结束(code:{}, name:{})", policySetCode, policySetVersion.getName());
         } else {
             log.info("未匹配应用名:{}, 策略集编码:{}", appName, policySetCode);
         }

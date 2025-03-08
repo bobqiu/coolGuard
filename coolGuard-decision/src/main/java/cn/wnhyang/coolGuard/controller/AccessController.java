@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.convert.AccessConvert;
 import cn.wnhyang.coolGuard.pojo.CommonResult;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.AccessService;
@@ -119,7 +118,7 @@ public class AccessController {
      */
     @GetMapping("/code")
     public CommonResult<AccessVO> getAccessByCode(@RequestParam("code") String code) {
-        return success(AccessConvert.INSTANCE.convert(accessService.getAccessByCode(code)));
+        return success(accessService.getAccessByCode(code));
     }
 
     /**
@@ -131,17 +130,6 @@ public class AccessController {
     @GetMapping("/page")
     public CommonResult<PageResult<AccessVO>> pageAccess(@Valid AccessPageVO pageVO) {
         return success(accessService.pageAccess(pageVO));
-    }
-
-    /**
-     * 复制接入
-     *
-     * @param id 接入id
-     * @return 结果
-     */
-    @PostMapping("/copy")
-    public CommonResult<Long> copyAccess(@RequestParam("id") Long id) {
-        return success(accessService.copyAccess(id));
     }
 
 }

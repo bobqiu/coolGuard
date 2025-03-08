@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.PolicyMode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
+import cn.wnhyang.coolGuard.context.DecisionContextHolder;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.PolicyConvert;
 import cn.wnhyang.coolGuard.convert.PolicyVersionConvert;
@@ -27,14 +28,16 @@ import com.yomahub.liteflow.annotation.LiteflowMethod;
 import com.yomahub.liteflow.core.NodeComponent;
 import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
 import com.yomahub.liteflow.enums.NodeTypeEnum;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static cn.wnhyang.coolGuard.error.DecisionErrorCode.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
@@ -48,7 +51,6 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
 @Slf4j
 @Service
 @LiteflowComponent
-@RequiredArgsConstructor
 public class PolicyServiceImpl implements PolicyService {
 
     private final PolicyMapper policyMapper;
@@ -62,6 +64,24 @@ public class PolicyServiceImpl implements PolicyService {
     private final RuleVersionMapper ruleVersionMapper;
 
     private final RuleService ruleService;
+
+    private final AsyncTaskExecutor asyncTaskExecutor;
+
+    public PolicyServiceImpl(PolicyMapper policyMapper,
+                             PolicyVersionMapper policyVersionMapper,
+                             ChainMapper chainMapper,
+                             RuleMapper ruleMapper,
+                             RuleVersionMapper ruleVersionMapper,
+                             RuleService ruleService,
+                             @Qualifier("policyAsync") AsyncTaskExecutor asyncTaskExecutor) {
+        this.policyMapper = policyMapper;
+        this.policyVersionMapper = policyVersionMapper;
+        this.chainMapper = chainMapper;
+        this.ruleMapper = ruleMapper;
+        this.ruleVersionMapper = ruleVersionMapper;
+        this.ruleService = ruleService;
+        this.asyncTaskExecutor = asyncTaskExecutor;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -110,7 +130,7 @@ public class PolicyServiceImpl implements PolicyService {
         }
         // 2、确认是否被策略集编排引用
         String psChain = StrUtil.format(LFUtil.POLICY_SET_CHAIN, policy.getPolicySetCode());
-        if (chainMapper.selectByChainNameAndEl(psChain, LFUtil.getNodeWithTag(LFUtil.POLICY_COMMON_NODE, policy.getCode()))) {
+        if (chainMapper.selectByChainNameAndEl(psChain, LFUtil.getNodeWithTag(LFUtil.POLICY_NODE, policy.getCode()))) {
             throw exception(POLICY_REFERENCE_BY_POLICY_SET_DELETE);
         }
         // 3、确认是否还有运行的规则
@@ -193,37 +213,31 @@ public class PolicyServiceImpl implements PolicyService {
         return CollectionUtils.convertList(policyMapper.selectList(), Policy::getLabelValue);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略普通组件")
+    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.POLICY_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "策略组件")
     public void policy(NodeComponent bindCmp) {
-        String tag = bindCmp.getTag();
-        log.info("当前策略(code:{})", tag);
-        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        PolicyContext.PolicyCtx policy = PolicyConvert.INSTANCE.convert2Ctx(policyVersionMapper.selectLatestByCode(tag));
-        policyContext.addPolicy(policy.getCode(), policy);
-        log.info("当前策略(code:{}, name:{}, code:{})", policy.getCode(), policy.getName(), policy.getCode());
+        String policyCode = bindCmp.getTag();
+        PolicyContext policyContext = DecisionContextHolder.getPolicyContext();
+        PolicyContext.PolicyCtx policyCtx = PolicyConvert.INSTANCE.convert2Ctx(policyVersionMapper.selectLatestByCode(policyCode));
+        policyContext.addPolicy(policyCtx.getCode(), policyCtx);
+        List<PolicyContext.RuleCtx> ruleCtxList = RuleConvert.INSTANCE.convert2Ctx(ruleVersionMapper.selectLatestRunningByPolicyCode(policyCode));
 
-        if (PolicyMode.ORDER.equals(policy.getMode())) {
-            bindCmp.invoke2Resp(LFUtil.P_F, policy.getCode());
+        bindCmp.setStepData(StrUtil.format("当前策略(code:{}, name:{}, mode:{}, 规则数量:{})", policyCtx.getCode(), policyCtx.getName(), policyCtx.getMode(), ruleCtxList.size()));
+        log.info("当前策略(code:{}, name:{}, mode:{}, 规则数量:{})", policyCtx.getCode(), policyCtx.getName(), policyCtx.getMode(), ruleCtxList.size());
+
+        if (PolicyMode.ORDER.equals(policyCtx.getMode())) {
+            for (PolicyContext.RuleCtx ruleCtx : ruleCtxList) {
+                ruleService.executeRule(ruleCtx);
+                if (policyContext.isHitRisk(policyCtx.getCode())) {
+                    break;
+                }
+            }
         } else {
-            bindCmp.invoke2Resp(LFUtil.P_FP, policy.getCode());
+            List<CompletableFuture<Void>> completableFutureList = ruleCtxList.stream().map(ruleCtx -> CompletableFuture.runAsync(
+                            () -> ruleService.executeRule(ruleCtx),
+                            asyncTaskExecutor))
+                    .toList();
+            CompletableFuture.allOf(completableFutureList.toArray(new CompletableFuture[0])).join();
         }
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_FOR, nodeId = LFUtil.POLICY_FOR_NODE, nodeType = NodeTypeEnum.FOR, nodeName = "策略for组件")
-    public int policyFor(NodeComponent bindCmp) {
-        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        String policyCode = bindCmp.getSubChainReqData();
-        List<PolicyContext.RuleCtx> ruleList = RuleConvert.INSTANCE.convert2Ctx(ruleVersionMapper.selectLatestByPolicyCode(policyCode));
-        log.info("当前策略(code:{})下的规则数量为:{}", policyCode, ruleList.size());
-        policyContext.addRuleList(policyCode, ruleList);
-        return ruleList.size();
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.POLICY_BREAK_NODE, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "策略break组件")
-    public boolean policyBreak(NodeComponent bindCmp) {
-        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        String policyCode = bindCmp.getSubChainReqData();
-        return policyContext.isHitRisk(policyCode);
     }
 
 }

@@ -1,11 +1,11 @@
 package cn.wnhyang.coolGuard.config;
 
+import cn.wnhyang.coolGuard.thread.ThreadPoolFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -18,20 +18,51 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class AsyncTaskConfig {
 
+    /**
+     * 通用异步线程池
+     *
+     * @return 异步线程池
+     */
     @Bean("asyncExecutor")
     public AsyncTaskExecutor asyncTask() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        // 设置核心线程数
-        executor.setCorePoolSize(10);
-        // 设置最大线程数
-        executor.setMaxPoolSize(20);
-        // 设置队列容量
-        executor.setQueueCapacity(30);
-        // 设置线程名称前缀
-        executor.setThreadNamePrefix("asyncExecutor-");
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
-        executor.initialize();
-        return executor;
+        return ThreadPoolFactory.createExecutor(
+                16,
+                16,
+                512,
+                "asyncExecutor-",
+                new ThreadPoolExecutor.CallerRunsPolicy()
+        );
+    }
 
+    /**
+     * 指标线程池
+     *
+     * @return 异步线程池
+     */
+    @Bean("indicatorAsync")
+    public AsyncTaskExecutor indicatorAsync() {
+        return ThreadPoolFactory.createExecutor(
+                16,
+                16,
+                512,
+                "indicatorAsync-",
+                new ThreadPoolExecutor.CallerRunsPolicy()
+        );
+    }
+
+    /**
+     * 策略线程池
+     *
+     * @return 异步线程池
+     */
+    @Bean("policyAsync")
+    public AsyncTaskExecutor policyAsync() {
+        return ThreadPoolFactory.createExecutor(
+                16,
+                16,
+                512,
+                "policyAsync-",
+                new ThreadPoolExecutor.CallerRunsPolicy()
+        );
     }
 }

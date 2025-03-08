@@ -4,7 +4,6 @@ import cn.wnhyang.coolGuard.vo.base.AccessBaseVO;
 import lombok.Data;
 
 import java.io.Serial;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,13 +31,4 @@ public class AccessVO extends AccessBaseVO {
      */
     private Map<String, String> testParams;
 
-    /**
-     * 输入字段
-     */
-    private List<InputFieldVO> inputFieldList;
-
-    /**
-     * 输出字段
-     */
-    private List<OutputFieldVO> outputFieldList;
 }

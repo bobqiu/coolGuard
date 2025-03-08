@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.wnhyang.coolGuard.constant.ValueType;
+import cn.wnhyang.coolGuard.context.DecisionContextHolder;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.entity.Cond;
@@ -13,12 +14,7 @@ import cn.wnhyang.coolGuard.enums.LogicType;
 import cn.wnhyang.coolGuard.service.CondService;
 import cn.wnhyang.coolGuard.service.ListDataService;
 import cn.wnhyang.coolGuard.util.FunUtil;
-import cn.wnhyang.coolGuard.util.LFUtil;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
-import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.core.NodeComponent;
-import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
-import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,31 +36,24 @@ public class CondServiceImpl implements CondService {
 
     private final ListDataService listDataService;
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_BOOLEAN, nodeId = LFUtil.COND, nodeType = NodeTypeEnum.BOOLEAN, nodeName = "条件组件")
-    public boolean cond(NodeComponent bindCmp) {
-        Cond cond = bindCmp.getCmpData(Cond.class);
-        if (cond == null) {
-            return true;
-        }
-        log.info("条件组件:{}", cond);
-        // 获取上下文
-        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
-        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
+    @Override
+    public boolean cond(Cond cond) {
+        log.info("条件:{}", cond);
         // 如果有子节点，则递归计算子节点的结果
         if (CollUtil.isNotEmpty(cond.getChildren())) {
             List<Cond> children = cond.getChildren();
             return switch (cond.getRelation().toUpperCase()) {
-                case "AND" -> children.stream().allMatch((item) -> condLeaf(fieldContext, indicatorContext, item));
-                case "OR" -> children.stream().anyMatch((item) -> condLeaf(fieldContext, indicatorContext, item));
+                case "AND" -> children.stream().allMatch(this::condLeaf);
+                case "OR" -> children.stream().anyMatch(this::condLeaf);
                 default -> throw new IllegalArgumentException("Unsupported relation: " + cond.getRelation());
             };
         }
 
         // 处理叶子节点
-        return condLeaf(fieldContext, indicatorContext, cond);
+        return condLeaf(cond);
     }
 
-    public boolean condLeaf(FieldContext fieldContext, IndicatorContext indicatorContext, Cond cond) {
+    public boolean condLeaf(Cond cond) {
         if (cond == null) {
             return false;
         }
@@ -75,6 +64,8 @@ public class CondServiceImpl implements CondService {
         boolean b = false;
 
         try {
+            FieldContext fieldContext = DecisionContextHolder.getFieldContext();
+            IndicatorContext indicatorContext = DecisionContextHolder.getIndicatorContext();
             CondType condType = CondType.getByType(cond.getType());
             LogicType byType = LogicType.getByType(cond.getLogicType());
             switch (condType) {

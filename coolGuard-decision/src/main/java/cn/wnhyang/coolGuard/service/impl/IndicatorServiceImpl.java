@@ -1,17 +1,19 @@
 package cn.wnhyang.coolGuard.service.impl;
 
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.SceneType;
+import cn.wnhyang.coolGuard.context.DecisionContextHolder;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.convert.IndicatorVersionConvert;
 import cn.wnhyang.coolGuard.dto.IndicatorDTO;
-import cn.wnhyang.coolGuard.entity.*;
+import cn.wnhyang.coolGuard.entity.Indicator;
+import cn.wnhyang.coolGuard.entity.IndicatorVersion;
+import cn.wnhyang.coolGuard.entity.LabelValue;
+import cn.wnhyang.coolGuard.entity.PolicySet;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
 import cn.wnhyang.coolGuard.enums.WinSize;
 import cn.wnhyang.coolGuard.indicator.AbstractIndicator;
@@ -20,9 +22,9 @@ import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
 import cn.wnhyang.coolGuard.mapper.IndicatorVersionMapper;
 import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.service.CondService;
 import cn.wnhyang.coolGuard.service.IndicatorService;
 import cn.wnhyang.coolGuard.util.CollectionUtils;
-import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.IndicatorVO;
 import cn.wnhyang.coolGuard.vo.VersionSubmitResultVO;
 import cn.wnhyang.coolGuard.vo.base.BatchVersionSubmit;
@@ -32,18 +34,17 @@ import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
-import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.core.NodeComponent;
-import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
-import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static cn.wnhyang.coolGuard.error.DecisionErrorCode.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
@@ -64,16 +65,25 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     private final PolicySetMapper policySetMapper;
 
-    private final ChainMapper chainMapper;
-
     private final IndicatorVersionMapper indicatorVersionMapper;
 
-    public IndicatorServiceImpl(List<AbstractIndicator> indicatorList, IndicatorMapper indicatorMapper, PolicySetMapper policySetMapper, ChainMapper chainMapper, IndicatorVersionMapper indicatorVersionMapper) {
+    private final CondService condService;
+
+    private final AsyncTaskExecutor asyncTaskExecutor;
+
+    public IndicatorServiceImpl(List<AbstractIndicator> indicatorList,
+                                IndicatorMapper indicatorMapper,
+                                PolicySetMapper policySetMapper,
+                                ChainMapper chainMapper,
+                                IndicatorVersionMapper indicatorVersionMapper,
+                                CondService condService,
+                                @Qualifier("indicatorAsync") AsyncTaskExecutor asyncTaskExecutor) {
         addIndicator(indicatorList);
         this.indicatorMapper = indicatorMapper;
         this.policySetMapper = policySetMapper;
-        this.chainMapper = chainMapper;
         this.indicatorVersionMapper = indicatorVersionMapper;
+        this.condService = condService;
+        this.asyncTaskExecutor = asyncTaskExecutor;
     }
 
     private void addIndicator(List<AbstractIndicator> indicatorList) {
@@ -189,20 +199,6 @@ public class IndicatorServiceImpl implements IndicatorService {
         convert.setVersionDesc(submitVO.getVersionDesc());
         convert.setLatest(Boolean.TRUE);
         indicatorVersionMapper.insert(convert);
-        // 4、更新chain
-        String iChain = StrUtil.format(LFUtil.INDICATOR_CHAIN, indicator.getCode());
-        String condEl = LFUtil.buildCondEl(convert.getCond());
-        if (chainMapper.selectByChainName(iChain)) {
-            Chain chain = chainMapper.getByChainName(iChain);
-            chain.setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                    LFUtil.INDICATOR_TRUE_COMMON_NODE,
-                    LFUtil.INDICATOR_FALSE_COMMON_NODE));
-            chainMapper.updateById(chain);
-        } else {
-            chainMapper.insert(new Chain().setChainName(iChain).setElData(StrUtil.format(LFUtil.IF_EL, condEl,
-                    LFUtil.INDICATOR_TRUE_COMMON_NODE,
-                    LFUtil.INDICATOR_FALSE_COMMON_NODE)));
-        }
         result.setSuccess(Boolean.TRUE);
         return result;
     }
@@ -227,45 +223,30 @@ public class IndicatorServiceImpl implements IndicatorService {
         return CollectionUtils.convertList(indicatorMapper.selectList(), Indicator::getLabelValue);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS_FOR, nodeId = LFUtil.INDICATOR_FOR_NODE, nodeType = NodeTypeEnum.FOR, nodeName = "指标for组件")
-    public int indicatorFor(NodeComponent bindCmp) {
-        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
-        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
+    @Override
+    public void indicatorCompute() {
+        FieldContext fieldContext = DecisionContextHolder.getFieldContext();
         String appName = fieldContext.getData(FieldCode.APP_NAME, String.class);
         String policySetCode = fieldContext.getData(FieldCode.POLICY_SET_CODE, String.class);
-        List<IndicatorVersion> indicatorVersionList = indicatorVersionMapper.selectLatestListByScenes(appName, policySetCode);
-        indicatorContext.setIndicatorList(ListUtil.toCopyOnWriteArrayList(IndicatorVersionConvert.INSTANCE.convert2Ctx(indicatorVersionList)));
-        return indicatorVersionList.size();
+        List<IndicatorContext.IndicatorCtx> indicatorCtxList = IndicatorVersionConvert.INSTANCE.convert2Ctx(indicatorVersionMapper.selectLatestListByScenes(appName, policySetCode));
+        log.info("appName({}),policySetCode({})指标计算{}条", appName, policySetCode, indicatorCtxList.size());
+
+        DecisionContextHolder.setIndicatorContext(new IndicatorContext());
+        List<CompletableFuture<Void>> completableFutureList = indicatorCtxList.stream()
+                .map(indicatorCtx ->
+                        CompletableFuture.runAsync(() -> indicatorCompute(indicatorCtx),
+                                asyncTaskExecutor))
+                .toList();
+        CompletableFuture.allOf(completableFutureList.toArray(new CompletableFuture[0])).join();
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标普通组件")
-    public void indicator(NodeComponent bindCmp) {
-        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
-        int index = bindCmp.getLoopIndex();
-        bindCmp.invoke2Resp(StrUtil.format(LFUtil.INDICATOR_CHAIN, indicatorContext.getIndicator(index).getCode()), index);
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_TRUE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标true组件")
-    public void indicatorTrue(NodeComponent bindCmp) {
-        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
-        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
-
-        int index = bindCmp.getSubChainReqData();
-        IndicatorContext.IndicatorCtx indicatorCtx = indicatorContext.getIndicator(index);
-        AbstractIndicator abstractIndicator = INDICATOR_MAP.get(indicatorCtx.getType());
-        indicatorContext.setIndicatorValue(index, abstractIndicator.compute(true, indicatorCtx, fieldContext));
-        log.info("true:指标(code:{}, name:{}, value:{})", indicatorCtx.getCode(), indicatorCtx.getName(), indicatorCtx.getValue());
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.INDICATOR_FALSE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "指标false组件")
-    public void indicatorFalse(NodeComponent bindCmp) {
-        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
-        IndicatorContext indicatorContext = bindCmp.getContextBean(IndicatorContext.class);
-
-        int index = bindCmp.getSubChainReqData();
-        IndicatorContext.IndicatorCtx indicatorCtx = indicatorContext.getIndicator(index);
-        indicatorContext.setIndicatorValue(index, INDICATOR_MAP.get(indicatorCtx.getType()).compute(false, indicatorCtx, fieldContext));
-        log.info("false:指标(code:{}, name:{}, value:{})", indicatorCtx.getCode(), indicatorCtx.getName(), indicatorCtx.getValue());
+    @Override
+    public void indicatorCompute(IndicatorContext.IndicatorCtx indicatorCtx) {
+        boolean compute = INDICATOR_MAP.get(indicatorCtx.getType()).compute(condService.cond(indicatorCtx.getCond()), indicatorCtx);
+        log.info("指标(code:{}, name:{}, value:{})", indicatorCtx.getCode(), indicatorCtx.getName(), indicatorCtx.getValue());
+        if (compute) {
+            DecisionContextHolder.getIndicatorContext().setIndicator(indicatorCtx);
+        }
 
     }
 

@@ -92,4 +92,9 @@ public interface PolicySetService {
      * @return list
      */
     List<LabelValue> getLabelValueList();
+
+    /**
+     * 策略集
+     */
+    void policySet();
 }

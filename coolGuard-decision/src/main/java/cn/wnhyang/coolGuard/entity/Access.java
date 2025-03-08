@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,6 +48,18 @@ public class Access extends BaseDO {
      */
     @TableField("code")
     private String code;
+
+    /**
+     * 输入配置
+     */
+    @TableField(value = "input_field_list", typeHandler = JacksonTypeHandler.class)
+    private List<ParamConfig> inputFieldList;
+
+    /**
+     * 输出配置
+     */
+    @TableField(value = "output_field_list", typeHandler = JacksonTypeHandler.class)
+    private List<ParamConfig> outputFieldList;
 
     /**
      * 测试参数

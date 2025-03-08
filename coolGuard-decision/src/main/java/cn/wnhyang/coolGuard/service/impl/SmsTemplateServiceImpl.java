@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.wnhyang.coolGuard.context.DecisionContextHolder;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.convert.SmsTemplateConvert;
 import cn.wnhyang.coolGuard.entity.Action;
@@ -11,15 +12,10 @@ import cn.wnhyang.coolGuard.mapper.SmsTemplateMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.SmsTemplateService;
 import cn.wnhyang.coolGuard.util.CollectionUtils;
-import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.create.SmsTemplateCreateVO;
 import cn.wnhyang.coolGuard.vo.page.SmsTemplatePageVO;
 import cn.wnhyang.coolGuard.vo.update.SmsTemplateUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
-import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.core.NodeComponent;
-import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
-import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -101,12 +97,14 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         return CollectionUtils.convertList(smsTemplateMapper.selectList(), SmsTemplate::getLabelValue);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.SEND_SMS, nodeType = NodeTypeEnum.COMMON, nodeName = "加入名单组件")
-    public void sendSms(NodeComponent bindCmp) {
+    @Override
+    public void sendSms(Action.SendSms sendSms) {
+        if (sendSms == null) {
+            return;
+        }
+        FieldContext fieldContext = DecisionContextHolder.getFieldContext();
         // TODO 完善
-        Action.SendSms sendSms = bindCmp.getCmpData(Action.SendSms.class);
         SmsTemplate smsTemplate = smsTemplateMapper.selectByCode(sendSms.getSmsTemplateCode());
-        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         String smsContent = StrUtil.format(smsTemplate.getContent(), fieldContext);
         log.info("smsContent: {}", smsContent);
     }

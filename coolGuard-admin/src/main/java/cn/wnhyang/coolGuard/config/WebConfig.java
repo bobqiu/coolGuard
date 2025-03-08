@@ -1,10 +1,12 @@
 package cn.wnhyang.coolGuard.config;
 
+import cn.wnhyang.coolGuard.filter.TraceFilter;
 import cn.wnhyang.coolGuard.xss.XssFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -19,6 +21,17 @@ import java.util.Map;
 @Configuration
 @Slf4j
 public class WebConfig {
+
+    @Bean
+    public FilterRegistrationBean<TraceFilter> traceFilterRegistration() {
+        FilterRegistrationBean<TraceFilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new TraceFilter());
+        bean.addUrlPatterns("/*");
+        // 设置为最高优先级
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
+
 
     /**
      * 跨域配置

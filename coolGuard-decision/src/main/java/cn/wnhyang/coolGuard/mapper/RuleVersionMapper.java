@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.mapper;
 
+import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.entity.RuleVersion;
 import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
 import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
@@ -36,6 +37,13 @@ public interface RuleVersionMapper extends BaseMapperX<RuleVersion> {
         return selectList(new LambdaQueryWrapperX<RuleVersion>()
                 .eq(RuleVersion::getPolicyCode, policyCode)
                 .eq(RuleVersion::getLatest, Boolean.TRUE));
+    }
+
+    default List<RuleVersion> selectLatestRunningByPolicyCode(String policyCode) {
+        return selectList(new LambdaQueryWrapperX<RuleVersion>()
+                .eq(RuleVersion::getPolicyCode, policyCode)
+                .eq(RuleVersion::getLatest, Boolean.TRUE)
+                .ne(RuleVersion::getStatus, RuleStatus.OFF));
     }
 
     default List<RuleVersion> selectLatestList() {

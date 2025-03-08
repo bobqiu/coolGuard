@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
@@ -95,4 +96,16 @@ public interface IndicatorService {
      * @return lvList
      */
     List<LabelValue> getLabelValueList();
+
+    /**
+     * 计算指标
+     */
+    void indicatorCompute();
+
+    /**
+     * 计算指标
+     *
+     * @param indicatorCtx 指标
+     */
+    void indicatorCompute(IndicatorContext.IndicatorCtx indicatorCtx);
 }

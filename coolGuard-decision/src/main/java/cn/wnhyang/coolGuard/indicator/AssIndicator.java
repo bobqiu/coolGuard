@@ -25,13 +25,13 @@ public class AssIndicator extends AbstractIndicator {
     }
 
     @Override
-    public Object getResult0(IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set) {
+    public Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set) {
 
         return set.size();
     }
 
     @Override
-    public void addEvent(IndicatorContext.IndicatorCtx indicator, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
-        set.add(eventTime, eventDetail.get(indicator.getCalcField()).toString());
+    public void addEvent(IndicatorContext.IndicatorCtx indicatorCtx, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
+        set.add(eventTime, eventDetail.get(indicatorCtx.getCalcField()).toString());
     }
 }

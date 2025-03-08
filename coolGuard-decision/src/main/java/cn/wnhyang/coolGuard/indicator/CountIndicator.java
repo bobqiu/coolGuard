@@ -26,13 +26,13 @@ public class CountIndicator extends AbstractIndicator {
     }
 
     @Override
-    public Object getResult0(IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set) {
+    public Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set) {
 
         return set.size();
     }
 
     @Override
-    public void addEvent(IndicatorContext.IndicatorCtx indicator, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
+    public void addEvent(IndicatorContext.IndicatorCtx indicatorCtx, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set) {
         set.add(eventTime, eventDetail.get(FieldCode.SEQ_ID).toString());
     }
 

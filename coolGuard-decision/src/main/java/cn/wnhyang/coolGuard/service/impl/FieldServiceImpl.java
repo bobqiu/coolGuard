@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
@@ -10,36 +11,37 @@ import cn.wnhyang.coolGuard.analysis.pn.PhoneNoAnalysis;
 import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.ValueType;
+import cn.wnhyang.coolGuard.context.DecisionContextHolder;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.convert.FieldConvert;
 import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.entity.Field;
+import cn.wnhyang.coolGuard.entity.ParamConfig;
 import cn.wnhyang.coolGuard.enums.FieldType;
 import cn.wnhyang.coolGuard.exception.ServiceException;
 import cn.wnhyang.coolGuard.mapper.FieldMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.FieldService;
-import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.util.QLExpressUtil;
-import cn.wnhyang.coolGuard.vo.InputFieldVO;
 import cn.wnhyang.coolGuard.vo.create.FieldCreateVO;
 import cn.wnhyang.coolGuard.vo.create.TestDynamicFieldScript;
 import cn.wnhyang.coolGuard.vo.page.FieldPageVO;
 import cn.wnhyang.coolGuard.vo.update.FieldUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
-import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.core.NodeComponent;
-import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
-import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RMap;
+import org.redisson.api.RedissonClient;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static cn.wnhyang.coolGuard.error.DecisionErrorCode.*;
 import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
@@ -65,6 +67,8 @@ public class FieldServiceImpl implements FieldService {
     private final IpAnalysis ipAnalysis;
 
     private final GeoAnalysis geoAnalysis;
+
+    private final RedissonClient redissonClient;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -150,18 +154,61 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public List<Field> listField() {
-        return fieldMapper.selectList();
+        RMap<String, Field> fieldMap = loadFieldMapIfNecessary();
+        return new ArrayList<>(fieldMap.values());
     }
 
     @Override
-    public FieldContext fieldParse(List<InputFieldVO> inputFieldList, Map<String, String> params) {
+    public Map<String, Field> getFields() {
+        RMap<String, Field> fieldMap = loadFieldMapIfNecessary();
+        return Collections.unmodifiableMap(new HashMap<>(fieldMap));
+    }
+
+    /**
+     * 统一的缓存加载方法
+     */
+    private RMap<String, Field> loadFieldMapIfNecessary() {
+        RMap<String, Field> fieldMap = redissonClient.getMap(RedisKey.FIELD + RedisKey.MAP);
+
+        if (fieldMap.isEmpty()) {
+            RLock lock = redissonClient.getLock(RedisKey.FIELD + RedisKey.MAP + RedisKey.LOCK);
+            try {
+                lock.lock();
+                if (fieldMap.isEmpty()) {
+                    List<Field> dbFields;
+                    try {
+                        dbFields = fieldMapper.selectList();
+                    } catch (Exception e) {
+                        log.error("Database query failed", e);
+                        return fieldMap;
+                    }
+
+                    Map<String, Field> fieldData = dbFields.stream()
+                            .collect(Collectors.toMap(Field::getCode, Function.identity()));
+
+                    if (!fieldData.isEmpty()) {
+                        fieldMap.putAll(fieldData);
+                        fieldMap.expire(Duration.ofHours(6));
+                    } else {
+                        fieldMap.expire(Duration.ofMinutes(5));
+                    }
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        return fieldMap;
+    }
+
+    @Override
+    public FieldContext fieldParse(List<ParamConfig> inputFieldList, Map<String, String> params) {
         FieldContext fieldContext = new FieldContext();
         normalFieldParse(inputFieldList, params, fieldContext);
         dynamicFieldParse(inputFieldList, fieldContext);
         return fieldContext;
     }
 
-    private void normalFieldParse(List<InputFieldVO> inputFieldList, Map<String, String> params, FieldContext fieldContext) {
+    private void normalFieldParse(List<ParamConfig> inputFieldList, Map<String, String> params, FieldContext fieldContext) {
         // 设置唯一id
         fieldContext.setDataByType(FieldCode.SEQ_ID, IdUtil.fastSimpleUUID(), FieldType.STRING);
 
@@ -181,7 +228,7 @@ public class FieldServiceImpl implements FieldService {
             try {
                 FieldType fieldType = FieldType.getByType(inputField.getType());
                 if (fieldType != null) {
-                    fieldContext.setDataByType(inputField.getCode(), value, fieldType);
+                    fieldContext.setDataByType(inputField.getFieldCode(), value, fieldType);
                 }
 
             } catch (Exception e) {
@@ -208,23 +255,25 @@ public class FieldServiceImpl implements FieldService {
 
     }
 
-    private void dynamicFieldParse(List<InputFieldVO> inputFieldList, FieldContext fieldContext) {
-        inputFieldList.stream().filter(InputFieldVO::getDynamic).forEach(inputField -> {
+    private void dynamicFieldParse(List<ParamConfig> inputFieldList, FieldContext fieldContext) {
+        inputFieldList.stream().filter(ParamConfig::getDynamic).forEach(inputField -> {
             try {
                 Object result = QLExpressUtil.execute(inputField.getScript(), fieldContext);
-                fieldContext.setDataByType(inputField.getCode(), String.valueOf(result), FieldType.getByType(inputField.getType()));
+                fieldContext.setDataByType(inputField.getFieldCode(), String.valueOf(result), FieldType.getByType(inputField.getType()));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.SET_FIELD, nodeType = NodeTypeEnum.COMMON, nodeName = "设置字段组件")
-    public void setField(NodeComponent bindCmp) {
+    @Override
+    public void setField(List<Action.SetField> setFields) {
+        if (CollUtil.isEmpty(setFields)) {
+            return;
+        }
+        FieldContext fieldContext = DecisionContextHolder.getFieldContext();
         // TODO 完善
         log.info("setField");
-        List<Action.SetField> setFields = bindCmp.getCmpDataList(Action.SetField.class);
-        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         setFields.forEach(setField -> {
             log.info("setField：{}", setField);
             String value = setField.getValue();

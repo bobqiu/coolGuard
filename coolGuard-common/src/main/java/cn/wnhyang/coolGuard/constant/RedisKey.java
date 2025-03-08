@@ -6,6 +6,10 @@ package cn.wnhyang.coolGuard.constant;
  **/
 public interface RedisKey {
 
+    String LIST = "list";
+
+    String MAP = "map";
+
     String LOCK = "lock";
 
     /**
@@ -17,11 +21,6 @@ public interface RedisKey {
      * 应用
      */
     String APPLICATION = "app";
-
-    /**
-     * 链路
-     */
-    String CHAIN = "chain";
 
     /**
      * 处置
@@ -44,19 +43,9 @@ public interface RedisKey {
     String INDICATOR = "indicator";
 
     /**
-     * 指标s
-     */
-    String INDICATORS = "indicators";
-
-    /**
      * 规则
      */
     String RULE = "rule";
-
-    /**
-     * 规则s
-     */
-    String RULES = "rules";
 
     String ACCESS = "access";
 

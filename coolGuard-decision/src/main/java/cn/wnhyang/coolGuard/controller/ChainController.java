@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
-import static cn.wnhyang.coolGuard.util.LFUtil.*;
 
 /**
  * chain
@@ -30,18 +29,6 @@ import static cn.wnhyang.coolGuard.util.LFUtil.*;
 public class ChainController {
 
     private static final List<Node> NODE_LIST = List.of(
-            new Node(INDICATOR_FOR_NODE, "入参组件"),
-            new Node(INDICATOR_COMMON_NODE, "入参组件"),
-            new Node(INDICATOR_TRUE_COMMON_NODE, "入参组件"),
-            new Node(INDICATOR_FALSE_COMMON_NODE, "入参组件"),
-            new Node(POLICY_SET_COMMON_NODE, "入参组件"),
-            new Node(POLICY_COMMON_NODE, "入参组件"),
-            new Node(POLICY_FOR_NODE, "入参组件"),
-            new Node(POLICY_BREAK_NODE, "入参组件"),
-            new Node(COND, "入参组件"),
-            new Node(RULE_COMMON_NODE, "入参组件"),
-            new Node(RULE_TRUE, "入参组件"),
-            new Node(RULE_FALSE, "入参组件")
     );
 
     private final ChainService chainService;

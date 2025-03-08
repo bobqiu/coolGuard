@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.RuleVO;
@@ -86,4 +87,11 @@ public interface RuleService {
      * @return labelValueList
      */
     List<LabelValue> getLabelValueList();
+
+    /**
+     * 规则执行
+     *
+     * @param ruleCtx ruleCtx
+     */
+    void executeRule(PolicyContext.RuleCtx ruleCtx);
 }

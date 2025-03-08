@@ -1,0 +1,24 @@
+package cn.wnhyang.coolGuard.thread;
+
+import com.yomahub.liteflow.thread.ExecutorBuilder;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+
+/**
+ * @author wnhyang
+ * @date 2025/3/3
+ **/
+public class LfMainExecutorBuilder implements ExecutorBuilder {
+
+    @Override
+    public ExecutorService buildExecutor() {
+        return ThreadPoolFactory.createExecutor(
+                16,
+                16,
+                512,
+                "lfMain-",
+                new ThreadPoolExecutor.CallerRunsPolicy()
+        ).getThreadPoolExecutor();
+    }
+}

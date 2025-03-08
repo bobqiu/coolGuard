@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.service;
 
-import cn.wnhyang.coolGuard.entity.Access;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.AccessVO;
 import cn.wnhyang.coolGuard.vo.create.AccessCreateVO;
@@ -88,12 +87,6 @@ public interface AccessService {
      * @param code 编码
      * @return po
      */
-    Access getAccessByCode(String code);
+    AccessVO getAccessByCode(String code);
 
-    /**
-     * 复制
-     *
-     * @param id id
-     */
-    Long copyAccess(Long id);
 }

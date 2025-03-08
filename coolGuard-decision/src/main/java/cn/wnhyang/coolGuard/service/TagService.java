@@ -61,4 +61,11 @@ public interface TagService {
      * @return lvList
      */
     List<LabelValue> getLabelValueList();
+
+    /**
+     * 添加标签
+     *
+     * @param tagCodes tagCodes
+     */
+    void addTag(List<String> tagCodes);
 }

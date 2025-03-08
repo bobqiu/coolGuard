@@ -2,6 +2,7 @@ package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.wnhyang.coolGuard.constant.RedisKey;
+import cn.wnhyang.coolGuard.context.DecisionContextHolder;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.convert.ListDataConvert;
 import cn.wnhyang.coolGuard.entity.Action;
@@ -11,15 +12,10 @@ import cn.wnhyang.coolGuard.mapper.ListDataMapper;
 import cn.wnhyang.coolGuard.mapper.ListSetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.ListDataService;
-import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.create.ListDataCreateVO;
 import cn.wnhyang.coolGuard.vo.page.ListDataPageVO;
 import cn.wnhyang.coolGuard.vo.update.ListDataUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
-import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.core.NodeComponent;
-import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
-import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RList;
@@ -126,12 +122,14 @@ public class ListDataServiceImpl implements ListDataService {
         return false;
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ADD_LIST_DATA, nodeType = NodeTypeEnum.COMMON, nodeName = "加入名单组件")
-    public void addListData(NodeComponent bindCmp) {
+    @Override
+    public void addListData(List<Action.AddList> addLists) {
+        if (CollUtil.isEmpty(addLists)) {
+            return;
+        }
+        FieldContext fieldContext = DecisionContextHolder.getFieldContext();
         // TODO 完善
         log.info("addListData");
-        List<Action.AddList> addLists = bindCmp.getCmpDataList(Action.AddList.class);
-        FieldContext fieldContext = bindCmp.getContextBean(FieldContext.class);
         for (Action.AddList addList : addLists) {
             log.info("addListData:{}", addList);
             ListData listData = new ListData();

@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.SmsTemplate;
 import cn.wnhyang.coolGuard.pojo.PageResult;
@@ -61,4 +62,11 @@ public interface SmsTemplateService {
      * @return lvList
      */
     List<LabelValue> getLabelValueList();
+
+    /**
+     * 发送短信
+     *
+     * @param sendSms 发送短信
+     */
+    void sendSms(Action.SendSms sendSms);
 }

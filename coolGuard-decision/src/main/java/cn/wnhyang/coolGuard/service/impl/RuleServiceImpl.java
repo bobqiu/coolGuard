@@ -1,23 +1,22 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.PolicyMode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
-import cn.wnhyang.coolGuard.constant.RuleStatus;
+import cn.wnhyang.coolGuard.context.DecisionContextHolder;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.PolicyContext;
 import cn.wnhyang.coolGuard.convert.RuleConvert;
 import cn.wnhyang.coolGuard.convert.RuleVersionConvert;
 import cn.wnhyang.coolGuard.dto.RuleDTO;
-import cn.wnhyang.coolGuard.entity.*;
-import cn.wnhyang.coolGuard.mapper.ChainMapper;
+import cn.wnhyang.coolGuard.entity.LabelValue;
+import cn.wnhyang.coolGuard.entity.Rule;
+import cn.wnhyang.coolGuard.entity.RuleVersion;
 import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.mapper.RuleVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.service.RuleService;
+import cn.wnhyang.coolGuard.service.*;
 import cn.wnhyang.coolGuard.util.CollectionUtils;
-import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.util.QLExpressUtil;
 import cn.wnhyang.coolGuard.vo.RuleVO;
 import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
@@ -25,10 +24,6 @@ import cn.wnhyang.coolGuard.vo.create.RuleCreateVO;
 import cn.wnhyang.coolGuard.vo.page.RulePageVO;
 import cn.wnhyang.coolGuard.vo.update.RuleUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
-import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.core.NodeComponent;
-import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
-import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -55,20 +50,17 @@ public class RuleServiceImpl implements RuleService {
 
     private final RuleMapper ruleMapper;
 
-    private final ChainMapper chainMapper;
-
     private final RuleVersionMapper ruleVersionMapper;
 
-    public static String buildRuleBingoEl(Action action) {
-        if (action == null) {
-            return LFUtil.RULE_TRUE;
-        }
-        return LFUtil.buildWhen(LFUtil.RULE_TRUE,
-                LFUtil.buildElWithData(LFUtil.ADD_TAG, action.getTagCodes()),
-                LFUtil.buildElWithData(LFUtil.ADD_LIST_DATA, action.getAddList()),
-                LFUtil.buildElWithData(LFUtil.SEND_SMS, action.getSendSms()),
-                LFUtil.buildElWithData(LFUtil.SET_FIELD, action.getSetField()));
-    }
+    private final CondService condService;
+
+    private final TagService tagService;
+
+    private final FieldService fieldService;
+
+    private final ListDataService listDataService;
+
+    private final SmsTemplateService smsTemplateService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -173,18 +165,6 @@ public class RuleServiceImpl implements RuleService {
         convert.setVersionDesc(submitVO.getVersionDesc());
         convert.setLatest(Boolean.TRUE);
         ruleVersionMapper.insert(convert);
-        // 4、更新chain
-        String condEl = LFUtil.buildCondEl(convert.getCond());
-        String rTrue = buildRuleBingoEl(convert.getRuleTrue());
-        String rChain = StrUtil.format(LFUtil.RULE_CHAIN, rule.getCode());
-        String elData = StrUtil.format(LFUtil.IF_EL, condEl, rTrue, LFUtil.RULE_FALSE);
-        if (chainMapper.selectByChainName(rChain)) {
-            Chain chain = chainMapper.getByChainName(rChain);
-            chain.setElData(elData);
-            chainMapper.updateById(chain);
-        } else {
-            chainMapper.insert(new Chain().setChainName(rChain).setElData(elData));
-        }
     }
 
     @Override
@@ -198,48 +178,38 @@ public class RuleServiceImpl implements RuleService {
         return CollectionUtils.convertList(ruleMapper.selectList(), Rule::getLabelValue);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.IS_ACCESS, nodeId = LFUtil.RULE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON)
-    public boolean ruleAccess(NodeComponent bindCmp) {
-        String policyCode = bindCmp.getSubChainReqData();
-        int index = bindCmp.getLoopIndex();
-        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        PolicyContext.RuleCtx rule = policyContext.getRule(policyCode, index);
-        return !RuleStatus.OFF.equals(rule.getStatus());
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_COMMON_NODE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则普通组件")
-    public void rulProcess(NodeComponent bindCmp) {
-        String policyCode = bindCmp.getSubChainReqData();
-        int index = bindCmp.getLoopIndex();
-        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        PolicyContext.RuleCtx rule = policyContext.getRule(policyCode, index);
-        bindCmp.invoke2Resp(StrUtil.format(LFUtil.RULE_CHAIN, rule.getCode()), rule);
-    }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_TRUE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则true组件")
-    public void ruleTrue(NodeComponent bindCmp) {
-        PolicyContext policyContext = bindCmp.getContextBean(PolicyContext.class);
-        PolicyContext.RuleCtx rule = bindCmp.getSubChainReqData();
-        log.info("命中规则(name:{}, code:{})", rule.getName(), rule.getCode());
-        if (RuleStatus.MOCK.equals(rule.getStatus())) {
-            policyContext.addHitMockRuleVO(rule.getPolicyCode(), rule);
-        } else {
-            // 权重
-            if (PolicyMode.WEIGHT.equals(policyContext.getPolicy(rule.getPolicyCode()).getMode())) {
+    @Override
+    public void executeRule(PolicyContext.RuleCtx ruleCtx) {
+        FieldContext fieldContext = DecisionContextHolder.getFieldContext();
+        PolicyContext policyContext = DecisionContextHolder.getPolicyContext();
+        if (condService.cond(ruleCtx.getCond())) {
+            if (PolicyMode.WEIGHT.equals(policyContext.getPolicy(ruleCtx.getPolicyCode()).getMode())) {
                 try {
-                    Double value = (Double) QLExpressUtil.execute(rule.getExpress(), bindCmp.getContextBean(FieldContext.class));
-                    rule.setExpressValue(value);
+                    Double value = (Double) QLExpressUtil.execute(ruleCtx.getExpress(), fieldContext);
+                    ruleCtx.setExpressValue(value);
                 } catch (Exception e) {
                     log.error("规则表达式执行异常", e);
                 }
             }
-            policyContext.addHitRuleVO(rule.getPolicyCode(), rule);
+            ruleCtx.setHit(true);
+            policyContext.addHitRule(ruleCtx.getPolicyCode(), ruleCtx);
+            // TODO 规则true操作
+            if (ruleCtx.getRuleTrue() == null) {
+                return;
+            }
+            tagService.addTag(ruleCtx.getRuleTrue().getTagCodes());
+            listDataService.addListData(ruleCtx.getRuleTrue().getAddList());
+            fieldService.setField(ruleCtx.getRuleTrue().getSetField());
+            smsTemplateService.sendSms(ruleCtx.getRuleTrue().getSendSms());
+        } else {
+            // TODO 规则false操作
+            if (ruleCtx.getRuleFalse() == null) {
+                return;
+            }
+            tagService.addTag(ruleCtx.getRuleFalse().getTagCodes());
+            listDataService.addListData(ruleCtx.getRuleFalse().getAddList());
+            fieldService.setField(ruleCtx.getRuleFalse().getSetField());
+            smsTemplateService.sendSms(ruleCtx.getRuleFalse().getSendSms());
         }
     }
-
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.RULE_FALSE, nodeType = NodeTypeEnum.COMMON, nodeName = "规则false组件")
-    public void ruleFalse(NodeComponent bindCmp) {
-        log.info("规则未命中");
-    }
-
 }

@@ -6,6 +6,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.constant.WinType;
+import cn.wnhyang.coolGuard.context.DecisionContextHolder;
+import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
 import lombok.extern.slf4j.Slf4j;
@@ -50,11 +52,11 @@ public abstract class AbstractIndicator {
      *
      * @return true/false
      */
-    private boolean filter(IndicatorContext.IndicatorCtx indicator, Map<String, Object> eventDetail) {
+    private boolean filter(IndicatorContext.IndicatorCtx indicatorCtx, Map<String, Object> eventDetail) {
         // 1、主属性不能为空，并且主属性取值也不能为空
-        if (StrUtil.isNotBlank(indicator.getMasterField()) && ObjectUtil.isNotNull(eventDetail.get(indicator.getMasterField()))) {
-            if (CollUtil.isNotEmpty(indicator.getSlaveFields())) {
-                for (String s : indicator.getSlaveFields()) {
+        if (StrUtil.isNotBlank(indicatorCtx.getMasterField()) && ObjectUtil.isNotNull(eventDetail.get(indicatorCtx.getMasterField()))) {
+            if (CollUtil.isNotEmpty(indicatorCtx.getSlaveFields())) {
+                for (String s : indicatorCtx.getSlaveFields()) {
                     if (eventDetail.get(s) == null) {
                         return false;
                     }
@@ -69,10 +71,10 @@ public abstract class AbstractIndicator {
      * 设置redis key
      * 如：masterField分别为a、b，其在事件中的取值可能一样，那么指标key也就一样，可以优化为a：xxx，b：xxx
      */
-    private String getRedisKey(IndicatorContext.IndicatorCtx indicator, Map<String, Object> eventDetail) {
-        StringBuilder redisKey = new StringBuilder(RedisKey.ZB + indicator.getCode() + ":" + eventDetail.get(indicator.getMasterField()));
-        if (CollUtil.isNotEmpty(indicator.getSlaveFields())) {
-            for (String slaveField : indicator.getSlaveFields()) {
+    private String getRedisKey(IndicatorContext.IndicatorCtx indicatorCtx, Map<String, Object> eventDetail) {
+        StringBuilder redisKey = new StringBuilder(RedisKey.ZB + indicatorCtx.getCode() + ":" + eventDetail.get(indicatorCtx.getMasterField()));
+        if (CollUtil.isNotEmpty(indicatorCtx.getSlaveFields())) {
+            for (String slaveField : indicatorCtx.getSlaveFields()) {
                 redisKey.append("-").append(eventDetail.get(slaveField));
             }
         }
@@ -85,49 +87,51 @@ public abstract class AbstractIndicator {
      * @param set redis set
      * @return 计算指标结果
      */
-    public abstract Object getResult0(IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set);
+    public abstract Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set);
 
     /**
      * 获取计算指标结果
      *
      * @return 计算指标结果
      */
-    public Object getResult(long eventTime, IndicatorContext.IndicatorCtx indicator, RScoredSortedSet<String> set) {
+    public Object getResult(long eventTime, IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set) {
         // 1、清理过期数据
-        cleanExpiredDate(indicator, eventTime, set);
+        cleanExpiredDate(indicatorCtx, eventTime, set);
         // 2、设置过期时间
-        if (WinType.LAST.equals(indicator.getWinType())) {
-            set.expire(Duration.ofSeconds(indicator.getTimeSlice() * indicator.getWinCount()));
-        } else if (WinType.CUR.equals(indicator.getWinType())) {
-            set.expire(Duration.ofSeconds(indicator.getTimeSlice()));
+        if (WinType.LAST.equals(indicatorCtx.getWinType())) {
+            set.expire(Duration.ofSeconds(indicatorCtx.getTimeSlice() * indicatorCtx.getWinCount()));
+        } else if (WinType.CUR.equals(indicatorCtx.getWinType())) {
+            set.expire(Duration.ofSeconds(indicatorCtx.getTimeSlice()));
         }
-        return getResult0(indicator, set);
+        return getResult0(indicatorCtx, set);
     }
 
     /**
      * 计算指标
      *
-     * @param indicator   指标
-     * @param eventDetail 事件详情
+     * @param addEvent 是否添加事件
      */
-    public Object compute(boolean addEvent, IndicatorContext.IndicatorCtx indicator, Map<String, Object> eventDetail) {
-        if (indicator == null) {
-            return null;
+    public boolean compute(boolean addEvent, IndicatorContext.IndicatorCtx indicatorCtx) {
+        if (indicatorCtx == null) {
+            return false;
         }
-        if (!filter(indicator, eventDetail)) {
-            return null;
+        FieldContext fieldContext = DecisionContextHolder.getFieldContext();
+        if (!filter(indicatorCtx, fieldContext)) {
+            return false;
         }
-        String redisKey = getRedisKey(indicator, eventDetail);
+        String redisKey = getRedisKey(indicatorCtx, fieldContext);
         log.info("redisKey:{}", redisKey);
         RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(redisKey);
-        long eventTime = Long.parseLong(eventDetail.get(FieldCode.EVENT_TIME_STAMP).toString());
+        long eventTime = Long.parseLong(fieldContext.getData2String(FieldCode.EVENT_TIME_STAMP));
         // 1、状态检查和过滤
         if (addEvent) {
             // 2、添加事件
-            addEvent(indicator, eventTime, eventDetail, set);
+            addEvent(indicatorCtx, eventTime, fieldContext, set);
 
         }
-        return getResult(eventTime, indicator, set);
+        Object result = getResult(eventTime, indicatorCtx, set);
+        indicatorCtx.setValue(result);
+        return true;
     }
 
     /**
@@ -136,7 +140,7 @@ public abstract class AbstractIndicator {
      * @param eventTime   当前时间戳
      * @param eventDetail 事件详情
      */
-    public abstract void addEvent(IndicatorContext.IndicatorCtx indicator, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set);
+    public abstract void addEvent(IndicatorContext.IndicatorCtx indicatorCtx, long eventTime, Map<String, Object> eventDetail, RScoredSortedSet<String> set);
 
     /**
      * 清理过期数据
@@ -144,11 +148,11 @@ public abstract class AbstractIndicator {
      * @param eventTime 当前时间戳
      * @param set       redis set
      */
-    public void cleanExpiredDate(IndicatorContext.IndicatorCtx indicator, long eventTime, RScoredSortedSet<String> set) {
-        if (WinType.LAST.equals(indicator.getWinType())) {
-            set.removeRangeByScore(-1, true, eventTime - Duration.ofSeconds(indicator.getTimeSlice()).toMillis(), false);
-        } else if (WinType.CUR.equals(indicator.getWinType())) {
-            set.removeRangeByScore(-1, true, calculateEpochMilli(indicator, LocalDateTime.now()), false);
+    public void cleanExpiredDate(IndicatorContext.IndicatorCtx indicatorCtx, long eventTime, RScoredSortedSet<String> set) {
+        if (WinType.LAST.equals(indicatorCtx.getWinType())) {
+            set.removeRangeByScore(-1, true, eventTime - Duration.ofSeconds(indicatorCtx.getTimeSlice()).toMillis(), false);
+        } else if (WinType.CUR.equals(indicatorCtx.getWinType())) {
+            set.removeRangeByScore(-1, true, calculateEpochMilli(indicatorCtx, LocalDateTime.now()), false);
         }
     }
 
@@ -158,16 +162,16 @@ public abstract class AbstractIndicator {
      * @param now 当前时间
      * @return 时间戳
      */
-    private long calculateEpochMilli(IndicatorContext.IndicatorCtx indicator, LocalDateTime now) {
+    private long calculateEpochMilli(IndicatorContext.IndicatorCtx indicatorCtx, LocalDateTime now) {
         ZoneId zoneId = ZoneId.systemDefault();
         // 这个default分支仅处理WindowSize枚举中未包含的情况
-        return switch (indicator.getWinSize()) {
+        return switch (indicatorCtx.getWinSize()) {
             case "M" -> now.withDayOfMonth(1).with(LocalTime.MIN).atZone(zoneId).toInstant().toEpochMilli();
             case "d" -> now.with(LocalTime.MIN).atZone(zoneId).toInstant().toEpochMilli();
             case "H" -> now.withMinute(0).withSecond(0).withNano(0).atZone(zoneId).toInstant().toEpochMilli();
             case "m" -> now.withSecond(0).withNano(0).atZone(zoneId).toInstant().toEpochMilli();
             case "s" -> now.withNano(0).atZone(zoneId).toInstant().toEpochMilli();
-            default -> throw new IllegalArgumentException("Unsupported window size: " + indicator.getWinSize());
+            default -> throw new IllegalArgumentException("Unsupported window size: " + indicatorCtx.getWinSize());
         };
     }
 }

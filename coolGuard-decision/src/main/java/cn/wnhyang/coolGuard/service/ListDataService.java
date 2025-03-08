@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.service;
 
+import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.entity.ListData;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.vo.create.ListDataCreateVO;
@@ -70,5 +71,12 @@ public interface ListDataService {
      * @return true存在/false不存在
      */
     boolean hasListData(String setCode, String value);
+
+    /**
+     * 添加名单数据
+     *
+     * @param addLists 添加名单数据
+     */
+    void addListData(List<Action.AddList> addLists);
 
 }

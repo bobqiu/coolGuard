@@ -1,18 +1,15 @@
 package cn.wnhyang.coolGuard.service.impl;
 
-import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.convert.PolicySetConvert;
 import cn.wnhyang.coolGuard.convert.RuleVersionConvert;
 import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.Rule;
 import cn.wnhyang.coolGuard.entity.RuleVersion;
-import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.RuleMapper;
 import cn.wnhyang.coolGuard.mapper.RuleVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.RuleVersionService;
 import cn.wnhyang.coolGuard.util.CollectionUtils;
-import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.RuleVersionVO;
 import cn.wnhyang.coolGuard.vo.page.RuleVersionPageVO;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +37,6 @@ public class RuleVersionServiceImpl implements RuleVersionService {
     private final RuleVersionMapper ruleVersionMapper;
 
     private final RuleMapper ruleMapper;
-
-    private final ChainMapper chainMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -83,7 +78,6 @@ public class RuleVersionServiceImpl implements RuleVersionService {
         }
         ruleMapper.updateByCode(new Rule().setCode(ruleVersion.getCode()).setPublish(Boolean.FALSE));
         ruleVersionMapper.updateById(new RuleVersion().setId(id).setLatest(Boolean.FALSE));
-        chainMapper.deleteByChainName(StrUtil.format(LFUtil.RULE_CHAIN, ruleVersion.getCode()));
     }
 
     @Override

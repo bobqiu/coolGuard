@@ -1,18 +1,15 @@
 package cn.wnhyang.coolGuard.service.impl;
 
-import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.convert.IndicatorVersionConvert;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.entity.IndicatorVersion;
 import cn.wnhyang.coolGuard.entity.LabelValue;
-import cn.wnhyang.coolGuard.mapper.ChainMapper;
 import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
 import cn.wnhyang.coolGuard.mapper.IndicatorVersionMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.IndicatorVersionService;
 import cn.wnhyang.coolGuard.util.CollectionUtils;
-import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.IndicatorSimpleVO;
 import cn.wnhyang.coolGuard.vo.IndicatorVersionVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorVersionPageVO;
@@ -41,8 +38,6 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
     private final IndicatorVersionMapper indicatorVersionMapper;
 
     private final IndicatorMapper indicatorMapper;
-
-    private final ChainMapper chainMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -81,7 +76,6 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
         }
         indicatorMapper.updateByCode(new Indicator().setCode(indicatorVersion.getCode()).setPublish(Boolean.FALSE));
         indicatorVersionMapper.updateById(new IndicatorVersion().setId(id).setLatest(Boolean.FALSE));
-        chainMapper.deleteByChainName(StrUtil.format(LFUtil.INDICATOR_CHAIN, indicatorVersion.getCode()));
     }
 
     @Override

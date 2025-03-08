@@ -40,6 +40,10 @@ es:
   password: elastic
 
 liteflow:
+  # 自定义Lf主线程池
+  main-executor-class: cn.wnhyang.coolGuard.thread.LfMainExecutorBuilder
+  # 自定义Lf异步线程池
+  global-thread-pool-executor-class: cn.wnhyang.coolGuard.thread.LfAsyncExecutorBuilder
   rule-source-ext-data-map:
     url: jdbc:mysql://localhost:3306/coolGuard?allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
     driverClassName: com.mysql.cj.jdbc.Driver

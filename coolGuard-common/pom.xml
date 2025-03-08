@@ -146,6 +146,11 @@
             <artifactId>sa-token-redisson-jackson</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>transmittable-thread-local</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

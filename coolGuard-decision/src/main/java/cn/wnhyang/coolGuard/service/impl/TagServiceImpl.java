@@ -1,23 +1,19 @@
 package cn.wnhyang.coolGuard.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.wnhyang.coolGuard.context.DecisionContextHolder;
 import cn.wnhyang.coolGuard.context.EventContext;
 import cn.wnhyang.coolGuard.convert.TagConvert;
-import cn.wnhyang.coolGuard.entity.Action;
 import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.entity.Tag;
 import cn.wnhyang.coolGuard.mapper.TagMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.TagService;
 import cn.wnhyang.coolGuard.util.CollectionUtils;
-import cn.wnhyang.coolGuard.util.LFUtil;
 import cn.wnhyang.coolGuard.vo.create.TagCreateVO;
 import cn.wnhyang.coolGuard.vo.page.TagPageVO;
 import cn.wnhyang.coolGuard.vo.update.TagUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
-import com.yomahub.liteflow.annotation.LiteflowMethod;
-import com.yomahub.liteflow.core.NodeComponent;
-import com.yomahub.liteflow.enums.LiteFlowMethodEnum;
-import com.yomahub.liteflow.enums.NodeTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -91,13 +87,15 @@ public class TagServiceImpl implements TagService {
         return CollectionUtils.convertList(tagMapper.selectList(), Tag::getLabelValue);
     }
 
-    @LiteflowMethod(value = LiteFlowMethodEnum.PROCESS, nodeId = LFUtil.ADD_TAG, nodeType = NodeTypeEnum.COMMON, nodeName = "加入标签组件")
-    public void addTag(NodeComponent bindCmp) {
+    @Override
+    public void addTag(List<String> tagCodes) {
+        if (CollUtil.isEmpty(tagCodes)) {
+            return;
+        }
+        EventContext eventContext = DecisionContextHolder.getEventContext();
         // TODO 完善
-        Action action = bindCmp.getCmpData(Action.class);
-        EventContext eventContext = bindCmp.getContextBean(EventContext.class);
-        log.info("addTag:{}", action.getTagCodes());
-        for (String tagCode : action.getTagCodes()) {
+        log.info("addTag:{}", tagCodes);
+        for (String tagCode : tagCodes) {
             eventContext.addTag(tagMapper.selectByCode(tagCode));
         }
     }

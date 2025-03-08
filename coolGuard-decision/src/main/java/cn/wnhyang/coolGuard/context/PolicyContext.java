@@ -3,6 +3,7 @@ package cn.wnhyang.coolGuard.context;
 import cn.hutool.core.collection.CollUtil;
 import cn.wnhyang.coolGuard.constant.DisposalConstant;
 import cn.wnhyang.coolGuard.constant.PolicyMode;
+import cn.wnhyang.coolGuard.constant.RuleStatus;
 import cn.wnhyang.coolGuard.entity.*;
 import cn.wnhyang.coolGuard.vo.result.PolicyResult;
 import cn.wnhyang.coolGuard.vo.result.PolicySetResult;
@@ -71,35 +72,28 @@ public class PolicyContext {
     }
 
     /**
-     * 规则集合
-     */
-    private final Map<String, List<RuleCtx>> ruleListMap = new ConcurrentHashMap<>();
-
-    /**
-     * 添加规则集合
-     *
-     * @param policyCode 策略code
-     * @param ruleList   规则列表
-     */
-    public void addRuleList(String policyCode, List<RuleCtx> ruleList) {
-        ruleListMap.put(policyCode, ruleList);
-    }
-
-    /**
-     * 获取规则
-     *
-     * @param policyCode 策略code
-     * @param index      规则索引
-     * @return 规则
-     */
-    public RuleCtx getRule(String policyCode, int index) {
-        return ruleListMap.get(policyCode).get(index);
-    }
-
-    /**
      * 命中规则集合
      */
     private final Map<String, List<RuleCtx>> hitRuleListMap = new ConcurrentHashMap<>();
+
+    /**
+     * 命中模拟规则集合
+     */
+    private final Map<String, List<RuleCtx>> hitMockRuleListMap = new ConcurrentHashMap<>();
+
+    /**
+     * 添加命中规则
+     *
+     * @param policyCode 策略code
+     * @param rule       规则
+     */
+    public void addHitRule(String policyCode, RuleCtx rule) {
+        if (RuleStatus.MOCK.equals(rule.getStatus())) {
+            addHitMockRuleVO(policyCode, rule);
+        } else {
+            addHitRuleVO(policyCode, rule);
+        }
+    }
 
     /**
      * 添加命中规则
@@ -123,18 +117,13 @@ public class PolicyContext {
     public boolean isHitRisk(String policyCode) {
         if (CollUtil.isNotEmpty(hitRuleListMap.get(policyCode))) {
             for (RuleCtx ruleCtx : hitRuleListMap.get(policyCode)) {
-                if (!DisposalConstant.PASS_CODE.equals(ruleCtx.getDisposalCode())) {
+                if (ruleCtx.getHit() && !DisposalConstant.PASS_CODE.equals(ruleCtx.getDisposalCode())) {
                     return true;
                 }
             }
         }
         return false;
     }
-
-    /**
-     * 命中模拟规则集合
-     */
-    private final Map<String, List<RuleCtx>> hitMockRuleListMap = new ConcurrentHashMap<>();
 
     /**
      * 添加命中模拟规则
@@ -265,6 +254,11 @@ public class PolicyContext {
          * 表达式值
          */
         private Double expressValue;
+
+        /**
+         * 命中
+         */
+        private Boolean hit;
 
     }
 

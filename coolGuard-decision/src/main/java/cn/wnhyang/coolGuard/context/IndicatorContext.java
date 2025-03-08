@@ -8,9 +8,9 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author wnhyang
@@ -18,21 +18,10 @@ import java.util.Map;
  **/
 public class IndicatorContext {
 
-    private List<IndicatorCtx> indicatorList;
+    private final Map<String, IndicatorCtx> indicatorMap = new ConcurrentHashMap<>();
 
-    private final Map<String, IndicatorCtx> indicatorMap = new HashMap<>();
-
-    public void setIndicatorList(List<IndicatorCtx> indicatorList) {
-        this.indicatorList = indicatorList;
-        indicatorList.forEach(indicator -> indicatorMap.put(indicator.getCode(), indicator));
-    }
-
-    public IndicatorCtx getIndicator(int index) {
-        return indicatorList.get(index);
-    }
-
-    public void setIndicatorValue(int index, Object value) {
-        indicatorList.get(index).setValue(value);
+    public void setIndicator(IndicatorCtx indicator) {
+        indicatorMap.put(indicator.getCode(), indicator);
     }
 
     public String getIndicatorReturnType(String code) {

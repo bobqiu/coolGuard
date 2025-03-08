@@ -1,11 +1,13 @@
 package cn.wnhyang.coolGuard.vo.base;
 
+import cn.wnhyang.coolGuard.entity.ParamConfig;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author wnhyang
@@ -23,6 +25,16 @@ public class AccessBaseVO implements Serializable {
     @NotBlank(message = "接入名不能为空")
     @Size(min = 1, max = 50, message = "接入名长度必须在1-50之间")
     private String name;
+
+    /**
+     * 输入配置
+     */
+    private List<ParamConfig> inputFieldList;
+
+    /**
+     * 输出配置
+     */
+    private List<ParamConfig> outputFieldList;
 
     /**
      * 描述
