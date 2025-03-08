@@ -11,8 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 
 /**
@@ -27,42 +25,6 @@ import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
 public class AccessController {
 
     private final AccessService accessService;
-
-    /**
-     * 测试接入
-     *
-     * @param code   服务名
-     * @param params 参数
-     * @return map
-     */
-    @PostMapping("/{code}/test")
-    public CommonResult<Map<String, Object>> testRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
-        return success(accessService.testRisk(code, params));
-    }
-
-    /**
-     * 同步接入
-     *
-     * @param code   服务code
-     * @param params 参数
-     * @return map
-     */
-    @PostMapping("/{code}/sync")
-    public CommonResult<Map<String, Object>> syncRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
-        return success(accessService.syncRisk(code, params));
-    }
-
-    /**
-     * 异步接入
-     *
-     * @param code   服务code
-     * @param params 参数
-     * @return map
-     */
-    @PostMapping("/{code}/async")
-    public CommonResult<Map<String, Object>> asyncRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
-        return success(accessService.asyncRisk(code, params));
-    }
 
     /**
      * 新增

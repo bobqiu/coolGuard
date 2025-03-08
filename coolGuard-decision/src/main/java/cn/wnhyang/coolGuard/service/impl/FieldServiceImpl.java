@@ -39,7 +39,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -133,18 +135,8 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public String testDynamicFieldScript(TestDynamicFieldScript testDynamicFieldScript) {
-        FieldContext fieldContext = new FieldContext();
-        Map<String, Object> params = testDynamicFieldScript.getParams();
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
-            Field field = fieldMapper.selectByCode(entry.getKey());
-            FieldType byType = FieldType.getByType(field.getType());
-            if (byType != null) {
-                fieldContext.setDataByType(field.getCode(), entry.getValue().toString(), byType);
-            }
-        }
-
         try {
-            Object execute = QLExpressUtil.execute(testDynamicFieldScript.getScript(), fieldContext);
+            Object execute = QLExpressUtil.execute(testDynamicFieldScript.getScript(), testDynamicFieldScript.getContext());
             return String.valueOf(execute);
         } catch (Exception e) {
             // TODO 定义异常
@@ -160,8 +152,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public Map<String, Field> getFields() {
-        RMap<String, Field> fieldMap = loadFieldMapIfNecessary();
-        return Collections.unmodifiableMap(new HashMap<>(fieldMap));
+        return loadFieldMapIfNecessary();
     }
 
     /**

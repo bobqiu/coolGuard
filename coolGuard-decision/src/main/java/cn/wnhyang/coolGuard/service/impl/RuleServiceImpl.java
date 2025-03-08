@@ -193,7 +193,6 @@ public class RuleServiceImpl implements RuleService {
             }
             ruleCtx.setHit(true);
             policyContext.addHitRule(ruleCtx.getPolicyCode(), ruleCtx);
-            // TODO 规则true操作
             if (ruleCtx.getRuleTrue() == null) {
                 return;
             }
@@ -202,7 +201,6 @@ public class RuleServiceImpl implements RuleService {
             fieldService.setField(ruleCtx.getRuleTrue().getSetField());
             smsTemplateService.sendSms(ruleCtx.getRuleTrue().getSendSms());
         } else {
-            // TODO 规则false操作
             if (ruleCtx.getRuleFalse() == null) {
                 return;
             }

@@ -3,7 +3,6 @@ package cn.wnhyang.coolGuard.service.impl;
 import cn.hutool.core.util.IdUtil;
 import cn.wnhyang.coolGuard.constant.FieldCode;
 import cn.wnhyang.coolGuard.constant.RedisKey;
-import cn.wnhyang.coolGuard.constant.SceneType;
 import cn.wnhyang.coolGuard.context.DecisionContextHolder;
 import cn.wnhyang.coolGuard.context.FieldContext;
 import cn.wnhyang.coolGuard.context.IndicatorContext;
@@ -13,14 +12,11 @@ import cn.wnhyang.coolGuard.dto.IndicatorDTO;
 import cn.wnhyang.coolGuard.entity.Indicator;
 import cn.wnhyang.coolGuard.entity.IndicatorVersion;
 import cn.wnhyang.coolGuard.entity.LabelValue;
-import cn.wnhyang.coolGuard.entity.PolicySet;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
 import cn.wnhyang.coolGuard.enums.WinSize;
-import cn.wnhyang.coolGuard.indicator.AbstractIndicator;
-import cn.wnhyang.coolGuard.mapper.ChainMapper;
+import cn.wnhyang.coolGuard.indicator.IndicatorFactory;
 import cn.wnhyang.coolGuard.mapper.IndicatorMapper;
 import cn.wnhyang.coolGuard.mapper.IndicatorVersionMapper;
-import cn.wnhyang.coolGuard.mapper.PolicySetMapper;
 import cn.wnhyang.coolGuard.pojo.PageResult;
 import cn.wnhyang.coolGuard.service.CondService;
 import cn.wnhyang.coolGuard.service.IndicatorService;
@@ -30,7 +26,6 @@ import cn.wnhyang.coolGuard.vo.VersionSubmitResultVO;
 import cn.wnhyang.coolGuard.vo.base.BatchVersionSubmit;
 import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
-import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
@@ -41,9 +36,7 @@ import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static cn.wnhyang.coolGuard.error.DecisionErrorCode.*;
@@ -59,11 +52,7 @@ import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception
 @LiteflowComponent
 public class IndicatorServiceImpl implements IndicatorService {
 
-    private static final Map<String, AbstractIndicator> INDICATOR_MAP = new HashMap<>();
-
     private final IndicatorMapper indicatorMapper;
-
-    private final PolicySetMapper policySetMapper;
 
     private final IndicatorVersionMapper indicatorVersionMapper;
 
@@ -71,24 +60,21 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     private final AsyncTaskExecutor asyncTaskExecutor;
 
-    public IndicatorServiceImpl(List<AbstractIndicator> indicatorList,
-                                IndicatorMapper indicatorMapper,
-                                PolicySetMapper policySetMapper,
-                                ChainMapper chainMapper,
-                                IndicatorVersionMapper indicatorVersionMapper,
-                                CondService condService,
-                                @Qualifier("indicatorAsync") AsyncTaskExecutor asyncTaskExecutor) {
-        addIndicator(indicatorList);
+    private final IndicatorFactory indicatorFactory;
+
+    public IndicatorServiceImpl(
+            IndicatorMapper indicatorMapper,
+            IndicatorVersionMapper indicatorVersionMapper,
+            CondService condService,
+            @Qualifier("indicatorAsync") AsyncTaskExecutor asyncTaskExecutor,
+            IndicatorFactory indicatorFactory) {
         this.indicatorMapper = indicatorMapper;
-        this.policySetMapper = policySetMapper;
         this.indicatorVersionMapper = indicatorVersionMapper;
         this.condService = condService;
         this.asyncTaskExecutor = asyncTaskExecutor;
+        this.indicatorFactory = indicatorFactory;
     }
 
-    private void addIndicator(List<AbstractIndicator> indicatorList) {
-        indicatorList.forEach(indicator -> INDICATOR_MAP.put(indicator.getTypeCode(), indicator));
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -154,16 +140,6 @@ public class IndicatorServiceImpl implements IndicatorService {
     public PageResult<IndicatorVO> pageIndicator(IndicatorPageVO pageVO) {
         PageResult<IndicatorDTO> indicatorPageResult = indicatorMapper.selectPage(pageVO);
         return IndicatorConvert.INSTANCE.convert2(indicatorPageResult);
-    }
-
-    @Override
-    public PageResult<Indicator> pageIndicatorByPolicySet(IndicatorByPolicySetPageVO pageVO) {
-        String policySetCode = pageVO.getPolicySetCode();
-        PolicySet policySet = policySetMapper.selectByCode(policySetCode);
-        if (policySet != null) {
-            indicatorMapper.selectPageByScene(pageVO, SceneType.POLICY_SET, policySet.getCode());
-        }
-        return PageResult.empty();
     }
 
     @Override
@@ -242,7 +218,7 @@ public class IndicatorServiceImpl implements IndicatorService {
 
     @Override
     public void indicatorCompute(IndicatorContext.IndicatorCtx indicatorCtx) {
-        boolean compute = INDICATOR_MAP.get(indicatorCtx.getType()).compute(condService.cond(indicatorCtx.getCond()), indicatorCtx);
+        boolean compute = indicatorFactory.getIndicator(indicatorCtx.getType()).compute(condService.cond(indicatorCtx.getCond()), indicatorCtx);
         log.info("指标(code:{}, name:{}, value:{})", indicatorCtx.getCode(), indicatorCtx.getName(), indicatorCtx.getValue());
         if (compute) {
             DecisionContextHolder.getIndicatorContext().setIndicator(indicatorCtx);

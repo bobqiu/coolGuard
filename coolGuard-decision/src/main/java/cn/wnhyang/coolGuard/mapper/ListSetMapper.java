@@ -18,6 +18,7 @@ public interface ListSetMapper extends BaseMapperX<ListSet> {
 
     default PageResult<ListSet> selectPage(ListSetPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<ListSet>()
+                .likeIfPresent(ListSet::getCode, pageVO.getCode())
                 .likeIfPresent(ListSet::getName, pageVO.getName()));
     }
 

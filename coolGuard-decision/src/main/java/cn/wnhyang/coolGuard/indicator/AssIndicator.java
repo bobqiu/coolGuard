@@ -26,7 +26,6 @@ public class AssIndicator extends AbstractIndicator {
 
     @Override
     public Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set) {
-
         return set.size();
     }
 

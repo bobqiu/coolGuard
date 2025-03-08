@@ -27,18 +27,9 @@ public class MaxIndicator extends AbstractIndicator {
 
     @Override
     public Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set) {
-        double max = 0.0;
-        for (String item : set) {
-            String[] split = item.split("-");
-            if (split.length >= 2) {
-                double v = Double.parseDouble(split[1]);
-                if (v > max) {
-                    max = v;
-                }
-            }
-        }
-
-        return max;
+        return set.stream()
+                .mapToDouble(s -> Double.parseDouble(s.split("-")[1]))
+                .max();
     }
 
     @Override

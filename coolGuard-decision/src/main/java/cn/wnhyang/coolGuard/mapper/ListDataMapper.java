@@ -20,7 +20,9 @@ public interface ListDataMapper extends BaseMapperX<ListData> {
 
     default PageResult<ListData> selectPage(ListDataPageVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapperX<ListData>()
-                .eqIfPresent(ListData::getValue, pageVO.getValue()));
+                .eqIfPresent(ListData::getListSetCode, pageVO.getListSetCode())
+                .eqIfPresent(ListData::getSource, pageVO.getSource())
+                .likeIfPresent(ListData::getValue, pageVO.getValue()));
     }
 
     default List<String> selectListBySetCode(String setCode) {

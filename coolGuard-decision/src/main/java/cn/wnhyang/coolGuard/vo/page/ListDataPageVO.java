@@ -23,7 +23,17 @@ public class ListDataPageVO extends PageParam {
     private Long id;
 
     /**
+     * 名单集id
+     */
+    private String listSetCode;
+
+    /**
      * 名单数据
      */
     private String value;
+
+    /**
+     * 名单数据来源
+     */
+    private String source;
 }

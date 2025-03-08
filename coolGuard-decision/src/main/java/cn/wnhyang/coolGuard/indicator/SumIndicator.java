@@ -27,15 +27,9 @@ public class SumIndicator extends AbstractIndicator {
 
     @Override
     public Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set) {
-        double sum = 0.0;
-        for (String item : set) {
-            String[] split = item.split("-");
-            if (split.length >= 2) {
-                sum = sum + Double.parseDouble(split[1]);
-            }
-        }
-
-        return sum;
+        return set.stream()
+                .mapToDouble(s -> Double.parseDouble(s.split("-")[1]))
+                .sum();
     }
 
     @Override

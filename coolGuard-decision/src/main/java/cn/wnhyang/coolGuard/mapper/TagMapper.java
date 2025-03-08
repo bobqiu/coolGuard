@@ -17,7 +17,9 @@ import org.apache.ibatis.annotations.Mapper;
 public interface TagMapper extends BaseMapperX<Tag> {
 
     default PageResult<Tag> selectPage(TagPageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<Tag>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<Tag>()
+                .likeIfPresent(Tag::getName, pageVO.getName())
+                .likeIfPresent(Tag::getCode, pageVO.getCode()));
     }
 
     default Tag selectByCode(String code) {

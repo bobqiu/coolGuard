@@ -21,4 +21,14 @@ public class TagPageVO extends PageParam {
      * 主键
      */
     private Long id;
+
+    /**
+     * 标签编码
+     */
+    private String code;
+
+    /**
+     * 标签名
+     */
+    private String name;
 }

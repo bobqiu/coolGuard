@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 public class IndicatorContext {
 
-    private final Map<String, IndicatorCtx> indicatorMap = new ConcurrentHashMap<>();
+    private final Map<String, IndicatorCtx> indicatorMap = new ConcurrentHashMap<>(32);
 
     public void setIndicator(IndicatorCtx indicator) {
         indicatorMap.put(indicator.getCode(), indicator);

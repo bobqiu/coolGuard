@@ -6,8 +6,6 @@ import cn.wnhyang.coolGuard.vo.create.AccessCreateVO;
 import cn.wnhyang.coolGuard.vo.page.AccessPageVO;
 import cn.wnhyang.coolGuard.vo.update.AccessUpdateVO;
 
-import java.util.Map;
-
 /**
  * 接入表 服务类
  *
@@ -15,33 +13,6 @@ import java.util.Map;
  * @since 2024/03/14
  */
 public interface AccessService {
-
-    /**
-     * 测试
-     *
-     * @param code   服务code
-     * @param params 参数
-     * @return map
-     */
-    Map<String, Object> testRisk(String code, Map<String, String> params);
-
-    /**
-     * 同步调用
-     *
-     * @param code   服务code
-     * @param params 参数
-     * @return map
-     */
-    Map<String, Object> syncRisk(String code, Map<String, String> params);
-
-    /**
-     * 异步调用
-     *
-     * @param code   服务code
-     * @param params 参数
-     * @return map
-     */
-    Map<String, Object> asyncRisk(String code, Map<String, String> params);
 
     /**
      * 新建

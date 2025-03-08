@@ -27,18 +27,9 @@ public class MinIndicator extends AbstractIndicator {
 
     @Override
     public Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set) {
-        double min = Double.MAX_VALUE;
-        for (String item : set) {
-            String[] split = item.split("-");
-            if (split.length >= 2) {
-                double v = Double.parseDouble(split[1]);
-                if (v < min) {
-                    min = v;
-                }
-            }
-        }
-
-        return min;
+        return set.stream()
+                .mapToDouble(s -> Double.parseDouble(s.split("-")[1]))
+                .min();
     }
 
     @Override

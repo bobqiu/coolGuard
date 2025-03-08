@@ -26,7 +26,7 @@ public class PolicyContext {
     /**
      * 处置方式集合
      */
-    private final Map<String, DisposalCtx> disposalMap = new ConcurrentHashMap<>();
+    private final Map<String, DisposalCtx> disposalMap = new ConcurrentHashMap<>(32);
 
     /**
      * 策略集
@@ -49,7 +49,7 @@ public class PolicyContext {
     /**
      * 策略集合
      */
-    private final Map<String, PolicyCtx> policyMap = new ConcurrentHashMap<>();
+    private final Map<String, PolicyCtx> policyMap = new ConcurrentHashMap<>(32);
 
     /**
      * 添加策略
@@ -74,12 +74,12 @@ public class PolicyContext {
     /**
      * 命中规则集合
      */
-    private final Map<String, List<RuleCtx>> hitRuleListMap = new ConcurrentHashMap<>();
+    private final Map<String, List<RuleCtx>> hitRuleListMap = new ConcurrentHashMap<>(128);
 
     /**
      * 命中模拟规则集合
      */
-    private final Map<String, List<RuleCtx>> hitMockRuleListMap = new ConcurrentHashMap<>();
+    private final Map<String, List<RuleCtx>> hitMockRuleListMap = new ConcurrentHashMap<>(128);
 
     /**
      * 添加命中规则
@@ -154,7 +154,7 @@ public class PolicyContext {
             String maxDisposalCode = DisposalConstant.PASS_CODE;
             int maxGrade = Integer.MIN_VALUE;
             // 投票
-            Map<String, Integer> votes = new HashMap<>();
+            Map<String, Integer> votes = new HashMap<>(128);
             // 权重
             double weight = 0.0;
             List<RuleCtx> ruleList = hitRuleListMap.get(policy.getCode());

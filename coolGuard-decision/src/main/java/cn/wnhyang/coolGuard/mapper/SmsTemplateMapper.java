@@ -17,7 +17,9 @@ import org.apache.ibatis.annotations.Mapper;
 public interface SmsTemplateMapper extends BaseMapperX<SmsTemplate> {
 
     default PageResult<SmsTemplate> selectPage(SmsTemplatePageVO pageVO) {
-        return selectPage(pageVO, new LambdaQueryWrapperX<SmsTemplate>());
+        return selectPage(pageVO, new LambdaQueryWrapperX<SmsTemplate>()
+                .likeIfPresent(SmsTemplate::getName, pageVO.getName())
+                .likeIfPresent(SmsTemplate::getCode, pageVO.getCode()));
     }
 
     default SmsTemplate selectByCode(String code) {

@@ -1,6 +1,5 @@
 package cn.wnhyang.coolGuard.controller;
 
-import cn.wnhyang.coolGuard.convert.IndicatorConvert;
 import cn.wnhyang.coolGuard.entity.LabelValue;
 import cn.wnhyang.coolGuard.enums.IndicatorType;
 import cn.wnhyang.coolGuard.enums.WinSize;
@@ -12,7 +11,6 @@ import cn.wnhyang.coolGuard.vo.VersionSubmitResultVO;
 import cn.wnhyang.coolGuard.vo.base.BatchVersionSubmit;
 import cn.wnhyang.coolGuard.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolGuard.vo.create.IndicatorCreateVO;
-import cn.wnhyang.coolGuard.vo.page.IndicatorByPolicySetPageVO;
 import cn.wnhyang.coolGuard.vo.page.IndicatorPageVO;
 import cn.wnhyang.coolGuard.vo.update.IndicatorUpdateVO;
 import jakarta.validation.Valid;
@@ -113,17 +111,6 @@ public class IndicatorController {
     @GetMapping("/page")
     public CommonResult<PageResult<IndicatorVO>> pageIndicator(@Valid IndicatorPageVO pageVO) {
         return success(indicatorService.pageIndicator(pageVO));
-    }
-
-    /**
-     * 分页查询根据策略集id
-     *
-     * @param pageVO 分页VO
-     * @return pageResult
-     */
-    @GetMapping("/policySet/page")
-    public CommonResult<PageResult<IndicatorVO>> pageIndicatorByPolicySet(@Valid IndicatorByPolicySetPageVO pageVO) {
-        return success(IndicatorConvert.INSTANCE.convert(indicatorService.pageIndicatorByPolicySet(pageVO)));
     }
 
     /**

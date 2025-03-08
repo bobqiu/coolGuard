@@ -145,7 +145,6 @@ public class CondServiceImpl implements CondService {
                     String fieldCode = cond.getLeftValue();
 
                     String stringData = fieldContext.getData2String(fieldCode);
-                    // TODO 查名单集做匹配，加上在/不在
 
                     b = switch (byType) {
                         case IN -> listDataService.hasListData(cond.getRightValue(), stringData);

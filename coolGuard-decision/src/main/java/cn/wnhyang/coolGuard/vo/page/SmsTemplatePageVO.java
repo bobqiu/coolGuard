@@ -21,4 +21,14 @@ public class SmsTemplatePageVO extends PageParam {
      * 主键
      */
     private Long id;
+
+    /**
+     * 消息编码
+     */
+    private String code;
+
+    /**
+     * 消息名
+     */
+    private String name;
 }

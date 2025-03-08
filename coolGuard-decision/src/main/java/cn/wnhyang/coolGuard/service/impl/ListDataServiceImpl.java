@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.wnhyang.coolGuard.constant.ListDataSource;
 import cn.wnhyang.coolGuard.constant.RedisKey;
 import cn.wnhyang.coolGuard.context.DecisionContextHolder;
 import cn.wnhyang.coolGuard.context.FieldContext;
@@ -135,7 +136,7 @@ public class ListDataServiceImpl implements ListDataService {
             ListData listData = new ListData();
             listData.setListSetCode(addList.getListSetCode());
             listData.setValue(fieldContext.getData2String(addList.getFieldCode()));
-            listData.setSource("规则生成");
+            listData.setSource(ListDataSource.RULE);
             listDataMapper.insert(listData);
         }
     }

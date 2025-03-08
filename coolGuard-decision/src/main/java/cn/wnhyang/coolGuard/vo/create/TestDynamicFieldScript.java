@@ -1,12 +1,12 @@
 package cn.wnhyang.coolGuard.vo.create;
 
+import com.ql.util.express.DefaultContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * @author wnhyang
@@ -20,7 +20,7 @@ public class TestDynamicFieldScript implements Serializable {
     @Serial
     private static final long serialVersionUID = -793230133623515208L;
 
-    private Map<String, Object> params;
+    private DefaultContext<String, Object> context;
 
     private String script;
 }
