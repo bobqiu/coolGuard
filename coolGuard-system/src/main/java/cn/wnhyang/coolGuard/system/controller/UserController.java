@@ -1,9 +1,12 @@
 package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
-import cn.wnhyang.coolGuard.pojo.CommonResult;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.pojo.CommonResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.util.CollectionUtils;
+import cn.wnhyang.coolGuard.common.util.ExcelUtil;
+import cn.wnhyang.coolGuard.log.annotation.OperateLog;
+import cn.wnhyang.coolGuard.log.enums.OperateType;
 import cn.wnhyang.coolGuard.system.convert.UserConvert;
 import cn.wnhyang.coolGuard.system.entity.RoleDO;
 import cn.wnhyang.coolGuard.system.entity.UserDO;
@@ -11,8 +14,6 @@ import cn.wnhyang.coolGuard.system.service.PermissionService;
 import cn.wnhyang.coolGuard.system.service.RoleService;
 import cn.wnhyang.coolGuard.system.service.UserService;
 import cn.wnhyang.coolGuard.system.vo.user.*;
-import cn.wnhyang.coolGuard.util.CollectionUtils;
-import cn.wnhyang.coolGuard.util.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
+import static cn.wnhyang.coolGuard.common.pojo.CommonResult.success;
 
 /**
  * 用户
@@ -52,7 +53,7 @@ public class UserController {
      * @return 用户id
      */
     @PostMapping
-    @OperateLog(module = "后台-用户", name = "创建用户")
+    @OperateLog(module = "后台-用户", name = "创建用户", type = OperateType.CREATE)
     @SaCheckPermission("system:user:create")
     public CommonResult<Long> createUser(@RequestBody @Valid UserCreateVO reqVO) {
         Long id = userService.createUser(reqVO);
@@ -66,7 +67,7 @@ public class UserController {
      * @return 结果
      */
     @PutMapping
-    @OperateLog(module = "后台-用户", name = "修改用户信息")
+    @OperateLog(module = "后台-用户", name = "修改用户信息", type = OperateType.UPDATE)
     @SaCheckPermission("system:user:update")
     public CommonResult<Boolean> updateUser(@RequestBody @Valid UserUpdateVO reqVO) {
         userService.updateUser(reqVO);
@@ -80,7 +81,7 @@ public class UserController {
      * @return 结果
      */
     @DeleteMapping
-    @OperateLog(module = "后台-用户", name = "删除用户")
+    @OperateLog(module = "后台-用户", name = "删除用户", type = OperateType.DELETE)
     @SaCheckPermission("system:user:delete")
     public CommonResult<Boolean> deleteUser(@RequestParam("id") Long id) {
         userService.deleteUser(id);

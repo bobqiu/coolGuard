@@ -1,8 +1,8 @@
 package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
-import cn.wnhyang.coolGuard.pojo.CommonResult;
+import cn.wnhyang.coolGuard.common.pojo.CommonResult;
+import cn.wnhyang.coolGuard.log.annotation.OperateLog;
 import cn.wnhyang.coolGuard.system.service.PermissionService;
 import cn.wnhyang.coolGuard.system.vo.permission.RoleMenuVO;
 import cn.wnhyang.coolGuard.system.vo.permission.UserRoleVO;

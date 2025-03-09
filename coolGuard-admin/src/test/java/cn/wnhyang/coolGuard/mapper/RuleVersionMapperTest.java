@@ -1,7 +1,9 @@
 package cn.wnhyang.coolGuard.mapper;
 
 import cn.wnhyang.coolGuard.AdminApplication;
-import cn.wnhyang.coolGuard.entity.Rule;
+import cn.wnhyang.coolGuard.decision.entity.Rule;
+import cn.wnhyang.coolGuard.decision.mapper.RuleMapper;
+import cn.wnhyang.coolGuard.decision.mapper.RuleVersionMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

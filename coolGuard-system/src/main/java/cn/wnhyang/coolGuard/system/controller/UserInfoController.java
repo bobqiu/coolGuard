@@ -2,10 +2,10 @@ package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
-import cn.wnhyang.coolGuard.pojo.CommonResult;
+import cn.wnhyang.coolGuard.common.pojo.CommonResult;
+import cn.wnhyang.coolGuard.log.annotation.OperateLog;
 import cn.wnhyang.coolGuard.satoken.Login;
-import cn.wnhyang.coolGuard.satoken.core.util.LoginUtil;
+import cn.wnhyang.coolGuard.satoken.util.LoginUtil;
 import cn.wnhyang.coolGuard.system.entity.UserDO;
 import cn.wnhyang.coolGuard.system.service.UserService;
 import cn.wnhyang.coolGuard.system.vo.core.user.UserInfoRespVO;
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static cn.wnhyang.coolGuard.exception.GlobalErrorCode.UNAUTHORIZED;
-import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
+import static cn.wnhyang.coolGuard.common.exception.GlobalErrorCode.UNAUTHORIZED;
+import static cn.wnhyang.coolGuard.common.exception.util.ServiceExceptionUtil.exception;
 
 /**
  * 用户信息

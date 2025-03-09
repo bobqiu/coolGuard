@@ -1,14 +1,17 @@
 package cn.wnhyang.coolGuard.system.controller;
 
-import cn.wnhyang.coolGuard.pojo.CommonResult;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.wnhyang.coolGuard.common.pojo.CommonResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.util.ExcelUtil;
+import cn.wnhyang.coolGuard.log.annotation.OperateLog;
+import cn.wnhyang.coolGuard.log.enums.OperateType;
 import cn.wnhyang.coolGuard.system.convert.ParamConvert;
 import cn.wnhyang.coolGuard.system.service.ParamService;
 import cn.wnhyang.coolGuard.system.vo.param.ParamCreateVO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamPageVO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamUpdateVO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamVO;
-import cn.wnhyang.coolGuard.util.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
+import static cn.wnhyang.coolGuard.common.pojo.CommonResult.success;
 
 
 /**
@@ -43,6 +46,8 @@ public class ParamController {
      * @return id
      */
     @PostMapping
+    @OperateLog(module = "后台-参数", name = "新增参数", type = OperateType.CREATE)
+    @SaCheckPermission("system:param:create")
     public CommonResult<Long> create(@RequestBody @Valid ParamCreateVO createVO) {
         return success(paramService.create(createVO));
     }
@@ -54,6 +59,8 @@ public class ParamController {
      * @return true/false
      */
     @PutMapping
+    @OperateLog(module = "后台-参数", name = "更新参数", type = OperateType.UPDATE)
+    @SaCheckPermission("system:param:update")
     public CommonResult<Boolean> update(@RequestBody @Valid ParamUpdateVO updateVO) {
         paramService.update(updateVO);
         return success(true);
@@ -66,6 +73,8 @@ public class ParamController {
      * @return true/false
      */
     @DeleteMapping
+    @OperateLog(module = "后台-参数", name = "删除参数", type = OperateType.DELETE)
+    @SaCheckPermission("system:param:delete")
     public CommonResult<Boolean> delete(@RequestParam("id") Long id) {
         paramService.delete(id);
         return success(true);

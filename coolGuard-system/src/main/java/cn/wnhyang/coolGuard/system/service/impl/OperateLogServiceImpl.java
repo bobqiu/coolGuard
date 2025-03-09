@@ -1,10 +1,9 @@
 package cn.wnhyang.coolGuard.system.service.impl;
 
-import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.log.core.dto.LogCreateReqDTO;
-import cn.wnhyang.coolGuard.log.core.service.LogService;
-import cn.wnhyang.coolGuard.pojo.CommonResult;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.pojo.CommonResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.log.dto.LogCreateReqDTO;
+import cn.wnhyang.coolGuard.log.service.LogService;
 import cn.wnhyang.coolGuard.system.convert.OperateLogConvert;
 import cn.wnhyang.coolGuard.system.dto.OperateLogCreateDTO;
 import cn.wnhyang.coolGuard.system.entity.OperateLogDO;
@@ -15,9 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
-import static cn.wnhyang.coolGuard.system.entity.OperateLogDO.JAVA_METHOD_ARGS_MAX_LENGTH;
-import static cn.wnhyang.coolGuard.system.entity.OperateLogDO.RESULT_MAX_LENGTH;
+import static cn.wnhyang.coolGuard.common.pojo.CommonResult.success;
 
 
 /**
@@ -41,8 +38,6 @@ public class OperateLogServiceImpl implements OperateLogService, LogService {
     @Transactional(rollbackFor = Exception.class)
     public void createOperateLog(OperateLogCreateDTO createReqDTO) {
         OperateLogDO logDO = OperateLogConvert.INSTANCE.convert(createReqDTO);
-        logDO.setJavaMethodArgs(StrUtil.subPre(logDO.getJavaMethodArgs(), JAVA_METHOD_ARGS_MAX_LENGTH));
-        logDO.setResultData(StrUtil.subPre(logDO.getResultData(), RESULT_MAX_LENGTH));
         operateLogMapper.insert(logDO);
     }
 

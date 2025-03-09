@@ -1,9 +1,10 @@
 package cn.wnhyang.coolGuard.mapper;
 
 import cn.wnhyang.coolGuard.AdminApplication;
-import cn.wnhyang.coolGuard.dto.PolicyDTO;
-import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.vo.page.PolicyPageVO;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.decision.dto.PolicyDTO;
+import cn.wnhyang.coolGuard.decision.mapper.PolicyMapper;
+import cn.wnhyang.coolGuard.decision.vo.page.PolicyPageVO;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

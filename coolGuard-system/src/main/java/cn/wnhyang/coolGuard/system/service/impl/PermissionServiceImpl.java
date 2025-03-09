@@ -2,7 +2,8 @@ package cn.wnhyang.coolGuard.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.wnhyang.coolGuard.enums.UserConstants;
+import cn.wnhyang.coolGuard.common.constant.UserConstants;
+import cn.wnhyang.coolGuard.common.util.CollectionUtils;
 import cn.wnhyang.coolGuard.system.entity.MenuDO;
 import cn.wnhyang.coolGuard.system.entity.RoleMenuDO;
 import cn.wnhyang.coolGuard.system.entity.UserRoleDO;
@@ -10,7 +11,6 @@ import cn.wnhyang.coolGuard.system.mapper.MenuMapper;
 import cn.wnhyang.coolGuard.system.mapper.RoleMenuMapper;
 import cn.wnhyang.coolGuard.system.mapper.UserRoleMapper;
 import cn.wnhyang.coolGuard.system.service.PermissionService;
-import cn.wnhyang.coolGuard.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import static cn.wnhyang.coolGuard.util.CollectionUtils.convertSet;
+import static cn.wnhyang.coolGuard.common.util.CollectionUtils.convertSet;
 
 /**
  * 权限

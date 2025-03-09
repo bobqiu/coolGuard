@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.mapper;
 
 
-import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
+import cn.wnhyang.coolGuard.mybatis.mapper.BaseMapperX;
 import cn.wnhyang.coolGuard.system.entity.RoleMenuDO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.ibatis.annotations.Mapper;

@@ -2,9 +2,10 @@ package cn.wnhyang.coolGuard.mapper;
 
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.AdminApplication;
-import cn.wnhyang.coolGuard.dto.RuleDTO;
-import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.vo.page.RulePageVO;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.decision.dto.RuleDTO;
+import cn.wnhyang.coolGuard.decision.mapper.RuleMapper;
+import cn.wnhyang.coolGuard.decision.vo.page.RulePageVO;
 import com.ql.util.express.DefaultContext;
 import com.ql.util.express.ExpressRunner;
 import jakarta.annotation.Resource;

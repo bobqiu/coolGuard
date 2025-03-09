@@ -1,11 +1,10 @@
 package cn.wnhyang.coolGuard.system.entity;
 
-import cn.wnhyang.coolGuard.pojo.BaseDO;
+import cn.wnhyang.coolGuard.mybatis.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +12,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 /**
  * 操作日志记录
@@ -28,16 +26,6 @@ import java.util.Map;
 @TableName("sys_operate_log")
 public class OperateLogDO extends BaseDO {
 
-    /**
-     * {@link #javaMethodArgs} 的最大长度
-     */
-    public static final Integer JAVA_METHOD_ARGS_MAX_LENGTH = 8000;
-
-    /**
-     * {@link #resultData} 的最大长度
-     */
-    public static final Integer RESULT_MAX_LENGTH = 4000;
-
     @Serial
     private static final long serialVersionUID = 1797386582905133955L;
 
@@ -46,6 +34,12 @@ public class OperateLogDO extends BaseDO {
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
+
+    /**
+     * 链路id
+     */
+    @TableField("trace_id")
+    private String traceId;
 
     /**
      * 用户编号
@@ -78,18 +72,6 @@ public class OperateLogDO extends BaseDO {
     private Integer type;
 
     /**
-     * 操作内容
-     */
-    @TableField("content")
-    private String content;
-
-    /**
-     * 拓展字段
-     */
-    @TableField(value = "exts", typeHandler = JacksonTypeHandler.class)
-    private Map<String, Object> exts;
-
-    /**
      * 请求方法名
      */
     @TableField("request_method")
@@ -102,6 +84,12 @@ public class OperateLogDO extends BaseDO {
     private String requestUrl;
 
     /**
+     * 请求参数
+     */
+    @TableField("request_params")
+    private String requestParams;
+
+    /**
      * 用户 IP
      */
     @TableField("user_ip")
@@ -112,18 +100,6 @@ public class OperateLogDO extends BaseDO {
      */
     @TableField("user_agent")
     private String userAgent;
-
-    /**
-     * Java 方法名
-     */
-    @TableField("java_method")
-    private String javaMethod;
-
-    /**
-     * Java 方法的参数
-     */
-    @TableField("java_method_args")
-    private String javaMethodArgs;
 
     /**
      * 操作时间
@@ -160,4 +136,5 @@ public class OperateLogDO extends BaseDO {
      */
     @TableField("result_data")
     private String resultData;
+
 }

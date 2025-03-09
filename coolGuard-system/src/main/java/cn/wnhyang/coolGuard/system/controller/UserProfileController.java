@@ -1,9 +1,9 @@
 package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
-import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
-import cn.wnhyang.coolGuard.pojo.CommonResult;
-import cn.wnhyang.coolGuard.satoken.core.util.LoginUtil;
+import cn.wnhyang.coolGuard.common.pojo.CommonResult;
+import cn.wnhyang.coolGuard.log.annotation.OperateLog;
+import cn.wnhyang.coolGuard.satoken.util.LoginUtil;
 import cn.wnhyang.coolGuard.system.convert.UserConvert;
 import cn.wnhyang.coolGuard.system.entity.UserDO;
 import cn.wnhyang.coolGuard.system.service.UserService;

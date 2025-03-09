@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.service.impl;
 
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.ParamConvert;
 import cn.wnhyang.coolGuard.system.entity.ParamDO;
 import cn.wnhyang.coolGuard.system.mapper.ParamMapper;
@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
+import static cn.wnhyang.coolGuard.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.wnhyang.coolGuard.system.error.SystemErrorCode.*;
 
 /**

@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
-import cn.wnhyang.coolGuard.pojo.CommonResult;
+import cn.wnhyang.coolGuard.common.pojo.CommonResult;
 import cn.wnhyang.coolGuard.system.service.MenuService;
 import cn.wnhyang.coolGuard.system.vo.menu.MenuTreeRespVO;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
+import static cn.wnhyang.coolGuard.common.pojo.CommonResult.success;
 
 /**
  * 菜单路由

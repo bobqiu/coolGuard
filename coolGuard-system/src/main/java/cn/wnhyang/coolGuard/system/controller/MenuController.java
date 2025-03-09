@@ -2,8 +2,9 @@ package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
-import cn.wnhyang.coolGuard.pojo.CommonResult;
+import cn.wnhyang.coolGuard.common.pojo.CommonResult;
+import cn.wnhyang.coolGuard.log.annotation.OperateLog;
+import cn.wnhyang.coolGuard.log.enums.OperateType;
 import cn.wnhyang.coolGuard.system.convert.MenuConvert;
 import cn.wnhyang.coolGuard.system.entity.MenuDO;
 import cn.wnhyang.coolGuard.system.service.MenuService;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
+import static cn.wnhyang.coolGuard.common.pojo.CommonResult.success;
 
 
 /**
@@ -37,7 +38,7 @@ public class MenuController {
      * @return 菜单id
      */
     @PostMapping
-    @OperateLog(module = "后台-菜单", name = "创建菜单")
+    @OperateLog(module = "后台-菜单", name = "创建菜单", type = OperateType.CREATE)
     @SaCheckPermission("system:menu:create")
     public CommonResult<Long> createMenu(@RequestBody @Valid MenuCreateVO reqVO) {
         return success(menuService.createMenu(reqVO));
@@ -50,7 +51,7 @@ public class MenuController {
      * @return 结果
      */
     @PutMapping
-    @OperateLog(module = "后台-菜单", name = "更新菜单")
+    @OperateLog(module = "后台-菜单", name = "更新菜单", type = OperateType.UPDATE)
     @SaCheckPermission("system:menu:update")
     public CommonResult<Boolean> updateMenu(@RequestBody @Valid MenuUpdateVO reqVO) {
         menuService.updateMenu(reqVO);
@@ -64,7 +65,7 @@ public class MenuController {
      * @return 结果
      */
     @DeleteMapping
-    @OperateLog(module = "后台-菜单", name = "删除菜单")
+    @OperateLog(module = "后台-菜单", name = "删除菜单", type = OperateType.DELETE)
     @SaCheckPermission("system:menu:delete")
     public CommonResult<Boolean> deleteMenu(@RequestParam("id") Long id) {
         menuService.deleteMenu(id);

@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.entity;
 
-import cn.wnhyang.coolGuard.entity.LabelValue;
+import cn.wnhyang.coolGuard.common.entity.LabelValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,8 @@
 package cn.wnhyang.coolGuard.system.service;
 
 
-import cn.wnhyang.coolGuard.entity.LabelValue;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.entity.LabelValue;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.entity.DictTypeDO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeCreateVO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypePageVO;

@@ -1,9 +1,9 @@
 package cn.wnhyang.coolGuard.system.login;
 
 
-import cn.wnhyang.coolGuard.entity.LabelValue;
+import cn.wnhyang.coolGuard.common.entity.LabelValue;
+import cn.wnhyang.coolGuard.common.util.CollectionUtils;
 import cn.wnhyang.coolGuard.satoken.Login;
-import cn.wnhyang.coolGuard.util.CollectionUtils;
 import lombok.Data;
 
 import java.io.Serializable;

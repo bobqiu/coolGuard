@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.convert;
 
 
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.entity.DictDataDO;
 import cn.wnhyang.coolGuard.system.vo.dictdata.DictDataCreateVO;
 import cn.wnhyang.coolGuard.system.vo.dictdata.DictDataRespVO;

@@ -1,9 +1,9 @@
 package cn.wnhyang.coolGuard.system.mapper;
 
 
-import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
-import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.mybatis.mapper.BaseMapperX;
+import cn.wnhyang.coolGuard.mybatis.wrapper.LambdaQueryWrapperX;
 import cn.wnhyang.coolGuard.system.entity.UserDO;
 import cn.wnhyang.coolGuard.system.vo.user.UserPageVO;
 import org.apache.ibatis.annotations.Mapper;

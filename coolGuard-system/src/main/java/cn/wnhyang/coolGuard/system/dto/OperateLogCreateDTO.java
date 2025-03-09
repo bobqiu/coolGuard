@@ -6,7 +6,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 /**
  * @author wnhyang
@@ -16,6 +15,9 @@ import java.util.Map;
 public class OperateLogCreateDTO implements Serializable {
 
     private static final long serialVersionUID = 541323985520059827L;
+
+    @NotBlank(message = "链路id不能为空")
+    private String traceId;
 
     @NotNull(message = "用户编号不能为空")
     private Long userId;
@@ -31,26 +33,19 @@ public class OperateLogCreateDTO implements Serializable {
     @NotNull(message = "操作分类不能为空")
     private Integer type;
 
-    private String content;
-
-    private Map<String, Object> exts;
-
     @NotBlank(message = "请求方法名不能为空")
     private String requestMethod;
 
     @NotBlank(message = "请求地址不能为空")
     private String requestUrl;
 
+    private String requestParams;
+
     @NotBlank(message = "用户 IP 不能为空")
     private String userIp;
 
     @NotBlank(message = "浏览器 UserAgent 不能为空")
     private String userAgent;
-
-    @NotBlank(message = "Java 方法名不能为空")
-    private String javaMethod;
-
-    private String javaMethodArgs;
 
     @NotNull(message = "开始时间不能为空")
     private LocalDateTime startTime;
@@ -66,6 +61,9 @@ public class OperateLogCreateDTO implements Serializable {
 
     private String resultMsg;
 
+    /**
+     * 结果数据
+     */
     private String resultData;
 
 }

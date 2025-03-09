@@ -1,10 +1,11 @@
 package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.wnhyang.coolGuard.entity.LabelValue;
-import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
-import cn.wnhyang.coolGuard.pojo.CommonResult;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.entity.LabelValue;
+import cn.wnhyang.coolGuard.common.pojo.CommonResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.log.annotation.OperateLog;
+import cn.wnhyang.coolGuard.log.enums.OperateType;
 import cn.wnhyang.coolGuard.system.convert.DictTypeConvert;
 import cn.wnhyang.coolGuard.system.service.DictTypeService;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeCreateVO;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
+import static cn.wnhyang.coolGuard.common.pojo.CommonResult.success;
 
 /**
  * 字典类型
@@ -39,7 +40,7 @@ public class DictTypeController {
      * @return 字典id
      */
     @PostMapping
-    @OperateLog(module = "后台-字典", name = "创建字典类型")
+    @OperateLog(module = "后台-字典", name = "创建字典类型", type = OperateType.CREATE)
     @SaCheckPermission("system:dict:create")
     public CommonResult<Long> createDictType(@Valid @RequestBody DictTypeCreateVO reqVO) {
         Long dictTypeId = dictTypeService.createDictType(reqVO);
@@ -53,7 +54,7 @@ public class DictTypeController {
      * @return 结果
      */
     @PutMapping
-    @OperateLog(module = "后台-字典", name = "更新字典类型")
+    @OperateLog(module = "后台-字典", name = "更新字典类型", type = OperateType.UPDATE)
     @SaCheckPermission("system:dict:update")
     public CommonResult<Boolean> updateDictType(@Valid @RequestBody DictTypeUpdateVO reqVO) {
         dictTypeService.updateDictType(reqVO);
@@ -67,7 +68,7 @@ public class DictTypeController {
      * @return 结果
      */
     @DeleteMapping
-    @OperateLog(module = "后台-字典", name = "删除字典类型")
+    @OperateLog(module = "后台-字典", name = "删除字典类型", type = OperateType.DELETE)
     @SaCheckPermission("system:dict:delete")
     public CommonResult<Boolean> deleteDictType(@RequestParam("id") Long id) {
         dictTypeService.deleteDictType(id);

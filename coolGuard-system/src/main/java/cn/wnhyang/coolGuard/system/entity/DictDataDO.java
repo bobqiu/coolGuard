@@ -1,8 +1,8 @@
 package cn.wnhyang.coolGuard.system.entity;
 
-import cn.wnhyang.coolGuard.LabelValueAble;
-import cn.wnhyang.coolGuard.entity.LabelValue;
-import cn.wnhyang.coolGuard.pojo.BaseDO;
+import cn.wnhyang.coolGuard.common.LabelValueAble;
+import cn.wnhyang.coolGuard.common.entity.LabelValue;
+import cn.wnhyang.coolGuard.mybatis.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;

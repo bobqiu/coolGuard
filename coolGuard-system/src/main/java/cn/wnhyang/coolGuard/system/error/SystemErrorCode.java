@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.error;
 
 
-import cn.wnhyang.coolGuard.exception.ErrorCode;
+import cn.wnhyang.coolGuard.common.exception.ErrorCode;
 
 /**
  * System 错误码枚举类

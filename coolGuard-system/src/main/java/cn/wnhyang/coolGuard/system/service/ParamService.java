@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.service;
 
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.entity.ParamDO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamCreateVO;
 import cn.wnhyang.coolGuard.system.vo.param.ParamPageVO;

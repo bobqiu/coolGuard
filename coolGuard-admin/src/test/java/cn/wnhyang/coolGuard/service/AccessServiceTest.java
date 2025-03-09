@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.service;
 
 import cn.wnhyang.coolGuard.AdminApplication;
+import cn.wnhyang.coolGuard.decision.service.AccessService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

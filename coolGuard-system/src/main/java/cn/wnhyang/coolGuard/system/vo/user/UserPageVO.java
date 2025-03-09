@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.vo.user;
 
-import cn.wnhyang.coolGuard.pojo.PageParam;
+import cn.wnhyang.coolGuard.common.pojo.PageParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

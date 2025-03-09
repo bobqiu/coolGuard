@@ -2,10 +2,11 @@ package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.wnhyang.coolGuard.entity.LabelValue;
-import cn.wnhyang.coolGuard.log.core.annotation.OperateLog;
-import cn.wnhyang.coolGuard.pojo.CommonResult;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.entity.LabelValue;
+import cn.wnhyang.coolGuard.common.pojo.CommonResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.log.annotation.OperateLog;
+import cn.wnhyang.coolGuard.log.enums.OperateType;
 import cn.wnhyang.coolGuard.system.convert.RoleConvert;
 import cn.wnhyang.coolGuard.system.entity.RoleDO;
 import cn.wnhyang.coolGuard.system.service.PermissionService;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
+import static cn.wnhyang.coolGuard.common.pojo.CommonResult.success;
 
 /**
  * 角色
@@ -46,7 +47,7 @@ public class RoleController {
      * @return id
      */
     @PostMapping
-    @OperateLog(module = "后台-角色", name = "创建角色")
+    @OperateLog(module = "后台-角色", name = "创建角色", type = OperateType.CREATE)
     @SaCheckPermission("system:role:create")
     public CommonResult<Long> createRole(@RequestBody @Valid RoleCreateVO reqVO) {
         return success(roleService.createRole(reqVO));
@@ -59,7 +60,7 @@ public class RoleController {
      * @return 结果
      */
     @PutMapping
-    @OperateLog(module = "后台-角色", name = "更新角色")
+    @OperateLog(module = "后台-角色", name = "更新角色", type = OperateType.UPDATE)
     @SaCheckPermission("system:role:update")
     public CommonResult<Boolean> updateRole(@RequestBody @Valid RoleUpdateVO reqVO) {
         roleService.updateRole(reqVO);
@@ -73,7 +74,7 @@ public class RoleController {
      * @return 结果
      */
     @DeleteMapping
-    @OperateLog(module = "后台-角色", name = "删除角色")
+    @OperateLog(module = "后台-角色", name = "删除角色", type = OperateType.DELETE)
     @SaCheckPermission("system:role:delete")
     public CommonResult<Boolean> deleteRole(@RequestParam("id") Long id) {
         roleService.deleteRole(id);

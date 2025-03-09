@@ -1,7 +1,8 @@
 package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.wnhyang.coolGuard.pojo.CommonResult;
+import cn.wnhyang.coolGuard.common.pojo.CommonResult;
+import cn.wnhyang.coolGuard.log.annotation.OperateLog;
 import cn.wnhyang.coolGuard.system.service.AuthService;
 import cn.wnhyang.coolGuard.system.vo.core.auth.EmailLoginVO;
 import cn.wnhyang.coolGuard.system.vo.core.auth.LoginReqVO;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
-import static cn.wnhyang.coolGuard.pojo.CommonResult.success;
+import static cn.wnhyang.coolGuard.common.pojo.CommonResult.success;
 
 
 /**
@@ -39,6 +40,7 @@ public class AuthController {
      * @return token
      */
     @PostMapping("/login")
+    @OperateLog(module = "用户登录", name = "用户登录")
     public CommonResult<LoginRespVO> login(@RequestBody @Valid LoginReqVO reqVO) {
         return success(authService.login(reqVO));
     }

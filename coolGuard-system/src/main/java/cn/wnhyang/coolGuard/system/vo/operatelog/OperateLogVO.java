@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 /**
  * @author wnhyang
@@ -18,6 +17,11 @@ public class OperateLogVO {
      * id
      */
     private Long id;
+
+    /**
+     * 链路id
+     */
+    private String traceId;
 
     /**
      * 用户昵称
@@ -48,16 +52,6 @@ public class OperateLogVO {
     private Integer type;
 
     /**
-     * 操作内容
-     */
-    private String content;
-
-    /**
-     * 扩展信息
-     */
-    private Map<String, Object> exts;
-
-    /**
      * 请求方法名
      */
     @NotBlank(message = "请求方法名不能为空")
@@ -68,6 +62,8 @@ public class OperateLogVO {
      */
     @NotBlank(message = "请求地址不能为空")
     private String requestUrl;
+
+    private String requestParams;
 
     /**
      * 用户 IP
@@ -80,17 +76,6 @@ public class OperateLogVO {
      */
     @NotBlank(message = "浏览器 UserAgent 不能为空")
     private String userAgent;
-
-    /**
-     * Java 方法名
-     */
-    @NotBlank(message = "Java 方法名不能为空")
-    private String javaMethod;
-
-    /**
-     * Java 方法的参数
-     */
-    private String javaMethodArgs;
 
     /**
      * 开始时间
@@ -123,4 +108,5 @@ public class OperateLogVO {
      * 结果数据
      */
     private String resultData;
+
 }

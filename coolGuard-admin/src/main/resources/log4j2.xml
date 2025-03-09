@@ -83,7 +83,7 @@
         </Root>
 
         <!-- 为EventESDataConsumer类单独配置logger -->
-        <AsyncLogger name="cn.wnhyang.coolGuard.kafka.consumer.EventESDataConsumer" level="INFO" additivity="false">
+        <AsyncLogger name="cn.wnhyang.coolGuard.decision.kafka.consumer.EventESDataConsumer" level="INFO" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="EventESDataFile"/>
         </AsyncLogger>

@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.vo.rsa;
 
-import cn.wnhyang.coolGuard.pojo.PageParam;
+import cn.wnhyang.coolGuard.common.pojo.PageParam;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

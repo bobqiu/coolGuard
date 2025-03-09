@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.vo.user;
 
-import cn.wnhyang.coolGuard.entity.LabelValue;
+import cn.wnhyang.coolGuard.common.entity.LabelValue;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import lombok.AllArgsConstructor;
 import lombok.Data;

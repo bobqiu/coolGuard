@@ -2,7 +2,7 @@ package cn.wnhyang.coolGuard.system.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.wnhyang.coolGuard.satoken.Login;
-import cn.wnhyang.coolGuard.satoken.core.util.LoginUtil;
+import cn.wnhyang.coolGuard.satoken.util.LoginUtil;
 import cn.wnhyang.coolGuard.system.convert.MenuConvert;
 import cn.wnhyang.coolGuard.system.entity.MenuDO;
 import cn.wnhyang.coolGuard.system.entity.RoleMenuDO;
@@ -19,11 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static cn.wnhyang.coolGuard.exception.GlobalErrorCode.UNAUTHORIZED;
-import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
+import static cn.wnhyang.coolGuard.common.exception.GlobalErrorCode.UNAUTHORIZED;
+import static cn.wnhyang.coolGuard.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.wnhyang.coolGuard.common.util.CollectionUtils.convertSet;
 import static cn.wnhyang.coolGuard.system.entity.MenuDO.ID_ROOT;
 import static cn.wnhyang.coolGuard.system.error.SystemErrorCode.*;
-import static cn.wnhyang.coolGuard.util.CollectionUtils.convertSet;
 
 
 /**

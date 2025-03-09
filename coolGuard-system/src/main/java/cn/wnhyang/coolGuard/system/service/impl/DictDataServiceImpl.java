@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.service.impl;
 
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.DictDataConvert;
 import cn.wnhyang.coolGuard.system.entity.DictDataDO;
 import cn.wnhyang.coolGuard.system.entity.DictTypeDO;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
+import static cn.wnhyang.coolGuard.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.wnhyang.coolGuard.system.error.SystemErrorCode.*;
 
 

@@ -1,8 +1,8 @@
 package cn.wnhyang.coolGuard.system.convert;
 
 
-import cn.wnhyang.coolGuard.log.core.dto.LogCreateReqDTO;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.log.dto.LogCreateReqDTO;
 import cn.wnhyang.coolGuard.system.dto.OperateLogCreateDTO;
 import cn.wnhyang.coolGuard.system.entity.OperateLogDO;
 import cn.wnhyang.coolGuard.system.vo.operatelog.OperateLogVO;

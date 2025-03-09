@@ -1,8 +1,8 @@
 package cn.wnhyang.coolGuard.system.service;
 
 
-import cn.wnhyang.coolGuard.entity.LabelValue;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.entity.LabelValue;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.entity.RoleDO;
 import cn.wnhyang.coolGuard.system.vo.role.RoleCreateVO;
 import cn.wnhyang.coolGuard.system.vo.role.RolePageVO;
@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static cn.wnhyang.coolGuard.util.CollectionUtils.convertSet;
+import static cn.wnhyang.coolGuard.common.util.CollectionUtils.convertSet;
 
 
 /**

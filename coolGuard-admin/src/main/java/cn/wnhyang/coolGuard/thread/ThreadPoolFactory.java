@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.thread;
 
-import cn.wnhyang.coolGuard.constant.TraceConstants;
-import cn.wnhyang.coolGuard.context.TraceContext;
+import cn.wnhyang.coolGuard.common.constant.TraceConstants;
+import cn.wnhyang.coolGuard.common.context.TraceContext;
 import com.alibaba.ttl.TtlRunnable;
 import org.slf4j.MDC;
 import org.springframework.core.task.TaskDecorator;

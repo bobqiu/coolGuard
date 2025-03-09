@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.service.impl;
 
 import cn.hutool.crypto.asymmetric.RSA;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.convert.RsaConvert;
 import cn.wnhyang.coolGuard.system.entity.RsaDO;
 import cn.wnhyang.coolGuard.system.mapper.RsaMapper;

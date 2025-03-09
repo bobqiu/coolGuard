@@ -101,4 +101,3 @@ sa-token:
 logging:
   level:
     cn.wnhyang.coolGuard.mapper: debug
-    cn.wnhyang.coolGuard.system.mapper: debug

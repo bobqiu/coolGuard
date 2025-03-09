@@ -1,6 +1,7 @@
 package cn.wnhyang.coolGuard.util;
 
-import cn.wnhyang.coolGuard.enums.LogicType;
+import cn.wnhyang.coolGuard.decision.enums.LogicType;
+import cn.wnhyang.coolGuard.decision.util.FunUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

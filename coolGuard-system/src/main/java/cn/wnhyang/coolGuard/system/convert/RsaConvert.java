@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.convert;
 
 
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
 import cn.wnhyang.coolGuard.system.entity.RsaDO;
 import cn.wnhyang.coolGuard.system.vo.rsa.RsaCreateVO;
 import cn.wnhyang.coolGuard.system.vo.rsa.RsaRespVO;

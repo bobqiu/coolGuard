@@ -1,21 +1,21 @@
 package cn.wnhyang.coolGuard.system.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.wnhyang.coolGuard.entity.LabelValue;
-import cn.wnhyang.coolGuard.enums.UserConstants;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.constant.UserConstants;
+import cn.wnhyang.coolGuard.common.entity.LabelValue;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.util.CollectionUtils;
+import cn.wnhyang.coolGuard.redis.constant.RedisKey;
 import cn.wnhyang.coolGuard.system.convert.RoleConvert;
 import cn.wnhyang.coolGuard.system.entity.RoleDO;
 import cn.wnhyang.coolGuard.system.entity.RoleMenuDO;
 import cn.wnhyang.coolGuard.system.mapper.RoleMapper;
 import cn.wnhyang.coolGuard.system.mapper.RoleMenuMapper;
 import cn.wnhyang.coolGuard.system.mapper.UserRoleMapper;
-import cn.wnhyang.coolGuard.system.redis.RedisKey;
 import cn.wnhyang.coolGuard.system.service.RoleService;
 import cn.wnhyang.coolGuard.system.vo.role.RoleCreateVO;
 import cn.wnhyang.coolGuard.system.vo.role.RolePageVO;
 import cn.wnhyang.coolGuard.system.vo.role.RoleUpdateVO;
-import cn.wnhyang.coolGuard.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
+import static cn.wnhyang.coolGuard.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.wnhyang.coolGuard.system.error.SystemErrorCode.*;
 
 

@@ -1,7 +1,7 @@
 package cn.wnhyang.coolGuard.system.vo.operatelog;
 
 import cn.hutool.core.date.DatePattern;
-import cn.wnhyang.coolGuard.pojo.PageParam;
+import cn.wnhyang.coolGuard.common.pojo.PageParam;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 

@@ -2,14 +2,14 @@ package cn.wnhyang.coolGuard.system.service;
 
 
 import cn.hutool.core.collection.CollUtil;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.util.CollectionUtils;
 import cn.wnhyang.coolGuard.system.dto.UserCreateDTO;
 import cn.wnhyang.coolGuard.system.entity.UserDO;
 import cn.wnhyang.coolGuard.system.login.LoginUser;
 import cn.wnhyang.coolGuard.system.vo.user.*;
 import cn.wnhyang.coolGuard.system.vo.userprofile.UserProfileUpdatePasswordVO;
 import cn.wnhyang.coolGuard.system.vo.userprofile.UserProfileUpdateVO;
-import cn.wnhyang.coolGuard.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.HashMap;

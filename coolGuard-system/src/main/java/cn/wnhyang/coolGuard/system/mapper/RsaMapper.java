@@ -1,6 +1,6 @@
 package cn.wnhyang.coolGuard.system.mapper;
 
-import cn.wnhyang.coolGuard.mybatis.BaseMapperX;
+import cn.wnhyang.coolGuard.mybatis.mapper.BaseMapperX;
 import cn.wnhyang.coolGuard.system.entity.RsaDO;
 import org.apache.ibatis.annotations.Mapper;
 

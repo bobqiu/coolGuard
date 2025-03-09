@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.wnhyang.coolGuard.mapper.IndicatorMapper">
+<mapper namespace="cn.wnhyang.coolGuard.decision.mapper.IndicatorMapper">
 
 
-    <select id="selectPage0" resultType="cn.wnhyang.coolGuard.dto.IndicatorDTO">
+    <select id="selectPage0" resultType="cn.wnhyang.coolGuard.decision.dto.IndicatorDTO">
         SELECT t.id,
         t.code,
         t.name,

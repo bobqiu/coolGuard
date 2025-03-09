@@ -1,7 +1,8 @@
 package cn.wnhyang.coolGuard.system.service.impl;
 
-import cn.wnhyang.coolGuard.entity.LabelValue;
-import cn.wnhyang.coolGuard.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.entity.LabelValue;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.util.CollectionUtils;
 import cn.wnhyang.coolGuard.system.convert.DictTypeConvert;
 import cn.wnhyang.coolGuard.system.entity.DictTypeDO;
 import cn.wnhyang.coolGuard.system.mapper.DictDataMapper;
@@ -10,14 +11,13 @@ import cn.wnhyang.coolGuard.system.service.DictTypeService;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeCreateVO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypePageVO;
 import cn.wnhyang.coolGuard.system.vo.dicttype.DictTypeUpdateVO;
-import cn.wnhyang.coolGuard.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
+import static cn.wnhyang.coolGuard.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.wnhyang.coolGuard.system.error.SystemErrorCode.*;
 
 

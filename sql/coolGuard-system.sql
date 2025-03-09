@@ -77,31 +77,29 @@ create table coolGuard.sys_menu
 
 create table coolGuard.sys_operate_log
 (
-    id               bigint auto_increment comment '操作日志id'
+    id             bigint auto_increment comment '操作日志id'
         primary key,
-    user_id          bigint                                  not null comment '用户编号',
-    user_nickname    varchar(30)                             null comment '用户昵称',
-    module           varchar(50)                             not null comment '模块标题',
-    name             varchar(50)                             not null comment '操作名',
-    type             int           default 0                 not null comment '操作分类',
-    content          varchar(2000) default ''                not null comment '操作内容',
-    exts             varchar(512)  default ''                not null comment '拓展字段',
-    request_method   varchar(16)   default ''                null comment '请求方法名',
-    request_url      varchar(255)  default ''                null comment '请求地址',
-    user_ip          varchar(50)                             null comment '用户 IP',
-    user_agent       varchar(200)                            null comment '浏览器 UA',
-    java_method      varchar(512)  default ''                not null comment 'Java 方法名',
-    java_method_args varchar(8000) default ''                null comment 'Java 方法的参数',
-    start_time       datetime                                not null comment '操作时间',
-    end_time         datetime                                null comment '结束时间',
-    duration         int                                     not null comment '执行时长',
-    result_code      int           default 0                 not null comment '结果码',
-    result_msg       varchar(512)  default ''                null comment '结果提示',
-    result_data      varchar(4000) default ''                null comment '结果数据',
-    creator          varchar(30)   default ''                null comment '创建者',
-    create_time      datetime      default CURRENT_TIMESTAMP not null comment '创建时间',
-    updater          varchar(30)   default ''                null comment '更新者',
-    update_time      datetime      default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+    trace_id       varchar(32)                            null comment '链路id',
+    user_id        bigint                                 not null comment '用户编号',
+    user_nickname  varchar(30)                            null comment '用户昵称',
+    module         varchar(50)                            not null comment '模块标题',
+    name           varchar(50)                            not null comment '操作名',
+    type           int          default 0                 not null comment '操作分类',
+    request_method varchar(16)  default ''                null comment '请求方法名',
+    request_url    varchar(255) default ''                null comment '请求地址',
+    request_params varchar(3000)                          null comment '请求参数',
+    user_ip        varchar(50)                            null comment '用户 IP',
+    user_agent     varchar(200)                           null comment '浏览器 UA',
+    start_time     datetime                               not null comment '操作时间',
+    end_time       datetime                               null comment '结束时间',
+    duration       int                                    not null comment '执行时长',
+    result_code    int          default 0                 not null comment '结果码',
+    result_msg     varchar(512) default ''                null comment '结果提示',
+    result_data    varchar(3000)                          null,
+    creator        varchar(30)  default ''                null comment '创建者',
+    create_time    datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    updater        varchar(30)  default ''                null comment '更新者',
+    update_time    datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
 )
     comment '操作日志记录' charset = utf8mb4;
 

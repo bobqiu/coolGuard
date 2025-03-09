@@ -4,11 +4,12 @@ import cn.dev33.satoken.secure.BCrypt;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.wnhyang.coolGuard.entity.LabelValue;
-import cn.wnhyang.coolGuard.enums.UserConstants;
-import cn.wnhyang.coolGuard.mybatis.LambdaQueryWrapperX;
-import cn.wnhyang.coolGuard.pojo.PageResult;
-import cn.wnhyang.coolGuard.satoken.core.util.LoginUtil;
+import cn.wnhyang.coolGuard.common.constant.UserConstants;
+import cn.wnhyang.coolGuard.common.entity.LabelValue;
+import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.common.util.CollectionUtils;
+import cn.wnhyang.coolGuard.mybatis.wrapper.LambdaQueryWrapperX;
+import cn.wnhyang.coolGuard.satoken.util.LoginUtil;
 import cn.wnhyang.coolGuard.system.convert.UserConvert;
 import cn.wnhyang.coolGuard.system.dto.UserCreateDTO;
 import cn.wnhyang.coolGuard.system.entity.RoleDO;
@@ -23,7 +24,6 @@ import cn.wnhyang.coolGuard.system.service.UserService;
 import cn.wnhyang.coolGuard.system.vo.user.*;
 import cn.wnhyang.coolGuard.system.vo.userprofile.UserProfileUpdatePasswordVO;
 import cn.wnhyang.coolGuard.system.vo.userprofile.UserProfileUpdateVO;
-import cn.wnhyang.coolGuard.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static cn.wnhyang.coolGuard.exception.util.ServiceExceptionUtil.exception;
+import static cn.wnhyang.coolGuard.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.wnhyang.coolGuard.system.error.SystemErrorCode.*;
 
 
