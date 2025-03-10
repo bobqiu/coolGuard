@@ -87,6 +87,7 @@ public class ParamController {
      * @return vo
      */
     @GetMapping
+    @SaCheckPermission("system:param:query")
     public CommonResult<ParamVO> get(@RequestParam("id") Long id) {
         return success(ParamConvert.INSTANCE.convert(paramService.get(id)));
     }
@@ -98,6 +99,7 @@ public class ParamController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckPermission("system:param:query")
     public CommonResult<PageResult<ParamVO>> page(@Valid ParamPageVO pageVO) {
         return success(ParamConvert.INSTANCE.convert(paramService.page(pageVO)));
     }

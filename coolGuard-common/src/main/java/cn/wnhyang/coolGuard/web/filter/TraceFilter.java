@@ -34,7 +34,7 @@ public class TraceFilter extends OncePerRequestFilter {
         } finally {
             // 必须清理上下文
             TraceContext.clear();
-            MDC.clear();
+            MDC.remove(TraceConstants.TRACE_KEY);
         }
     }
 

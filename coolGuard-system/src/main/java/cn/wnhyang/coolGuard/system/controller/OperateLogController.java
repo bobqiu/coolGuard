@@ -3,6 +3,8 @@ package cn.wnhyang.coolGuard.system.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolGuard.common.pojo.CommonResult;
 import cn.wnhyang.coolGuard.common.pojo.PageResult;
+import cn.wnhyang.coolGuard.log.annotation.OperateLog;
+import cn.wnhyang.coolGuard.log.enums.OperateType;
 import cn.wnhyang.coolGuard.system.convert.OperateLogConvert;
 import cn.wnhyang.coolGuard.system.service.OperateLogService;
 import cn.wnhyang.coolGuard.system.vo.operatelog.OperateLogPageVO;
@@ -34,6 +36,7 @@ public class OperateLogController {
      */
     @GetMapping("/page")
     @SaCheckPermission("system:operateLog:query")
+    @OperateLog(module = "后台-操作日志", name = "分页查询操作日志", type = OperateType.GET)
     public CommonResult<PageResult<OperateLogVO>> getOperateLogPage(@Valid OperateLogPageVO reqVO) {
         return CommonResult.success(OperateLogConvert.INSTANCE.convert(operateLogService.getOperateLogPage(reqVO)));
     }

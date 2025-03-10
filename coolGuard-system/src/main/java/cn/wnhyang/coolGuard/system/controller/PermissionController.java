@@ -2,7 +2,6 @@ package cn.wnhyang.coolGuard.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolGuard.common.pojo.CommonResult;
-import cn.wnhyang.coolGuard.log.annotation.OperateLog;
 import cn.wnhyang.coolGuard.system.service.PermissionService;
 import cn.wnhyang.coolGuard.system.vo.permission.RoleMenuVO;
 import cn.wnhyang.coolGuard.system.vo.permission.UserRoleVO;
@@ -32,7 +31,6 @@ public class PermissionController {
      * @return 结果
      */
     @PostMapping("/roleMenu")
-    @OperateLog(module = "后台-权限", name = "给角色赋予菜单")
     @SaCheckPermission("system:permission:roleMenu")
     public CommonResult<Boolean> roleMenu(@RequestBody @Valid RoleMenuVO reqVO) {
         permissionService.roleMenu(reqVO.getRoleId(), reqVO.getMenuIds());
@@ -46,7 +44,6 @@ public class PermissionController {
      * @return 角色对应的菜单ID集合
      */
     @GetMapping("/getRoleMenuList")
-    @OperateLog(module = "后台-权限", name = "查询角色菜单列表")
     @SaCheckPermission("system:permission:roleMenuList")
     public CommonResult<Set<Long>> getRoleMenuList(@RequestParam("roleId") Long roleId) {
         return CommonResult.success(permissionService.getMenuIdListByRoleId(roleId));
@@ -59,7 +56,6 @@ public class PermissionController {
      * @return 结果
      */
     @PostMapping("/userRole")
-    @OperateLog(module = "后台-权限", name = "给角色赋予菜单")
     @SaCheckPermission("system:permission:userRole")
     public CommonResult<Boolean> roleMenu(@RequestBody @Valid UserRoleVO reqVO) {
         permissionService.userRole(reqVO.getUserId(), reqVO.getRoleIds());
@@ -73,11 +69,9 @@ public class PermissionController {
      * @return 用户对应的角色ID集合
      */
     @GetMapping("/getUserRoleList")
-    @OperateLog(module = "后台-权限", name = "查询用户角色列表")
     @SaCheckPermission("system:permission:userRoleList")
     public CommonResult<Set<Long>> getUserRoleList(@RequestParam("userId") Long userId) {
         return CommonResult.success(permissionService.getRoleIdListByUserId(userId));
     }
-
 
 }

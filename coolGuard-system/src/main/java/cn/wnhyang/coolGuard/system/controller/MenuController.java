@@ -79,7 +79,6 @@ public class MenuController {
      * @return 菜单列表
      */
     @GetMapping("/list")
-    @OperateLog(module = "后台-菜单", name = "查询菜单列表")
     @SaCheckPermission("system:menu:list")
     public CommonResult<List<MenuRespVO>> getMenuList(@Valid MenuListVO reqVO) {
         return success(MenuConvert.INSTANCE.convertList(menuService.getMenuList(reqVO)));
@@ -92,7 +91,6 @@ public class MenuController {
      * @return 菜单列表
      */
     @GetMapping("/listTree")
-    @OperateLog(module = "后台-菜单", name = "查询菜单列表")
     @SaCheckPermission("system:menu:list")
     public CommonResult<List<MenuTreeRespVO>> getMenuTreeList(@Valid MenuListVO reqVO) {
         return success(menuService.getMenuTreeList(reqVO));

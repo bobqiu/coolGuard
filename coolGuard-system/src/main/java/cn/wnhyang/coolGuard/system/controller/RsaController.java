@@ -86,7 +86,6 @@ public class RsaController {
      * @return 字典数据
      */
     @GetMapping("/page")
-    @OperateLog(module = "后台-字典", name = "分页密钥")
     @SaCheckPermission("system:rsa:query")
     public CommonResult<PageResult<RsaRespVO>> getDictDataPage(@Valid RsaPageVO reqVO) {
         return success(RsaConvert.INSTANCE.convertPage(rsaService.getRsaPage(reqVO)));
@@ -99,7 +98,6 @@ public class RsaController {
      * @return 字典数据
      */
     @GetMapping
-    @OperateLog(module = "后台-字典", name = "查询详细密钥")
     @SaCheckPermission("system:rsa:query")
     public CommonResult<RsaRespVO> getDictData(@RequestParam("id") Long id) {
         return success(RsaConvert.INSTANCE.convert(rsaService.getRsa(id)));

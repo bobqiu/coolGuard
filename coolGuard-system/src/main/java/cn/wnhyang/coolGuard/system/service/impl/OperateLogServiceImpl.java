@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.system.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolGuard.common.pojo.CommonResult;
 import cn.wnhyang.coolGuard.common.pojo.PageResult;
 import cn.wnhyang.coolGuard.log.dto.LogCreateReqDTO;
@@ -38,6 +39,9 @@ public class OperateLogServiceImpl implements OperateLogService, LogService {
     @Transactional(rollbackFor = Exception.class)
     public void createOperateLog(OperateLogCreateDTO createReqDTO) {
         OperateLogDO logDO = OperateLogConvert.INSTANCE.convert(createReqDTO);
+        logDO.setRequestParams(StrUtil.maxLength(logDO.getRequestParams(), OperateLogDO.REQUEST_PARAMS_MAX_LENGTH));
+        logDO.setResultMsg(StrUtil.maxLength(logDO.getResultMsg(), OperateLogDO.RESULT_MSG_MAX_LENGTH));
+        logDO.setResultData(StrUtil.maxLength(logDO.getResultData(), OperateLogDO.RESULT_DATA_MAX_LENGTH));
         operateLogMapper.insert(logDO);
     }
 

@@ -88,7 +88,6 @@ public class RoleController {
      * @return 角色信息
      */
     @GetMapping
-    @OperateLog(module = "后台-角色", name = "查询角色")
     @SaCheckPermission("system:role:query")
     public CommonResult<RoleRespVO> getRole(@RequestParam("id") Long id) {
         RoleDO roleDO = roleService.getRole(id);
@@ -105,7 +104,6 @@ public class RoleController {
      * @return 角色列表
      */
     @GetMapping("/page")
-    @OperateLog(module = "后台-角色", name = "查询角色列表")
     @SaCheckPermission("system:role:list")
     public CommonResult<PageResult<RoleRespVO>> getRolePage(@Valid RolePageVO reqVO) {
         PageResult<RoleDO> pageResult = roleService.getRolePage(reqVO);

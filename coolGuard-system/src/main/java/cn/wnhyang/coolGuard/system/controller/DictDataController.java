@@ -76,9 +76,9 @@ public class DictDataController {
     }
 
     /**
-     * 查询简单菜单数据
+     * 查询简单字典数据
      *
-     * @return 菜单列表
+     * @return 字典列表
      */
     @GetMapping("/list")
     @SaCheckLogin
@@ -93,7 +93,6 @@ public class DictDataController {
      * @return 字典数据
      */
     @GetMapping("/page")
-    @OperateLog(module = "后台-字典", name = "分页字典数据")
     @SaCheckPermission("system:dict:query")
     public CommonResult<PageResult<DictDataRespVO>> getDictDataPage(@Valid DictDataPageVO reqVO) {
         return success(DictDataConvert.INSTANCE.convertPage(dictDataService.getDictDataPage(reqVO)));
@@ -106,7 +105,6 @@ public class DictDataController {
      * @return 字典数据
      */
     @GetMapping
-    @OperateLog(module = "后台-字典", name = "查询详细字典数据")
     @SaCheckPermission("system:dict:query")
     public CommonResult<DictDataRespVO> getDictData(@RequestParam("id") Long id) {
         return success(DictDataConvert.INSTANCE.convert(dictDataService.getDictData(id)));

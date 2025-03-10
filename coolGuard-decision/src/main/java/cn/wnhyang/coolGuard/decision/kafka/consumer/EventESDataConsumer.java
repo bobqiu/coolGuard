@@ -1,7 +1,6 @@
 package cn.wnhyang.coolGuard.decision.kafka.consumer;
 
 import cn.wnhyang.coolGuard.decision.constant.KafkaConstant;
-import cn.wnhyang.coolGuard.decision.es.ElasticSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class EventESDataConsumer {
-
-    private final ElasticSearchService elasticSearchService;
 
     @KafkaListener(topics = KafkaConstant.EVENT_ES_DATA, groupId = KafkaConstant.EVENT_ES_DATA_GROUP)
     public void consume(String message) {

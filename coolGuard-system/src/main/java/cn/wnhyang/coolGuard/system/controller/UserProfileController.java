@@ -33,7 +33,6 @@ public class UserProfileController {
      * @return 用户信息
      */
     @GetMapping
-    @OperateLog(module = "后台-用户设置", name = "查询登录用户信息")
     @SaCheckLogin
     public CommonResult<UserProfileVO> getUserProfile() {
         UserDO userDO = userService.getUserById(LoginUtil.getUserId());

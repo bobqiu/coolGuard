@@ -10,7 +10,6 @@ import cn.wnhyang.coolGuard.system.vo.core.auth.LoginRespVO;
 import cn.wnhyang.coolGuard.system.vo.core.auth.RegisterVO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -24,11 +23,10 @@ import static cn.wnhyang.coolGuard.common.pojo.CommonResult.success;
  * @author wnhyang
  * @date 2023/7/26
  **/
-@RestController
-@RequiredArgsConstructor
-@Validated
-@RequestMapping("/auth")
 @SaIgnore
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;

@@ -1,5 +1,6 @@
 package cn.wnhyang.coolGuard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.wnhyang.coolGuard.common.pojo.CommonResult;
 import cn.wnhyang.coolGuard.decision.service.DecisionService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import static cn.wnhyang.coolGuard.common.pojo.CommonResult.success;
  * @author wnhyang
  * @date 2025/3/8
  **/
+@SaIgnore
 @RestController
 @RequestMapping("/decision")
 @RequiredArgsConstructor

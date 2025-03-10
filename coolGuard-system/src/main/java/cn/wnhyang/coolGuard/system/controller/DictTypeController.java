@@ -82,7 +82,6 @@ public class DictTypeController {
      * @return 分页字典类型
      */
     @GetMapping("/page")
-    @OperateLog(module = "后台-字典", name = "分页字典类型")
     @SaCheckPermission("system:dict:query")
     public CommonResult<PageResult<DictTypeRespVO>> pageDictType(@Valid DictTypePageVO reqVO) {
         return success(DictTypeConvert.INSTANCE.convertPage(dictTypeService.getDictTypePage(reqVO)));
@@ -95,7 +94,6 @@ public class DictTypeController {
      * @return 字典详情
      */
     @GetMapping
-    @OperateLog(module = "后台-字典", name = "查询字典类型详情")
     @SaCheckPermission("system:dict:query")
     public CommonResult<DictTypeRespVO> getDictType(@RequestParam("id") Long id) {
         return success(DictTypeConvert.INSTANCE.convert(dictTypeService.getDictType(id)));

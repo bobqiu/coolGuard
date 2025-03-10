@@ -2,9 +2,10 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:8
+    image: mysql:8.0.36
     container_name: mysql
     environment:
+      MYSQL_ROOT_HOST: '%'
       TZ: Asia/Shanghai
       MYSQL_ROOT_PASSWORD: ${mysql_password}
     ports:
@@ -16,7 +17,7 @@ services:
       - custom_network
 
   redis:
-    image: redis:6
+    image: redis:6.2.12-alpine
     container_name: redis
     environment:
       TZ: Asia/Shanghai
@@ -34,14 +35,19 @@ services:
     container_name: kafka
     environment:
       KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_LOG_DIRS: /var/lib/kafka/data
-      KAFKA_METADATA_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_METADATA_LOG_REPLICATION_FACTOR: 1
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
       TZ: Asia/Shanghai
     ports:
       - "9092:9092"
+      - "9093:9093"
     volumes:
       - kafkadata:/var/lib/kafka/data
       - kafkalogs:/var/log/kafka
@@ -54,7 +60,7 @@ services:
       - custom_network
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.3
     container_name: elasticsearch
     environment:
       ES_JAVA_OPTS: "-Xms2g -Xmx2g"
@@ -63,6 +69,7 @@ services:
       xpack.security.enabled: "true"
       xpack.security.http.ssl.enabled: "false"
       xpack.security.transport.ssl.enabled: "false"
+      cluster.initial_master_nodes: elasticsearch
       TZ: Asia/Shanghai
     ports:
       - "9200:9200"
@@ -74,12 +81,13 @@ services:
       - custom_network
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.14.0
+    image: docker.elastic.co/kibana/kibana:8.17.3
     container_name: kibana
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
       ELASTICSEARCH_USERNAME: elastic
       ELASTICSEARCH_PASSWORD: ${elasticsearch_password}
+      SERVER_PUBLICBASEURL: "http://localhost:5601"
       SERVER_HOST: "0.0.0.0"
       XPACK_SECURITY_ENABLED: "true"
       XPACK_SECURITY_HTTP_SSL_ENABLED: "false"
@@ -96,15 +104,25 @@ services:
 
 volumes:
   mysqllogs:
+    driver: local
   mysqldata:
+    driver: local
   redisdata:
+    driver: local
   redislogs:
+    driver: local
   kafkadata:
+    driver: local
   kafkalogs:
+    driver: local
   esdata:
+    driver: local
   eslogs:
+    driver: local
   kibanadata:
+    driver: local
   kibanalog:
+    driver: local
 
 networks:
   custom_network:

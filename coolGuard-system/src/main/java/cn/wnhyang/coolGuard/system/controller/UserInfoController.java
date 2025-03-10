@@ -3,7 +3,6 @@ package cn.wnhyang.coolGuard.system.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.wnhyang.coolGuard.common.pojo.CommonResult;
-import cn.wnhyang.coolGuard.log.annotation.OperateLog;
 import cn.wnhyang.coolGuard.satoken.Login;
 import cn.wnhyang.coolGuard.satoken.util.LoginUtil;
 import cn.wnhyang.coolGuard.system.entity.UserDO;
@@ -38,7 +37,6 @@ public class UserInfoController {
      * @return 用户信息
      */
     @GetMapping("/info")
-    @OperateLog(module = "后台-用户", name = "查询用户信息")
     @SaCheckLogin
     public CommonResult<UserInfoRespVO> userInfo() {
 

@@ -26,6 +26,21 @@ import java.time.LocalDateTime;
 @TableName("sys_operate_log")
 public class OperateLogDO extends BaseDO {
 
+    /**
+     * {@link #requestParams} 的最大长度
+     */
+    public static final Integer REQUEST_PARAMS_MAX_LENGTH = 8000;
+
+    /**
+     * {@link #resultMsg} 的最大长度
+     */
+    public static final Integer RESULT_MSG_MAX_LENGTH = 512;
+
+    /**
+     * {@link #resultData} 的最大长度
+     */
+    public static final Integer RESULT_DATA_MAX_LENGTH = 512;
+
     @Serial
     private static final long serialVersionUID = 1797386582905133955L;
 

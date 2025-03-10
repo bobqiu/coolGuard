@@ -32,12 +32,6 @@ spring:
   # kafka配置
   kafka:
     bootstrap-servers: localhost:9092
-es:
-  scheme: http
-  host: 127.0.0.1
-  port: 9200
-  username: elastic
-  password: elastic
 
 liteflow:
   # 自定义Lf主线程池
