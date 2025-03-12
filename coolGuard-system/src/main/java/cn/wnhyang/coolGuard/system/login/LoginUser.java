@@ -7,6 +7,7 @@ import cn.wnhyang.coolGuard.satoken.Login;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -73,6 +74,11 @@ public class LoginUser implements Login, Serializable {
      * 帐号状态（0正常 1停用）
      */
     private Boolean status;
+
+    /**
+     * 账号过期时间
+     */
+    private LocalDate expireDate;
 
     /**
      * 最后登录IP

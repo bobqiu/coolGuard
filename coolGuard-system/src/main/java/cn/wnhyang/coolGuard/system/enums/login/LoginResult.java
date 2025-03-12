@@ -37,6 +37,11 @@ public enum LoginResult {
     USER_DISABLED(20),
 
     /**
+     * 用户已过期
+     */
+    USER_EXPIRED(21),
+
+    /**
      * 未知异常
      */
     UNKNOWN_ERROR(100);

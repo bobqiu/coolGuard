@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
+import java.time.LocalDate;
 
 /**
  * @author wnhyang
@@ -35,5 +36,10 @@ public class UserPageVO extends PageParam {
      * 状态
      */
     private Boolean status;
+
+    /**
+     * 账号过期时间
+     */
+    private LocalDate expireDate;
 
 }

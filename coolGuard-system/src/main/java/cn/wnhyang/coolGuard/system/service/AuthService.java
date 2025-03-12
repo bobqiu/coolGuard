@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
@@ -60,14 +61,17 @@ public class AuthService {
             user = userService.getLoginUser(account, "", "");
             loginType = LoginType.LOGIN_USERNAME;
         }
-        if (!BCrypt.checkpw(reqVO.getPassword(), user.getPassword())) {
-            createLoginLog(user.getId(), account, loginType, LoginResult.BAD_CREDENTIALS);
-            throw exception(AUTH_LOGIN_BAD_CREDENTIALS);
-        }
-        // 校验是否禁用
         if (!user.getStatus()) {
             createLoginLog(user.getId(), account, loginType, LoginResult.USER_DISABLED);
             throw exception(AUTH_LOGIN_USER_DISABLED);
+        }
+        if (user.getExpireDate() != null && user.getExpireDate().isBefore(LocalDate.now())) {
+            createLoginLog(user.getId(), account, loginType, LoginResult.USER_EXPIRED);
+            throw exception(AUTH_TOKEN_EXPIRED);
+        }
+        if (!BCrypt.checkpw(reqVO.getPassword(), user.getPassword())) {
+            createLoginLog(user.getId(), account, loginType, LoginResult.BAD_CREDENTIALS);
+            throw exception(AUTH_LOGIN_BAD_CREDENTIALS);
         }
 
         // 创建 Token 令牌，记录登录日志
@@ -92,15 +96,18 @@ public class AuthService {
         } else {
             throw exception(AUTH_LOGIN_BAD_CREDENTIALS);
         }
+        if (!user.getStatus()) {
+            createLoginLog(user.getId(), user.getUsername(), loginType, LoginResult.USER_DISABLED);
+            throw exception(AUTH_LOGIN_USER_DISABLED);
+        }
+        if (user.getExpireDate() != null && user.getExpireDate().isBefore(LocalDate.now())) {
+            createLoginLog(user.getId(), user.getUsername(), loginType, LoginResult.USER_EXPIRED);
+            throw exception(AUTH_TOKEN_EXPIRED);
+        }
         String emailCode = valueOperations.get(RedisKey.EMAIL_CODE);
         if (!code.equals(emailCode)) {
             createLoginLog(user.getId(), email, loginType, LoginResult.BAD_EMAIL_CODE);
             throw exception(AUTH_LOGIN_BAD_EMAIL_CODE);
-        }
-        // 校验是否禁用
-        if (!user.getStatus()) {
-            createLoginLog(user.getId(), email, loginType, LoginResult.USER_DISABLED);
-            throw exception(AUTH_LOGIN_USER_DISABLED);
         }
 
         // 创建 Token 令牌，记录登录日志

@@ -15,12 +15,13 @@ public interface SystemErrorCode {
     // ========== AUTH 模块 1002000000 ==========
     ErrorCode AUTH_LOGIN_BAD_CREDENTIALS = new ErrorCode(1002000000, "登录失败，账号或密码不正确");
     ErrorCode AUTH_LOGIN_USER_DISABLED = new ErrorCode(1002000001, "登录失败，账号被禁用");
-    ErrorCode AUTH_LOGIN_BAD_MOBILE_CODE = new ErrorCode(1002000002, "登录失败，手机号或验证码不正确");
-    ErrorCode AUTH_LOGIN_BAD_EMAIL_CODE = new ErrorCode(1002000003, "登录失败，邮箱或验证码不正确");
-    ErrorCode AUTH_LOGIN_CAPTCHA_CODE_ERROR = new ErrorCode(1002000004, "验证码不正确，原因：{}");
-    ErrorCode AUTH_THIRD_LOGIN_NOT_BIND = new ErrorCode(1002000005, "未绑定账号，需要进行绑定");
-    ErrorCode AUTH_TOKEN_EXPIRED = new ErrorCode(1002000006, "Token 已经过期");
-    ErrorCode AUTH_MOBILE_NOT_EXISTS = new ErrorCode(1002000007, "手机号不存在");
+    ErrorCode AUTH_LOGIN_USER_EXPIRED = new ErrorCode(1002000002, "登录失败，账号被禁用");
+    ErrorCode AUTH_LOGIN_BAD_MOBILE_CODE = new ErrorCode(1002000003, "登录失败，手机号或验证码不正确");
+    ErrorCode AUTH_LOGIN_BAD_EMAIL_CODE = new ErrorCode(1002000004, "登录失败，邮箱或验证码不正确");
+    ErrorCode AUTH_LOGIN_CAPTCHA_CODE_ERROR = new ErrorCode(1002000005, "验证码不正确，原因：{}");
+    ErrorCode AUTH_THIRD_LOGIN_NOT_BIND = new ErrorCode(1002000006, "未绑定账号，需要进行绑定");
+    ErrorCode AUTH_TOKEN_EXPIRED = new ErrorCode(1002000007, "Token 已经过期");
+    ErrorCode AUTH_MOBILE_NOT_EXISTS = new ErrorCode(1002000008, "手机号不存在");
 
     // ========== 菜单模块 1002001000 ==========
     ErrorCode MENU_NAME_EXISTS = new ErrorCode(1002001000, "菜单名已存在");
@@ -50,8 +51,8 @@ public interface SystemErrorCode {
     ErrorCode USER_NOT_EXISTS = new ErrorCode(1002003004, "用户不存在");
     ErrorCode USER_IMPORT_LIST_IS_EMPTY = new ErrorCode(1002003005, "导入用户数据不能为空！");
     ErrorCode USER_PASSWORD_FAILED = new ErrorCode(1002003006, "用户密码校验失败");
-    ErrorCode USER_IS_DISABLE = new ErrorCode(1002003007, "名字为【{}】的用户已被禁用");
-    ErrorCode USER_COUNT_MAX = new ErrorCode(1002003008, "创建用户失败，原因：超过租户最大租户配额({})！");
+    ErrorCode USER_IS_DISABLE = new ErrorCode(1002003007, "用户已被禁用");
+    ErrorCode USER_IS_EXPIRE = new ErrorCode(1002003008, "用户已过期");
 
     // ========== 字典类型 1002006000 ==========
     ErrorCode DICT_TYPE_NOT_EXISTS = new ErrorCode(1002006001, "当前字典类型不存在");

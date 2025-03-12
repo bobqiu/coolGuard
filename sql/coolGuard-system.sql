@@ -182,6 +182,7 @@ create table coolGuard.sys_user
     sex         tinyint      default 0                 null comment '用户性别',
     avatar      varchar(200) default ''                null comment '头像地址',
     status      bit          default b'0'              not null comment '帐号状态',
+    expire_date date                                   null,
     login_ip    varchar(50)  default ''                null comment '最后登录IP',
     login_date  datetime                               null comment '最后登录时间',
     creator     varchar(30)  default ''                null comment '创建者',

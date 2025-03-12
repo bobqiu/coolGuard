@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -100,6 +101,12 @@ public class UserDO extends BaseDO {
      */
     @TableField("status")
     private Boolean status;
+
+    /**
+     * 账号过期时间
+     */
+    @TableField("expire_date")
+    private LocalDate expireDate;
 
     /**
      * 最后登录IP

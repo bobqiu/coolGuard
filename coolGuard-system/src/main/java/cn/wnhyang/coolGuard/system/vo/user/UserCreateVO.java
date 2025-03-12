@@ -1,12 +1,10 @@
 package cn.wnhyang.coolGuard.system.vo.user;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -73,6 +71,12 @@ public class UserCreateVO {
      * 状态
      */
     private Boolean status;
+
+    /**
+     * 账号过期时间
+     */
+    @Future
+    private LocalDate expireDate;
 
     /**
      * 角色集合
