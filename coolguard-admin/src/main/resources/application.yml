@@ -1,0 +1,58 @@
+server:
+  port: 8081
+  shutdown: graceful
+
+spring:
+  application:
+    name: coolguard
+  profiles:
+    active: local
+  # Cache 配置项
+  cache:
+    type: REDIS
+    redis:
+      time-to-live: 1h # 设置过期时间为 1 小时
+  # kafka配置
+  kafka:
+    client-id: coolguard
+    producer:
+      acks: 1
+      retries: 3
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      # 默认消费者组id
+      group-id: coolguard-default
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  boot:
+    admin:
+      client:
+        instance:
+          service-base-url: http://localhost:8081
+
+# 监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+# mybatis-plus
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  login: false
+
+# 日志配置
+logging:
+  config: classpath:log4j2.xml
+
+# Lock4j 配置项
+lock4j:
+  acquire-timeout: 3000 #默认值3s，可不设置
+  expire: 30000 #默认值30s，可不设置
+  primary-executor: com.baomidou.lock.executor.RedissonLockExecutor #默认redisson>redisTemplate>zookeeper，可不设置
+  lock-key-prefix: lock4j #锁key前缀, 默认值lock4j，可不设置

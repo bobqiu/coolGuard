@@ -5,17 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.wnhyang</groupId>
-    <artifactId>coolGuard</artifactId>
+    <artifactId>coolguard</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>coolGuard-common</module>
-        <module>coolGuard-admin</module>
-        <module>coolGuard-system</module>
-        <module>coolGuard-decision</module>
-        <module>coolGuard-dependencies</module>
-        <module>coolGuard-monitor</module>
+        <module>coolguard-common</module>
+        <module>coolguard-admin</module>
+        <module>coolguard-system</module>
+        <module>coolguard-decision</module>
+        <module>coolguard-dependencies</module>
+        <module>coolguard-monitor</module>
     </modules>
 
     <properties>
@@ -25,7 +25,7 @@
         <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <coolGuard.version>1.0-SNAPSHOT</coolGuard.version>
+        <coolguard.version>1.0-SNAPSHOT</coolguard.version>
         <spring-boot.version>3.3.9</spring-boot.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok.version>1.18.24</lombok.version>
@@ -65,8 +65,8 @@
         <dependencies>
             <dependency>
                 <groupId>cn.wnhyang</groupId>
-                <artifactId>coolGuard-dependencies</artifactId>
-                <version>${coolGuard.version}</version>
+                <artifactId>coolguard-dependencies</artifactId>
+                <version>${coolguard.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
