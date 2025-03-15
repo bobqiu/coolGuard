@@ -146,14 +146,13 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * TODO 不能直接抛出后端异常给前端
      * 拦截未知的运行时异常
      */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<CommonResult<Void>> handleRuntimeException(RuntimeException e, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         log.error("请求地址'{}',发生未知异常.", requestUri, e);
-        return ResponseEntity.internalServerError().body(CommonResult.error(INTERNAL_SERVER_ERROR.getCode(), e.getMessage()));
+        return ResponseEntity.internalServerError().body(CommonResult.error(INTERNAL_SERVER_ERROR));
     }
 
     /**

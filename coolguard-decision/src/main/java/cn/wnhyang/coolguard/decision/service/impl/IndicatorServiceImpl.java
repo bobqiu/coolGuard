@@ -126,8 +126,6 @@ public class IndicatorServiceImpl implements IndicatorService {
         }
         // TODO 查找引用
         indicatorMapper.deleteById(id);
-        // 删除历史版本
-        indicatorVersionMapper.deleteByCode(indicator.getCode());
     }
 
     @Override

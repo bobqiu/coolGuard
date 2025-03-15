@@ -60,8 +60,4 @@ public interface RuleVersionMapper extends BaseMapperX<RuleVersion> {
                 .orderByDesc(RuleVersion::getVersion)
                 .last("LIMIT 1"));
     }
-
-    default void deleteByCode(String code) {
-        delete(RuleVersion::getCode, code);
-    }
 }

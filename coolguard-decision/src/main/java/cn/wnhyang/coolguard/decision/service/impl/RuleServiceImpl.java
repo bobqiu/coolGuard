@@ -113,8 +113,6 @@ public class RuleServiceImpl implements RuleService {
             throw exception(RULE_IS_RUNNING);
         }
         ruleMapper.deleteById(id);
-        // 删除所有版本
-        ruleVersionMapper.deleteByCode(rule.getCode());
     }
 
     @Override

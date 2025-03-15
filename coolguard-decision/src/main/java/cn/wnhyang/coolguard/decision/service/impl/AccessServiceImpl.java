@@ -75,6 +75,7 @@ public class AccessServiceImpl implements AccessService {
         if (access == null) {
             throw exception(ACCESS_NOT_EXIST);
         }
+        // TODO 最近有数据不可删除
         accessMapper.deleteById(id);
     }
 

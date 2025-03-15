@@ -1,10 +1,12 @@
 package cn.wnhyang.coolguard.decision.vo.base;
 
+import cn.wnhyang.coolguard.decision.entity.Th;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author wnhyang
@@ -21,6 +23,11 @@ public class PolicyBaseVO implements Serializable {
      */
     @NotBlank(message = "策略名不能为空")
     private String name;
+
+    /**
+     * 策略阈值
+     */
+    private List<Th> thList;
 
     /**
      * 描述

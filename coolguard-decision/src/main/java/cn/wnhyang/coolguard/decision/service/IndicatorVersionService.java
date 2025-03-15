@@ -18,13 +18,6 @@ import java.util.List;
 public interface IndicatorVersionService {
 
     /**
-     * 删除
-     *
-     * @param id id
-     */
-    void delete(Long id);
-
-    /**
      * 查询单个
      *
      * @param id id

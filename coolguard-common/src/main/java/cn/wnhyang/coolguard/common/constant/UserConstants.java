@@ -24,5 +24,5 @@ public interface UserConstants {
     /**
      * 初始密码
      */
-    String DEFAULT_PASSWORD = "Okay@123456";
+    String DEFAULT_PASSWORD = "Cg@123456";
 }

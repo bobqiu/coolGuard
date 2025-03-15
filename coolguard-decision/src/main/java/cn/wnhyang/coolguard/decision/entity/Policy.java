@@ -65,6 +65,7 @@ public class Policy extends BaseDO implements LabelValueAble {
 
     /**
      * 策略阈值
+     * (下限,x1] code1,(x1,x2] code2
      */
     @TableField(value = "th_list", typeHandler = JacksonTypeHandler.class)
     private List<Th> thList;

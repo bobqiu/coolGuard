@@ -39,16 +39,6 @@ public class PolicyVersionServiceImpl implements PolicyVersionService {
     private final PolicyMapper policyMapper;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void delete(Long id) {
-        PolicyVersion policyVersion = policyVersionMapper.selectById(id);
-        if (policyVersion == null) {
-            throw exception(POLICY_VERSION_NOT_EXIST);
-        }
-        policyVersionMapper.deleteById(id);
-    }
-
-    @Override
     public PolicyVersion get(Long id) {
         return policyVersionMapper.selectById(id);
     }

@@ -40,16 +40,6 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
     private final IndicatorMapper indicatorMapper;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void delete(Long id) {
-        IndicatorVersion indicatorVersion = indicatorVersionMapper.selectById(id);
-        if (indicatorVersion == null) {
-            throw exception(INDICATOR_VERSION_NOT_EXIST);
-        }
-        indicatorVersionMapper.deleteById(id);
-    }
-
-    @Override
     public IndicatorVersionVO get(Long id) {
         IndicatorVersion indicatorVersion = indicatorVersionMapper.selectById(id);
         return IndicatorVersionConvert.INSTANCE.convert(indicatorVersion);

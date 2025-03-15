@@ -39,16 +39,6 @@ public class RuleVersionServiceImpl implements RuleVersionService {
     private final RuleMapper ruleMapper;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void delete(Long id) {
-        RuleVersion ruleVersion = ruleVersionMapper.selectById(id);
-        if (ruleVersion == null) {
-            throw exception(RULE_VERSION_NOT_EXIST);
-        }
-        ruleVersionMapper.deleteById(id);
-    }
-
-    @Override
     public RuleVersion get(Long id) {
         return ruleVersionMapper.selectById(id);
     }

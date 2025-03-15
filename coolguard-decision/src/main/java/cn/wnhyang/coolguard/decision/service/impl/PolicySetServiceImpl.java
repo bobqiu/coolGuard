@@ -131,8 +131,6 @@ public class PolicySetServiceImpl implements PolicySetService {
         policyService.deletePolicy(CollectionUtils.convertSet(policyMapper.selectListBySetCode(policySet.getCode()), Policy::getId));
         // 5、删除chain
         policySetMapper.deleteById(id);
-        // 删除历史版本
-        policySetVersionMapper.deleteByCode(policySet.getCode());
     }
 
     @Override
