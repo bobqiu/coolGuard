@@ -3,6 +3,7 @@ package cn.wnhyang.coolguard.decision.controller;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
 import cn.wnhyang.coolguard.decision.service.DecisionService;
+import cn.wnhyang.coolguard.decision.vo.result.DecisionResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class DecisionController {
      * @return map
      */
     @PostMapping("/{code}/test")
-    public CommonResult<Map<String, Object>> testRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
+    public CommonResult<DecisionResult> testRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
         return success(decisionService.testRisk(code, params));
     }
 
@@ -44,7 +45,7 @@ public class DecisionController {
      * @return map
      */
     @PostMapping("/{code}/sync")
-    public CommonResult<Map<String, Object>> syncRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
+    public CommonResult<DecisionResult> syncRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
         return success(decisionService.syncRisk(code, params));
     }
 
@@ -56,7 +57,7 @@ public class DecisionController {
      * @return map
      */
     @PostMapping("/{code}/async")
-    public CommonResult<Map<String, Object>> asyncRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
+    public CommonResult<DecisionResult> asyncRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
         return success(decisionService.asyncRisk(code, params));
     }
 }

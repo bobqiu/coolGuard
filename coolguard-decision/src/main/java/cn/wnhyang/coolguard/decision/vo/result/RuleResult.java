@@ -1,7 +1,8 @@
 package cn.wnhyang.coolguard.decision.vo.result;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -10,7 +11,9 @@ import java.io.Serializable;
  * @author wnhyang
  * @date 2024/4/8
  **/
-@Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RuleResult implements Serializable {
 
     @Serial
@@ -19,12 +22,12 @@ public class RuleResult implements Serializable {
     /**
      * 规则名称
      */
-    private final String name;
+    private String name;
 
     /**
      * 规则编码
      */
-    private final String code;
+    private String code;
 
     public RuleResult(String name, String code, String express) {
         this.name = name;
@@ -35,19 +38,16 @@ public class RuleResult implements Serializable {
     /**
      * 处置名称
      */
-    @Setter
     private String disposalName;
 
     /**
      * 处置编码
      */
-    @Setter
     private String disposalCode;
 
     /**
      *
      */
-    @Setter
     private String express;
 
 }

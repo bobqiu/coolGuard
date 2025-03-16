@@ -1,7 +1,8 @@
 package cn.wnhyang.coolguard.decision.vo.result;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -12,7 +13,9 @@ import java.util.List;
  * @author wnhyang
  * @date 2024/4/8
  **/
-@Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PolicyResult implements Serializable {
 
     @Serial
@@ -21,28 +24,26 @@ public class PolicyResult implements Serializable {
     /**
      * 策略名称
      */
-    private final String name;
+    private String name;
 
     /**
      * 策略编码
      */
-    private final String code;
+    private String code;
 
     /**
      * 策略模式
      */
-    private final String mode;
+    private String mode;
 
     /**
      * 处置名称
      */
-    @Setter
     private String disposalName;
 
     /**
      * 处置编码
      */
-    @Setter
     private String disposalCode;
 
     public PolicyResult(String name, String code, String mode) {

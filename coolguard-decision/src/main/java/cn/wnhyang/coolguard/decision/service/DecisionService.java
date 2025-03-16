@@ -1,5 +1,7 @@
 package cn.wnhyang.coolguard.decision.service;
 
+import cn.wnhyang.coolguard.decision.vo.result.DecisionResult;
+
 import java.util.Map;
 
 /**
@@ -15,7 +17,7 @@ public interface DecisionService {
      * @param params 参数
      * @return map
      */
-    Map<String, Object> testRisk(String code, Map<String, String> params);
+    DecisionResult testRisk(String code, Map<String, String> params);
 
     /**
      * 同步调用
@@ -24,7 +26,7 @@ public interface DecisionService {
      * @param params 参数
      * @return map
      */
-    Map<String, Object> syncRisk(String code, Map<String, String> params);
+    DecisionResult syncRisk(String code, Map<String, String> params);
 
     /**
      * 异步调用
@@ -33,5 +35,5 @@ public interface DecisionService {
      * @param params 参数
      * @return map
      */
-    Map<String, Object> asyncRisk(String code, Map<String, String> params);
+    DecisionResult asyncRisk(String code, Map<String, String> params);
 }

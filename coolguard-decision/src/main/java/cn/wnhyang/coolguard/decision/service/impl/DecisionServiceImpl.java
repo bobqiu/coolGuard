@@ -15,6 +15,8 @@ import cn.wnhyang.coolguard.decision.kafka.producer.CommonProducer;
 import cn.wnhyang.coolguard.decision.mapper.AccessMapper;
 import cn.wnhyang.coolguard.decision.service.*;
 import cn.wnhyang.coolguard.decision.vo.AccessVO;
+import cn.wnhyang.coolguard.decision.vo.EventData;
+import cn.wnhyang.coolguard.decision.vo.result.DecisionResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -48,12 +50,12 @@ public class DecisionServiceImpl implements DecisionService {
 
     private final PolicySetService policySetService;
 
-    private Map<String, Object> access(String code, Map<String, String> params, String mode) {
+    private DecisionResult access(String code, Map<String, String> params, String mode) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start("接入");
         log.info("服务名：{}, 入参：{}", code, params);
 
-        Map<String, Object> result = new HashMap<>(16);
+        DecisionResult decisionResult = new DecisionResult();
         try {
             stopWatch.stop();
 
@@ -83,7 +85,7 @@ public class DecisionServiceImpl implements DecisionService {
             }
             stopWatch.start("结果");
             // 策略结果
-            result.put("policySetResult", DecisionContextHolder.getEventContext().getPolicySetResult());
+            decisionResult.setPolicySetResult(DecisionContextHolder.getEventContext().getPolicySetResult());
             // 设置出参
             Map<String, Object> outFields = new HashMap<>(16);
             outFields.put(FieldCode.SEQ_ID, fieldContext.getData(FieldCode.SEQ_ID, String.class));
@@ -92,17 +94,17 @@ public class DecisionServiceImpl implements DecisionService {
                     outFields.put(outputField.getParamName(), fieldContext.getData2String(outputField.getFieldCode()));
                 }
             }
-            result.put("outFields", outFields);
+            decisionResult.setOutFields(outFields);
             stopWatch.stop();
 
             // 将上下文拼在一块，将此任务丢到线程中执行
             stopWatch.start("ES");
-            Map<String, Object> esData = new HashMap<>(16);
-            esData.put("fields", fieldContext);
-            esData.put("zbs", DecisionContextHolder.getIndicatorContext().convert());
-            esData.put("result", DecisionContextHolder.getEventContext().getPolicySetResult());
+            EventData eventData = new EventData();
+            eventData.setFields(fieldContext);
+            eventData.setZbs(DecisionContextHolder.getIndicatorContext().convert());
+            eventData.setPolicySetResult(DecisionContextHolder.getEventContext().getPolicySetResult());
             try {
-                commonProducer.send(KafkaConstant.EVENT_ES_DATA, JsonUtil.toJsonString(esData));
+                commonProducer.send(KafkaConstant.EVENT_ES_DATA, JsonUtil.toJsonString(eventData));
             } catch (Exception e) {
                 log.error("esData error", e);
             }
@@ -111,32 +113,30 @@ public class DecisionServiceImpl implements DecisionService {
             DecisionContextHolder.removeAll();
         }
         log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
-        return result;
+        return decisionResult;
     }
 
     @Override
-    public Map<String, Object> testRisk(String code, Map<String, String> params) {
-        Map<String, Object> result = access(code, params, AccessMode.TEST);
+    public DecisionResult testRisk(String code, Map<String, String> params) {
+        DecisionResult result = access(code, params, AccessMode.TEST);
         accessMapper.updateByCode(new Access().setCode(code).setTestParams(params));
         return result;
     }
 
     @Override
-    public Map<String, Object> syncRisk(String code, Map<String, String> params) {
+    public DecisionResult syncRisk(String code, Map<String, String> params) {
         return access(code, params, AccessMode.SYNC);
     }
 
     @Override
-    public Map<String, Object> asyncRisk(String code, Map<String, String> params) {
+    public DecisionResult asyncRisk(String code, Map<String, String> params) {
 
-        Map<String, Object> map = new HashMap<>(16);
-        map.put("code", "000000");
-
+        DecisionResult decisionResult = new DecisionResult();
         try {
             return asyncExecutor.submit(() ->
                     access(code, params, AccessMode.ASYNC)).get(100, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
-            return map;
+            return decisionResult;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
