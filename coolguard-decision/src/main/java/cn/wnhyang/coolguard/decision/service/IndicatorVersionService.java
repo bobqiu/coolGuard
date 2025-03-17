@@ -5,7 +5,7 @@ import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.decision.vo.IndicatorSimpleVO;
 import cn.wnhyang.coolguard.decision.vo.IndicatorVersionVO;
 import cn.wnhyang.coolguard.decision.vo.page.IndicatorVersionPageVO;
-import jakarta.validation.Valid;
+import cn.wnhyang.coolguard.decision.vo.query.CvQueryVO;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public interface IndicatorVersionService {
      * @param code code
      * @return po
      */
-    IndicatorVersionVO getByCode(String code);
+    List<IndicatorVersionVO> getByCode(String code);
 
     /**
      * 分页查询
@@ -54,7 +54,7 @@ public interface IndicatorVersionService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<IndicatorVersionVO> pageByCode(@Valid IndicatorVersionPageVO pageVO);
+    PageResult<IndicatorVersionVO> pageByCode(IndicatorVersionPageVO pageVO);
 
     /**
      * 选中
@@ -76,4 +76,12 @@ public interface IndicatorVersionService {
      * @return simpleList
      */
     List<IndicatorSimpleVO> getSimpleList();
+
+    /**
+     * 根据code和version查询
+     *
+     * @param queryVO queryVO
+     * @return vo
+     */
+    IndicatorVersionVO getByCv(CvQueryVO queryVO);
 }

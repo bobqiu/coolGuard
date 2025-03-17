@@ -3,6 +3,7 @@ package cn.wnhyang.coolguard.decision.mapper;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.decision.entity.PolicySetVersion;
 import cn.wnhyang.coolguard.decision.vo.page.PolicySetVersionPageVO;
+import cn.wnhyang.coolguard.decision.vo.query.CvQueryVO;
 import cn.wnhyang.coolguard.mybatis.mapper.BaseMapperX;
 import cn.wnhyang.coolguard.mybatis.wrapper.LambdaQueryWrapperX;
 import org.apache.ibatis.annotations.Mapper;
@@ -47,8 +48,8 @@ public interface PolicySetVersionMapper extends BaseMapperX<PolicySetVersion> {
         delete(PolicySetVersion::getCode, code);
     }
 
-    default PolicySetVersion selectByCode(String code) {
-        return selectOne(PolicySetVersion::getCode, code);
+    default List<PolicySetVersion> selectByCode(String code) {
+        return selectList(PolicySetVersion::getCode, code);
     }
 
     default PolicySetVersion selectLatestByAppNameAndCode(String appName, String code) {
@@ -56,5 +57,9 @@ public interface PolicySetVersionMapper extends BaseMapperX<PolicySetVersion> {
                 .eq(PolicySetVersion::getAppName, appName)
                 .eq(PolicySetVersion::getCode, code)
                 .eq(PolicySetVersion::getLatest, Boolean.TRUE));
+    }
+
+    default PolicySetVersion selectByCv(CvQueryVO queryVO) {
+        return selectOne(PolicySetVersion::getCode, queryVO.getCode(), PolicySetVersion::getVersion, queryVO.getVersion());
     }
 }

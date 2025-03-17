@@ -12,6 +12,7 @@ import cn.wnhyang.coolguard.decision.mapper.RuleVersionMapper;
 import cn.wnhyang.coolguard.decision.service.RuleVersionService;
 import cn.wnhyang.coolguard.decision.vo.RuleVersionVO;
 import cn.wnhyang.coolguard.decision.vo.page.RuleVersionPageVO;
+import cn.wnhyang.coolguard.decision.vo.query.CvQueryVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class RuleVersionServiceImpl implements RuleVersionService {
     }
 
     @Override
-    public RuleVersion getByCode(String code) {
+    public List<RuleVersion> getByCode(String code) {
         return ruleVersionMapper.selectByCode(code);
     }
 
@@ -90,6 +91,11 @@ public class RuleVersionServiceImpl implements RuleVersionService {
     @Override
     public List<LabelValue> getLabelValueList() {
         return CollectionUtils.convertList(ruleVersionMapper.selectList(), RuleVersion::getLabelValue);
+    }
+
+    @Override
+    public RuleVersionVO getByCv(CvQueryVO queryVO) {
+        return RuleVersionConvert.INSTANCE.convert(ruleVersionMapper.selectByCv(queryVO));
     }
 
 }

@@ -5,6 +5,7 @@ import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.decision.constant.SceneType;
 import cn.wnhyang.coolguard.decision.entity.IndicatorVersion;
 import cn.wnhyang.coolguard.decision.vo.page.IndicatorVersionPageVO;
+import cn.wnhyang.coolguard.decision.vo.query.CvQueryVO;
 import cn.wnhyang.coolguard.mybatis.mapper.BaseMapperX;
 import cn.wnhyang.coolguard.mybatis.wrapper.LambdaQueryWrapperX;
 import org.apache.ibatis.annotations.Mapper;
@@ -66,7 +67,11 @@ public interface IndicatorVersionMapper extends BaseMapperX<IndicatorVersion> {
         );
     }
 
-    default IndicatorVersion selectByCode(String code) {
-        return selectOne(IndicatorVersion::getCode, code);
+    default List<IndicatorVersion> selectByCode(String code) {
+        return selectList(IndicatorVersion::getCode, code);
+    }
+
+    default IndicatorVersion selectByCv(CvQueryVO queryVO) {
+        return selectOne(IndicatorVersion::getCode, queryVO.getCode(), IndicatorVersion::getVersion, queryVO.getVersion());
     }
 }

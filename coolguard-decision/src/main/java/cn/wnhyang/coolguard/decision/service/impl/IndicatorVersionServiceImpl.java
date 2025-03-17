@@ -13,6 +13,7 @@ import cn.wnhyang.coolguard.decision.service.IndicatorVersionService;
 import cn.wnhyang.coolguard.decision.vo.IndicatorSimpleVO;
 import cn.wnhyang.coolguard.decision.vo.IndicatorVersionVO;
 import cn.wnhyang.coolguard.decision.vo.page.IndicatorVersionPageVO;
+import cn.wnhyang.coolguard.decision.vo.query.CvQueryVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -46,9 +47,8 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
     }
 
     @Override
-    public IndicatorVersionVO getByCode(String code) {
-        IndicatorVersion indicatorVersion = indicatorVersionMapper.selectByCode(code);
-        return IndicatorVersionConvert.INSTANCE.convert(indicatorVersion);
+    public List<IndicatorVersionVO> getByCode(String code) {
+        return IndicatorVersionConvert.INSTANCE.convert0(indicatorVersionMapper.selectByCode(code));
     }
 
     @Override
@@ -99,6 +99,11 @@ public class IndicatorVersionServiceImpl implements IndicatorVersionService {
     @Override
     public List<IndicatorSimpleVO> getSimpleList() {
         return IndicatorVersionConvert.INSTANCE.convert(indicatorVersionMapper.selectLatestList());
+    }
+
+    @Override
+    public IndicatorVersionVO getByCv(CvQueryVO queryVO) {
+        return IndicatorVersionConvert.INSTANCE.convert(indicatorVersionMapper.selectByCv(queryVO));
     }
 
 }

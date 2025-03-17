@@ -10,6 +10,7 @@ import cn.wnhyang.coolguard.decision.vo.IndicatorSimpleVO;
 import cn.wnhyang.coolguard.decision.vo.IndicatorVersionVO;
 import cn.wnhyang.coolguard.decision.vo.base.IdBaseVO;
 import cn.wnhyang.coolguard.decision.vo.page.IndicatorVersionPageVO;
+import cn.wnhyang.coolguard.decision.vo.query.CvQueryVO;
 import cn.wnhyang.coolguard.log.annotation.OperateLog;
 import cn.wnhyang.coolguard.log.enums.OperateType;
 import jakarta.servlet.http.HttpServletResponse;
@@ -79,13 +80,24 @@ public class IndicatorVersionController {
     }
 
     /**
+     * 根据code和version查询
+     *
+     * @param queryVO queryVO
+     * @return vo
+     */
+    @GetMapping("/cv")
+    public CommonResult<IndicatorVersionVO> getByCv(@Valid CvQueryVO queryVO) {
+        return success(indicatorVersionService.getByCv(queryVO));
+    }
+
+    /**
      * 根据code查询
      *
      * @param code code
      * @return vo
      */
     @GetMapping("/code")
-    public CommonResult<IndicatorVersionVO> getByCode(@RequestParam("code") String code) {
+    public CommonResult<List<IndicatorVersionVO>> getByCode(@RequestParam("code") String code) {
         return success(indicatorVersionService.getByCode(code));
     }
 

@@ -5,7 +5,7 @@ import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.decision.entity.PolicyVersion;
 import cn.wnhyang.coolguard.decision.vo.PolicyVersionVO;
 import cn.wnhyang.coolguard.decision.vo.page.PolicyVersionPageVO;
-import jakarta.validation.Valid;
+import cn.wnhyang.coolguard.decision.vo.query.CvQueryVO;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public interface PolicyVersionService {
      * @param pageVO 分页VO
      * @return pageResult
      */
-    PageResult<PolicyVersionVO> pageByCode(@Valid PolicyVersionPageVO pageVO);
+    PageResult<PolicyVersionVO> pageByCode(PolicyVersionPageVO pageVO);
 
     /**
      * 下线
@@ -61,7 +61,7 @@ public interface PolicyVersionService {
      * @param code code
      * @return pageResult
      */
-    PolicyVersion getByCode(String code);
+    List<PolicyVersion> getByCode(String code);
 
     /**
      * 获取lvList
@@ -69,4 +69,12 @@ public interface PolicyVersionService {
      * @return lvList
      */
     List<LabelValue> getLabelValueList();
+
+    /**
+     * 根据code和version查询
+     *
+     * @param queryVO queryVO
+     * @return vo
+     */
+    PolicyVersionVO getByCv(CvQueryVO queryVO);
 }

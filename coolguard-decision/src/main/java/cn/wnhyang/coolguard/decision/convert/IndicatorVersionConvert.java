@@ -33,4 +33,6 @@ public interface IndicatorVersionConvert {
     List<IndicatorContext.IndicatorCtx> convert2Ctx(List<IndicatorVersion> indicatorVersionList);
 
     List<IndicatorSimpleVO> convert(List<IndicatorVersion> indicatorVersions);
+
+    List<IndicatorVersionVO> convert0(List<IndicatorVersion> list);
 }

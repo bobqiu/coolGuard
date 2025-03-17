@@ -3,8 +3,6 @@ package cn.wnhyang.coolguard.decision.convert;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.decision.entity.Field;
 import cn.wnhyang.coolguard.decision.vo.FieldVO;
-import cn.wnhyang.coolguard.decision.vo.InputFieldVO;
-import cn.wnhyang.coolguard.decision.vo.OutputFieldVO;
 import cn.wnhyang.coolguard.decision.vo.create.FieldCreateVO;
 import cn.wnhyang.coolguard.decision.vo.update.FieldUpdateVO;
 import org.mapstruct.Mapper;
@@ -27,11 +25,8 @@ public interface FieldConvert {
 
     FieldVO convert(Field po);
 
-    InputFieldVO convert2InputFieldVO(Field po);
-
     PageResult<FieldVO> convert(PageResult<Field> pageResult);
 
     List<FieldVO> convert(List<Field> list);
 
-    OutputFieldVO convert2OutputFieldVO(Field field);
 }

@@ -8,6 +8,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * 规则版本表
  *
@@ -25,4 +27,6 @@ public interface RuleVersionConvert {
 
     @Mapping(target = "id", ignore = true)
     RuleVersion convert(Rule rule);
+
+    List<RuleVersionVO> convert(List<RuleVersion> list);
 }

@@ -4,6 +4,7 @@ import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.decision.constant.RuleStatus;
 import cn.wnhyang.coolguard.decision.entity.RuleVersion;
 import cn.wnhyang.coolguard.decision.vo.page.RuleVersionPageVO;
+import cn.wnhyang.coolguard.decision.vo.query.CvQueryVO;
 import cn.wnhyang.coolguard.mybatis.mapper.BaseMapperX;
 import cn.wnhyang.coolguard.mybatis.wrapper.LambdaQueryWrapperX;
 import org.apache.ibatis.annotations.Mapper;
@@ -50,8 +51,8 @@ public interface RuleVersionMapper extends BaseMapperX<RuleVersion> {
         return selectList(RuleVersion::getLatest, Boolean.TRUE);
     }
 
-    default RuleVersion selectByCode(String code) {
-        return selectOne(RuleVersion::getCode, code);
+    default List<RuleVersion> selectByCode(String code) {
+        return selectList(RuleVersion::getCode, code);
     }
 
     default RuleVersion selectLatestVersion(String code) {
@@ -59,5 +60,9 @@ public interface RuleVersionMapper extends BaseMapperX<RuleVersion> {
                 .eq(RuleVersion::getCode, code)
                 .orderByDesc(RuleVersion::getVersion)
                 .last("LIMIT 1"));
+    }
+
+    default RuleVersion selectByCv(CvQueryVO queryVO) {
+        return selectOne(RuleVersion::getCode, queryVO.getCode(), RuleVersion::getVersion, queryVO.getVersion());
     }
 }

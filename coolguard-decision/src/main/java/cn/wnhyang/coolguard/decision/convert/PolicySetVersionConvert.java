@@ -8,6 +8,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * 策略集表版本
  *
@@ -26,4 +28,5 @@ public interface PolicySetVersionConvert {
     @Mapping(target = "id", ignore = true)
     PolicySetVersion convert(PolicySet policySet);
 
+    List<PolicySetVersionVO> convert(List<PolicySetVersion> list);
 }

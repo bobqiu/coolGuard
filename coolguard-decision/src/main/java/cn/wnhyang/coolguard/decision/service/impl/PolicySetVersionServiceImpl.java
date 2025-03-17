@@ -15,6 +15,7 @@ import cn.wnhyang.coolguard.decision.service.PolicySetVersionService;
 import cn.wnhyang.coolguard.decision.util.LFUtil;
 import cn.wnhyang.coolguard.decision.vo.PolicySetVersionVO;
 import cn.wnhyang.coolguard.decision.vo.page.PolicySetVersionPageVO;
+import cn.wnhyang.coolguard.decision.vo.query.CvQueryVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class PolicySetVersionServiceImpl implements PolicySetVersionService {
     }
 
     @Override
-    public PolicySetVersion getByCode(String code) {
+    public List<PolicySetVersion> getByCode(String code) {
         return policySetVersionMapper.selectByCode(code);
     }
 
@@ -96,6 +97,11 @@ public class PolicySetVersionServiceImpl implements PolicySetVersionService {
     @Override
     public List<LabelValue> getLabelValueList() {
         return CollectionUtils.convertList(policySetVersionMapper.selectLatestList(), PolicySetVersion::getLabelValue);
+    }
+
+    @Override
+    public PolicySetVersionVO getByCv(CvQueryVO queryVO) {
+        return PolicySetVersionConvert.INSTANCE.convert(policySetVersionMapper.selectByCv(queryVO));
     }
 
 }

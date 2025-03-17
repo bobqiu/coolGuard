@@ -10,6 +10,7 @@ import cn.wnhyang.coolguard.decision.service.PolicySetVersionService;
 import cn.wnhyang.coolguard.decision.vo.PolicySetVersionVO;
 import cn.wnhyang.coolguard.decision.vo.base.IdBaseVO;
 import cn.wnhyang.coolguard.decision.vo.page.PolicySetVersionPageVO;
+import cn.wnhyang.coolguard.decision.vo.query.CvQueryVO;
 import cn.wnhyang.coolguard.log.annotation.OperateLog;
 import cn.wnhyang.coolguard.log.enums.OperateType;
 import jakarta.servlet.http.HttpServletResponse;
@@ -79,13 +80,24 @@ public class PolicySetVersionController {
     }
 
     /**
+     * 根据code和version查询
+     *
+     * @param queryVO queryVO
+     * @return vo
+     */
+    @GetMapping("/cv")
+    public CommonResult<PolicySetVersionVO> getByCv(@Valid CvQueryVO queryVO) {
+        return success(policySetVersionService.getByCv(queryVO));
+    }
+
+    /**
      * 根据code查询
      *
      * @param code code
      * @return vo
      */
     @GetMapping("/code")
-    public CommonResult<PolicySetVersionVO> getByCode(@RequestParam("code") String code) {
+    public CommonResult<List<PolicySetVersionVO>> getByCode(@RequestParam("code") String code) {
         return success(PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.getByCode(code)));
     }
 
