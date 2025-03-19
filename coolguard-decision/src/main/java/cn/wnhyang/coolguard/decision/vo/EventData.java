@@ -14,7 +14,7 @@ import java.util.Map;
 @Data
 public class EventData {
 
-    private Map<String, Object> fields;
+    private Map<String, Object> zd;
 
     private List<IndicatorResult> zbs;
 

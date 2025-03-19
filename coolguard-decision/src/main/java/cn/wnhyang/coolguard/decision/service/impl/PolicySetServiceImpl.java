@@ -116,6 +116,7 @@ public class PolicySetServiceImpl implements PolicySetService {
         if (policySet == null) {
             throw exception(POLICY_SET_NOT_EXIST);
         }
+        // TODO 策略引用
         // 1、确认策略集是否还在运行
         PolicySetVersion policySetVersion = policySetVersionMapper.selectLatest(policySet.getCode());
         if (policySetVersion != null) {
@@ -167,7 +168,7 @@ public class PolicySetServiceImpl implements PolicySetService {
         // 3、过滤策略集
         Set<String> policySetCodeSet = policyList.stream().map(Policy::getPolicySetCode).collect(Collectors.toSet());
 
-        List<PolicySet> policySetList = policySetMapper.selectList(policySetCodeSet, pageVO.getAppName(), pageVO.getName(), pageVO.getCode());
+        List<PolicySet> policySetList = policySetMapper.selectList(policySetCodeSet, pageVO.getAppCode(), pageVO.getName(), pageVO.getCode());
 
         List<PolicySetVO> policySetVOList = PolicySetConvert.INSTANCE.convert(policySetList);
 
@@ -239,12 +240,12 @@ public class PolicySetServiceImpl implements PolicySetService {
     @Override
     public void policySet() {
         FieldContext fieldContext = DecisionContextHolder.getFieldContext();
-        String appName = fieldContext.getData(FieldCode.APP_NAME, String.class);
+        String appCode = fieldContext.getData(FieldCode.APP_CODE, String.class);
         String policySetCode = fieldContext.getData(FieldCode.POLICY_SET_CODE, String.class);
 
-        PolicySetVersion policySetVersion = policySetVersionMapper.selectLatestByAppNameAndCode(appName, policySetCode);
+        PolicySetVersion policySetVersion = policySetVersionMapper.selectLatestByAppAndCode(appCode, policySetCode);
         if (policySetVersion != null) {
-            log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", policySetVersion.getAppName(), policySetVersion.getCode(), policySetVersion.getName());
+            log.info("应用名:{}, 策略集编码:{}, 对应的策略集(name:{})", policySetVersion.getAppCode(), policySetVersion.getCode(), policySetVersion.getName());
             PolicyContext policyContext = new PolicyContext();
             PolicyContext.PolicySetCtx policySetCtx = PolicySetConvert.INSTANCE.convert2Ctx(policySetVersion);
             policyContext.init(DisposalConvert.INSTANCE.convert2Ctx(disposalMapper.selectList()), policySetCtx);
@@ -263,7 +264,7 @@ public class PolicySetServiceImpl implements PolicySetService {
             eventContext.setPolicySetResult(policyContext.convert());
             log.info("执行策略集结束(code:{}, name:{})", policySetCode, policySetVersion.getName());
         } else {
-            log.info("未匹配应用名:{}, 策略集编码:{}", appName, policySetCode);
+            log.info("未匹配应用名:{}, 策略集编码:{}", appCode, policySetCode);
         }
     }
 

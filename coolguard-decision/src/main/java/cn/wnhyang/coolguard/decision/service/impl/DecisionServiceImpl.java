@@ -100,7 +100,7 @@ public class DecisionServiceImpl implements DecisionService {
             // 将上下文拼在一块，将此任务丢到线程中执行
             stopWatch.start("ES");
             EventData eventData = new EventData();
-            eventData.setFields(fieldContext);
+            eventData.setZd(fieldContext);
             eventData.setZbs(DecisionContextHolder.getIndicatorContext().convert());
             eventData.setPolicySetResult(DecisionContextHolder.getEventContext().getPolicySetResult());
             try {

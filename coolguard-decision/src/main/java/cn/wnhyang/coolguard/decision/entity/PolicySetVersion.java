@@ -40,8 +40,8 @@ public class PolicySetVersion extends BaseDO implements LabelValueAble {
     /**
      * app名
      */
-    @TableField("app_name")
-    private String appName;
+    @TableField("app_code")
+    private String appCode;
 
     /**
      * 策略集编码

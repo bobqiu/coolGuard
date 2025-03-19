@@ -126,7 +126,7 @@ public class Indicator extends BaseDO implements LabelValueAble {
 
     /**
      * 场景，多个
-     * appName
+     * appCode
      * policySetCode
      */
     @TableField(value = "scenes", typeHandler = JacksonTypeHandler.class)

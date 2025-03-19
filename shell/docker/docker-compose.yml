@@ -10,12 +10,14 @@ services:
     environment:
       MYSQL_ROOT_HOST: '%'
       TZ: Asia/Shanghai
-      MYSQL_ROOT_PASSWORD: ${mysql_password}
+      MYSQL_ROOT_PASSWORD: ${mysql_root_password}
+      MYSQL_USER: ${mysql_user}
+      MYSQL_PASSWORD: ${mysql_password}
     networks:
       - custom_network
 
   redis:
-    image: redis:6.2.12-alpine
+    image: redis:7.2.7-alpine
     container_name: redis
     volumes:
       - redisdata:/data

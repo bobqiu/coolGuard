@@ -26,7 +26,7 @@ public class PolicySetVO extends PolicySetBaseVO {
     /**
      * app名
      */
-    private String appName;
+    private String appCode;
 
     /**
      * 策略集编码

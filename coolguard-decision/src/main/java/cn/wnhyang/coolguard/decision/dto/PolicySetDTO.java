@@ -25,7 +25,7 @@ public class PolicySetDTO implements Serializable {
     /**
      * app名
      */
-    private String appName;
+    private String appCode;
 
     /**
      * 策略集编码

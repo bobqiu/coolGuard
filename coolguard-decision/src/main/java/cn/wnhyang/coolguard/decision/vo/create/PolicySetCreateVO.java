@@ -23,7 +23,7 @@ public class PolicySetCreateVO extends PolicySetBaseVO {
      * app名
      */
     @NotBlank(message = "应用名不能为空")
-    private String appName;
+    private String appCode;
 
     /**
      * 策略集编码

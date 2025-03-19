@@ -38,7 +38,7 @@ public interface PolicySetMapper extends BaseMapperX<PolicySet> {
                                     (SELECT code, MAX(version) AS max_version FROM de_policy_set_version GROUP BY code) t3 ON t2.code = t3.code AND t2.version = t3.max_version"""
                             );
                 }, PolicySetVersion::getCode, Policy::getCode)
-                .eqIfExists(PolicySet::getAppName, pageVO.getAppName())
+                .eqIfExists(PolicySet::getAppCode, pageVO.getAppCode())
                 .likeIfExists(PolicySet::getName, pageVO.getName())
                 .likeIfExists(PolicySet::getCode, pageVO.getCode())
                 // 如果有latest，则查询最新版本
@@ -52,14 +52,14 @@ public interface PolicySetMapper extends BaseMapperX<PolicySet> {
         return selectOne(PolicySet::getCode, code);
     }
 
-    default PolicySet selectByAppNameAndCode(String appName, String code) {
-        return selectOne(PolicySet::getAppName, appName, PolicySet::getCode, code);
+    default PolicySet selectByAppAndCode(String appCode, String code) {
+        return selectOne(PolicySet::getAppCode, appCode, PolicySet::getCode, code);
     }
 
-    default List<PolicySet> selectList(Set<String> setCodes, String appName, String name, String code) {
+    default List<PolicySet> selectList(Set<String> setCodes, String appCode, String name, String code) {
         return selectList(new LambdaQueryWrapperX<PolicySet>()
                 .inIfPresent(PolicySet::getCode, setCodes)
-                .eqIfPresent(PolicySet::getAppName, appName)
+                .eqIfPresent(PolicySet::getAppCode, appCode)
                 .likeIfPresent(PolicySet::getName, name)
                 .eqIfPresent(PolicySet::getCode, code));
     }

@@ -20,7 +20,7 @@ public class PolicySetPageVO extends PageParam {
     /**
      * app名
      */
-    private String appName;
+    private String appCode;
 
     /**
      * 策略集编码

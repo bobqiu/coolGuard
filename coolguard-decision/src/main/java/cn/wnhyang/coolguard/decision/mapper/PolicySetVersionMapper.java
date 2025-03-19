@@ -52,9 +52,9 @@ public interface PolicySetVersionMapper extends BaseMapperX<PolicySetVersion> {
         return selectList(PolicySetVersion::getCode, code);
     }
 
-    default PolicySetVersion selectLatestByAppNameAndCode(String appName, String code) {
+    default PolicySetVersion selectLatestByAppAndCode(String appCode, String code) {
         return selectOne(new LambdaQueryWrapperX<PolicySetVersion>()
-                .eq(PolicySetVersion::getAppName, appName)
+                .eq(PolicySetVersion::getAppCode, appCode)
                 .eq(PolicySetVersion::getCode, code)
                 .eq(PolicySetVersion::getLatest, Boolean.TRUE));
     }

@@ -76,14 +76,14 @@ public class PolicyVersionController {
     /**
      * 下线
      *
-     * @param id id
+     * @param idBaseVO idBaseVO
      * @return true/false
      */
     @PostMapping("/offline")
     @SaCheckPermission("decision:policy:offline")
     @OperateLog(module = "后台-策略", name = "下线策略", type = OperateType.DELETE)
-    public CommonResult<Boolean> offline(@RequestParam("id") Long id) {
-        policyVersionService.offline(id);
+    public CommonResult<Boolean> offline(@RequestBody IdBaseVO idBaseVO) {
+        policyVersionService.offline(idBaseVO.getId());
         return success(true);
     }
 

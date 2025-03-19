@@ -7,7 +7,7 @@ package cn.wnhyang.coolguard.decision.constant;
 public interface SceneType {
 
     /**
-     * appName场景
+     * app场景
      */
     String APP = "app";
 

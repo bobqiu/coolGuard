@@ -42,14 +42,14 @@ public class RuleVersionController {
     /**
      * 下线
      *
-     * @param id id
+     * @param idBaseVO idBaseVO
      * @return true/false
      */
     @PostMapping("/offline")
     @SaCheckPermission("decision:rule:offline")
     @OperateLog(module = "后台-规则", name = "下线规则", type = OperateType.DELETE)
-    public CommonResult<Boolean> offline(@RequestParam("id") Long id) {
-        ruleVersionService.offline(id);
+    public CommonResult<Boolean> offline(@RequestBody IdBaseVO idBaseVO) {
+        ruleVersionService.offline(idBaseVO.getId());
         return success(true);
     }
 

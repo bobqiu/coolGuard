@@ -200,10 +200,10 @@ public class IndicatorServiceImpl implements IndicatorService {
     @Override
     public void indicatorCompute() {
         FieldContext fieldContext = DecisionContextHolder.getFieldContext();
-        String appName = fieldContext.getData(FieldCode.APP_NAME, String.class);
+        String appCode = fieldContext.getData(FieldCode.APP_CODE, String.class);
         String policySetCode = fieldContext.getData(FieldCode.POLICY_SET_CODE, String.class);
-        List<IndicatorContext.IndicatorCtx> indicatorCtxList = IndicatorVersionConvert.INSTANCE.convert2Ctx(indicatorVersionMapper.selectLatestListByScenes(appName, policySetCode));
-        log.info("appName({}),policySetCode({})指标计算{}条", appName, policySetCode, indicatorCtxList.size());
+        List<IndicatorContext.IndicatorCtx> indicatorCtxList = IndicatorVersionConvert.INSTANCE.convert2Ctx(indicatorVersionMapper.selectLatestListByScenes(appCode, policySetCode));
+        log.info("appCode({}),policySetCode({})指标计算{}条", appCode, policySetCode, indicatorCtxList.size());
 
         DecisionContextHolder.setIndicatorContext(new IndicatorContext());
         List<CompletableFuture<Void>> completableFutureList = indicatorCtxList.stream()

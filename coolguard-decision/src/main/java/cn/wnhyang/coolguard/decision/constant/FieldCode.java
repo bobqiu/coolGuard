@@ -8,7 +8,7 @@ package cn.wnhyang.coolguard.decision.constant;
  **/
 public interface FieldCode {
 
-    String APP_NAME = "N_S_appName";
+    String APP_CODE = "N_S_appCode";
     String POLICY_SET_CODE = "N_S_policySetCode";
 
     String SEQ_ID = "N_S_seqId";
