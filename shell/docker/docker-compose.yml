@@ -3,14 +3,14 @@ services:
     image: mysql:8.0.36
     container_name: mysql
     volumes:
-      - mysqllog:/var/log/mysql
       - mysqldata:/var/lib/mysql
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_HOST: 'localhost'
       TZ: Asia/Shanghai
       MYSQL_ROOT_PASSWORD: ${mysql_root_password}
+      MYSQL_DATABASE: ${mysql_database}
       MYSQL_USER: ${mysql_user}
       MYSQL_PASSWORD: ${mysql_password}
     networks:
@@ -19,14 +19,13 @@ services:
   redis:
     image: redis:7.2.7-alpine
     container_name: redis
+    command: redis-server --requirepass ${redis_password}
     volumes:
       - redisdata:/data
-      - redislog:/var/log/redis
     ports:
       - "6379:6379"
     environment:
       TZ: Asia/Shanghai
-      REDIS_PASSWORD: ${redis_password}
     networks:
       - custom_network
 
@@ -35,7 +34,6 @@ services:
     container_name: kafka
     volumes:
       - kafkadata:/var/lib/kafka/data
-      - kafkalog:/var/log/kafka
     ports:
       - "9092:9092"
       - "9093:9093"
@@ -45,11 +43,11 @@ services:
       KAFKA_METADATA_LOG_REPLICATION_FACTOR: 1
       KAFKA_DEFAULT_REPLICATION_FACTOR: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://localhost:9092,CONTROLLER://localhost:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -64,7 +62,6 @@ services:
     container_name: elasticsearch
     volumes:
       - esdata:/usr/share/elasticsearch/data
-      - eslog:/var/log/elasticsearch
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -86,7 +83,6 @@ services:
     container_name: kibana
     volumes:
       - kibanadata:/usr/share/kibana/data
-      - kibanalog:/var/log/kibana
     ports:
       - "5601:5601"
     environment:
@@ -99,27 +95,30 @@ services:
       TZ: Asia/Shanghai
     networks:
       - custom_network
+  coolguard:
+    image: ${coolguard_image}
+    container_name: coolguard
+    volumes:
+      - coolguardlog:/coolguard/logs
+    ports:
+      - "8081:8081"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=demo"
+    networks:
+      - custom_network
 
 volumes:
-  mysqllog:
-    driver: local
   mysqldata:
     driver: local
   redisdata:
     driver: local
-  redislog:
-    driver: local
   kafkadata:
-    driver: local
-  kafkalog:
     driver: local
   esdata:
     driver: local
-  eslog:
-    driver: local
   kibanadata:
     driver: local
-  kibanalog:
+  coolguardlog:
     driver: local
 
 networks:

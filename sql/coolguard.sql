@@ -1,4 +1,4 @@
-create table coolGuard.de_access
+create table coolguard.de_access
 (
     id                bigint auto_increment comment '自增编号'
         primary key,
@@ -17,7 +17,7 @@ create table coolGuard.de_access
 )
     comment '接入表';
 
-create table coolGuard.de_application
+create table coolguard.de_application
 (
     id          bigint auto_increment comment '主键'
         primary key,
@@ -34,11 +34,11 @@ create table coolGuard.de_application
 )
     comment '应用表';
 
-create table coolGuard.de_chain
+create table coolguard.de_chain
 (
     id               bigint auto_increment comment '主键'
         primary key,
-    application_name varchar(32)                 default 'coolGuard'       not null comment '应用名',
+    application_name varchar(32)                 default 'coolguard'       not null comment '应用名',
     chain_name       varchar(64)                 default ''                not null comment 'chain名',
     el_data          varchar(3000)               default ''                not null comment 'el数据',
     enable           bit                         default b'1'              not null comment 'chain状态',
@@ -52,7 +52,7 @@ create table coolGuard.de_chain
 )
     comment 'chain表';
 
-create table coolGuard.de_disposal
+create table coolguard.de_disposal
 (
     id          bigint auto_increment comment '主键'
         primary key,
@@ -71,7 +71,7 @@ create table coolGuard.de_disposal
 )
     comment '处置表';
 
-create table coolGuard.de_field
+create table coolguard.de_field
 (
     id            bigint auto_increment comment '主键'
         primary key,
@@ -94,7 +94,7 @@ create table coolGuard.de_field
 )
     comment '字段表';
 
-create table coolGuard.de_field_group
+create table coolguard.de_field_group
 (
     id          bigint auto_increment comment '自增编号'
         primary key,
@@ -111,7 +111,7 @@ create table coolGuard.de_field_group
 )
     comment '字段分组表';
 
-create table coolGuard.de_indicator
+create table coolguard.de_indicator
 (
     id             bigint auto_increment comment '自增编号'
         primary key,
@@ -142,7 +142,7 @@ create table coolGuard.de_indicator
 )
     comment '指标表';
 
-create table coolGuard.de_indicator_version
+create table coolguard.de_indicator_version
 (
     id             bigint auto_increment comment '自增编号'
         primary key,
@@ -173,7 +173,7 @@ create table coolGuard.de_indicator_version
 )
     comment '指标表历史表';
 
-create table coolGuard.de_list_data
+create table coolguard.de_list_data
 (
     id            bigint auto_increment comment '主键'
         primary key,
@@ -189,7 +189,7 @@ create table coolGuard.de_list_data
 )
     comment '名单数据表';
 
-create table coolGuard.de_list_set
+create table coolguard.de_list_set
 (
     id          bigint auto_increment comment '主键'
         primary key,
@@ -206,7 +206,7 @@ create table coolGuard.de_list_set
 )
     comment '名单集表';
 
-create table coolGuard.de_policy
+create table coolguard.de_policy
 (
     id              bigint auto_increment comment '主键'
         primary key,
@@ -226,7 +226,7 @@ create table coolGuard.de_policy
 )
     comment '策略表';
 
-create table coolGuard.de_policy_set
+create table coolguard.de_policy_set
 (
     id          bigint auto_increment comment '主键'
         primary key,
@@ -245,7 +245,7 @@ create table coolGuard.de_policy_set
 )
     comment '策略集表';
 
-create table coolGuard.de_policy_set_version
+create table coolguard.de_policy_set_version
 (
     id           bigint auto_increment comment '主键'
         primary key,
@@ -264,7 +264,7 @@ create table coolGuard.de_policy_set_version
 )
     comment '策略集表历史';
 
-create table coolGuard.de_policy_version
+create table coolguard.de_policy_version
 (
     id              bigint auto_increment comment '主键'
         primary key,
@@ -284,7 +284,7 @@ create table coolGuard.de_policy_version
 )
     comment '策略版本表';
 
-create table coolGuard.de_rule
+create table coolguard.de_rule
 (
     id            bigint auto_increment comment '主键'
         primary key,
@@ -310,7 +310,7 @@ create table coolGuard.de_rule
 )
     comment '规则表';
 
-create table coolGuard.de_rule_script
+create table coolguard.de_rule_script
 (
     id               bigint auto_increment comment '主键'
         primary key,
@@ -329,7 +329,7 @@ create table coolGuard.de_rule_script
 )
     comment '规则脚本表';
 
-create table coolGuard.de_rule_version
+create table coolguard.de_rule_version
 (
     id            bigint auto_increment comment '主键'
         primary key,
@@ -355,7 +355,7 @@ create table coolGuard.de_rule_version
 )
     comment '规则版本表';
 
-create table coolGuard.de_sms_flow
+create table coolguard.de_sms_flow
 (
     id                bigint auto_increment comment '主键'
         primary key,
@@ -374,7 +374,7 @@ create table coolGuard.de_sms_flow
 )
     comment '消息流水表';
 
-create table coolGuard.de_sms_template
+create table coolguard.de_sms_template
 (
     id          bigint auto_increment comment '主键'
         primary key,
@@ -392,7 +392,7 @@ create table coolGuard.de_sms_template
 )
     comment '消息模版表';
 
-create table coolGuard.de_tag
+create table coolguard.de_tag
 (
     id          bigint auto_increment comment '主键'
         primary key,

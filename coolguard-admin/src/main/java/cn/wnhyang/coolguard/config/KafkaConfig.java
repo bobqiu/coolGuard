@@ -31,7 +31,7 @@ public class KafkaConfig {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, properties.getBootstrapServers());
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, properties.getProducer().getKeySerializer());
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, properties.getProducer().getKeySerializer());
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, properties.getProducer().getValueSerializer());
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
