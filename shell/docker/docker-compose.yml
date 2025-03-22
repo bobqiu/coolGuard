@@ -99,7 +99,7 @@ services:
     image: ${coolguard_image}
     container_name: coolguard
     volumes:
-      - coolguardlog:/coolguard/logs
+      - /docker/coolguard/logs:/coolguard/logs
     ports:
       - "8081:8081"
     environment:
@@ -117,8 +117,6 @@ volumes:
   esdata:
     driver: local
   kibanadata:
-    driver: local
-  coolguardlog:
     driver: local
 
 networks:
