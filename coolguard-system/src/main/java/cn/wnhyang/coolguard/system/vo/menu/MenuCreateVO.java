@@ -29,7 +29,6 @@ public class MenuCreateVO {
     /**
      * 菜单路径
      */
-    @NotBlank(message = "菜单路径不能为空")
     private String path;
 
     /**

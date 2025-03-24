@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
@@ -75,6 +76,7 @@ public class PolicySetVersionController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<PolicySetVersionVO> get(@RequestParam("id") Long id) {
         return success(PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.get(id)));
     }
@@ -86,6 +88,7 @@ public class PolicySetVersionController {
      * @return vo
      */
     @GetMapping("/cv")
+    @SaCheckLogin
     public CommonResult<PolicySetVersionVO> getByCv(@Valid CvQueryVO queryVO) {
         return success(policySetVersionService.getByCv(queryVO));
     }
@@ -97,6 +100,7 @@ public class PolicySetVersionController {
      * @return vo
      */
     @GetMapping("/code")
+    @SaCheckLogin
     public CommonResult<List<PolicySetVersionVO>> getByCode(@RequestParam("code") String code) {
         return success(PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.getByCode(code)));
     }
@@ -108,6 +112,7 @@ public class PolicySetVersionController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<PolicySetVersionVO>> page(@Valid PolicySetVersionPageVO pageVO) {
         return success(PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.page(pageVO)));
     }
@@ -119,6 +124,7 @@ public class PolicySetVersionController {
      * @return pageResult
      */
     @GetMapping("/pageByCode")
+    @SaCheckLogin
     public CommonResult<PageResult<PolicySetVersionVO>> pageByCode(@Valid PolicySetVersionPageVO pageVO) {
         return success(policySetVersionService.pageByCode(pageVO));
     }
@@ -131,6 +137,7 @@ public class PolicySetVersionController {
      * @throws IOException IO异常
      */
     @GetMapping("/export")
+    @SaCheckPermission("decision:policySet:export")
     public void exportExcel(@Valid PolicySetVersionPageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
         ExcelUtil.write(response, "PolicySetVersionVO.xls", "数据", PolicySetVersionVO.class, PolicySetVersionConvert.INSTANCE.convert(policySetVersionService.page(pageVO)).getList());
@@ -144,6 +151,7 @@ public class PolicySetVersionController {
      * @throws IOException IO异常
      */
     @PostMapping("/import")
+    @SaCheckPermission("decision:policySet:import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
         List<PolicySetVersionVO> read = ExcelUtil.read(file, PolicySetVersionVO.class);
         // do something
@@ -156,6 +164,7 @@ public class PolicySetVersionController {
      * @return lv列表
      */
     @GetMapping("/lvList")
+    @SaCheckLogin
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(policySetVersionService.getLabelValueList());
     }

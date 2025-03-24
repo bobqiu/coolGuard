@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
@@ -84,6 +85,7 @@ public class ChainController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<ChainVO> getChain(@RequestParam("id") Long id) {
         return success(ChainConvert.INSTANCE.convert(chainService.getChain(id)));
     }
@@ -95,6 +97,7 @@ public class ChainController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<ChainVO>> pageChain(@Valid ChainPageVO pageVO) {
         return success(ChainConvert.INSTANCE.convert(chainService.pageChain(pageVO)));
     }
@@ -105,6 +108,7 @@ public class ChainController {
      * @return 节点列表
      */
     @GetMapping("/nodes")
+    @SaCheckLogin
     public CommonResult<List<Node>> nodeList() {
         return success(NODE_LIST);
     }

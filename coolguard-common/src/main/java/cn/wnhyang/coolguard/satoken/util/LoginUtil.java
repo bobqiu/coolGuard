@@ -2,8 +2,8 @@ package cn.wnhyang.coolguard.satoken.util;
 
 import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.session.SaSession;
-import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import cn.hutool.core.util.ObjectUtil;
 import cn.wnhyang.coolguard.common.constant.UserConstants;
 import cn.wnhyang.coolguard.common.enums.DeviceType;
@@ -52,19 +52,19 @@ public class LoginUtil {
     }
 
     public void login(Login loginUser, DeviceType deviceEnum) {
-        SaLoginModel model = new SaLoginModel();
+        SaLoginParameter parameter = new SaLoginParameter();
         if (ObjectUtil.isNotNull(deviceEnum)) {
-            model.setDevice(deviceEnum.getDevice());
+            parameter.setDeviceType(deviceEnum.getDevice());
         }
         // 自定义分配 不同用户体系 不同 token 授权时间 不设置默认走全局 yml 配置
         // 例如: 后台用户30分钟过期 app用户1天过期
         UserType userType = UserType.valueOf(loginUser.getType());
         if (userType == UserType.PC) {
-            model.setTimeout(259200).setActiveTimeout(1800);
+            parameter.setTimeout(259200).setActiveTimeout(1800);
         } else if (userType == UserType.APP) {
-            model.setTimeout(604800).setActiveTimeout(604800);
+            parameter.setTimeout(604800).setActiveTimeout(604800);
         }
-        StpUtil.login(loginUser.getId(), model);
+        StpUtil.login(loginUser.getId(), parameter);
         StpUtil.getTokenSession().set(LOGIN_USER_KEY, loginUser);
     }
 

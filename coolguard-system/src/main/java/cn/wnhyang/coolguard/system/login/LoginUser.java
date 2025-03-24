@@ -4,6 +4,7 @@ package cn.wnhyang.coolguard.system.login;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.util.CollectionUtils;
 import cn.wnhyang.coolguard.satoken.Login;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -116,11 +117,13 @@ public class LoginUser implements Login, Serializable {
     }
 
     @Override
+    @JsonIgnore
     public Set<Long> getRoleIds() {
         return CollectionUtils.convertSet(roles, LabelValue::getId);
     }
 
     @Override
+    @JsonIgnore
     public Set<String> getRoleValues() {
         return CollectionUtils.convertSet(roles, LabelValue::getValue);
     }

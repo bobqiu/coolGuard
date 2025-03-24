@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
@@ -81,6 +82,7 @@ public class DisposalController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<DisposalVO> getDisposal(@RequestParam("id") Long id) {
         return success(DisposalConvert.INSTANCE.convert(disposalService.getDisposal(id)));
     }
@@ -92,6 +94,7 @@ public class DisposalController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<DisposalVO>> pageDisposal(@Valid DisposalPageVO pageVO) {
         return success(DisposalConvert.INSTANCE.convert(disposalService.pageDisposal(pageVO)));
     }
@@ -102,6 +105,7 @@ public class DisposalController {
      * @return list
      */
     @GetMapping("/list")
+    @SaCheckLogin
     public CommonResult<List<DisposalVO>> listDisposal() {
         return success(DisposalConvert.INSTANCE.convert(disposalService.listDisposal()));
     }
@@ -112,6 +116,7 @@ public class DisposalController {
      * @return lv列表
      */
     @GetMapping("/lvList")
+    @SaCheckLogin
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(disposalService.getLabelValueList());
     }

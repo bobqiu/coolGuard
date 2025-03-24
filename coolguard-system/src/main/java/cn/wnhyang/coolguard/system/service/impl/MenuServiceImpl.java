@@ -48,7 +48,9 @@ public class MenuServiceImpl implements MenuService {
         validateParentMenu(reqVO.getParentId(), null);
         // 校验菜单（自己）
         validateMenuNameUnique(reqVO.getName(), null);
-        validateMenuPathUnique(reqVO.getPath(), null);
+        if (!reqVO.getType().equals(MenuType.BUTTON.getType())) {
+            validateMenuPathUnique(reqVO.getPath(), null);
+        }
 
         // 插入数据库
         MenuDO menuDO = MenuConvert.INSTANCE.convert(reqVO);
@@ -69,7 +71,9 @@ public class MenuServiceImpl implements MenuService {
         validateParentMenu(reqVO.getParentId(), reqVO.getId());
         // 校验菜单（自己）
         validateMenuNameUnique(reqVO.getName(), reqVO.getId());
-        validateMenuPathUnique(reqVO.getPath(), reqVO.getId());
+        if (!reqVO.getType().equals(MenuType.BUTTON.getType())) {
+            validateMenuPathUnique(reqVO.getPath(), reqVO.getId());
+        }
 
         // 更新到数据库
         MenuDO updateObject = MenuConvert.INSTANCE.convert(reqVO);

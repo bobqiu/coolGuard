@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
@@ -88,6 +89,7 @@ public class TagController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<TagVO> get(@RequestParam("id") Long id) {
         return success(TagConvert.INSTANCE.convert(tagService.get(id)));
     }
@@ -99,6 +101,7 @@ public class TagController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<TagVO>> page(@Valid TagPageVO pageVO) {
         return success(TagConvert.INSTANCE.convert(tagService.page(pageVO)));
     }
@@ -111,6 +114,7 @@ public class TagController {
      * @throws IOException IO异常
      */
     @GetMapping("/export")
+    @SaCheckPermission("decision:tag:export")
     public void exportExcel(@Valid TagPageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
         ExcelUtil.write(response, "TagVO.xls", "数据", TagVO.class, TagConvert.INSTANCE.convert(tagService.page(pageVO)).getList());
@@ -124,6 +128,7 @@ public class TagController {
      * @throws IOException IO异常
      */
     @PostMapping("/import")
+    @SaCheckPermission("decision:tag:import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
         List<TagVO> read = ExcelUtil.read(file, TagVO.class);
         // do something
@@ -136,6 +141,7 @@ public class TagController {
      * @return lvList
      */
     @GetMapping("/lvList")
+    @SaCheckLogin
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(tagService.getLabelValueList());
     }

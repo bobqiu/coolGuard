@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
@@ -75,6 +76,7 @@ public class IndicatorVersionController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<IndicatorVersionVO> get(@RequestParam("id") Long id) {
         return success(indicatorVersionService.get(id));
     }
@@ -86,6 +88,7 @@ public class IndicatorVersionController {
      * @return vo
      */
     @GetMapping("/cv")
+    @SaCheckLogin
     public CommonResult<IndicatorVersionVO> getByCv(@Valid CvQueryVO queryVO) {
         return success(indicatorVersionService.getByCv(queryVO));
     }
@@ -97,6 +100,7 @@ public class IndicatorVersionController {
      * @return vo
      */
     @GetMapping("/code")
+    @SaCheckLogin
     public CommonResult<List<IndicatorVersionVO>> getByCode(@RequestParam("code") String code) {
         return success(indicatorVersionService.getByCode(code));
     }
@@ -108,6 +112,7 @@ public class IndicatorVersionController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<IndicatorVersionVO>> page(@Valid IndicatorVersionPageVO pageVO) {
         return success(indicatorVersionService.page(pageVO));
     }
@@ -119,6 +124,7 @@ public class IndicatorVersionController {
      * @return pageResult
      */
     @GetMapping("/pageByCode")
+    @SaCheckLogin
     public CommonResult<PageResult<IndicatorVersionVO>> pageByCode(@Valid IndicatorVersionPageVO pageVO) {
         return success(indicatorVersionService.pageByCode(pageVO));
     }
@@ -131,6 +137,7 @@ public class IndicatorVersionController {
      * @throws IOException IO异常
      */
     @GetMapping("/export")
+    @SaCheckPermission("decision:indicator:export")
     public void exportExcel(@Valid IndicatorVersionPageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
         ExcelUtil.write(response, "IndicatorVersionVO.xls", "数据", IndicatorVersionVO.class, indicatorVersionService.page(pageVO).getList());
@@ -144,6 +151,7 @@ public class IndicatorVersionController {
      * @throws IOException IO异常
      */
     @PostMapping("/import")
+    @SaCheckPermission("decision:indicator:import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
         List<IndicatorVersionVO> read = ExcelUtil.read(file, IndicatorVersionVO.class);
         // do something
@@ -156,6 +164,7 @@ public class IndicatorVersionController {
      * @return lvList
      */
     @GetMapping("/lvList")
+    @SaCheckLogin
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(indicatorVersionService.getLabelValueList());
     }
@@ -166,6 +175,7 @@ public class IndicatorVersionController {
      * @return 简单指标list
      */
     @GetMapping("/simpleList")
+    @SaCheckLogin
     public CommonResult<List<IndicatorSimpleVO>> getSimpleLabelValueList() {
         return success(indicatorVersionService.getSimpleList());
     }

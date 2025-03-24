@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
@@ -81,6 +82,7 @@ public class ApplicationController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<ApplicationVO> getApplication(@RequestParam("id") Long id) {
         return success(ApplicationConvert.INSTANCE.convert(applicationService.getApplication(id)));
     }
@@ -92,6 +94,7 @@ public class ApplicationController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<ApplicationVO>> pageApplication(@Valid ApplicationPageVO pageVO) {
         return success(ApplicationConvert.INSTANCE.convert(applicationService.pageApplication(pageVO)));
     }
@@ -102,6 +105,7 @@ public class ApplicationController {
      * @return lv列表
      */
     @GetMapping("/lvList")
+    @SaCheckLogin
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(applicationService.getLabelValueList());
     }

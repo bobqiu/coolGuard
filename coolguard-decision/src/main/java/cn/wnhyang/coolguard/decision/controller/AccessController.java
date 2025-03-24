@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
@@ -77,6 +78,7 @@ public class AccessController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<AccessVO> getAccess(@RequestParam("id") Long id) {
         return success(accessService.getAccess(id));
     }
@@ -88,6 +90,7 @@ public class AccessController {
      * @return vo
      */
     @GetMapping("/code")
+    @SaCheckLogin
     public CommonResult<AccessVO> getAccessByCode(@RequestParam("code") String code) {
         return success(accessService.getAccessByCode(code));
     }
@@ -99,6 +102,7 @@ public class AccessController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<AccessVO>> pageAccess(@Valid AccessPageVO pageVO) {
         return success(accessService.pageAccess(pageVO));
     }

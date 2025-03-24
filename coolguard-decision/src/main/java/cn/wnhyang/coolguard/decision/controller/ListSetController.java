@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
@@ -87,6 +88,7 @@ public class ListSetController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<ListSetVO> get(@RequestParam("id") Long id) {
         return success(ListSetConvert.INSTANCE.convert(listSetService.get(id)));
     }
@@ -98,6 +100,7 @@ public class ListSetController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<ListSetVO>> page(@Valid ListSetPageVO pageVO) {
         return success(ListSetConvert.INSTANCE.convert(listSetService.page(pageVO)));
     }
@@ -110,6 +113,7 @@ public class ListSetController {
      * @throws IOException IO异常
      */
     @GetMapping("/export")
+    @SaCheckPermission("decision:listSet:export")
     public void exportExcel(@Valid ListSetPageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
         ExcelUtil.write(response, "ListSetVO.xls", "数据", ListSetVO.class, ListSetConvert.INSTANCE.convert(listSetService.page(pageVO)).getList());
@@ -123,6 +127,7 @@ public class ListSetController {
      * @throws IOException IO异常
      */
     @PostMapping("/import")
+    @SaCheckPermission("decision:listSet:import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
         List<ListSetVO> read = ExcelUtil.read(file, ListSetVO.class);
         // do something
@@ -135,6 +140,7 @@ public class ListSetController {
      * @return lvList
      */
     @GetMapping("/lvList")
+    @SaCheckLogin
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(listSetService.getLabelValueList());
     }

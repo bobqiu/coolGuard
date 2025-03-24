@@ -186,6 +186,8 @@ public class UserController {
      * @throws IOException 响应异常
      */
     @PostMapping("/import")
+    @OperateLog(module = "后台-用户", name = "导入用户")
+    @SaCheckPermission("system:user:import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
         List<UserDO> read = ExcelUtil.read(file, UserDO.class);
         // do something

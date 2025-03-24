@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
@@ -95,6 +96,7 @@ public class PolicySetController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<PolicySetVO> getPolicySet(@RequestParam("id") Long id) {
         return success(policySetService.getPolicySet(id));
     }
@@ -106,6 +108,7 @@ public class PolicySetController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<PolicySetVO>> pagePolicySet(@Valid PolicySetPageVO pageVO) {
         return success(policySetService.pagePolicySet0(pageVO));
     }
@@ -116,6 +119,7 @@ public class PolicySetController {
      * @return list
      */
     @GetMapping("/list")
+    @SaCheckLogin
     public CommonResult<List<PolicySetVO>> listPolicySet() {
         return success(policySetService.listPolicySet());
     }
@@ -126,6 +130,7 @@ public class PolicySetController {
      * @return lv列表
      */
     @GetMapping("/lvList")
+    @SaCheckLogin
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(policySetService.getLabelValueList());
     }

@@ -29,7 +29,7 @@ public class OperateLogDO extends BaseDO {
     /**
      * {@link #requestParams} 的最大长度
      */
-    public static final Integer REQUEST_PARAMS_MAX_LENGTH = 2000;
+    public static final Integer REQUEST_PARAMS_MAX_LENGTH = 2500;
 
     /**
      * {@link #resultMsg} 的最大长度
@@ -39,7 +39,7 @@ public class OperateLogDO extends BaseDO {
     /**
      * {@link #resultData} 的最大长度
      */
-    public static final Integer RESULT_DATA_MAX_LENGTH = 3000;
+    public static final Integer RESULT_DATA_MAX_LENGTH = 2500;
 
     @Serial
     private static final long serialVersionUID = 1797386582905133955L;

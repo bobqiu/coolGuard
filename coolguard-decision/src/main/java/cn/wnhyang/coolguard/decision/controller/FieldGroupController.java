@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
@@ -80,6 +81,7 @@ public class FieldGroupController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<FieldGroupVO> getFieldGroup(@RequestParam("id") Long id) {
         return success(fieldGroupService.getFieldGroup(id));
     }
@@ -91,6 +93,7 @@ public class FieldGroupController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<FieldGroupVO>> pageFieldGroup(@Valid FieldGroupPageVO pageVO) {
         return success(fieldGroupService.pageFieldGroup(pageVO));
     }
@@ -101,6 +104,7 @@ public class FieldGroupController {
      * @return list
      */
     @GetMapping("/list")
+    @SaCheckLogin
     public CommonResult<List<FieldGroupVO>> listFieldGroup() {
         return success(fieldGroupService.listFieldGroup());
     }
@@ -111,6 +115,7 @@ public class FieldGroupController {
      * @return lv列表
      */
     @GetMapping("/lvList")
+    @SaCheckLogin
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(fieldGroupService.getLabelValueList());
     }

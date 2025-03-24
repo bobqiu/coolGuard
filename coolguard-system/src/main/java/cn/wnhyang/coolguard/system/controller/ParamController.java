@@ -112,6 +112,7 @@ public class ParamController {
      * @throws IOException IO异常
      */
     @GetMapping("/export")
+    @SaCheckPermission("system:param:export")
     public void exportExcel(@Valid ParamPageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
         ExcelUtil.write(response, "ParamVO.xls", "数据", ParamVO.class, ParamConvert.INSTANCE.convert(paramService.page(pageVO)).getList());
@@ -125,6 +126,7 @@ public class ParamController {
      * @throws IOException IO异常
      */
     @PostMapping("/import")
+    @SaCheckPermission("system:param:import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
         List<ParamVO> read = ExcelUtil.read(file, ParamVO.class);
         // do something

@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
@@ -74,6 +75,7 @@ public class RuleVersionController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<RuleVersionVO> get(@RequestParam("id") Long id) {
         return success(RuleVersionConvert.INSTANCE.convert(ruleVersionService.get(id)));
     }
@@ -85,6 +87,7 @@ public class RuleVersionController {
      * @return vo
      */
     @GetMapping("/cv")
+    @SaCheckLogin
     public CommonResult<RuleVersionVO> getByCv(@Valid CvQueryVO queryVO) {
         return success(ruleVersionService.getByCv(queryVO));
     }
@@ -96,6 +99,7 @@ public class RuleVersionController {
      * @return vo
      */
     @GetMapping("/code")
+    @SaCheckLogin
     public CommonResult<List<RuleVersionVO>> getByCode(@RequestParam("code") String code) {
         return success(RuleVersionConvert.INSTANCE.convert(ruleVersionService.getByCode(code)));
     }
@@ -107,6 +111,7 @@ public class RuleVersionController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<RuleVersionVO>> page(@Valid RuleVersionPageVO pageVO) {
         return success(RuleVersionConvert.INSTANCE.convert(ruleVersionService.page(pageVO)));
     }
@@ -118,6 +123,7 @@ public class RuleVersionController {
      * @return pageResult
      */
     @GetMapping("/pageByCode")
+    @SaCheckLogin
     public CommonResult<PageResult<RuleVersionVO>> pageByCode(@Valid RuleVersionPageVO pageVO) {
         return success(ruleVersionService.pageByCode(pageVO));
     }
@@ -130,6 +136,7 @@ public class RuleVersionController {
      * @throws IOException IO异常
      */
     @GetMapping("/export")
+    @SaCheckPermission("decision:rule:export")
     public void exportExcel(@Valid RuleVersionPageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
         ExcelUtil.write(response, "PolicySetVersionExtVO.xls", "数据", RuleVersionVO.class, RuleVersionConvert.INSTANCE.convert(ruleVersionService.page(pageVO)).getList());
@@ -143,6 +150,7 @@ public class RuleVersionController {
      * @throws IOException IO异常
      */
     @PostMapping("/import")
+    @SaCheckPermission("decision:rule:import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
         List<RuleVersionVO> read = ExcelUtil.read(file, RuleVersionVO.class);
         // do something
@@ -155,6 +163,7 @@ public class RuleVersionController {
      * @return list
      */
     @GetMapping("/lvList")
+    @SaCheckLogin
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(ruleVersionService.getLabelValueList());
     }

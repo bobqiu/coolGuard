@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.wnhyang.coolguard.decision.analysis.ad.Pca;
 import cn.wnhyang.coolguard.decision.analysis.geo.GeoAnalysis;
 import cn.wnhyang.coolguard.decision.analysis.ip.Ip2Region;
@@ -39,22 +40,26 @@ public class AnalysisController {
     private final GeoAnalysis geoAnalysis;
 
     @GetMapping("/pca")
+    @SaCheckLogin
     public Pca getPca(@RequestParam("code") String code) {
         Pca pca = AdocUtil.getPca(code);
         return pca;
     }
 
     @GetMapping("/phone")
+    @SaCheckLogin
     public PhoneNoInfo getPhone(@RequestParam("phone") String phone) {
         return phoneNoAnalysis.analysis(phone);
     }
 
     @GetMapping("/ip")
+    @SaCheckLogin
     public Ip2Region getIp(@RequestParam("ip") String ip) {
         return ipAnalysis.analysis(ip);
     }
 
     @GetMapping("/geo")
+    @SaCheckLogin
     public Pca getGeo(@RequestParam("lonAndLat") String lonAndLat) {
         return geoAnalysis.analysis(lonAndLat);
     }

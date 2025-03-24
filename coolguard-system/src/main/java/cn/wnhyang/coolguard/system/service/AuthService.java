@@ -2,6 +2,8 @@ package cn.wnhyang.coolguard.system.service;
 
 import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.stp.parameter.SaLogoutParameter;
+import cn.dev33.satoken.stp.parameter.enums.SaLogoutRange;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolguard.common.enums.DeviceType;
@@ -135,7 +137,7 @@ public class AuthService {
     public void logout() {
         Login loginUser = LoginUtil.getLoginUser();
         if (loginUser != null) {
-            StpUtil.logout();
+            StpUtil.logout(new SaLogoutParameter().setRange(SaLogoutRange.TOKEN));
             createLoginLog(loginUser.getId(), loginUser.getUsername(), LoginType.LOGOUT_SELF, LoginResult.SUCCESS);
         }
     }

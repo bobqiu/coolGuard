@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
@@ -88,6 +89,7 @@ public class SmsTemplateController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<SmsTemplateVO> get(@RequestParam("id") Long id) {
         return success(SmsTemplateConvert.INSTANCE.convert(smsTemplateService.get(id)));
     }
@@ -99,6 +101,7 @@ public class SmsTemplateController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<SmsTemplateVO>> page(@Valid SmsTemplatePageVO pageVO) {
         return success(SmsTemplateConvert.INSTANCE.convert(smsTemplateService.page(pageVO)));
     }
@@ -111,6 +114,7 @@ public class SmsTemplateController {
      * @throws IOException IO异常
      */
     @GetMapping("/export")
+    @SaCheckPermission("decision:smsTemplate:export")
     public void exportExcel(@Valid SmsTemplatePageVO pageVO, HttpServletResponse response) throws IOException {
         // 输出 Excel
         ExcelUtil.write(response, "SmsTemplateVO.xls", "数据", SmsTemplateVO.class, SmsTemplateConvert.INSTANCE.convert(smsTemplateService.page(pageVO)).getList());
@@ -124,6 +128,7 @@ public class SmsTemplateController {
      * @throws IOException IO异常
      */
     @PostMapping("/import")
+    @SaCheckPermission("decision:smsTemplate:import")
     public CommonResult<Boolean> importExcel(@RequestParam("file") MultipartFile file) throws IOException {
         List<SmsTemplateVO> read = ExcelUtil.read(file, SmsTemplateVO.class);
         // do something
@@ -136,6 +141,7 @@ public class SmsTemplateController {
      * @return lvList
      */
     @GetMapping("/lvList")
+    @SaCheckLogin
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(smsTemplateService.getLabelValueList());
     }

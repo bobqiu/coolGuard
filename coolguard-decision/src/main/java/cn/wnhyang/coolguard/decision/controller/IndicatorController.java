@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
@@ -96,6 +97,7 @@ public class IndicatorController {
      * @return true/false
      */
     @PostMapping("/batchSubmit")
+    @SaCheckLogin
     public CommonResult<List<VersionSubmitResultVO>> batchSubmit(@RequestBody @Valid BatchVersionSubmit submitVOList) {
         return success(indicatorService.batchSubmit(submitVOList));
     }
@@ -107,6 +109,7 @@ public class IndicatorController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<IndicatorVO> getIndicator(@RequestParam("id") Long id) {
         return success(indicatorService.getIndicator(id));
     }
@@ -118,6 +121,7 @@ public class IndicatorController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<IndicatorVO>> pageIndicator(@Valid IndicatorPageVO pageVO) {
         return success(indicatorService.pageIndicator(pageVO));
     }
@@ -128,6 +132,7 @@ public class IndicatorController {
      * @return 全部指标
      */
     @GetMapping("/list")
+    @SaCheckLogin
     public CommonResult<List<IndicatorVO>> listIndicator() {
         return success(indicatorService.listIndicator());
     }
@@ -138,6 +143,7 @@ public class IndicatorController {
      * @return lvList
      */
     @GetMapping("/lvList")
+    @SaCheckLogin
     public CommonResult<List<LabelValue>> getLabelValueList() {
         return success(indicatorService.getLabelValueList());
     }

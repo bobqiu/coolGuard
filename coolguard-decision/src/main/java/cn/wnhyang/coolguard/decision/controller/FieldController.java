@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
@@ -83,6 +84,7 @@ public class FieldController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<FieldVO> getField(@RequestParam("id") Long id) {
         return success(FieldConvert.INSTANCE.convert(fieldService.getField(id)));
     }
@@ -94,6 +96,7 @@ public class FieldController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<FieldVO>> pageField(@Valid FieldPageVO pageVO) {
         return success(FieldConvert.INSTANCE.convert(fieldService.pageField(pageVO)));
     }
@@ -105,6 +108,7 @@ public class FieldController {
      * @return 测试结果
      */
     @PostMapping("/testDynamicFieldScript")
+    @SaCheckLogin
     public CommonResult<String> testDynamicFieldScript(@RequestBody @Valid TestDynamicFieldScript testDynamicFieldScript) {
         return success(fieldService.testDynamicFieldScript(testDynamicFieldScript));
     }
@@ -115,6 +119,7 @@ public class FieldController {
      * @return list
      */
     @GetMapping("/list")
+    @SaCheckLogin
     public CommonResult<List<FieldVO>> listField() {
         return success(FieldConvert.INSTANCE.convert(fieldService.listField()));
     }

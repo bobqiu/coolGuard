@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
@@ -78,6 +79,7 @@ public class RuleScriptController {
      * @return vo
      */
     @GetMapping
+    @SaCheckLogin
     public CommonResult<RuleScriptVO> getRuleScript(@RequestParam("id") Long id) {
         return success(RuleScriptConvert.INSTANCE.convert(ruleScriptService.getRuleScript(id)));
     }
@@ -89,6 +91,7 @@ public class RuleScriptController {
      * @return pageResult
      */
     @GetMapping("/page")
+    @SaCheckLogin
     public CommonResult<PageResult<RuleScriptVO>> pageRuleScript(@Valid RuleScriptPageVO pageVO) {
         return success(RuleScriptConvert.INSTANCE.convert(ruleScriptService.pageRuleScript(pageVO)));
     }
