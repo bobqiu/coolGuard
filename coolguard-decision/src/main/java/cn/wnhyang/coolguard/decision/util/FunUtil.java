@@ -1,7 +1,7 @@
 package cn.wnhyang.coolguard.decision.util;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ReUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.wnhyang.coolguard.common.fun.StartTimePointFun;
 import cn.wnhyang.coolguard.decision.fun.LogicOp;
 import lombok.extern.slf4j.Slf4j;
@@ -58,8 +58,8 @@ public class FunUtil {
     };
 
     public LogicOp<String> stringLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
-        case NULL -> StrUtil.isBlank(a);
-        case NOT_NULL -> !StrUtil.isBlank(a);
+        case NULL -> ObjUtil.isNull(a);
+        case NOT_NULL -> ObjUtil.isNotNull(a);
         case EQ -> a.equals(b);
         case NOT_EQ -> !a.equals(b);
         case CONTAINS -> a.contains(b);
@@ -72,8 +72,8 @@ public class FunUtil {
     };
 
     public LogicOp<Integer> integerLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
-        case NULL -> a == null;
-        case NOT_NULL -> a != null;
+        case NULL -> ObjUtil.isNull(a);
+        case NOT_NULL -> ObjUtil.isNotNull(a);
         case EQ -> a.equals(b);
         case NOT_EQ -> !a.equals(b);
         case LT -> a < b;
@@ -84,8 +84,8 @@ public class FunUtil {
     };
 
     public LogicOp<Double> doubleLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
-        case NULL -> a == null;
-        case NOT_NULL -> a != null;
+        case NULL -> ObjUtil.isNull(a);
+        case NOT_NULL -> ObjUtil.isNotNull(a);
         case EQ -> a.equals(b);
         case NOT_EQ -> !a.equals(b);
         case LT -> a < b;
@@ -96,8 +96,8 @@ public class FunUtil {
     };
 
     public LogicOp<LocalDateTime> dateLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
-        case NULL -> a == null;
-        case NOT_NULL -> a != null;
+        case NULL -> ObjUtil.isNull(a);
+        case NOT_NULL -> ObjUtil.isNotNull(a);
         case EQ -> a.equals(b);
         case NOT_EQ -> !a.equals(b);
         case LT -> a.isBefore(b);
@@ -108,16 +108,16 @@ public class FunUtil {
     };
 
     public LogicOp<String> enumLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
-        case NULL -> a == null;
-        case NOT_NULL -> a != null;
+        case NULL -> ObjUtil.isNull(a);
+        case NOT_NULL -> ObjUtil.isNotNull(a);
         case EQ -> a.equals(b);
         case NOT_EQ -> !a.equals(b);
         default -> false;
     };
 
     public LogicOp<Boolean> booleanLogicOp = (a, logicType, b) -> switch (Objects.requireNonNull(logicType)) {
-        case NULL -> a == null;
-        case NOT_NULL -> a != null;
+        case NULL -> ObjUtil.isNull(a);
+        case NOT_NULL -> ObjUtil.isNotNull(a);
         case EQ -> a.equals(b);
         case NOT_EQ -> !a.equals(b);
         default -> false;
