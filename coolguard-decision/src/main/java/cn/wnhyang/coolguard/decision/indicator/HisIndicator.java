@@ -27,13 +27,13 @@ public class HisIndicator extends AbstractIndicator {
     }
 
     @Override
-    public Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set) {
+    public Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set, long startTime, long endTime) {
         // TODO 问题这样取值，类型都是字符串
-        if (!set.isEmpty()) {
+        if (!set.valueRange(startTime, true, endTime, true).isEmpty()) {
             if (IndicatorReturnFlag.EARLIEST.equals(indicatorCtx.getReturnFlag())) {
-                return set.first().split("-")[1];
+                return set.valueRange(startTime, true, endTime, true, 0, 1).iterator().next().split("-")[1];
             } else if (IndicatorReturnFlag.LATEST.equals(indicatorCtx.getReturnFlag())) {
-                return set.last().split("-")[1];
+                return set.valueRangeReversed(startTime, true, endTime, true, 0, 1).iterator().next().split("-")[1];
             }
         }
         return "";

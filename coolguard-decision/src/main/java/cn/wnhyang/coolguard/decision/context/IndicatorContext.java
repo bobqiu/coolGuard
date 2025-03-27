@@ -41,7 +41,7 @@ public class IndicatorContext {
             return null;
         }
         return indicatorMap.values().stream().map(
-                indicatorVO -> new IndicatorResult(indicatorVO.getCode(), indicatorVO.getName(), indicatorVO.getType(), indicatorVO.getVersion(), indicatorVO.getValue())).toList();
+                indicatorCtx -> new IndicatorResult(indicatorCtx.getCode(), indicatorCtx.getName(), indicatorCtx.getType(), indicatorCtx.getVersion(), indicatorCtx.getValue())).toList();
     }
 
     @Data

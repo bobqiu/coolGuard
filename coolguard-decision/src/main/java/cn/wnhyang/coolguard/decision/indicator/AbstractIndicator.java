@@ -87,7 +87,7 @@ public abstract class AbstractIndicator {
      * @param set redis set
      * @return 计算指标结果
      */
-    public abstract Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set);
+    public abstract Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set, long startTime, long endTime);
 
     /**
      * 获取计算指标结果
@@ -97,13 +97,16 @@ public abstract class AbstractIndicator {
     public Object getResult(long eventTime, IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set) {
         // 1、清理过期数据
         cleanExpiredDate(indicatorCtx, eventTime, set);
+        long startTime = eventTime;
         // 2、设置过期时间
         if (WinType.LAST.equals(indicatorCtx.getWinType())) {
+            startTime = eventTime - indicatorCtx.getTimeSlice() * indicatorCtx.getWinCount() * 1000;
             set.expire(Duration.ofSeconds(indicatorCtx.getTimeSlice() * indicatorCtx.getWinCount()));
         } else if (WinType.CUR.equals(indicatorCtx.getWinType())) {
+            startTime = eventTime - indicatorCtx.getTimeSlice() * 1000;
             set.expire(Duration.ofSeconds(indicatorCtx.getTimeSlice()));
         }
-        return getResult0(indicatorCtx, set);
+        return getResult0(indicatorCtx, set, startTime, eventTime);
     }
 
     /**
@@ -150,9 +153,9 @@ public abstract class AbstractIndicator {
      */
     public void cleanExpiredDate(IndicatorContext.IndicatorCtx indicatorCtx, long eventTime, RScoredSortedSet<String> set) {
         if (WinType.LAST.equals(indicatorCtx.getWinType())) {
-            set.removeRangeByScore(-1, true, eventTime - Duration.ofSeconds(indicatorCtx.getTimeSlice()).toMillis(), false);
+            set.removeRangeByScoreAsync(-1, true, eventTime - Duration.ofSeconds(indicatorCtx.getTimeSlice()).toMillis(), false);
         } else if (WinType.CUR.equals(indicatorCtx.getWinType())) {
-            set.removeRangeByScore(-1, true, calculateEpochMilli(indicatorCtx, LocalDateTime.now()), false);
+            set.removeRangeByScoreAsync(-1, true, calculateEpochMilli(indicatorCtx, LocalDateTime.now()), false);
         }
     }
 

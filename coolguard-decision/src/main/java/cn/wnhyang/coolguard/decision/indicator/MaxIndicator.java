@@ -26,10 +26,11 @@ public class MaxIndicator extends AbstractIndicator {
     }
 
     @Override
-    public Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set) {
-        return set.stream()
+    public Object getResult0(IndicatorContext.IndicatorCtx indicatorCtx, RScoredSortedSet<String> set, long startTime, long endTime) {
+        return set.valueRange(startTime, true, endTime, true)
+                .stream()
                 .mapToDouble(s -> Double.parseDouble(s.split("-")[1]))
-                .max();
+                .max().orElse(0);
     }
 
     @Override
