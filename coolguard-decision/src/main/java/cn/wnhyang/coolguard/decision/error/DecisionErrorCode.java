@@ -130,4 +130,6 @@ public interface DecisionErrorCode {
 
     ErrorCode TAG_NOT_EXIST = new ErrorCode(1014001002, "标签不存在");
 
+    ErrorCode LITE_FLOW_ERROR = new ErrorCode(1099001001, "liteflow异常{}");
+
 }

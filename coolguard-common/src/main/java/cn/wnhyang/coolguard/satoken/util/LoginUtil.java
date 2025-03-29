@@ -38,6 +38,19 @@ public class LoginUtil {
     }
 
     /**
+     * 获取当前用户ID
+     *
+     * @return 用户ID
+     */
+    public String getUsername() {
+        Login loginUser = getLoginUser();
+        if (loginUser == null) {
+            throw exception(UNAUTHORIZED);
+        }
+        return loginUser.getUsername();
+    }
+
+    /**
      * 判断是否是管理员
      *
      * @param userId 用户ID

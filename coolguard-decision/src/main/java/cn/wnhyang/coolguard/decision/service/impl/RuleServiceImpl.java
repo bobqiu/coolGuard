@@ -2,6 +2,7 @@ package cn.wnhyang.coolguard.decision.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
+import cn.wnhyang.coolguard.common.exception.ServiceException;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.common.util.CollectionUtils;
 import cn.wnhyang.coolguard.decision.constant.PolicyMode;
@@ -18,6 +19,8 @@ import cn.wnhyang.coolguard.decision.mapper.RuleVersionMapper;
 import cn.wnhyang.coolguard.decision.service.*;
 import cn.wnhyang.coolguard.decision.util.QLExpressUtil;
 import cn.wnhyang.coolguard.decision.vo.RuleVO;
+import cn.wnhyang.coolguard.decision.vo.VersionSubmitResultVO;
+import cn.wnhyang.coolguard.decision.vo.base.BatchVersionSubmit;
 import cn.wnhyang.coolguard.decision.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolguard.decision.vo.create.RuleCreateVO;
 import cn.wnhyang.coolguard.decision.vo.page.RulePageVO;
@@ -28,8 +31,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -137,7 +142,8 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void submit(VersionSubmitVO submitVO) {
+    public VersionSubmitResultVO submit(VersionSubmitVO submitVO) {
+        VersionSubmitResultVO result = new VersionSubmitResultVO().setId(submitVO.getId());
         Rule rule = ruleMapper.selectById(submitVO.getId());
         // 确认策略集是否存在
         if (rule == null) {
@@ -163,6 +169,26 @@ public class RuleServiceImpl implements RuleService {
         convert.setVersionDesc(submitVO.getVersionDesc());
         convert.setLatest(Boolean.TRUE);
         ruleVersionMapper.insert(convert);
+        result.setSuccess(Boolean.TRUE);
+        return result;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+    public List<VersionSubmitResultVO> batchSubmit(BatchVersionSubmit submitVO) {
+        List<VersionSubmitResultVO> result = new ArrayList<>();
+        submitVO.getIds().forEach(id -> {
+            try {
+                result.add(submit(new VersionSubmitVO().setId(id).setVersionDesc(submitVO.getVersionDesc())));
+            } catch (ServiceException e) {
+                log.error("提交失败，id:{}", id, e);
+                result.add(new VersionSubmitResultVO().setId(id).setSuccess(Boolean.FALSE).setMsg(e.getMessage()));
+            } catch (Exception e) {
+                log.error("提交失败，id:{}", id, e);
+                result.add(new VersionSubmitResultVO().setId(id).setSuccess(Boolean.FALSE).setMsg("未知异常"));
+            }
+        });
+        return result;
     }
 
     @Override

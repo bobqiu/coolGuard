@@ -1,5 +1,6 @@
 package cn.wnhyang.coolguard.decision.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
 import cn.wnhyang.coolguard.decision.service.DecisionService;
@@ -17,7 +18,6 @@ import static cn.wnhyang.coolguard.common.pojo.CommonResult.success;
  * @author wnhyang
  * @date 2025/3/8
  **/
-@SaIgnore
 @RestController
 @RequestMapping("/decision")
 @RequiredArgsConstructor
@@ -33,6 +33,7 @@ public class DecisionController {
      * @return map
      */
     @PostMapping("/{code}/test")
+    @SaCheckLogin
     public CommonResult<DecisionResult> testRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
         return success(decisionService.testRisk(code, params));
     }
@@ -45,6 +46,7 @@ public class DecisionController {
      * @return map
      */
     @PostMapping("/{code}/sync")
+    @SaIgnore
     public CommonResult<DecisionResult> syncRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
         return success(decisionService.syncRisk(code, params));
     }
@@ -57,6 +59,7 @@ public class DecisionController {
      * @return map
      */
     @PostMapping("/{code}/async")
+    @SaIgnore
     public CommonResult<DecisionResult> asyncRisk(@PathVariable("code") String code, @RequestBody Map<String, String> params) {
         return success(decisionService.asyncRisk(code, params));
     }

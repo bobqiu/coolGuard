@@ -44,7 +44,6 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
   mapper-locations: classpath*:mapper/**/*Mapper.xml
-  login: false
 
 # 日志配置
 logging:

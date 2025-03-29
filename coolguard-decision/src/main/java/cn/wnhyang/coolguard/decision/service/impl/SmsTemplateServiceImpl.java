@@ -105,6 +105,9 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         FieldContext fieldContext = DecisionContextHolder.getFieldContext();
         // TODO 完善
         SmsTemplate smsTemplate = smsTemplateMapper.selectByCode(sendSms.getSmsTemplateCode());
+        if (smsTemplate == null) {
+            return;
+        }
         String smsContent = StrUtil.format(smsTemplate.getContent(), fieldContext);
         log.info("smsContent: {}", smsContent);
     }

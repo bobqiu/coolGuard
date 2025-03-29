@@ -7,6 +7,8 @@ import cn.wnhyang.coolguard.common.pojo.CommonResult;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.decision.service.PolicyService;
 import cn.wnhyang.coolguard.decision.vo.PolicyVO;
+import cn.wnhyang.coolguard.decision.vo.VersionSubmitResultVO;
+import cn.wnhyang.coolguard.decision.vo.base.BatchVersionSubmit;
 import cn.wnhyang.coolguard.decision.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolguard.decision.vo.create.PolicyCreateVO;
 import cn.wnhyang.coolguard.decision.vo.page.PolicyPageVO;
@@ -108,9 +110,21 @@ public class PolicyController {
     @PostMapping("/submit")
     @SaCheckPermission("decision:policy:submit")
     @OperateLog(module = "后台-策略", name = "提交策略", type = OperateType.CREATE)
-    public CommonResult<Boolean> submit(@RequestBody @Valid VersionSubmitVO submitVO) {
-        policyService.submit(submitVO);
-        return success(true);
+    public CommonResult<VersionSubmitResultVO> submit(@RequestBody @Valid VersionSubmitVO submitVO) {
+        return success(policyService.submit(submitVO));
+    }
+
+    /**
+     * 批量提交
+     *
+     * @param submitVOList 提交VO列表
+     * @return true/false
+     */
+    @PostMapping("/batchSubmit")
+    @SaCheckPermission("decision:policy:submit")
+    @SaCheckLogin
+    public CommonResult<List<VersionSubmitResultVO>> batchSubmit(@RequestBody @Valid BatchVersionSubmit submitVOList) {
+        return success(policyService.batchSubmit(submitVOList));
     }
 
     /**

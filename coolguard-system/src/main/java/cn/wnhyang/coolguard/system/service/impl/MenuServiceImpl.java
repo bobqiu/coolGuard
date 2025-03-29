@@ -236,8 +236,7 @@ public class MenuServiceImpl implements MenuService {
             menuMap.put(menuDO.getId(), menuDO);
         }
 
-        // 使用LinkedHashSet保持插入顺序
-        Set<MenuDO> result = new LinkedHashSet<>();
+        Set<MenuDO> result = new HashSet<>();
         // 存储已处理过的菜单ID
         Set<Long> processedIds = new HashSet<>();
         for (Long menuId : menuIds) {
@@ -248,8 +247,8 @@ public class MenuServiceImpl implements MenuService {
                 collectMenuChildren(result, menuMap, menuId);
             }
         }
-
-        return result;
+        // 根据order排序后输出
+        return result.stream().sorted(Comparator.comparing(MenuDO::getOrder)).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -391,8 +390,9 @@ public class MenuServiceImpl implements MenuService {
     private void initMenuProperty(MenuDO menuDO) {
         // 菜单为按钮类型时，无需 component、icon、path 属性，进行置空
         if (MenuType.BUTTON.getType().equals(menuDO.getType())) {
-            menuDO.setComponent("");
-            menuDO.setPath("");
+            menuDO.setComponent(null);
+            menuDO.setPath(null);
+            menuDO.setMeta(null);
         }
     }
 }

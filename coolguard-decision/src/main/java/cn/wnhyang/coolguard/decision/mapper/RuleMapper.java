@@ -71,7 +71,11 @@ public interface RuleMapper extends BaseMapperX<Rule> {
     default List<Rule> selectRunningListByPolicyCode(String policyCode) {
         return selectList(new LambdaQueryWrapperX<Rule>()
                 .eqIfPresent(Rule::getPolicyCode, policyCode)
-                .or(q -> q.eq(Rule::getStatus, RuleStatus.ON).eq(Rule::getStatus, RuleStatus.MOCK)));
+                .and(q -> q
+                        .eq(Rule::getStatus, RuleStatus.ON)
+                        .or()
+                        .eq(Rule::getStatus, RuleStatus.MOCK)
+                ));
     }
 
     default List<Rule> selectListByPolicyCodeAndStatus(String policyCode, String status) {

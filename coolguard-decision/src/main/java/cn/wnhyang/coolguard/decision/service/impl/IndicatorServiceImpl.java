@@ -2,6 +2,7 @@ package cn.wnhyang.coolguard.decision.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
+import cn.wnhyang.coolguard.common.exception.ServiceException;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.common.util.CollectionUtils;
 import cn.wnhyang.coolguard.decision.constant.FieldCode;
@@ -33,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -178,15 +180,18 @@ public class IndicatorServiceImpl implements IndicatorService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public List<VersionSubmitResultVO> batchSubmit(BatchVersionSubmit submitVO) {
         List<VersionSubmitResultVO> result = new ArrayList<>();
         submitVO.getIds().forEach(id -> {
             try {
                 result.add(submit(new VersionSubmitVO().setId(id).setVersionDesc(submitVO.getVersionDesc())));
-            } catch (Exception e) {
-                log.error("指标提交失败，id:{}", id, e);
+            } catch (ServiceException e) {
+                log.error("提交失败，id:{}", id, e);
                 result.add(new VersionSubmitResultVO().setId(id).setSuccess(Boolean.FALSE).setMsg(e.getMessage()));
+            } catch (Exception e) {
+                log.error("提交失败，id:{}", id, e);
+                result.add(new VersionSubmitResultVO().setId(id).setSuccess(Boolean.FALSE).setMsg("未知异常"));
             }
         });
         return result;

@@ -94,4 +94,4 @@ sa-token:
 # 日志配置
 logging:
   level:
-    cn.wnhyang.coolguard.mapper: debug
+    cn.wnhyang.coolguard.decision.mapper: debug

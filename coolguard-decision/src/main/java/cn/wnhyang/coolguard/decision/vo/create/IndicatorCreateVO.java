@@ -52,7 +52,6 @@ public class IndicatorCreateVO extends IndicatorBaseVO {
     /**
      * 窗口数量
      */
-    @NotNull(message = "窗口数量不能为空")
     private Integer winCount;
 
     /**

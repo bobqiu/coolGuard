@@ -97,6 +97,7 @@ public class IndicatorController {
      * @return true/false
      */
     @PostMapping("/batchSubmit")
+    @SaCheckPermission("decision:indicator:submit")
     @SaCheckLogin
     public CommonResult<List<VersionSubmitResultVO>> batchSubmit(@RequestBody @Valid BatchVersionSubmit submitVOList) {
         return success(indicatorService.batchSubmit(submitVOList));

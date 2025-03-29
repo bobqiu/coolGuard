@@ -3,10 +3,13 @@ package cn.wnhyang.coolguard.decision.service;
 import cn.wnhyang.coolguard.common.entity.LabelValue;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.decision.vo.PolicySetVO;
+import cn.wnhyang.coolguard.decision.vo.VersionSubmitResultVO;
+import cn.wnhyang.coolguard.decision.vo.base.BatchVersionSubmit;
 import cn.wnhyang.coolguard.decision.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolguard.decision.vo.create.PolicySetCreateVO;
 import cn.wnhyang.coolguard.decision.vo.page.PolicySetPageVO;
 import cn.wnhyang.coolguard.decision.vo.update.PolicySetUpdateVO;
+import jakarta.validation.Valid;
 
 import java.util.Collection;
 import java.util.List;
@@ -77,7 +80,7 @@ public interface PolicySetService {
      *
      * @param submitVO submitVO
      */
-    void submit(VersionSubmitVO submitVO);
+    VersionSubmitResultVO submit(VersionSubmitVO submitVO);
 
     /**
      * 列表
@@ -97,4 +100,12 @@ public interface PolicySetService {
      * 策略集
      */
     void policySet();
+
+    /**
+     * 批量提交
+     *
+     * @param submitVOList 提交VO
+     * @return list
+     */
+    List<VersionSubmitResultVO> batchSubmit(@Valid BatchVersionSubmit submitVOList);
 }

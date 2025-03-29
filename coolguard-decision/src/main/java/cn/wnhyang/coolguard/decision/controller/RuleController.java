@@ -7,6 +7,8 @@ import cn.wnhyang.coolguard.common.pojo.CommonResult;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.decision.service.RuleService;
 import cn.wnhyang.coolguard.decision.vo.RuleVO;
+import cn.wnhyang.coolguard.decision.vo.VersionSubmitResultVO;
+import cn.wnhyang.coolguard.decision.vo.base.BatchVersionSubmit;
 import cn.wnhyang.coolguard.decision.vo.base.VersionSubmitVO;
 import cn.wnhyang.coolguard.decision.vo.create.RuleCreateVO;
 import cn.wnhyang.coolguard.decision.vo.page.RulePageVO;
@@ -108,9 +110,21 @@ public class RuleController {
     @PostMapping("/submit")
     @SaCheckPermission("decision:rule:submit")
     @OperateLog(module = "后台-规则", name = "提交规则", type = OperateType.CREATE)
-    public CommonResult<Boolean> submit(@RequestBody @Valid VersionSubmitVO submitVO) {
-        ruleService.submit(submitVO);
-        return success(true);
+    public CommonResult<VersionSubmitResultVO> submit(@RequestBody @Valid VersionSubmitVO submitVO) {
+        return success(ruleService.submit(submitVO));
+    }
+
+    /**
+     * 批量提交
+     *
+     * @param submitVOList 提交VO列表
+     * @return true/false
+     */
+    @PostMapping("/batchSubmit")
+    @SaCheckPermission("decision:rule:submit")
+    @SaCheckLogin
+    public CommonResult<List<VersionSubmitResultVO>> batchSubmit(@RequestBody @Valid BatchVersionSubmit submitVOList) {
+        return success(ruleService.batchSubmit(submitVOList));
     }
 
     /**

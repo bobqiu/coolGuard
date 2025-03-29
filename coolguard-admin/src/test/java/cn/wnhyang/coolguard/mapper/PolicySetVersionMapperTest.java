@@ -1,8 +1,6 @@
 package cn.wnhyang.coolguard.mapper;
 
 import cn.wnhyang.coolguard.AdminApplication;
-import cn.wnhyang.coolguard.decision.entity.PolicySet;
-import cn.wnhyang.coolguard.decision.entity.PolicySetVersion;
 import cn.wnhyang.coolguard.decision.mapper.PolicySetMapper;
 import cn.wnhyang.coolguard.decision.mapper.PolicySetVersionMapper;
 import jakarta.annotation.Resource;
@@ -26,9 +24,5 @@ public class PolicySetVersionMapperTest {
 
     @Test
     public void test() {
-        for (PolicySet policySet : policySetMapper.selectList()) {
-            log.info("{}", policySet);
-            policySetVersionMapper.insert(new PolicySetVersion().setCode(policySet.getCode()).setLatest(Boolean.TRUE).setChain(policySet.getChain()));
-        }
     }
 }

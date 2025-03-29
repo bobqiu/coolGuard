@@ -96,7 +96,9 @@ public class TagServiceImpl implements TagService {
         // TODO 完善
         log.info("addTag:{}", tagCodes);
         for (String tagCode : tagCodes) {
-            eventContext.addTag(tagMapper.selectByCode(tagCode));
+            if (tagMapper.selectByCode(tagCode) != null) {
+                eventContext.addTag(tagMapper.selectByCode(tagCode));
+            }
         }
     }
 
