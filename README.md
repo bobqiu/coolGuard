@@ -81,17 +81,11 @@ coolGuard音译酷盖，意为酷酷护卫。
 
 - Elasticsearch
 
-## 系统架构
-
-待补充
-
 ## 更多资料
 
-wiki:https://github.com/wnhyang/coolGuard/wiki
+https://www.yuque.com/wnhyang/coolguard
 
-### 在线体验
-
-计划中
+在线体验：https://www.yuque.com/wnhyang/coolguard/qgmbvnggi4wqe4v0
 
 ## 友链
 
