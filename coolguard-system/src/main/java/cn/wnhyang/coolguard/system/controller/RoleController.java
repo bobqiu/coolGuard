@@ -7,8 +7,6 @@ import cn.wnhyang.coolguard.common.pojo.CommonResult;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.log.annotation.OperateLog;
 import cn.wnhyang.coolguard.log.enums.OperateType;
-import cn.wnhyang.coolguard.system.convert.RoleConvert;
-import cn.wnhyang.coolguard.system.entity.RoleDO;
 import cn.wnhyang.coolguard.system.service.PermissionService;
 import cn.wnhyang.coolguard.system.service.RoleService;
 import cn.wnhyang.coolguard.system.vo.role.RoleCreateVO;
@@ -20,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static cn.wnhyang.coolguard.common.pojo.CommonResult.success;
 
@@ -90,11 +86,7 @@ public class RoleController {
     @GetMapping
     @SaCheckPermission("system:role:query")
     public CommonResult<RoleRespVO> getRole(@RequestParam("id") Long id) {
-        RoleDO roleDO = roleService.getRole(id);
-        Set<Long> menuIds = permissionService.getMenuIdListByRoleId(roleDO.getId());
-        RoleRespVO respVO = RoleConvert.INSTANCE.convert(roleDO);
-        respVO.setMenuIds(menuIds);
-        return success(respVO);
+        return success(roleService.getRole(id));
     }
 
     /**
@@ -106,15 +98,7 @@ public class RoleController {
     @GetMapping("/page")
     @SaCheckPermission("system:role:list")
     public CommonResult<PageResult<RoleRespVO>> getRolePage(@Valid RolePageVO reqVO) {
-        PageResult<RoleDO> pageResult = roleService.getRolePage(reqVO);
-        List<RoleRespVO> roleRespVOList = pageResult.getList().stream().map(role -> {
-            Set<Long> menuIds = permissionService.getMenuIdListByRoleId(role.getId());
-            RoleRespVO respVO = RoleConvert.INSTANCE.convert(role);
-            respVO.setMenuIds(menuIds);
-            return respVO;
-        }).collect(Collectors.toList());
-
-        return success(new PageResult<>(roleRespVOList, pageResult.getTotal()));
+        return success(roleService.getRolePage(reqVO));
     }
 
     /**

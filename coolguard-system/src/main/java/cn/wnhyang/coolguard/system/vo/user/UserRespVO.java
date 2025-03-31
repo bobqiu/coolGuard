@@ -1,6 +1,5 @@
 package cn.wnhyang.coolguard.system.vo.user;
 
-import cn.wnhyang.coolguard.common.entity.LabelValue;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,8 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author wnhyang
@@ -26,16 +23,6 @@ public class UserRespVO extends UserCreateVO {
      * 用户id
      */
     private Long id;
-
-    /**
-     * 角色标识列表
-     */
-    private Set<String> roles;
-
-    /**
-     * 角色列表
-     */
-    private List<LabelValue> roleList;
 
     /**
      * 登录ip

@@ -12,9 +12,11 @@ import cn.wnhyang.coolguard.system.entity.RoleMenuDO;
 import cn.wnhyang.coolguard.system.mapper.RoleMapper;
 import cn.wnhyang.coolguard.system.mapper.RoleMenuMapper;
 import cn.wnhyang.coolguard.system.mapper.UserRoleMapper;
+import cn.wnhyang.coolguard.system.service.PermissionService;
 import cn.wnhyang.coolguard.system.service.RoleService;
 import cn.wnhyang.coolguard.system.vo.role.RoleCreateVO;
 import cn.wnhyang.coolguard.system.vo.role.RolePageVO;
+import cn.wnhyang.coolguard.system.vo.role.RoleRespVO;
 import cn.wnhyang.coolguard.system.vo.role.RoleUpdateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,6 +27,8 @@ import org.springframework.util.StringUtils;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static cn.wnhyang.coolguard.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.wnhyang.coolguard.system.error.SystemErrorCode.*;
@@ -45,6 +49,8 @@ public class RoleServiceImpl implements RoleService {
     private final RoleMenuMapper roleMenuMapper;
 
     private final UserRoleMapper userRoleMapper;
+
+    private final PermissionService permissionService;
 
     @Override
     public List<RoleDO> getRoleList(Collection<Long> ids) {
@@ -101,13 +107,25 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleDO getRole(Long id) {
-        return roleMapper.selectById(id);
+    public RoleRespVO getRole(Long id) {
+        RoleDO roleDO = roleMapper.selectById(id);
+        Set<Long> menuIds = permissionService.getMenuIdListByRoleId(roleDO.getId());
+        RoleRespVO respVO = RoleConvert.INSTANCE.convert(roleDO);
+        respVO.setMenuIds(menuIds);
+        return respVO;
     }
 
     @Override
-    public PageResult<RoleDO> getRolePage(RolePageVO reqVO) {
-        return roleMapper.selectPage(reqVO);
+    public PageResult<RoleRespVO> getRolePage(RolePageVO reqVO) {
+        PageResult<RoleDO> pageResult = roleMapper.selectPage(reqVO);
+        List<RoleRespVO> roleRespVOList = pageResult.getList().stream().map(role -> {
+            Set<Long> menuIds = permissionService.getMenuIdListByRoleId(role.getId());
+            RoleRespVO respVO = RoleConvert.INSTANCE.convert(role);
+            respVO.setMenuIds(menuIds);
+            return respVO;
+        }).collect(Collectors.toList());
+
+        return new PageResult<>(roleRespVOList, pageResult.getTotal());
     }
 
     @Override

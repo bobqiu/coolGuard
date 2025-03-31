@@ -6,6 +6,7 @@ import cn.wnhyang.coolguard.common.pojo.PageResult;
 import cn.wnhyang.coolguard.system.entity.RoleDO;
 import cn.wnhyang.coolguard.system.vo.role.RoleCreateVO;
 import cn.wnhyang.coolguard.system.vo.role.RolePageVO;
+import cn.wnhyang.coolguard.system.vo.role.RoleRespVO;
 import cn.wnhyang.coolguard.system.vo.role.RoleUpdateVO;
 
 import java.util.Collection;
@@ -69,7 +70,7 @@ public interface RoleService {
      * @param id id
      * @return 角色
      */
-    RoleDO getRole(Long id);
+    RoleRespVO getRole(Long id);
 
     /**
      * 查询角色列表
@@ -77,7 +78,7 @@ public interface RoleService {
      * @param reqVO 请求
      * @return 角色列表
      */
-    PageResult<RoleDO> getRolePage(RolePageVO reqVO);
+    PageResult<RoleRespVO> getRolePage(RolePageVO reqVO);
 
     /**
      * 获取角色列表

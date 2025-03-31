@@ -102,12 +102,28 @@ public interface UserService {
     UserDO getUserById(Long id);
 
     /**
+     * 查询用户信息
+     *
+     * @param id id
+     * @return 用户
+     */
+    UserRespVO getUserRespById(Long id);
+
+    /**
      * 查询用户信息列表
      *
      * @param reqVO 请求数据
      * @return 用户列表
      */
-    PageResult<UserDO> getUserPage(UserPageVO reqVO);
+    PageResult<UserRespVO> getUserPage(UserPageVO reqVO);
+
+    /**
+     * 查询用户信息列表
+     *
+     * @param reqVO 请求数据
+     * @return 用户列表
+     */
+    List<UserRespVO> getUserList(UserPageVO reqVO);
 
     /**
      * 根据用户昵称查询用户列表

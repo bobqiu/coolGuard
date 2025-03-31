@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static cn.wnhyang.coolguard.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.wnhyang.coolguard.system.error.SystemErrorCode.*;
@@ -146,8 +147,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageResult<UserDO> getUserPage(UserPageVO reqVO) {
-        return userMapper.selectPage(reqVO);
+    public UserRespVO getUserRespById(Long id) {
+        UserDO userDO = userMapper.selectById(id);
+        Set<Long> roleIds = permissionService.getRoleIdListByUserId(userDO.getId());
+        UserRespVO respVO = UserConvert.INSTANCE.convert02(userDO);
+        respVO.setRoleIds(roleIds);
+        return respVO;
+    }
+
+    @Override
+    public PageResult<UserRespVO> getUserPage(UserPageVO reqVO) {
+        List<UserRespVO> userList = getUserList(reqVO);
+        return new PageResult<>(userList, (long) userList.size());
+    }
+
+    @Override
+    public List<UserRespVO> getUserList(UserPageVO reqVO) {
+        PageResult<UserDO> pageResult = userMapper.selectPage(reqVO);
+        return pageResult.getList().stream().map(user -> {
+            Set<Long> roleIds = permissionService.getRoleIdListByUserId(user.getId());
+            UserRespVO respVO = UserConvert.INSTANCE.convert02(user);
+            respVO.setRoleIds(roleIds);
+            return respVO;
+        }).collect(Collectors.toList());
     }
 
     @Override

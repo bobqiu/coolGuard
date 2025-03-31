@@ -3,15 +3,10 @@ package cn.wnhyang.coolguard.system.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.wnhyang.coolguard.common.pojo.CommonResult;
 import cn.wnhyang.coolguard.common.pojo.PageResult;
-import cn.wnhyang.coolguard.common.util.CollectionUtils;
 import cn.wnhyang.coolguard.common.util.ExcelUtil;
 import cn.wnhyang.coolguard.log.annotation.OperateLog;
 import cn.wnhyang.coolguard.log.enums.OperateType;
-import cn.wnhyang.coolguard.system.convert.UserConvert;
-import cn.wnhyang.coolguard.system.entity.RoleDO;
 import cn.wnhyang.coolguard.system.entity.UserDO;
-import cn.wnhyang.coolguard.system.service.PermissionService;
-import cn.wnhyang.coolguard.system.service.RoleService;
 import cn.wnhyang.coolguard.system.service.UserService;
 import cn.wnhyang.coolguard.system.vo.user.*;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,8 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static cn.wnhyang.coolguard.common.pojo.CommonResult.success;
 
@@ -41,10 +34,6 @@ import static cn.wnhyang.coolguard.common.pojo.CommonResult.success;
 public class UserController {
 
     private final UserService userService;
-
-    private final RoleService roleService;
-
-    private final PermissionService permissionService;
 
     /**
      * 创建用户
@@ -125,14 +114,7 @@ public class UserController {
     @GetMapping
     @SaCheckPermission("system:user:query")
     public CommonResult<UserRespVO> getUser(@RequestParam("id") Long id) {
-        UserDO userDO = userService.getUserById(id);
-        Set<Long> roleIds = permissionService.getRoleIdListByUserId(userDO.getId());
-
-        List<RoleDO> roleDOList = roleService.getRoleList(roleIds);
-        UserRespVO respVO = UserConvert.INSTANCE.convert(userDO, roleDOList);
-        respVO.setRoleIds(roleIds);
-
-        return success(respVO);
+        return success(userService.getUserRespById(id));
     }
 
     /**
@@ -144,22 +126,7 @@ public class UserController {
     @GetMapping("/page")
     @SaCheckPermission("system:user:list")
     public CommonResult<PageResult<UserRespVO>> getUserPage(@Valid UserPageVO reqVO) {
-        List<UserRespVO> userPageList = getUserPageList(reqVO);
-
-        return success(new PageResult<>(userPageList, (long) userPageList.size()));
-    }
-
-    private List<UserRespVO> getUserPageList(UserPageVO reqVO) {
-        PageResult<UserDO> pageResult = userService.getUserPage(reqVO);
-
-        return pageResult.getList().stream().map(user -> {
-            Set<Long> roleIds = permissionService.getRoleIdListByUserId(user.getId());
-            List<RoleDO> roleDOList = roleService.getRoleList(roleIds);
-            UserRespVO respVO = UserConvert.INSTANCE.convert(user, roleDOList);
-            respVO.setRoleIds(roleIds);
-            respVO.setRoleList(CollectionUtils.convertList(roleDOList, RoleDO::getLabelValue));
-            return respVO;
-        }).collect(Collectors.toList());
+        return success(userService.getUserPage(reqVO));
     }
 
     /**
@@ -173,7 +140,7 @@ public class UserController {
     @OperateLog(module = "后台-用户", name = "导出用户列表")
     @SaCheckPermission("system:user:export")
     public void exportExcel(@Valid UserPageVO exportReqVO, HttpServletResponse response) throws IOException {
-        List<UserRespVO> userPageList = getUserPageList(exportReqVO);
+        List<UserRespVO> userPageList = userService.getUserList(exportReqVO);
         // 输出 Excel
         ExcelUtil.write(response, "用户数据.xls", "数据", UserRespVO.class, userPageList);
     }

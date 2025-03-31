@@ -36,7 +36,6 @@ public class UserProfileController {
     @SaCheckLogin
     public CommonResult<UserProfileVO> getUserProfile() {
         UserDO userDO = userService.getUserById(LoginUtil.getUserId());
-
         return CommonResult.success(UserConvert.INSTANCE.convert04(userDO));
     }
 
